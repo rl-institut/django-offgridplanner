@@ -93,6 +93,8 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "offgridplanner.users",
     # Your stuff: custom apps go here
+    "offgridplanner.projects",
+    "offgridplanner.dashboard",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

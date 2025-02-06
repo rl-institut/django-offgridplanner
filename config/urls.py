@@ -18,13 +18,29 @@ urlpatterns = [
         TemplateView.as_view(template_name="pages/about.html"),
         name="about",
     ),
+    path(
+        "license/",
+        TemplateView.as_view(template_name="pages/license.html"),
+        name="license",
+    ),
+    path(
+        "imprint/",
+        TemplateView.as_view(template_name="pages/imprint.html"),
+        name="imprint",
+    ),
+    path(
+        "privacy/",
+        TemplateView.as_view(template_name="pages/privacy.html"),
+        name="privacy",
+    ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("offgridplanner.users.urls", namespace="users")),
+    path("dashboard/", include("offgridplanner.dashboard.urls", namespace="dashboard")),
+    path("projects/", include("offgridplanner.projects.urls", namespace="projects")),
+    path("steps/", include("offgridplanner.steps.urls", namespace="steps")),
     path("accounts/", include("allauth.urls")),
-    # Your stuff: custom urls includes go here
-    # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

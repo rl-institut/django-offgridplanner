@@ -1,5 +1,6 @@
 # ruff: noqa
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -11,39 +12,50 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
-urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path(
-        "about/",
-        TemplateView.as_view(template_name="pages/about.html"),
-        name="about",
-    ),
-    path(
-        "license/",
-        TemplateView.as_view(template_name="pages/license.html"),
-        name="license",
-    ),
-    path(
-        "imprint/",
-        TemplateView.as_view(template_name="pages/imprint.html"),
-        name="imprint",
-    ),
-    path(
-        "privacy/",
-        TemplateView.as_view(template_name="pages/privacy.html"),
-        name="privacy",
-    ),
-    # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
-    # User management
-    path("users/", include("offgridplanner.users.urls", namespace="users")),
-    path("dashboard/", include("offgridplanner.dashboard.urls", namespace="dashboard")),
-    path("projects/", include("offgridplanner.projects.urls", namespace="projects")),
-    path("steps/", include("offgridplanner.steps.urls", namespace="steps")),
-    path("accounts/", include("allauth.urls")),
-    # Media files
-    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
-]
+urlpatterns = (
+    i18n_patterns(
+        path(
+            "",
+            TemplateView.as_view(template_name="pages/landing_page.html"),
+            name="home",
+        ),
+        path(
+            "about/",
+            TemplateView.as_view(template_name="pages/about.html"),
+            name="about",
+        ),
+        path(
+            "license/",
+            TemplateView.as_view(template_name="pages/license.html"),
+            name="license",
+        ),
+        path(
+            "imprint/",
+            TemplateView.as_view(template_name="pages/imprint.html"),
+            name="imprint",
+        ),
+        path(
+            "privacy/",
+            TemplateView.as_view(template_name="pages/privacy.html"),
+            name="privacy",
+        ),
+        # Django Admin, use {% url 'admin:index' %}
+        path(settings.ADMIN_URL, admin.site.urls),
+        # User management
+        path("users/", include("offgridplanner.users.urls", namespace="users")),
+        path(
+            "dashboard/",
+            include("offgridplanner.dashboard.urls", namespace="dashboard"),
+        ),
+        path(
+            "projects/", include("offgridplanner.projects.urls", namespace="projects")
+        ),
+        path("steps/", include("offgridplanner.steps.urls", namespace="steps")),
+        path("accounts/", include("allauth.urls")),
+    )
+    + [path("i18n/", include("django.conf.urls.i18n"))]
+    + staticfiles_urlpatterns()
+)
 if settings.DEBUG:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
     urlpatterns += staticfiles_urlpatterns()

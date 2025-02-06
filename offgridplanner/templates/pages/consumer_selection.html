@@ -1,0 +1,312 @@
+{% extends 'step_progression.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block head_block %}
+  <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        rel="stylesheet" />
+  <link href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"
+        rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw-src.js"></script>
+  <link href="https://unpkg.com/leaflet-geosearch@3.0.6/dist/geosearch.css"
+        rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet-geosearch@3.0.6/dist/geosearch.umd.js"></script>
+  <link href="{% static 'css/pages/consumer_selection.css' %}"
+        rel="stylesheet" />
+{% endblock head_block %}
+{% block content %}
+  <main>
+    <div id="fixed-symbol" style="position: fixed; bottom: 60px; left: 20px;">
+      <img alt="Icon"
+           onclick="document.getElementById('videoTutorial').style.display='block'"
+           src="{% static 'assets/icons/qm.svg' %}"
+           style="width: 100px;
+                  cursor: pointer" />
+    </div>
+    <section class="dashboard" id="section">
+      <div class="row">
+        <div class="chart" style="height: auto">
+          <div class="accordion" id="accordionExample" style="margin-top: 12px">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button aria-controls="collapseTwo"
+                        aria-expanded="false"
+                        class="accordion-button"
+                        data-bs-target="#collapseTwo"
+                        data-bs-toggle="collapse"
+                        style="display: flex;
+                               justify-content: space-between;
+                               align-items: center"
+                        type="button">
+                  <span style="flex-grow: 1;">Set Consumer Properties</span>
+                </button>
+              </h2>
+              <div aria-labelledby="headingTwo"
+                   class="accordion-collapse"
+                   data-bs-parent="#accordionExample"
+                   id="collapseTwo">
+                <div class="accordion-body" style="border-bottom: none;">
+                  <table style="border-top: none; color: var(--ccb); border-spacing: 0;">
+                    <tr>
+                      <th style="vertical-align: top; padding: 5px;">Consumer Type</th>
+                      <th style="vertical-align: top; padding: 5px;">Consumer Category</th>
+                      <th style="vertical-align: top; padding: 5px;">Latitude</th>
+                      <th style="vertical-align: top; padding: 5px;">Longitude</th>
+                      <th style="vertical-align: top; padding: 5px;">
+                        Grid-/SHS-Options
+                        <span class="icon icon-question"
+                              data-bs-toggle="tooltip"
+                              title="The off-grid planning process identifies consumers for whom connection costs surpass a specified threshold during grid optimization. Economically, it may not be feasible to connect these consumers to the grid. Instead, equipping them with a solar home system is a more viable solution. Further details about this option are available on the Grid-Design page. Additionally, this page offers an option to adjust the threshold, ensuring all consumers can connect to the grid. On this very page, you also have the discretion to manually determine the connection status of specific consumers, such as schools and health centers. You can decide whether these entities should be mandatorily connected to the grid, or if the decision should be left to the optimizer based on the set threshold.">
+                        </span>
+                      </th>
+                      <th style="vertical-align: top; padding: 5px;">Delete Consumer</th>
+                      <th style="vertical-align: top; padding: 5px;"></th>
+                      <th style="vertical-align: top; padding: 5px;"></th>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px;">
+                        <div class="input-item">
+                          <select class="form-select" id="consumer" style="max-width: 150px">
+                            <option>Household</option>
+                          </select>
+                        </div>
+                      </td>
+                      <td style="padding: 5px;">
+                        <div class="input-item" style="display: flex; align-items: center;">
+                          <select class="form-select" id="enterprise" style="max-width: 150px;">
+                            <option>Enterprise</option>
+                          </select>
+                        </div>
+                      </td>
+                      <td style="padding: 5px;">
+                        <div class="input-group" style="max-width: 200px">
+                          <input class="form-control"
+                                 disabled="true"
+                                 id="latitude"
+                                 max="16"
+                                 min="2"
+                                 placeholder=""
+                                 required
+                                 step="0.00001"
+                                 type="number"
+                                 value="" />
+                          <span class="input-group-text">Degree</span>
+                        </div>
+                      </td>
+                      <td style="padding: 5px;">
+                        <div class="input-group" style="max-width: 200px">
+                          <input class="form-control"
+                                 disabled="true"
+                                 id="longitude"
+                                 max="16"
+                                 min="2"
+                                 placeholder=""
+                                 required
+                                 step="0.00001"
+                                 type="number"
+                                 value="" />
+                          <span class="input-group-text">Degree</span>
+                        </div>
+                      </td>
+                      <td style="padding: 5px;">
+                        <div class="input-item">
+                          <select class="form-select" id="shs_options" style="max-width: 150px">
+                            <option value="optimize">Optimize</option>
+                            <option value="grid">Grid</option>
+                          </select>
+                        </div>
+                      </td>
+                      <td style="padding: 5px;">
+                        <a class="btn btn--medium"
+                           href="javascript:void(0);"
+                           id="submit"
+                           onclick="delete_consumer();"
+                           style="height: 32px;
+                                  display: flex;
+                                  align-items: center;
+                                  justify-content: center">Delete</a>
+                      </td>
+                      <td style="padding: 5px;">
+                        <span style="float:right;"><a>&nbsp;</a></span>
+                      </td>
+                      <td style="padding: 5px;">
+                        <span style="float:right;"><a>&nbsp;</a></span>
+                      </td>
+                    </tr>
+                  </table>
+                  <hr />
+                  <div style="display: flex;
+                              justify-content: space-between;
+                              align-items: center">
+                    <span style="flex: 1; text-align: left; padding-left: 10px">
+                      <strong>Number of Selected Households:</strong>
+                      <a id="n_households" style="color: var(--ccb); font-weight: bold;">0</a>
+                    </span>
+                    <span style="flex: 1; text-align: center;">
+                      <strong>Number of Selected Enterprises:</strong>
+                      <a id="n_enterprises" style="color: var(--ccb); font-weight: bold;">0</a>
+                    </span>
+                    <span style="flex: 1; text-align: right;; padding-right: 10px">
+                      <strong>Number of Selected Public Services:</strong>
+                      <a id="n_public_services" style="color: var(--ccb); font-weight: bold;">0</a>
+                    </span>
+                  </div>
+                  <hr />
+                  <p>
+                    <span>
+                      <p style="display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                color: var(--ccb)">
+                        <span style="display: flex; align-items: center;">
+                          <input id="fileInput" style="display: none;" type="file" />
+                          <a class="btn btn--medium"
+                             href="javascript:void(0);"
+                             id="importButton"
+                             style="height: 32px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin-right: 10px">Import Consumers</a>
+                          <a class="btn btn--medium"
+                             href="javascript:void(0);"
+                             id="exportButton"
+                             onclick="consumer_to_db(null, document.getElementById('fileTypeDropdown').value);"
+                             style="height: 32px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin-right: 10px;
+                                    color: #fff">Export Consumers</a>
+                          <select class="form-select"
+                                  id="fileTypeDropdown"
+                                  style="max-width: 150px;
+                                         margin-right: 10px;
+                                         height: 32px;
+                                         line-height: 20px;
+                                         padding: 0 24px 0 8px">
+                            <option value="csv">File type: CSV</option>
+                            <option value="xlsx">File type: XLSX</option>
+                          </select>
+                          <span class="icon icon-question"
+                                data-bs-toggle="tooltip"
+                                style="margin-right: 10px"
+                                title="The first row of the CSV or Excel file should contain the column headers, with subsequent rows containing the respective values. The file must include a 'latitude' column and a 'longitude' column, both of which are mandatory and should use a dot as a decimal separator, with the unit in decimal degrees. Additionally, the file can optionally include a 'consumer_type' column, which should specify whether the consumer is a 'household', 'enterprise', or 'public_service'. If no value is provided, it will default to 'household'. Another optional column is 'consumer_detail', which should be selected from the options available in the 'Consumer Category' drop-down menu. The 'shs_options' column is also optional and should either be set to 0 (for optimization) or 1 (for grid connection), with 0 being the default. Finally, the file must contain a 'custom_specification' column, which should be populated with a value selected from the 'Large Loads to add' drop-down menu, if applicable. Each value in this column must start with a leading integer followed by a space, the letter 'x', and another space (e.g. '1 x Milling Machine (7.5kW)'). This specific format is mandatory.">
+                          </span>
+                        </span>
+                        <span style="display: flex; align-items: center;">
+                          <a style="margin-right: 10px;">Show Advanced Options</a>
+                          <label class="switch">
+                            <input id="toggleswitch2" type="checkbox" />
+                            <span class="slider round"></span>
+                          </label>
+                        </span>
+                      </p>
+                      <div class="accordion-item" style="border-top: none">
+                        <div aria-labelledby="headingThree"
+                             class="accordion-collapse collapse"
+                             id="collapseThree">
+                          <div class="accordion-body">
+                            <a>Select Individual Large Enterprise Loads</a>
+                            <p>
+                              Note: Productive use enterprises selected above will not by default have added any
+                              "large loads" (such as milling machines or electric welders etc.) and will only have
+                              typical low power appliances included.
+                              <br />
+                              The functionality below allows the user to
+                              add, remove, and view specific types and quantities of large loads for each
+                              individual enterprise consumer.
+                            </p>
+                            <div class="list_container">
+                              <div>
+                                <p>
+                                  <b style="color: var(--ccb)">Large loads to add</b>
+                                </p>
+                                <div class="input-item"
+                                     style="margin-right: 30px;
+                                            margin-bottom: 20px;
+                                            width: 200px">
+                                  <select class="form-select" id="loads" style="max-width: 200px">
+                                    <option>Motor</option>
+                                  </select>
+                                </div>
+                                <div class="input-group" style="width: 200px;  margin-bottom: 20px;">
+                                  <input class="form-control"
+                                         id="number_loads"
+                                         max="30"
+                                         min="1"
+                                         placeholder="Number"
+                                         required
+                                         step="1"
+                                         type="number"
+                                         value="1" />
+                                </div>
+                                <a class="btn btn--medium"
+                                   href="javascript:void(0);"
+                                   id="add"
+                                   onclick="addElementToLargeLoadList();"
+                                   style="height: 32px;
+                                          display: flex;
+                                          align-items: center;
+                                          justify-content: center;
+                                          margin-bottom: 20px;
+                                          width: 200px">Add Load</a>
+                              </div>
+                              <div>
+                                <p>
+                                  <b style="color: var(--ccb)">Selected Loads</b>
+                                </p>
+                                <div class="list" id="load_list" style="width: 400px"></div>
+                              </div>
+                              <div></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="search-container">
+                        <input class="input-group-text"
+                               id="search-input"
+                               placeholder="Search location within Nigeria"
+                               style="text-align: left"
+                               type="text" />
+                      </div>
+                      <p></p>
+                      <div id="map"
+                           style="min-height: 700px;
+                                  min-width: 1000px;
+                                  margin-bottom: 10px"></div>
+                    </section>
+                    <div class="modal"
+                         id="videoTutorial"
+                         style="background-color: rgba(0,0,0,0.5);
+                                z-index: 999;
+                                text-align: left">
+                      <form class="modal-content" style="width: 700px; height: 520px;">
+                        <div class="container">
+                          <h1 style="margin-bottom: 0;">Video Tutorial</h1>
+                          <div style="padding: 15px;">
+                            <video controls height="360" id="tutorialVideo" width="568">
+                              <source src="{% static 'videos/tut_consumer_selection.mp4' %}"
+                                      type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          </div>
+                          <button class="deletebtn"
+                                  onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'"
+                                  type="button">OK</button>
+                          <button class="cancelbtn"
+                                  onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'; deactivate_video_tutorial();"
+                                  type="button">Don't Show Again</button>
+                        </div>
+                      </form>
+                    </div>
+                  </main>
+                {% endblock content %}
+                {% block end_body_scripts %}
+                  <script src="{% static 'js/integrate_map.js' %}"></script>
+                  <script src="{% static 'js/pages/consumer_selection.js' %}"></script>
+                  <script src="{% static 'js/backend_communication.js' %}"></script>
+                {% endblock end_body_scripts %}

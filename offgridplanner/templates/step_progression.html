@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block navbar %}
+  {% include "navbar.html" with user=user scenario_create=True documentation_url=documentation_url %}
+{% endblock navbar %}
+{% block title %}
+  {% translate "Scenario step" %} {{ step_id }}
+{% endblock title %}
+<!-- WRITE HTML CODE WITHIN THESE block content TAGS -->
+{% block content %}
+  <section class="wizard">
+    <div>
+      <h1 class="wizard__name">
+        <span class="project">{{ proj_name }}</span>
+        <!--span class="scenario">{% translate "Scenario" %} {{ scenario.name }}</span -->
+      </h1>
+      <div class="wizard__back">
+        <div>
+          {% if proj_id %}
+            <a href="{% url 'projects:projects_list' proj_id %}">{% translate "My projects" %}</a>
+          {% else %}
+            <a href="{% url 'projects:projects_list' %}">{% translate "My projects" %}</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="wizard__steps">
+        <ul>
+          {% for step in step_list %}
+            <li {% if step_id == forloop.counter %}class="active"{% endif %}>
+              {% if proj_id %}
+                <a href="{% url 'ogp_steps' proj_id forloop.counter %}">{% translate step %}</a>
+              {% else %}
+                {% translate step %}
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <div class="scenario-create__info-message">
+    {% block step_explanation %}
+      {% if page_information %}
+        <div>
+          <p>{{ page_information }}</p>
+        </div>
+      {% endif %}
+    {% endblock step_explanation %}
+  </div>
+  {% block progression_content %}
+  {% endblock progression_content %}
+  {% block step_footer %}
+    <div class="step-footer">
+      <div>
+        <div class="step-footer__left"></div>
+        <div class="step-footer__center">
+          {% if proj_id %}
+            {% if step_id > 1 %}
+              <a id="previous-button"
+                 class="btn btn--medium btn--hollow btn--previous"
+                 href="{% url 'cpn_steps' proj_id step_id|add:'-1' %}"
+                 aria-disabled="true">{% translate "Previous" %}</a>
+            {% endif %}
+            {% if step_id < step_list|length %}
+              {% block next_btn %}
+                <a id="next-button"
+                   class="btn btn--medium"
+                   href="{% url 'cpn_steps' proj_id step_id|add:1 %}">{% translate "Next" %}</a>
+              {% endblock next_btn %}
+            {% endif %}
+          {% else %}
+            <button id="next-button"
+                    class="btn btn--medium"
+                    onclick="javascript:submitFormBtn.click();">{% translate "Next" %}</button>
+          {% endif %}
+        </div>
+        <div class="step-footer__right"></div>
+      </div>
+    </div>
+  {% endblock step_footer %}
+{% endblock content %}

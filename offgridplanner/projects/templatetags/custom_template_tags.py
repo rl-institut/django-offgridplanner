@@ -21,3 +21,18 @@ def getfield(value, arg):
 @register.filter
 def getkey(mapping, key):
     return mapping.get(key, "")
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+
+@register.filter
+def get_field(form, key):
+    return form.fields[key].get_bound_field(form, key)
+
+
+@register.filter
+def has_field(form, key):
+    return key in form.fields

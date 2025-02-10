@@ -15,8 +15,25 @@ def home(request):
 
 # @login_required()
 @require_http_methods(["GET"])
-def project_setup(request):
-    return render(request, "pages/project_setup.html")
+def project_setup(request, proj_id=None):
+    from offgridplanner.projects.forms import ProjectForm
+
+    form = ProjectForm()
+    context = {"form": form}
+    if proj_id is not None:
+        max_days = int(os.environ.get("MAX_DAYS", 365))
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+        context = {"project_id": project.id, "max_days": max_days}
+
+    # TODO in the js figure out what this is supposed to mean, this make the next button jump to either step 'consumer_selection'
+    # or step 'demand_estimation'
+    # const consumerSelectionHref = `consumer_selection?project_id=${project_id}`;
+    # const demandEstimationHref = `demand_estimation?project_id =${project_id}`;
+    # If Consumer Selection is hidden (in raw html), go to demand_estimation
+
+    return render(request, "pages/project_setup.html", context)
 
 
 # @login_required()

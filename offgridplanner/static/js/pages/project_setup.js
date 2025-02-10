@@ -1,6 +1,4 @@
-var currentDate = new Date();
-var year = currentDate.getFullYear();
-
+/*
 // Select the element to be observed
 const responseMsgElement = document.getElementById('responseMsg');
 
@@ -22,12 +20,8 @@ observer.observe(responseMsgElement, {
 });
 
 
-const consumerSelectionHref = `consumer_selection?project_id=${project_id}`;
-const demandEstimationHref = `demand_estimation?project_id=${project_id}`;
-const func = `save_project_setup`;
-
 // Function to handle toggleswitch0 (Demand Estimation)
-document.getElementById('toggleswitch0').addEventListener('change', function() {
+document.getElementById('id_do_demand_estimation').addEventListener('change', function() {
     if (!this.checked) {
         // Update the text content of the responseMsg element
         document.getElementById('responseMsg').textContent =
@@ -38,7 +32,7 @@ document.getElementById('toggleswitch0').addEventListener('change', function() {
 });
 
 // Function to handle toggleswitch1 (Spatial Grid Optimization)
-document.getElementById('toggleswitch1').addEventListener('change', function() {
+document.getElementById('id_do_grid_optimization').addEventListener('change', function() {
     if (!this.checked) {
         // Update the text content of the responseMsg element
         document.getElementById('responseMsg').textContent =
@@ -48,49 +42,4 @@ document.getElementById('toggleswitch1').addEventListener('change', function() {
         document.getElementById('msgBox').style.display = 'block';
     }
 });
-
-
-// Function to set the correct href for the Next button based on the visibility of wizard steps
-function updateNextButtonHref(project_id, func, defaultHref, alternativeHref) {
-    const consumerSelectionStep = document.querySelector('li[onclick*="consumer_selection"]');
-    const nextButton = document.getElementById("nextButton");
-    if (consumerSelectionStep.style.display === 'none') {
-        // If Consumer Selection is hidden, use the alternative href
-        nextButton.setAttribute('onclick', `${func}('${alternativeHref}');`);
-    } else {
-        // If Consumer Selection is visible, use the default href
-        nextButton.setAttribute('onclick', `${func}('${defaultHref}');`);
-    }
-}
-
-
-// Event listeners passing the states of toggleswitches to the function
-document.getElementById('toggleswitch0').addEventListener('change', function() {
-    const toggleSwitch0State = this.checked;
-    const toggleSwitch1State = document.getElementById('toggleswitch1').checked;
-    const toggleSwitch2State = document.getElementById('toggleswitch2').checked;
-    updateWizardStepVisibility(toggleSwitch0State, toggleSwitch1State, toggleSwitch2State);
-    updateNextButtonHref(project_id, func, consumerSelectionHref, demandEstimationHref);
-});
-
-document.getElementById('toggleswitch1').addEventListener('change', function() {
-    const toggleSwitch0State = document.getElementById('toggleswitch0').checked;
-    const toggleSwitch1State = this.checked;
-    const toggleSwitch2State = document.getElementById('toggleswitch2').checked;
-
-    updateWizardStepVisibility(toggleSwitch0State, toggleSwitch1State, toggleSwitch2State);
-    updateNextButtonHref(project_id, func, consumerSelectionHref, demandEstimationHref);
-});
-
-document.getElementById('toggleswitch2').addEventListener('change', function() {
-    const toggleSwitch0State = document.getElementById('toggleswitch0').checked;
-    const toggleSwitch1State = document.getElementById('toggleswitch1').checked;
-    const toggleSwitch2State = this.checked;
-
-    updateWizardStepVisibility(toggleSwitch0State, toggleSwitch1State, toggleSwitch2State);
-    updateNextButtonHref(project_id, func, consumerSelectionHref, demandEstimationHref);
-});
-
-
-const wizardSection = document.getElementById('wizard');
-wizardSection.classList.add('show');
+*/

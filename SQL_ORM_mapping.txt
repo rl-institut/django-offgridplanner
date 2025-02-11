@@ -1,0 +1,12 @@
+ProjectSetup --> Project
+project_id --> did not keep
+project_name --> name
+project_description --> description
+project_lifetime --> lifetime
+created_at --> date_created
+updated_at --> date_updated
+add user as foreign key to Project
+add options as foreign key to Project
+email_notification, do_demand_estimation, do_grid_optimization, do_es_design_optimization --> moved into a new table called Settings
+
+New table Options

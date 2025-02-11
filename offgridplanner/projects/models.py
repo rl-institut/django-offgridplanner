@@ -29,14 +29,21 @@ class Project(models.Model):
     temporal_resolution = models.PositiveSmallIntegerField(default=1)
     n_days = models.PositiveSmallIntegerField(default=365)
     status = models.CharField(max_length=25, default="not yet started")
-    email_notification = models.BooleanField(default=False)
-
-    do_demand_estimation = models.BooleanField(default=True)
-    do_grid_optimization = models.BooleanField(default=True)
-    do_es_design_optimization = models.BooleanField(default=True)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
     )
+    options = models.ForeignKey(
+        Options,
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+
+
+class Options(models.Model):
+    email_notification = models.BooleanField(default=False)
+    do_demand_estimation = models.BooleanField(default=True)
+    do_grid_optimization = models.BooleanField(default=True)
+    do_es_design_optimization = models.BooleanField(default=True)

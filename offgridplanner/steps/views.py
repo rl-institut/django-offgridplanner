@@ -1,7 +1,12 @@
+import os
+
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+
+from offgridplanner.projects.forms import ProjectForm
 
 
 @require_http_methods(["GET"])
@@ -16,8 +21,6 @@ def home(request):
 # @login_required()
 @require_http_methods(["GET"])
 def project_setup(request, proj_id=None):
-    from offgridplanner.projects.forms import ProjectForm
-
     form = ProjectForm()
     context = {"form": form}
     if proj_id is not None:

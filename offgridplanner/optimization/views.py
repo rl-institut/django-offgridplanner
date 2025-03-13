@@ -27,6 +27,7 @@ from offgridplanner.optimization.supply.demand_estimation import (
     get_demand_timeseries,
     LOAD_PROFILES,
 )
+from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.optimization.models import Nodes, Links, Simulation
@@ -363,6 +364,26 @@ def load_demand_plot_data(request, proj_id=None):
 
     timeseries["Average"] = timeseries["Average"].tolist()
     return JsonResponse({"timeseries": timeseries})
+
+
+def export_demand(request, proj_id):
+    project = Project.objects.get(id=proj_id)
+    data = json.loads(request.body)
+    file_type = data["file_type"]
+    total_demand = get_demand_timeseries(
+        project.nodes, project.customdemand, time_range=range(project.n_days * 24)
+    ).sum(axis=1)
+    total_demand_df = total_demand.reset_index()
+    total_demand_df.columns = ["timestamp", "demand"]
+
+    io_file = df_to_file(total_demand_df, file_type)
+    response = StreamingHttpResponse(io_file)
+
+    response.headers["Content-Disposition"] = (
+        f"attachment; filename=offgridplanner_demand.{file_type}"
+    )
+
+    return response
 
 
 def load_plot_data(request, proj_id, plot_type=None):

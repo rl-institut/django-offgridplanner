@@ -148,7 +148,8 @@
                             justify-content: center;
                             margin-right: 10px;
                             color: #fff"
-                     href="javascript:void(0);">Export Demand</a>
+                     href="javascript:void(0);"
+                     onclick="javascript:export_demand(document.getElementById('fileTypeDropdown').value);">Export Demand</a>
                   <select id="fileTypeDropdown"
                           class="form-select"
                           style="max-width: 150px;
@@ -267,6 +268,11 @@
 {% endblock next_btn %}
 
 {% block end_body_scripts %}
+<script>
+const proj_id = '{{ proj_id }}';
+const csrfToken = '{{ csrf_token }}';
+const exportDemandUrl = `{% url 'optimization:export_demand' proj_id %}`;
+</script>
 <script src="{% static 'js/pages/demand_estimation.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>
 <script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>

@@ -17,6 +17,7 @@ urlpatterns = [
     ),
     path("consumer_to_db", consumer_to_db, name="consumer_to_db"),
     path("consumer_to_db/<int:proj_id>", consumer_to_db, name="consumer_to_db"),
+    path("export_demand/<int:proj_id>", export_demand, name="export_demand"),
     path("db_links_to_js/<int:proj_id>", db_links_to_js, name="db_links_to_js"),
     path("file_nodes_to_js", file_nodes_to_js, name="file_nodes_to_js"),
     path("db_nodes_to_js", db_nodes_to_js, name="db_nodes_to_js"),

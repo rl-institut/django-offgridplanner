@@ -22,6 +22,7 @@ from offgridplanner.optimization.grid import identify_consumers_on_map
 from offgridplanner.optimization.helpers import (
     consumer_data_to_file,
     check_imported_consumer_data,
+    check_imported_demand_data,
 )
 from offgridplanner.optimization.supply.demand_estimation import (
     get_demand_timeseries,
@@ -384,6 +385,44 @@ def export_demand(request, proj_id):
     )
 
     return response
+
+
+def import_demand(request, proj_id):
+    file = request.FILES["file"]
+    project = Project.objects.get(id=proj_id)
+    filename = file.name
+    file_extension = filename.split(".")[-1].lower()
+    file_content = file.read()
+
+    if file_extension not in ["csv", "xlsx"]:
+        return JsonResponse(
+            {
+                "responseMsg": "Unsupported file type. Please upload a CSV or Excel file."
+            },
+            status=400,
+        )
+
+    try:
+        df = (
+            pd.read_csv(io.StringIO(file_content.decode("utf-8")))
+            if file_extension == "csv"
+            else pd.read_excel(io.BytesIO(file_content), engine="openpyxl")
+        )
+        project_dict = model_to_dict(project)
+
+        df, error_msg = check_imported_demand_data(df, project_dict)
+        if df is None:
+            return JsonResponse({"responseMsg": error_msg}, status=400)
+
+        custom_demand = project.customdemand
+        custom_demand.uploaded_data = df.to_json()
+        custom_demand.save()
+        return JsonResponse({"responseMsg": ""})
+
+    except Exception as e:
+        return JsonResponse(
+            {"responseMsg": f"Failed to process the file: {str(e)}"}, status=500
+        )
 
 
 def load_plot_data(request, proj_id, plot_type=None):

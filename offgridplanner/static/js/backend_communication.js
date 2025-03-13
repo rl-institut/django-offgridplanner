@@ -204,7 +204,8 @@ async function file_nodes_to_js(formData) {
 
 async function file_demand_to_db(formData) {
     try {
-        const response = await fetch('/import_demand' + '/' + proj_id, {
+        const response = await fetch(importDemandUrl, {
+            headers: {'X-CSRFToken': csrfToken },
             method: 'POST',
             body: formData
         });

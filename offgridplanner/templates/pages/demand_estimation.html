@@ -258,6 +258,7 @@
     </section>
     <input type="submit" id="submitFormBtn" hidden>
   </form>
+  {% include 'warning_box.html' %}
 </main>
 {% endblock progression_content %}
 
@@ -272,6 +273,7 @@
 const proj_id = '{{ proj_id }}';
 const csrfToken = '{{ csrf_token }}';
 const exportDemandUrl = `{% url 'optimization:export_demand' proj_id %}`;
+const importDemandUrl = `{% url 'optimization:import_demand' proj_id %}`;
 </script>
 <script src="{% static 'js/pages/demand_estimation.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>

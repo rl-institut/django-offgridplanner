@@ -945,6 +945,7 @@ class EnergySystemOptimizer(BaseOptimizer):
         results.inverter_to_demand = self.sequences_inverter.sum() / 1000
         results.time_energy_system_design = self.execution_time
         results.co2_savings = self.co2_savings / self.n_days * 365
+        # TODO this only works with uploaded data if n_days=365
         results.total_annual_consumption = self.demand_full_year.sum() * (
             (100 - self.shortage) / 100
         )

@@ -8,7 +8,7 @@ class CustomDemandForm(ModelForm):
 
     class Meta:
         model = CustomDemand
-        exclude = ["project"]
+        exclude = ["project", "uploaded_data"]
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.get("initial", {})

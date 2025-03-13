@@ -487,10 +487,6 @@ document.getElementById('fileInput').addEventListener('change', async function(e
     }
 });
 
-document.getElementById('downloadDemand').addEventListener('click', function () {
-    save_demand_estimation('javascript:void(0);')
-    window.location.href = '/export_demand/' + project_id + '/' + document.getElementById('fileTypeDropdown').value+ '/';
-});
 
 function loadDashboard() {
     const dashboardSection = document.querySelector('.dashboard');
@@ -498,5 +494,31 @@ function loadDashboard() {
     // Check if the 'loading' class is not already present
     if (!dashboardSection.classList.contains('loading')) {
         dashboardSection.classList.add('loading');
+    }
+}
+
+
+async function export_demand(file_type) {
+    const response = await fetch(exportDemandUrl, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({"file_type": file_type})
+    });
+
+    if (response.ok) {
+        // Handle the file download for "csv" or "xlsx"
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = file_type === "xlsx" ? "offgridplanner_demand.xlsx" : "offgridplanner_demand.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+    } else {
+        console.error('Request failed with status:', response.status);
+        const errorDetails = await response.json();
+        console.error('Error details:', errorDetails);
     }
 }

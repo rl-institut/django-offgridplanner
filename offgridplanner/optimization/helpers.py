@@ -208,3 +208,37 @@ def consumer_data_to_file(df, file_type):
     else:
         df = df.drop(columns=["is_connected", "how_added", "node_type"])
     return df_to_file(df, file_type)
+
+
+def check_imported_demand_data(df, project_dict):
+    if df.empty:
+        return None, "No data could be read."
+
+    df.columns = [col.strip().lower() for col in df.columns]
+    if "demand" not in df.columns:
+        return None, "Column with title 'demand' is missing."
+
+    df = df["demand"].dropna()
+    try:
+        df = df.astype(float)
+    except ValueError as e:
+        return None, f"Error converting demand to float: {str(e)}"
+
+    n_days = min(project_dict["n_days"], int(os.environ.get("MAX_DAYS", 365)))
+    ts = pd.Series(
+        pd.date_range(
+            pd.to_datetime("2022").to_pydatetime(),
+            pd.to_datetime("2022").to_pydatetime() + pd.to_timedelta(n_days, unit="D"),
+            freq="h",
+            inclusive="left",
+        )
+    )
+    if len(df) < len(ts):
+        start_date_str = project_dict["start_date"].strftime("%d. %B %H:%M")
+        return None, (
+            f"You specified a start date of {start_date_str} and a simulation period of {n_days} days with an "
+            f"hourly frequency, which requires {len(ts.index)} data points. However, only {len(df.index)} data points were provided."
+        )
+
+    df.index = ts.values[: len(df.index)]
+    return df.to_frame("demand"), ""

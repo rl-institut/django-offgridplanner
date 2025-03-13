@@ -14,6 +14,7 @@ class CustomDemand(models.Model):
     very_high = models.FloatField(default=0.015)
     annual_total_consumption = models.FloatField(blank=True, null=True)
     annual_peak_consumption = models.FloatField(blank=True, null=True)
+    uploaded_data = models.JSONField(null=True)
 
     @property
     def calibration_option(self):

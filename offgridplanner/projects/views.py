@@ -22,7 +22,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from offgridplanner.projects.helpers import load_project_from_dict
+from offgridplanner.projects.helpers import (
+    load_project_from_dict,
+    prepare_data_for_export,
+)
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import Energysystemdesign
 from offgridplanner.steps.models import GridDesign
@@ -104,6 +107,56 @@ def project_delete(request, proj_id):
     return HttpResponseRedirect(reverse("projects:projects_list"))
 
 
+@require_http_methods(["GET"])
+def export_project_results(request, proj_id):
+    # TODO fix formatting and add units
+    project = Project.objects.get(id=proj_id)
+    # TODO get this data over get_project_data instead
+    input_df = pd.Series(model_to_dict(project))
+    results_df = pd.Series(model_to_dict(project.simulation.results))
+    energy_system_design_df = pd.Series(model_to_dict(project.energysystemdesign))
+    energy_flow_df = project.energyflow.df
+    nodes_df = project.nodes.df
+    links_df = project.links.df
+    dataframes = {
+        "results": results_df,
+        "energy flow": energy_flow_df,
+        "user specified input parameters": input_df,
+        "nodes": nodes_df,
+        "links": links_df,
+        "energy system design": energy_system_design_df,
+    }
+
+    prepared_data = prepare_data_for_export(dataframes)
+
+    excel_file = io.BytesIO()
+    with pd.ExcelWriter(excel_file, engine="xlsxwriter") as writer:
+        workbook = writer.book
+        # format_right = workbook.add_format({"align": "right"})
+        # format_left = workbook.add_format({"align": "left"})
+
+        for sheet_name, df in zip(dataframes.keys(), prepared_data):
+            df.astype(str).to_excel(writer, sheet_name=sheet_name, index=False)
+            worksheet = writer.sheets[sheet_name]
+            # set_column_width(worksheet, df, format_right if sheet_name != "results" else format_left)
+
+    excel_file.seek(0)
+
+    response = StreamingHttpResponse(
+        excel_file,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response.headers["Content-Disposition"] = (
+        "attachment; filename=offgridplanner_results.xlsx"
+    )
+    return response
+
+
+def export_project_report(proj_id):
+    pass
+
+
+# TODO unused as of now
 def get_project_data(project):
     # TODO in the original function the user is redirected to whatever page has missing data, i would rather do an error message
     """

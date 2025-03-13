@@ -23,6 +23,7 @@ code reusability and a structured approach to optimization within the applicatio
 """
 
 import os
+from io import StringIO
 
 import pandas as pd
 
@@ -79,18 +80,13 @@ class BaseOptimizer:
                 self.project.nodes, self.project.customdemand
             ).sum(axis=1)
 
-            self.demand = get_demand_timeseries(
-                self.project.nodes,
-                self.project.customdemand,
-                time_range=range(self.n_days * 24),
-            ).sum(axis=1)
+            self.demand = self.demand_full_year.iloc[: (self.n_days * 24)]
         else:
-            # TODO this should be the custom uploaded demand in demand_estimation
-            # self.demand_full_year = pd.read_json(sync_queries.get_model_instance(sa_tables.CustomDemand,
-            #                                                                      self.user_id,
-            #                                                                      self.project_id).data).sort_index()
-            # self.demand = self.demand_full_year.iloc[:len(self.dt_index)]['demand'].copy()
-            pass
+            uploaded_data = self.project.customdemand.uploaded_data
+            self.demand = pd.read_json(StringIO(uploaded_data))["demand"]
+            # TODO error is thrown for annual total consumption if full year demand is not defined - tbd fix
+            if self.n_days == 365:
+                self.demand_full_year = self.demand
 
     def capex_multi_investment(self, capex_0, component_lifetime):
         """

@@ -1,5 +1,6 @@
 import json
 import os
+from collections import defaultdict
 
 import pandas as pd
 from django.core.exceptions import PermissionDenied
@@ -12,12 +13,13 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
-from offgridplanner.steps.forms import CustomDemandForm
+from offgridplanner.projects.helpers import reorder_dict, group_form_by_component
+from offgridplanner.steps.forms import CustomDemandForm, EnergySystemDesignForm
 from offgridplanner.steps.forms import GridDesignForm
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
 from offgridplanner.steps.models import CustomDemand
-from offgridplanner.steps.models import Energysystemdesign
+from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
 from offgridplanner.projects.models import Project
 from offgridplanner.optimization.models import Simulation
@@ -212,10 +214,23 @@ def grid_design(request, proj_id=None):
 
         grid_design, _ = GridDesign.objects.get_or_create(project=project)
         if request.method == "GET":
-            form = GridDesignForm(instance=grid_design)
+            form = GridDesignForm(instance=grid_design, set_db_column_attribute=True)
+            # Group form fields by component (for easier rendering inside boxes)
+            grouped_fields = group_form_by_component(form)
+
+            for component in list(grouped_fields):
+                clean_name = (
+                    component.title().replace("_", " ")
+                    if component != "mg"
+                    else "Connection Costs"
+                )
+                grouped_fields[clean_name] = grouped_fields.pop(component)
+
+            # Reorder dictionary for easier rendering in the correct order in the template (move SHS fields to #3)
+            grouped_fields = reorder_dict(grouped_fields, 4, 2)
 
             context = {
-                "form": form,
+                "grouped_fields": grouped_fields,
                 "proj_id": proj_id,
                 "step_id": step_id,
                 "step_list": STEPS,
@@ -238,25 +253,37 @@ def energy_system_design(request, proj_id=None):
         project = get_object_or_404(Project, id=proj_id)
         if project.user.email != request.user.email:
             raise PermissionDenied
+
+    energy_system_design, _ = EnergySystemDesign.objects.get_or_create(project=project)
     if request.method == "GET":
-        context = {"proj_id": project.id, "step_id": step_id, "step_list": STEPS}
+        form = EnergySystemDesignForm(
+            instance=energy_system_design, set_db_column_attribute=True
+        )
+
+        grouped_fields = group_form_by_component(form)
+
+        for component in list(grouped_fields):
+            clean_name = component.title().replace("_", " ")
+            grouped_fields[clean_name] = grouped_fields.pop(component)
+
+        grouped_fields.default_factory = None
+
+        context = {
+            "proj_id": project.id,
+            "step_id": step_id,
+            "step_list": STEPS,
+            "grouped_fields": grouped_fields,
+        }
 
         # TODO read js/pages/energy-system-design.js
         # todo restore using load_previous_data in the first place, then replace with Django forms
 
         return render(request, "pages/energy_system_design.html", context)
     if request.method == "POST":
-        data = json.loads(request.body)
-        df = pd.json_normalize(data, sep="_")
-        d_flat = df.to_dict(orient="records")[0]
-        Energysystemdesign.objects.filter(project=project).delete()
-        es = Energysystemdesign(**d_flat)
-        es.project = project
-        es.save()
-        return JsonResponse(
-            {"href": reverse(f"steps:{STEPS[step_id]}", args=[proj_id])},
-            status=200,
-        )
+        form = EnergySystemDesignForm(request.POST, instance=energy_system_design)
+        if form.is_valid():
+            form.save()
+        return redirect("steps:ogp_steps", proj_id, step_id + 1)
 
 
 def calculating(request, proj_id=None):
@@ -370,5 +397,5 @@ def load_previous_data(request, page_name=None, proj_id=None):
         # demand_estimation.calibration_options = 2 if len(demand_estimation.maximum_peak_load) > 0 else 1
         # return demand_estimation
         elif page_name == "energy_system_design":
-            energy_system_design = Energysystemdesign.objects.get(project=project)
+            energy_system_design = EnergySystemDesign.objects.get(project=project)
             return energy_system_design

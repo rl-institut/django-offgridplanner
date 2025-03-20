@@ -4,6 +4,7 @@
 {% load i18n %}
 {% load custom_template_tags %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 
 {% block head_block %}
 <link href="{% static 'css/main.css' %}" rel="stylesheet">
@@ -16,137 +17,58 @@
       <form method="post">
         {% csrf_token %}
         <div class="row">
-          <div class="col-md-8">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="box box--tiny">
-                  <div class="box__header">
-                    <span class="grid-title">Distribution Cable</span>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.distribution_cable_lifetime.label }}</span>
-                      {{ form.distribution_cable_lifetime  }}
-                      <span class="input-group-text">Year</span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.distribution_cable_capex.label }}</span>
-                      {{ form.distribution_cable_capex }}
-                      <span class="input-group-text">USD/m</span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <span class="input-group-text">{{ form.distribution_cable_max_length.label }}</span>
-                    <div class="input-group">
-                      {{ form.distribution_cable_max_length }}
-                      <span class="input-group-text">m</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="box box--tiny">
-                  <div class="box__header">
-                    <span class="grid-title">Connection Cable</span>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.connection_cable_lifetime.label }}</span>
-                      {{ form.connection_cable_lifetime  }}
-                      <span class="input-group-text">Year</span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.connection_cable_capex.label }}</span>
-                      {{ form.connection_cable_capex }}
-                      <span class="input-group-text">USD/m</span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <span class="input-group-text">{{ form.connection_cable_max_length.label }}</span>
-                    <div class="input-group">
-                      {{ form.connection_cable_max_length }}
-                      <span class="input-group-text">m</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="box box--tiny">
-                  <div class="box__header">
-                    <span class="grid-title">Pole</span>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.pole_lifetime.label }}</span>
-                      {{ form.pole_lifetime }}
-                      <span class="input-group-text">Year</span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.pole_capex.label }}</span>
-                      {{ form.pole_capex }}
-                      <span class="input-group-text">USD/m</span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <span class="input-group-text">{{ form.pole_max_length.label }}</span>
-                    <div class="input-group">
-                      {{ form.pole_max_n_connections }}
-                      <span class="input-group-text">-</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="box box--tiny">
-                  <div class="box__header">
-                    <span class="grid-title">Connection Cost</span>
-                  </div>
-                  <div class="row">
-                    <div class="input-group">
-                      <span class="input-group-text">{{ form.mg_connection_cost.label }}</span>
-                      {{ form.mg_connection_cost }}
-                      <span class="input-group-text">USD/con</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {% for component, fields in grouped_fields.items %}
+          {% if component != 'Shs' %}
           <div class="col-md-4">
-            <div id="selectShsBox" class="box box--tiny">
+            <div class="box box--tiny">
               <div class="box__header">
-                    {{ form.include_shs | as_crispy_field }}
+                <span class="grid-title">{{ component }}</span>
               </div>
+              {% for field_name, field in fields %}
               <div class="row">
                 <div class="input-group">
-                  <div class="input-group">
-                    <span id="shsLifetimeLabel" class="input-group-text">{{ form.shs_max_grid_cost.label }}</span>
-                    {{ form.shs_max_grid_cost }}
-                    <span id="shsLifetimeUnit" class="input-group-text">USD/kWh</span>
-                  </div>
+                  <span class="input-group-text">{{ field.label | safe }}</span>
+                  {{ field|add_class:"form-control" }}
+                  <span class="input-group-text">{{ field.field.widget.attrs.unit }}</span>
                 </div>
-                <img
-                  src="{% static 'assets/icons/qm.svg' %}"
-                  alt="Icon"
-                  style="width: 100px; cursor: pointer; padding-top: 0.5rem; padding-bottom: 0.5rem"
-                  onclick="document.getElementById('videoTutorial').style.display='block'"
-                />
-                <p style="margin-bottom: 5px; color: #8B0000;">
-                  <i>
-                    Watch video tutorial for further explanation of this parameter
-                  </i>
-                </p>
               </div>
+              {% endfor %}
             </div>
           </div>
+          {% else %}
+          <div class="col-md-4">
+            <div class="box box--tiny" id="selectShsBox">
+              {% for field_name, field in fields %}
+                {% if field_name == 'include_shs' %}
+                <div class="box__header">
+                  {{ field|add_class:"form-check-input" }}
+                  <span id="selectShsBoxTitle" class="grid-title">{{ field.label | safe }}</span>
+                </div>
+                {% else %}
+                <div class="row">
+                  <div class="input-group" id="shsLifetimeLabel">
+                    <span class="input-group-text">{{ field.label | safe }}</span>
+                    {{ field|add_class:"form-control" }}
+                    <span class="input-group-text" id="shsLifetimeUnit">{{ field.field.widget.attrs.unit }}</span>
+                  </div>
+                  <img
+                    src="{% static 'assets/icons/qm.svg' %}"
+                    alt="Icon"
+                    style="width: 100px; cursor: pointer; padding-top: 0.5rem; padding-bottom: 0.5rem"
+                    onclick="document.getElementById('videoTutorial').style.display='block'"
+                  />
+                  <p style="margin-bottom: 5px; color: #8B0000;">
+                    <i>
+                      Watch video tutorial for further explanation of this parameter
+                    </i>
+
+                </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
         </div>
         <input type="submit" id="submitFormBtn" hidden>
       </form>
@@ -166,20 +88,20 @@
     </div>
   </section>
   <div id="videoTutorial" class="modal" style="background-color: rgba(0,0,0,0.5); z-index: 999; text-align: left">
-        <form class="modal-content" style="width: 700px; height: 520px;">
-          <div class="container">
-            <h1 style="margin-bottom: 0;">Video Tutorial</h1>
-            <div style="padding: 15px;">
-              <video id="tutorialVideo" width="568" height="360" controls>
-                <source src="{% static 'videos/tut_shs.mp4' %}">
-                        Your browser does not support the video tag.
-              </video>
-            </div>
-            <button onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'"
-                    type="button" class="deletebtn">OK
-            </button>
-          </div>
-        </form>
+    <form class="modal-content" style="width: 700px; height: 520px;">
+      <div class="container">
+        <h1 style="margin-bottom: 0;">Video Tutorial</h1>
+        <div style="padding: 15px;">
+          <video id="tutorialVideo" width="568" height="360" controls>
+            <source src="{% static 'videos/tut_shs.mp4' %}">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <button onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'"
+                type="button" class="deletebtn">OK
+        </button>
+      </div>
+    </form>
   </div>
 </main>
 {% endblock progression_content %}
@@ -187,6 +109,7 @@
 
 {% block end_body_scripts %}
 <script src="{% static 'js/pages/grid_design.js' %}"></script>
+<script src="{% static 'js/backend_communication.js' %}"></script>
 {% endblock end_body_scripts %}
 
 {% block next_btn %}

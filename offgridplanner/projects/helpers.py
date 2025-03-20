@@ -1,4 +1,9 @@
+import csv
 import io
+import os
+from collections import defaultdict
+
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 import pandas as pd
 
@@ -91,3 +96,50 @@ def prepare_data_for_export(dataframes):
     input_df, energy_flow_df, results_df, nodes_df, links_df = dfs
 
     return input_df, energy_flow_df, results_df, nodes_df, links_df
+
+
+def csv_to_dict(filepath, label_col="label"):
+    """
+    Converts a CSV file into a nested dictionary using a specified label column as keys.
+
+    Parameters:
+        filepath (str): Path to the CSV file.
+        label_col (str): Column name to be used as the dictionary key.
+
+    Returns:
+        dict: Nested dictionary where each row is stored under its label.
+    """
+    result = {}
+
+    file_path = staticfiles_storage.path(filepath)
+    if os.path.exists(file_path):
+        with open(file_path, encoding="utf-8-sig") as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=";")
+            for row in reader:
+                label = row.pop(label_col)  # Remove label from row data
+                result[label] = row  # Store remaining fields under this label
+
+    return result
+
+
+def group_form_by_component(form):
+    """Create a nested dictionary of form fields split by component. This assumes that the db_column of the model field
+    is formatted with a double underscore as 'component_name__parameter_name'.
+    Parameters:
+        form (ModelForm): ModelForm containing all fields to be displayed
+
+    Returns:
+        grouped_fields (collections.defaultdict): Nested dictionary with component as keys and lists of (label, field) tuples as values
+    """
+    grouped_fields = defaultdict(list)
+    for field_name, field in form.fields.items():
+        component_name = field.db_column.split("__")[0]
+        grouped_fields[component_name].append((field_name, form[field_name]))
+    return grouped_fields
+
+
+def reorder_dict(d, old_index, new_index):
+    items = list(d.items())  # Convert dictionary to list of key-value pairs
+    item = items.pop(old_index)  # Remove the item at the old index
+    items.insert(new_index, item)  # Insert it at the new index
+    return dict(items)

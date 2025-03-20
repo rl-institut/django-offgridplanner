@@ -27,7 +27,7 @@ from offgridplanner.projects.helpers import (
     prepare_data_for_export,
 )
 from offgridplanner.steps.models import CustomDemand
-from offgridplanner.steps.models import Energysystemdesign
+from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.projects.models import Options
@@ -170,7 +170,7 @@ def get_project_data(project):
         "Nodes": Nodes.objects.filter(project=project),
         "CustomDemand": CustomDemand.objects.filter(project=project),
         "GridDesign": GridDesign.objects.filter(project=project),
-        "Energysystemdesign": Energysystemdesign.objects.filter(project=project),
+        "EnergySystemDesign": EnergySystemDesign.objects.filter(project=project),
     }
 
     # TODO check which models are only necessary for the skipped steps and exclude them

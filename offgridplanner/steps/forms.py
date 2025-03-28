@@ -1,6 +1,48 @@
 from django.forms import ModelForm
 
-from offgridplanner.steps.models import CustomDemand, GridDesign
+from offgridplanner.projects.helpers import FORM_FIELD_METADATA
+from offgridplanner.projects.widgets import BatteryDesignWidget
+from offgridplanner.steps.models import CustomDemand, GridDesign, EnergySystemDesign
+
+
+def set_field_metadata(field, meta):
+    label = (
+        field.label.title() if meta.get("verbose") == "" else meta.get("verbose")
+    )  # Set verbose name
+    question_icon = f'<span class="icon icon-question" data-bs-toggle="tooltip" title="{meta.get("help_text")}"></span>'
+    field.label = label + question_icon if meta.get("help_text") != "" else label
+    field.help_text = meta.get("help_text", "")  # Set help text
+    # TODO change hard coded unit to customizable in the future
+    field.widget.attrs["unit"] = meta.get("unit", "").replace(
+        "currency", "USD"
+    )  # Store unit as an attribute
+    return
+
+
+class CustomModelForm(ModelForm):
+    """Automatically assign labels, help_text and units to the fields"""
+
+    def __init__(self, *args, **kwargs):
+        set_db_column_attr = kwargs.pop("set_db_column_attribute", False)
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            # Set metadata for the field (help text, units)
+            if field_name in FORM_FIELD_METADATA:
+                meta = FORM_FIELD_METADATA[field_name]
+                set_field_metadata(field, meta)
+                # Set the db column as an attribute for the fields (relevant for group_form_by_component)
+                if set_db_column_attr is True:
+                    model_field = self._meta.model._meta.get_field(field_name)
+                    field.db_column = model_field.db_column
+
+            # Set the custom widget for the optimized/fixed capacity field
+            if "settings_design" in field_name:
+                field.widget = BatteryDesignWidget(
+                    attrs={
+                        "value": str(self.initial[field_name]).lower(),
+                        "component": field.db_column.split("__")[0],
+                    }
+                )
 
 
 class CustomDemandForm(ModelForm):
@@ -23,6 +65,7 @@ class CustomDemandForm(ModelForm):
                 )
 
             kwargs["initial"] = initial
+
         super().__init__(*args, **kwargs)
 
     def clean(self):
@@ -59,7 +102,13 @@ class CustomDemandForm(ModelForm):
         return value
 
 
-class GridDesignForm(ModelForm):
+class GridDesignForm(CustomModelForm):
     class Meta:
         model = GridDesign
+        exclude = ["project"]
+
+
+class EnergySystemDesignForm(CustomModelForm):
+    class Meta:
+        model = EnergySystemDesign
         exclude = ["project"]

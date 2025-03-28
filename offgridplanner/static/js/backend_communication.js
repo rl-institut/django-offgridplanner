@@ -333,118 +333,6 @@ async function remove_buildings_inside_boundary({boundariesCoordinates} = {}) {
     }
 }
 
-
-async function save_energy_system_design() {
-    const data = {
-        pv: {
-            'settings': {
-                'is_selected': selectPv.checked,
-                'design': pvDesign.checked,
-            },
-            'parameters': {
-                'nominal_capacity': pvNominalCapacity.value,
-                'lifetime': pvLifetime.value,
-                'capex': pvCapex.value,
-                'opex': pvOpex.value,
-            }
-        },
-        diesel_genset: {
-            'settings': {
-                'is_selected': selectDieselGenset.checked,
-                'design': dieselGensetDesign.checked,
-            },
-            'parameters': {
-                'nominal_capacity': dieselGensetNominalCapacity.value,
-                'lifetime': dieselGensetLifetime.value,
-                'capex': dieselGensetCapex.value,
-                'opex': dieselGensetOpex.value,
-                'variable_cost': dieselGensetVariableCost.value,
-                'fuel_cost': dieselGensetFuelCost.value,
-                'fuel_lhv': dieselGensetFuelLhv.value,
-                'min_load': dieselGensetMinLoad.value / 100,
-                'max_efficiency': dieselGensetMaxEfficiency.value / 100,
-                'max_load': dieselGensetMaxLoad.value / 100,
-                'min_efficiency': dieselGensetMinEfficiency.value / 100,
-            }
-        },
-        battery: {
-            'settings': {
-                'is_selected': selectBattery.checked,
-                'design': batteryDesign.checked,
-            },
-            'parameters': {
-                'nominal_capacity': batteryNominalCapacity.value,
-                'lifetime': batteryLifetime.value,
-                'capex': batteryCapex.value,
-                'opex': batteryOpex.value,
-                'soc_min': batterySocMin.value / 100,
-                'soc_max': batterySocMax.value / 100,
-                'c_rate_in': batteryCrateIn.value,
-                'c_rate_out': batteryCrateOut.value,
-                'efficiency': batteryEfficiency.value / 100,
-            }
-        },
-        inverter: {
-            'settings': {
-                'is_selected': selectInverter.checked,
-                'design': inverterDesign.checked,
-            },
-            'parameters': {
-                'nominal_capacity': inverterNominalCapacity.value,
-                'lifetime': inverterLifetime.value,
-                'capex': inverterCapex.value,
-                'opex': inverterOpex.value,
-                'efficiency': inverterEfficiency.value / 100,
-            },
-        },
-        rectifier: {
-            'settings': {
-                'is_selected': selectRectifier.checked,
-                'design': rectifierDesign.checked,
-            },
-            'parameters': {
-                'nominal_capacity': rectifierNominalCapacity.value,
-                'lifetime': rectifierLifetime.value,
-                'capex': rectifierCapex.value,
-                'opex': rectifierOpex.value,
-                'efficiency': rectifierEfficiency.value / 100
-            },
-        },
-        shortage: {
-            'settings': {
-                'is_selected': selectShortage.checked,
-            },
-            'parameters': {
-                'max_shortage_total': shortageMaxTotal.value / 100,
-                'max_shortage_timestep': shortageMaxTimestep.value / 100,
-                'shortage_penalty_cost': shortagePenaltyCost.value
-            },
-        },
-    };
-    try {
-        const response = await fetch(saveEnergySystemDesignUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-        }
-
-        const res_href = await response.json(); // Wait for response to be parsed
-        const href = res_href["href"];
-        if (href.length > 0) {
-            window.location.href = href; // navigate after fetch request is complete
-        }
-    } catch (err) {
-        console.log("An error occurred while saving the energy system design.");
-    }
-}
-
 let hasRetried = false;
 
 async function load_results(project_id) {
@@ -1313,7 +1201,7 @@ function copyProject(url) {
         });
 }
 
-// TODO what does this do?
+// Initializes the help text tooltips (for the hover divs to be nicely formatted instead of default)
 document.addEventListener('DOMContentLoaded', function () {
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('.icon[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

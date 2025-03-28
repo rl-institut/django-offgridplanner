@@ -7,11 +7,11 @@ class CustomDemand(models.Model):
     # Corresponds to class Demand in tier_spatial planning, removed fields id (obsolete), use_custom_demand and use_custom_shares
     # (one or both of them should just be None in database if not used), and household_option (not sure what it is used for)
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
-    very_low = models.FloatField(default=0.663)
-    low = models.FloatField(default=0.215)
-    middle = models.FloatField(default=0.076)
-    high = models.FloatField(default=0.031)
-    very_high = models.FloatField(default=0.015)
+    very_low = models.FloatField(blank=True, null=True)
+    low = models.FloatField(blank=True, null=True)
+    middle = models.FloatField(blank=True, null=True)
+    high = models.FloatField(blank=True, null=True)
+    very_high = models.FloatField(blank=True, null=True)
     annual_total_consumption = models.FloatField(blank=True, null=True)
     annual_peak_consumption = models.FloatField(blank=True, null=True)
     uploaded_data = models.JSONField(null=True)
@@ -34,31 +34,49 @@ class CustomDemand(models.Model):
 
 class GridDesign(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
-    distribution_cable_lifetime = models.PositiveSmallIntegerField(default=25)
-    distribution_cable_capex = models.FloatField(default=10)
-    distribution_cable_max_length = models.FloatField(default=50)
-    connection_cable_lifetime = models.PositiveSmallIntegerField(default=25)
-    connection_cable_capex = models.FloatField(default=4)
-    connection_cable_max_length = models.FloatField(default=20)
-    pole_lifetime = models.PositiveSmallIntegerField(default=25)
-    pole_capex = models.FloatField(default=800)
-    pole_max_n_connections = models.PositiveSmallIntegerField(default=5)
-    mg_connection_cost = models.FloatField(default=140)
-    include_shs = models.BooleanField(default=True)
-    shs_max_grid_cost = models.FloatField(default=0.6, blank=True, null=True)
+    distribution_cable_lifetime = models.PositiveSmallIntegerField(
+        blank=True, null=True, db_column="distribution_cable__lifetime"
+    )
+    distribution_cable_capex = models.FloatField(
+        blank=True, null=True, db_column="distribution_cable__capex"
+    )
+    distribution_cable_max_length = models.FloatField(
+        blank=True, null=True, db_column="distribution_cable__max_length"
+    )
+    connection_cable_lifetime = models.PositiveSmallIntegerField(
+        blank=True, null=True, db_column="connection_cable__lifetime"
+    )
+    connection_cable_capex = models.FloatField(
+        blank=True, null=True, db_column="connection_cable__capex"
+    )
+    connection_cable_max_length = models.FloatField(
+        blank=True, null=True, db_column="connection_cable__max_length"
+    )
+    pole_lifetime = models.PositiveSmallIntegerField(
+        blank=True, null=True, db_column="pole__lifetime"
+    )
+    pole_capex = models.FloatField(blank=True, null=True, db_column="pole__capex")
+    pole_max_n_connections = models.PositiveSmallIntegerField(
+        blank=True, null=True, db_column="pole__max_n_connections"
+    )
+    mg_connection_cost = models.FloatField(
+        blank=True, null=True, db_column="mg__connection_cost"
+    )
+    include_shs = models.BooleanField(db_column="shs__include")
+    shs_max_grid_cost = models.FloatField(
+        blank=True, null=True, db_column="shs__max_grid_cost"
+    )
 
 
-class Energysystemdesign(models.Model):
+class EnergySystemDesign(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
     battery_settings_is_selected = models.BooleanField(
         db_column="battery__settings__is_selected",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     battery_settings_design = models.BooleanField(
         db_column="battery__settings__design",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     battery_parameters_nominal_capacity = models.FloatField(
         db_column="battery__parameters__nominal_capacity",
@@ -107,13 +125,11 @@ class Energysystemdesign(models.Model):
     )  # Field renamed because it contained more than one '_' in a row.
     diesel_genset_settings_is_selected = models.BooleanField(
         db_column="diesel_genset__settings__is_selected",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     diesel_genset_settings_design = models.BooleanField(
         db_column="diesel_genset__settings__design",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     diesel_genset_parameters_nominal_capacity = models.FloatField(
         db_column="diesel_genset__parameters__nominal_capacity",
@@ -172,13 +188,11 @@ class Energysystemdesign(models.Model):
     )  # Field renamed because it contained more than one '_' in a row.
     inverter_settings_is_selected = models.BooleanField(
         db_column="inverter__settings__is_selected",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     inverter_settings_design = models.BooleanField(
         db_column="inverter__settings__design",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     inverter_parameters_nominal_capacity = models.FloatField(
         db_column="inverter__parameters__nominal_capacity",
@@ -207,13 +221,11 @@ class Energysystemdesign(models.Model):
     )  # Field renamed because it contained more than one '_' in a row.
     pv_settings_is_selected = models.BooleanField(
         db_column="pv__settings__is_selected",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     pv_settings_design = models.BooleanField(
         db_column="pv__settings__design",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     pv_parameters_nominal_capacity = models.FloatField(
         db_column="pv__parameters__nominal_capacity",
@@ -237,13 +249,11 @@ class Energysystemdesign(models.Model):
     )  # Field renamed because it contained more than one '_' in a row.
     rectifier_settings_is_selected = models.BooleanField(
         db_column="rectifier__settings__is_selected",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     rectifier_settings_design = models.BooleanField(
         db_column="rectifier__settings__design",
-        blank=True,
-        null=True,
+        default=True,
     )  # Field renamed because it contained more than one '_' in a row.
     rectifier_parameters_nominal_capacity = models.FloatField(
         db_column="rectifier__parameters__nominal_capacity",
@@ -270,10 +280,9 @@ class Energysystemdesign(models.Model):
         blank=True,
         null=True,
     )  # Field renamed because it contained more than one '_' in a row.
-    shortage_settings_is_selected = models.FloatField(
+    shortage_settings_is_selected = models.BooleanField(
         db_column="shortage__settings__is_selected",
-        blank=True,
-        null=True,
+        default=False,
     )  # Field renamed because it contained more than one '_' in a row.
     shortage_parameters_max_shortage_total = models.FloatField(
         db_column="shortage__parameters__max_shortage_total",

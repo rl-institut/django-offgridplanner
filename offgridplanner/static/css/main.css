@@ -1306,6 +1306,10 @@ form .form-control:focus {
     box-shadow: 0 0 0 0.25rem rgba(31, 86, 125, 0.1);
 }
 
+.form-check-input {
+    margin-right: .5em;
+}
+
 form .form-check-input:focus {
     -webkit-box-shadow: 0 0 0 0.25rem rgba(31, 86, 125, 0.1);
     box-shadow: 0 0 0 0.25rem rgba(31, 86, 125, 0.1);
@@ -1904,29 +1908,20 @@ nav.navbar .dropdown-menu li {
     border-radius: 100px;
 }
 
-.wizard__steps li.step-1::before {
-    content: "1";
-}
-
-.wizard__steps li.step-2::before {
-    content: "2";
-}
-
-.wizard__steps li.step-3::before {
-    content: "3";
-}
-
-.wizard__steps li.step-4::before {
-    content: "4";
-}
-
-.wizard__steps li.step-5::before {
-    content: "5";
-}
-
-.wizard__steps li.step-6::before {
-    content: "6";
-}
+.wizard__steps li:nth-child(1)::before {
+content: "1"; }
+.wizard__steps li:nth-child(2)::before {
+content: "2"; }
+.wizard__steps li:nth-child(3)::before {
+content: "3"; }
+.wizard__steps li:nth-child(4)::before {
+content: "4"; }
+.wizard__steps li:nth-child(5)::before {
+content: "5"; }
+.wizard__steps li:nth-child(6)::before {
+content: "6"; }
+.wizard__steps li:nth-child(7)::before {
+content: "7"; }
 
 .wizard__steps li::before {
     content: attr(data-step-number);
@@ -2024,7 +2019,7 @@ nav.navbar .dropdown-menu li {
     border-radius: 8px;
     -webkit-box-shadow: 0px 0px 16px rgba(31, 86, 125, 0.08);
     box-shadow: 0px 0px 16px rgba(31, 86, 125, 0.08);
-    height: 34rem;
+    height: 40rem;
     margin-bottom: 1.5rem;
 }
 
@@ -2033,7 +2028,7 @@ nav.navbar .dropdown-menu li {
     border-radius: 10px;
     -webkit-box-shadow: 0px 0px 16px rgba(31, 86, 125, 0.08);
     box-shadow: 0px 0px 16px rgba(31, 86, 125, 0.08);
-    height: 34rem;
+    height: 40.75rem;
     margin-bottom: 1.0rem;
     border: 2px solid #198754;
 }
@@ -2052,7 +2047,7 @@ nav.navbar .dropdown-menu li {
     flex-direction: row;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
-    justify-content: space-between;
+    justify-content: flex-left;
     padding: 0rem 0.05rem 0.75rem;
     /* added by me :) */
     font-size: 1.2rem;
@@ -2123,11 +2118,11 @@ nav.navbar .dropdown-menu li {
 }
 
 .dashboard .box--small {
-    height: calc((34rem / 2) - ((1 * 0.75rem) / 2));
+    height: 18.5rem;
 }
 
 .dashboard .box--medium {
-    height: calc((34rem / 1.7) - ((1 * 0.75rem) / 2));
+    height: 21.5rem;
 }
 
 .dashboard .chart--small:not(:last-of-type) {

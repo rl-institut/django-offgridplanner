@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="btn-group d-flex" role="group">
+    <input type="radio" class="btn-check"
+           name="{{ widget.name }}" id="{{ widget.name }}_optimized"
+           value="true" autocomplete="off"
+           onchange="{{ widget.attrs.onchange }};"
+           {% if widget.attrs.value == 'true' %}checked{% endif %}
+            >
+    <label class="btn btn-outline-secondary" for="{{ widget.name }}_optimized">Optimized Capacity</label>
+
+    <input type="radio" class="btn-check"
+           name="{{ widget.name }}" id="{{ widget.name }}_fixed"
+           value="false" autocomplete="off"
+           onchange="{{ widget.attrs.onchange }};"
+           {% if widget.attrs.value == 'false' %}checked{% endif %}>
+    <label class="btn btn-outline-secondary" for="{{ widget.name }}_fixed">Fixed Capacity</label>
+</div>

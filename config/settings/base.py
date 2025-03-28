@@ -57,9 +57,9 @@ DATABASES["default"]["ATOMIC_REQUESTS"] = True
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Demand data
-DEMAND_DIR = os.path.join(APPS_DIR, "static", "parquet")
-FULL_PATH_PROFILES = os.path.join(DEMAND_DIR, "1-hour_mean_365_days_all_users.parquet")
+# External data files
+DATA_DIR = os.path.join(APPS_DIR, "static", "data")
+FULL_PATH_PROFILES = os.path.join(DATA_DIR, "1-hour_mean_365_days_all_users.parquet")
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -93,6 +93,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "widget_tweaks",
 ]
 
 LOCAL_APPS = [

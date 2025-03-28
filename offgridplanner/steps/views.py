@@ -1,5 +1,6 @@
 import json
 import os
+from collections import defaultdict
 
 import pandas as pd
 from django.core.exceptions import PermissionDenied
@@ -12,27 +13,33 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
-from offgridplanner.steps.forms import CustomDemandForm
+from offgridplanner.projects.helpers import (
+    reorder_dict,
+    group_form_by_component,
+    get_param_from_metadata,
+    FORM_FIELD_METADATA,
+)
+from offgridplanner.steps.forms import CustomDemandForm, EnergySystemDesignForm
 from offgridplanner.steps.forms import GridDesignForm
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
 from offgridplanner.steps.models import CustomDemand
-from offgridplanner.steps.models import Energysystemdesign
+from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
 from offgridplanner.projects.models import Project
 from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.tasks import task_is_finished
 from offgridplanner.users.models import User
 
-STEPS = [
-    _("project_setup"),
-    _("consumer_selection"),
-    _("demand_estimation"),
-    _("grid_design"),
-    _("energy_system_design"),
-    _("calculating"),
-    _("simulation_results"),
-]
+STEPS = {
+    "project_setup": _("Project Setup"),
+    "consumer_selection": _("Consumer Selection"),
+    "demand_estimation": _("Demand Estimation"),
+    "grid_design": _("Grid Design"),
+    "energy_system_design": _("Energy System Design"),
+    "calculating": _("Calculating"),
+    "simulation_results": _("Simulation Results"),
+}
 
 
 # @login_required()
@@ -53,15 +60,17 @@ def project_setup(request, proj_id=None):
             opts = OptionForm(instance=project.options)
             context.update({"proj_id": project.id})
         else:
-            form = ProjectForm()
+            form = ProjectForm(initial=get_param_from_metadata("default", "Project"))
             opts = OptionForm()
         context.update(
             {
                 "form": form,
                 "opts_form": opts,
+                # fields that should be rendered in left column (for use in template tags)
+                "left_col_fields": ["name", "n_days", "description"],
                 "max_days": max_days,
-                "step_id": STEPS.index("project_setup") + 1,
-                "step_list": STEPS,
+                "step_id": list(STEPS.keys()).index("project_setup") + 1,
+                "step_list": list(STEPS.values()),
             },
         )
 
@@ -157,8 +166,8 @@ def consumer_selection(request, proj_id=None):
         "large_load_type": large_load_type,
         "enterpise_option": enterpise_option,
         "option_load": option_load,
-        "step_id": STEPS.index("consumer_selection") + 1,
-        "step_list": STEPS,
+        "step_id": list(STEPS.keys()).index("consumer_selection") + 1,
+        "step_list": list(STEPS.values()),
     }
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
@@ -175,20 +184,22 @@ def consumer_selection(request, proj_id=None):
 @require_http_methods(["GET", "POST"])
 def demand_estimation(request, proj_id=None):
     # TODO demand import and export from this step still needs to be handled
-    step_id = STEPS.index("demand_estimation") + 1
+    step_id = list(STEPS.keys()).index("demand_estimation") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
             raise PermissionDenied
 
-        custom_demand, _ = CustomDemand.objects.get_or_create(project=project)
+        custom_demand, _ = CustomDemand.objects.get_or_create(
+            project=project, defaults=get_param_from_metadata("default", "CustomDemand")
+        )
         if request.method == "GET":
             form = CustomDemandForm(instance=custom_demand)
             context = {
                 "form": form,
                 "proj_id": proj_id,
                 "step_id": step_id,
-                "step_list": STEPS,
+                "step_list": list(STEPS.values()),
             }
 
             return render(request, "pages/demand_estimation.html", context)
@@ -204,21 +215,36 @@ def demand_estimation(request, proj_id=None):
 # @login_required()
 @require_http_methods(["GET", "POST"])
 def grid_design(request, proj_id=None):
-    step_id = STEPS.index("grid_design") + 1
+    step_id = list(STEPS.keys()).index("grid_design") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
             raise PermissionDenied
 
-        grid_design, _ = GridDesign.objects.get_or_create(project=project)
+        grid_design, _ = GridDesign.objects.get_or_create(
+            project=project, defaults=get_param_from_metadata("default", "GridDesign")
+        )
         if request.method == "GET":
-            form = GridDesignForm(instance=grid_design)
+            form = GridDesignForm(instance=grid_design, set_db_column_attribute=True)
+            # Group form fields by component (for easier rendering inside boxes)
+            grouped_fields = group_form_by_component(form)
+
+            for component in list(grouped_fields):
+                clean_name = (
+                    component.title().replace("_", " ")
+                    if component != "mg"
+                    else "Connection Costs"
+                )
+                grouped_fields[clean_name] = grouped_fields.pop(component)
+
+            # Reorder dictionary for easier rendering in the correct order in the template (move SHS fields to #3)
+            grouped_fields = reorder_dict(grouped_fields, 4, 2)
 
             context = {
-                "form": form,
+                "grouped_fields": grouped_fields,
                 "proj_id": proj_id,
                 "step_id": step_id,
-                "step_list": STEPS,
+                "step_list": list(STEPS.values()),
             }
             return render(request, "pages/grid_design.html", context)
 
@@ -233,30 +259,48 @@ def grid_design(request, proj_id=None):
 # @login_required()
 @require_http_methods(["GET", "POST"])
 def energy_system_design(request, proj_id=None):
-    step_id = STEPS.index("energy_system_design") + 1
+    step_id = list(STEPS.keys()).index("energy_system_design") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user.email != request.user.email:
             raise PermissionDenied
+
+    energy_system_design, _ = EnergySystemDesign.objects.get_or_create(
+        project=project,
+        defaults=get_param_from_metadata("default", "EnergySystemDesign"),
+    )
     if request.method == "GET":
-        context = {"proj_id": project.id, "step_id": step_id, "step_list": STEPS}
+        form = EnergySystemDesignForm(
+            instance=energy_system_design,
+            set_db_column_attribute=True,
+        )
+
+        grouped_fields = group_form_by_component(form)
+
+        for component in list(grouped_fields):
+            clean_name = component.title().replace("_", " ")
+            grouped_fields[clean_name] = grouped_fields.pop(component)
+
+        grouped_fields.default_factory = None
+
+        context = {
+            "proj_id": project.id,
+            "step_id": step_id,
+            "step_list": list(STEPS.values()),
+            "grouped_fields": grouped_fields,
+        }
 
         # TODO read js/pages/energy-system-design.js
         # todo restore using load_previous_data in the first place, then replace with Django forms
 
         return render(request, "pages/energy_system_design.html", context)
     if request.method == "POST":
-        data = json.loads(request.body)
-        df = pd.json_normalize(data, sep="_")
-        d_flat = df.to_dict(orient="records")[0]
-        Energysystemdesign.objects.filter(project=project).delete()
-        es = Energysystemdesign(**d_flat)
-        es.project = project
-        es.save()
-        return JsonResponse(
-            {"href": reverse(f"steps:{STEPS[step_id]}", args=[proj_id])},
-            status=200,
+        form = EnergySystemDesignForm(
+            request.POST, instance=energy_system_design, set_db_column_attribute=True
         )
+        if form.is_valid():
+            form.save()
+        return redirect("steps:ogp_steps", proj_id, step_id + 1)
 
 
 def calculating(request, proj_id=None):
@@ -310,7 +354,9 @@ def steps(request, proj_id, step_id=None):
     if step_id is None:
         return HttpResponseRedirect(reverse("steps:ogp_steps", args=[proj_id, 1]))
 
-    return HttpResponseRedirect(reverse(f"steps:{STEPS[step_id - 1]}", args=[proj_id]))
+    return HttpResponseRedirect(
+        reverse(f"steps:{list(STEPS.keys())[step_id - 1]}", args=[proj_id])
+    )
 
 
 @require_http_methods(["GET"])
@@ -370,5 +416,5 @@ def load_previous_data(request, page_name=None, proj_id=None):
         # demand_estimation.calibration_options = 2 if len(demand_estimation.maximum_peak_load) > 0 else 1
         # return demand_estimation
         elif page_name == "energy_system_design":
-            energy_system_design = Energysystemdesign.objects.get(project=project)
+            energy_system_design = EnergySystemDesign.objects.get(project=project)
             return energy_system_design

@@ -2,8 +2,14 @@
 
 {% load crispy_forms_tags %}
 {% load custom_template_tags %}
+{% load widget_tweaks %}
 {% load static %}
 {% load i18n %}
+
+{% block head_block %}
+<link href="{% static 'css/pages/project_setup.css' %}" rel="stylesheet">
+<link href="{% static 'css/main.css' %}" rel="stylesheet">
+{% endblock head_block %}
 
 {% block progression_content %}
   <main>
@@ -23,22 +29,30 @@
           {% csrf_token %}
           <div class="row" style="height: auto">
             <div class="col-md-6" style="height: auto">
-              <div class="input-item">{{ form|get_field:"name"|as_crispy_field }}</div>
-              <div class="input-item">{{ form|get_field:"n_days"|as_crispy_field }}</div>
-              <div class="input-item optional">{{ form|get_field:"description"|as_crispy_field }}</div>
-            </div>
-            <div class="col-md-6" style="height: auto">
+              {% for field in form %}
+              {% if field.name in left_col_fields %}
               <div class="input-item">
+                <label class="form-label">{{ field.label | safe }}</label>
                 <div class="input-group">
-                  {{ form|get_field:"interest_rate"|as_crispy_field }}
-                  <span class="input-group-text">%</span>
+                {{ field|add_class:"form-control" }}
+              {% if field.field.widget.attrs.unit != "" %}<span class="input-group-text">{{ field.field.widget.attrs.unit }}</span>{% endif %}
                 </div>
               </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+            <div class="col-md-6" style="height: auto">
+              {% for field in form %}
+              {% if field.name not in left_col_fields %}
               <div class="input-item">
+                <label class="form-label">{{ field.label | safe }}</label>
                 <div class="input-group">
-                  {{ form|get_field:"lifetime"|as_crispy_field }}
-                  <span class="input-group-text">Years</span>
+                {{ field|add_class:"form-control" }}
+                {% if field.field.widget.attrs.unit != "" %}<span class="input-group-text">{{ field.field.widget.attrs.unit }}</span>{% endif %}
                 </div>
+              </div>
+              {% endif %}
+              {% endfor %}
               </div>
               <label class="form-label">
                 Planning Steps

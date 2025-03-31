@@ -18,7 +18,7 @@
         rel="stylesheet" />
 {% endblock head_block %}
 {% block progression_content %}
-  <main>
+<main>
     <div id="fixed-symbol" style="position: fixed; bottom: 60px; left: 20px;">
       <img alt="Icon"
            onclick="document.getElementById('videoTutorial').style.display='block'"
@@ -41,7 +41,7 @@
                                justify-content: space-between;
                                align-items: center"
                         type="button">
-                  <span style="flex-grow: 1;">Set Consumer Properties</span>
+                  <span style="flex-grow: 1;">{% trans "Set Consumer Properties" %}</span>
                 </button>
               </h2>
               <span aria-labelledby="headingTwo"
@@ -51,18 +51,18 @@
                 <span class="accordion-body" style="border-bottom: none;">
                   <table style="border-top: none; color: var(--ccb); border-spacing: 0;">
                     <tr>
-                      <th style="vertical-align: top; padding: 5px;">Consumer Type</th>
-                      <th style="vertical-align: top; padding: 5px;">Consumer Category</th>
-                      <th style="vertical-align: top; padding: 5px;">Latitude</th>
-                      <th style="vertical-align: top; padding: 5px;">Longitude</th>
+                      <th style="vertical-align: top; padding: 5px;">{% trans "Consumer Type" %}</th>
+                      <th style="vertical-align: top; padding: 5px;">{% trans "Consumer Category" %}</th>
+                      <th style="vertical-align: top; padding: 5px;">{% trans "Latitude" %}</th>
+                      <th style="vertical-align: top; padding: 5px;">{% trans "Longitude" %}</th>
                       <th style="vertical-align: top; padding: 5px;">
-                        Grid-/SHS-Options
+                        {% trans "Grid-/SHS-Options" %}
                         <span class="icon icon-question"
                               data-bs-toggle="tooltip"
-                              title="The off-grid planning process identifies consumers for whom connection costs surpass a specified threshold during grid optimization. Economically, it may not be feasible to connect these consumers to the grid. Instead, equipping them with a solar home system is a more viable solution. Further details about this option are available on the Grid-Design page. Additionally, this page offers an option to adjust the threshold, ensuring all consumers can connect to the grid. On this very page, you also have the discretion to manually determine the connection status of specific consumers, such as schools and health centers. You can decide whether these entities should be mandatorily connected to the grid, or if the decision should be left to the optimizer based on the set threshold.">
+                              title="{% trans 'The off-grid planning process identifies consumers for whom connection costs surpass a specified threshold during grid optimization. Economically, it may not be feasible to connect these consumers to the grid. Instead, equipping them with a solar home system is a more viable solution. Further details about this option are available on the Grid-Design page. Additionally, this page offers an option to adjust the threshold, ensuring all consumers can connect to the grid. On this very page, you also have the discretion to manually determine the connection status of specific consumers, such as schools and health centers. You can decide whether these entities should be mandatorily connected to the grid, or if the decision should be left to the optimizer based on the set threshold.' %}">
                         </span>
                       </th>
-                      <th style="vertical-align: top; padding: 5px;">Delete Consumer</th>
+                      <th style="vertical-align: top; padding: 5px;">{% trans "Delete Consumer" %}</th>
                       <th style="vertical-align: top; padding: 5px;"></th>
                       <th style="vertical-align: top; padding: 5px;"></th>
                     </tr>
@@ -70,14 +70,14 @@
                       <td style="padding: 5px;">
                         <div class="input-item">
                           <select class="form-select" id="consumer" style="max-width: 150px">
-                            <option>Household</option>
+                            <option>{% trans "Household" %}</option>
                           </select>
                         </div>
                       </td>
                       <td style="padding: 5px;">
                         <div class="input-item" style="display: flex; align-items: center;">
                           <select class="form-select" id="enterprise" style="max-width: 150px;">
-                            <option>Enterprise</option>
+                            <option>{% trans "Enterprise" %}</option>
                           </select>
                         </div>
                       </td>
@@ -88,12 +88,12 @@
                                  id="latitude"
                                  max="16"
                                  min="2"
-                                 placeholder=""
+                                 placeholder="{% trans 'Latitude' %}"
                                  required
                                  step="0.00001"
                                  type="number"
                                  value="" />
-                          <span class="input-group-text">Degree</span>
+                          <span class="input-group-text">{% trans "Degree" %}</span>
                         </div>
                       </td>
                       <td style="padding: 5px;">
@@ -103,19 +103,19 @@
                                  id="longitude"
                                  max="16"
                                  min="2"
-                                 placeholder=""
+                                 placeholder="{% trans 'Longitude' %}"
                                  required
                                  step="0.00001"
                                  type="number"
                                  value="" />
-                          <span class="input-group-text">Degree</span>
+                          <span class="input-group-text">{% trans "Degree" %}</span>
                         </div>
                       </td>
                       <td style="padding: 5px;">
                         <div class="input-item">
                           <select class="form-select" id="shs_options" style="max-width: 150px">
-                            <option value="optimize">Optimize</option>
-                            <option value="grid">Grid</option>
+                            <option value="optimize">{% trans "Optimize" %}</option>
+                            <option value="grid">{% trans "Grid" %}</option>
                           </select>
                         </div>
                       </td>
@@ -127,7 +127,7 @@
                            style="height: 32px;
                                   display: flex;
                                   align-items: center;
-                                  justify-content: center">Delete</a>
+                                  justify-content: center">{% trans "Delete" %}</a>
                       </td>
                       <td style="padding: 5px;">
                         <span style="float:right;"><a>&nbsp;</a></span>
@@ -142,15 +142,15 @@
                               justify-content: space-between;
                               align-items: center">
                     <span style="flex: 1; text-align: left; padding-left: 10px">
-                      <strong>Number of Selected Households:</strong>
+                      <strong>{% trans "Number of Selected Households:" %}</strong>
                       <a id="n_households" style="color: var(--ccb); font-weight: bold;">0</a>
                     </span>
                     <span style="flex: 1; text-align: center;">
-                      <strong>Number of Selected Enterprises:</strong>
+                      <strong>{% trans "Number of Selected Enterprises:" %}</strong>
                       <a id="n_enterprises" style="color: var(--ccb); font-weight: bold;">0</a>
                     </span>
                     <span style="flex: 1; text-align: right;; padding-right: 10px">
-                      <strong>Number of Selected Public Services:</strong>
+                      <strong>{% trans "Number of Selected Public Services:" %}</strong>
                       <a id="n_public_services" style="color: var(--ccb); font-weight: bold;">0</a>
                     </span>
                   </div>
@@ -170,7 +170,7 @@
                                     display: flex;
                                     align-items: center;
                                     justify-content: center;
-                                    margin-right: 10px">Import Consumers</a>
+                                    margin-right: 10px">{% trans "Import Consumers" %}</a>
                           <a class="btn btn--medium"
                              href="javascript:void(0);"
                              id="exportButton"
@@ -180,7 +180,7 @@
                                     align-items: center;
                                     justify-content: center;
                                     margin-right: 10px;
-                                    color: #fff">Export Consumers</a>
+                                    color: #fff">{% trans "Export Consumers" %}</a>
                           <select class="form-select"
                                   id="fileTypeDropdown"
                                   style="max-width: 150px;
@@ -188,17 +188,17 @@
                                          height: 32px;
                                          line-height: 20px;
                                          padding: 0 24px 0 8px">
-                            <option value="csv">File type: CSV</option>
-                            <option value="xlsx">File type: XLSX</option>
+                            <option value="csv">{% trans "File type: CSV" %}</option>
+                            <option value="xlsx">{% trans "File type: XLSX" %}</option>
                           </select>
                           <span class="icon icon-question"
                                 data-bs-toggle="tooltip"
                                 style="margin-right: 10px"
-                                title="The first row of the CSV or Excel file should contain the column headers, with subsequent rows containing the respective values. The file must include a 'latitude' column and a 'longitude' column, both of which are mandatory and should use a dot as a decimal separator, with the unit in decimal degrees. Additionally, the file can optionally include a 'consumer_type' column, which should specify whether the consumer is a 'household', 'enterprise', or 'public_service'. If no value is provided, it will default to 'household'. Another optional column is 'consumer_detail', which should be selected from the options available in the 'Consumer Category' drop-down menu. The 'shs_options' column is also optional and should either be set to 0 (for optimization) or 1 (for grid connection), with 0 being the default. Finally, the file must contain a 'custom_specification' column, which should be populated with a value selected from the 'Large Loads to add' drop-down menu, if applicable. Each value in this column must start with a leading integer followed by a space, the letter 'x', and another space (e.g. '1 x Milling Machine (7.5kW)'). This specific format is mandatory.">
+                                title="{% trans 'The first row of the CSV or Excel file should contain the column headers, with subsequent rows containing the respective values. The file must include a \'latitude\' column and a \'longitude\' column, both of which are mandatory and should use a dot as a decimal separator, with the unit in decimal degrees. Additionally, the file can optionally include a \'consumer_type\' column, which should specify whether the consumer is a \'household\', \'enterprise\', or \'public_service\'. If no value is provided, it will default to \'household\'. Another optional column is \'consumer_detail\', which should be selected from the options available in the \'Consumer Category\' drop-down menu. The \'shs_options\' column is also optional and should either be set to 0 (for optimization) or 1 (for grid connection), with 0 being the default. Finally, the file must contain a \'custom_specification\' column, which should be populated with a value selected from the \'Large Loads to add\' drop-down menu, if applicable. Each value in this column must start with a leading integer followed by a space, the letter \'x\', and another space (e.g. \'1 x Milling Machine (7.5kW)\'). This specific format is mandatory.' %}">
                           </span>
                         </span>
                         <span style="display: flex; align-items: center;">
-                          <a style="margin-right: 10px;">Show Advanced Options</a>
+                          <a style="margin-right: 10px;">{% trans "Show Advanced Options" %}</a>
                           <label class="switch">
                             <input id="toggleswitch2" type="checkbox" />
                             <span class="slider round"></span>
@@ -210,27 +210,21 @@
                              class="accordion-collapse collapse"
                              id="collapseThree">
                           <div class="accordion-body">
-                            <a>Select Individual Large Enterprise Loads</a>
+                            <a>{% trans "Select Individual Large Enterprise Loads" %}</a>
                             <p>
-                              Note: Productive use enterprises selected above will not by default have added any
-                              "large loads" (such as milling machines or electric welders etc.) and will only have
-                              typical low power appliances included.
-                              <br />
-                              The functionality below allows the user to
-                              add, remove, and view specific types and quantities of large loads for each
-                              individual enterprise consumer.
+                              {% trans "Note: Productive use enterprises selected above will not by default have added any 'large loads' (such as milling machines or electric welders etc.) and will only have typical low power appliances included. The functionality below allows the user to add, remove, and view specific types and quantities of large loads for each individual enterprise consumer." %}
                             </p>
                             <div class="list_container">
                               <div>
                                 <p>
-                                  <b style="color: var(--ccb)">Large loads to add</b>
+                                  <b style="color: var(--ccb)">{% trans "Large loads to add" %}</b>
                                 </p>
                                 <div class="input-item"
                                      style="margin-right: 30px;
                                             margin-bottom: 20px;
                                             width: 200px">
                                   <select class="form-select" id="loads" style="max-width: 200px">
-                                    <option>Motor</option>
+                                    <option>{% trans "Motor" %}</option>
                                   </select>
                                 </div>
                                 <div class="input-group" style="width: 200px;  margin-bottom: 20px;">
@@ -238,7 +232,7 @@
                                          id="number_loads"
                                          max="30"
                                          min="1"
-                                         placeholder="Number"
+                                         placeholder="{% trans 'Number' %}"
                                          required
                                          step="1"
                                          type="number"
@@ -253,11 +247,11 @@
                                           align-items: center;
                                           justify-content: center;
                                           margin-bottom: 20px;
-                                          width: 200px">Add Load</a>
+                                          width: 200px">{% trans Add Load %}</a>
                               </div>
                               <div>
                                 <p>
-                                  <b style="color: var(--ccb)">Selected Loads</b>
+                                  <b style="color: var(--ccb)">{% trans Selected Loads %}</b>
                                 </p>
                                 <div class="list" id="load_list" style="width: 400px"></div>
                               </div>
@@ -269,7 +263,7 @@
                       <div id="search-container">
                         <input class="input-group-text"
                                id="search-input"
-                               placeholder="Search location within Nigeria"
+                               placeholder="{% trans 'Search location within Nigeria' %}"
                                style="text-align: left"
                                type="text" />
                       </div>
@@ -279,53 +273,53 @@
                                   min-width: 1000px;
                                   margin-bottom: 10px"></div>
                     </div>
-                  </span>
                 </span>
-              </div>
+              </span>
             </div>
           </div>
         </div>
-      </section>
-      <div id="msgBox"
-           class="modal"
-           style="background-color: rgba(0,0,0,0.5);
-                  z-index: 999;
-                  text-align: left">
-        <form class="modal-content" style="max-width: 24rem">
-          <div class="container">
-            <h1>Warning</h1>
-            <p id="responseMsg"></p>
-            <button onclick="document.getElementById('msgBox').style.display='none'"
-                    type="button"
-                    class="deletebtn">OK</button>
-          </div>
-        </form>
       </div>
-      <div class="modal"
-           id="videoTutorial"
-           style="background-color: rgba(0,0,0,0.5);
-                  z-index: 999;
-                  text-align: left">
-        <form class="modal-content" style="width: 700px; height: 520px;">
-          <div class="container">
-            <h1 style="margin-bottom: 0;">Video Tutorial</h1>
-            <div style="padding: 15px;">
-              <video controls height="360" id="tutorialVideo" width="568">
-                <source src="{% static 'videos/tut_consumer_selection.mp4' %}"
-                        type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-            <button class="deletebtn"
-                    onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'"
-                    type="button">OK</button>
-            <button class="cancelbtn"
-                    onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'; deactivate_video_tutorial();"
-                    type="button">Don't Show Again</button>
-          </div>
-        </form>
+    </section>
+<div id="msgBox"
+     class="modal"
+     style="background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            text-align: left">
+  <form class="modal-content" style="max-width: 24rem">
+    <div class="container">
+      <h1>{% trans "Warning" %}</h1>
+      <p id="responseMsg"></p>
+      <button onclick="document.getElementById('msgBox').style.display='none'"
+              type="button"
+              class="deletebtn">{% trans "OK" %}</button>
+    </div>
+  </form>
+</div>
+<div class="modal"
+     id="videoTutorial"
+     style="background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            text-align: left">
+  <form class="modal-content" style="width: 700px; height: 520px;">
+    <div class="container">
+      <h1 style="margin-bottom: 0;">{% trans "Video Tutorial" %}</h1>
+      <div style="padding: 15px;">
+        <video controls height="360" id="tutorialVideo" width="568">
+          <source src="{% static 'videos/tut_consumer_selection.mp4' %}"
+                  type="video/mp4" />
+          {% trans "Your browser does not support the video tag." %}
+        </video>
       </div>
-    </main>
+      <button class="deletebtn"
+              onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'"
+              type="button">{% trans "OK" %}</button>
+      <button class="cancelbtn"
+              onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'; deactivate_video_tutorial();"
+              type="button">{% trans "Don't show again" %}</button>
+    </div>
+  </form>
+</div>
+</main>
   {% endblock progression_content %}
 
 {% block next_btn %}

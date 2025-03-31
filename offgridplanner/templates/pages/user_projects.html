@@ -5,96 +5,97 @@
 
 {% block content %}
   <body>
-    <main>
-      <section class="dashboard">
-        <div>
-          <div class="row">
-            <div class="col">
-              <div class="chart" style="height: auto; padding-bottom: 10px">
-                <div class="chart__header">
-                  <a class="title">Projects</a>
-                  <span style="float:right;"><a>&nbsp;
-                    <a href="{% url 'steps:project_setup' %}"
-                       class="btn btn--long text-right">New Project</a>
-                  </a></span>
-                </div>
-                <span class="title"></span>
-                <table id="projectTable">
-                  <tr style="border-bottom:1px solid black">
-                    <th>ID</th>
-                    <th>Project Name</th>
-                    <th>Creation Date</th>
-                    <th>Last Update</th>
-                    <th>Model Status</th>
-                    <th></th>
-                    <!-- Added an empty header for the new column -->
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  {% if projects|length > 0 %}
-                    {% for project in projects %}
-                      <tr>
-                        <td>{{ project.id }}</td>
-                        <td>{{ project.name }}</td>
-                        <td>{{ project.date_created }}</td>
-                        <td>{{ project.date_updated }}</td>
-                        <td>{{ project.status }}</td>
-                        <td>
-                          <span style="float:right;">
-                            <form action="{% url 'projects:project_duplicate' project.id %}"
-                                  method="POST">
-                              {% csrf_token %}
-                              <button style="color:#1F567D;
-                                             padding:4px"
-                                      class="grey_button"
-                                      type="submit"
-                                      value="Duplicate">Duplicate Project</button>
-                            </form>
-                          </span>
-                        </td>
-                        <td>
-                        </span>
-                      </td>
-                      <td>
-                        <span style="float:right;">
-                          <a onclick="document.getElementById('projectID{{ project.id }}').style.display='block'"
-                             class="grey_button"
-                             style="color:white">Delete Project</a>
-                        </span>
-                      </td>
-                      <td>
-                        <span style="float:right;">
-                          <a href="{% url 'steps:project_setup' project.id %}" class="grey_button">Edit Project</a>
-                        </span>
-                      </td>
-                      <td>
-                        <span style="float:right;">
-                          <a href="{% url 'steps:simulation_results' project.id %}" class="grey_button">Show Results</a>
-                        </span>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                {% else %}
-                  <tr>
-                    <td>You do not yet have any saved projects</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <!-- Added an empty cell for the new column -->
-                  </tr>
-                {% endif %}
-              </table>
-              <span class="subtitle"></span>
+<main>
+  <section class="dashboard">
+    <div>
+      <div class="row">
+        <div class="col">
+          <div class="chart" style="height: auto; padding-bottom: 10px">
+            <div class="chart__header">
+              <a class="title">{% trans "Projects" %}</a>
+              <span style="float:right;">
+                <a>&nbsp;
+                  <a href="{% url 'steps:project_setup' %}"
+                     class="btn btn--long text-right">{% trans "New Project" %}</a>
+                </a></span>
             </div>
+            <span class="title"></span>
+            <table id="projectTable">
+              <tr style="border-bottom:1px solid black">
+                <th>{% trans "ID" %}</th>
+                <th>{% trans "Project Name" %}</th>
+                <th>{% trans "Creation Date" %}</th>
+                <th>{% trans "Last Update" %}</th>
+                <th>{% trans "Model Status" %}</th>
+                <th></th>
+                <!-- Added an empty header for the new column -->
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              {% if projects|length > 0 %}
+                {% for project in projects %}
+                  <tr>
+                    <td>{{ project.id }}</td>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.date_created }}</td>
+                    <td>{{ project.date_updated }}</td>
+                    <td>{{ project.status }}</td>
+                    <td>
+                      <span style="float:right;">
+                        <form action="{% url 'projects:project_duplicate' project.id %}"
+                              method="POST">
+                          {% csrf_token %}
+                          <button style="color:#1F567D;
+                                         padding:4px"
+                                  class="grey_button"
+                                  type="submit"
+                                  value="Duplicate">{% trans "Duplicate Project" %}</button>
+                        </form>
+                      </span>
+                    </td>
+                    <td></span>
+                    </td>
+                    <td>
+                      <span style="float:right;">
+                        <a onclick="document.getElementById('projectID{{ project.id }}').style.display='block'"
+                           class="grey_button"
+                           style="color:white">{% trans "Delete Project" %}</a>
+                      </span>
+                    </td>
+                    <td>
+                      <span style="float:right;">
+                        <a href="{% url 'steps:project_setup' project.id %}" class="grey_button">{% trans "Edit Project" %}</a>
+                      </span>
+                    </td>
+                    <td>
+                      <span style="float:right;">
+                        <a href="{% url 'steps:simulation_results' project.id %}" class="grey_button">{% trans "Show Results" %}</a>
+                      </span>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td>{% trans "You do not yet have any saved projects" %}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <!-- Added an empty cell for the new column -->
+                </tr>
+              {% endif %}
+            </table>
+            <span class="subtitle"></span>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+</div>
 </section>
+
 {% if projects|length > 0 %}
   {% for project in projects %}
     <div id=projectID{{ project.id }} class="modal">
@@ -103,19 +104,20 @@
             method="POST">
         {% csrf_token %}
         <div class="container">
-          <h1>Delete Project</h1>
-          <p>Are you sure you want to delete the project?</p>
+          <h1>{% trans "Delete Project" %}</h1>
+          <p>{% trans "Are you sure you want to delete the project?" %}</p>
           <div class="clearfix">
-            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">Delete</button>
+            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">{% trans "Delete" %}</button>
             <button onclick="document.getElementById('projectID{{ project.id }}').style.display='none'"
                     type="button"
-                    class="cancelbtn">Cancel</button>
+                    class="cancelbtn">{% trans "Cancel" %}</button>
           </div>
         </div>
       </form>
     </div>
   {% endfor %}
 {% endif %}
+
 <div id="projectExample"
      class="modal"
      style="background-color: rgba(0,0,0,0.5);
@@ -123,12 +125,12 @@
             text-align: left">
   <form class="modal-content" style="max-width: 24rem">
     <div class="container">
-      <h1>Create Example Model</h1>
-      <p>You have not created any projects yet. Would you like a sample project to be set up for you?</p>
-      <button onclick="create_example_project()" type="button" class="deletebtn">Yes</button>
+      <h1>{% trans "Create Example Model" %}</h1>
+      <p>{% trans "You have not created any projects yet. Would you like a sample project to be set up for you?" %}</p>
+      <button onclick="create_example_project()" type="button" class="deletebtn">{% trans "Yes" %}</button>
       <button onclick="document.getElementById('projectExample').style.display='none'"
               type="button"
-              class="deletebtn">No</button>
+              class="deletebtn">{% trans "No" %}</button>
     </div>
   </form>
 </div>

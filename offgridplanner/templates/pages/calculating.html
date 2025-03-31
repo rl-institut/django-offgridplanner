@@ -16,19 +16,19 @@
                 <div class="col">
                     <div class="chart" style="border: 15px solid #FAFAFA; height: auto;">
                         <div class="chart__header">
-                            <a class="title">Model Calculation</a>
+                            <a class="title">{% trans "Model Calculation" %}</a>
                         </div>
                         <hr>
                         <div class="loader" align="center"></div>
                         <a>Status: </a>
-                        <a id="statusMsg">task status is retrieved...</a>
+                        <a id="statusMsg">{% trans "Calculation status is retrieved..." %}</a>
                         <hr>
                         {% if email_opt == true %}
                             <label class="switch">
                                 <input type="checkbox" id="toggleswitch">
                                 <span class="slider round"></span>
                             </label>
-                            <a>&nbsp;&nbsp;Send email when calculation is finished.</a>
+                            <a>{% trans "Send email when calculation is finished." %}</a>
                             <p></p>
                         {% endif %}
                         <a>{{ msg }}</a>
@@ -36,7 +36,7 @@
                         <a href="{% url 'steps:energy_system_design' proj_id %}"
                            class="btn btn--long text-right"
                            onclick="abort_calculation();"
-                        >Abort Calculation</a>
+                        >{% "Abort Calculation" %}</a>
                     </div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
             <div class="container">
                 <h1>Warning</h1>
                 <p id="responseMsg"></p>
-                <a id="redirectLink" href="#" class="btn btn--long text-right">Go to Page with Missing Data</a>
+                <a id="redirectLink" href="#" class="btn btn--long text-right">{% trans "Go to Page with missing data" %}</a>
             </div>
         </form>
     </div>

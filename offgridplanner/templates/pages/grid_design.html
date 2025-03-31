@@ -59,7 +59,7 @@
                   />
                   <p style="margin-bottom: 5px; color: #8B0000;">
                     <i>
-                      Watch video tutorial for further explanation of this parameter
+                      {% trans "Watch video tutorial for further explanation of this parameter" %}
                     </i>
 
                 </div>
@@ -94,11 +94,11 @@
         <div style="padding: 15px;">
           <video id="tutorialVideo" width="568" height="360" controls>
             <source src="{% static 'videos/tut_shs.mp4' %}">
-            Your browser does not support the video tag.
+            {% trans "Your browser does not support the video tag." %}
           </video>
         </div>
         <button onclick="stopVideo(); document.getElementById('videoTutorial').style.display='none'"
-                type="button" class="deletebtn">OK
+                type="button" class="deletebtn">{% trans "OK" %}
         </button>
       </div>
     </form>

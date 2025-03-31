@@ -4,6 +4,7 @@ import os
 from collections import defaultdict
 
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.utils.translation import gettext_lazy as _
 
 import pandas as pd
 
@@ -165,6 +166,29 @@ def get_param_from_metadata(param, model=None):
         }
 
     return param_dict
+
+
+def generate_po_file(metadata, output_path="translations.po"):
+    """
+    Generates a .po file with msgid/msgstr pairs for 'verbose' and 'help_text' fields in the metadata dictionary.
+
+    Parameters:
+        metadata (dict): Nested dictionary with metadata information.
+        output_path (str): Path to save the .po file.
+    """
+    with open(output_path, "w", encoding="utf-8") as po_file:
+        po_file.write("# Translation file generated from metadata\n\n")
+
+        for label, fields in metadata.items():
+            for key in ["verbose", "help_text"]:
+                if key in fields and fields[key]:
+                    msgid = fields[key].replace(
+                        '"', '\\"'
+                    )  # Escape quotes if necessary
+                    po_file.write(f'msgid "{msgid}" \n')
+                    po_file.write('msgstr "" \n \n')
+
+                    print(f".po file generated at {output_path}")
 
 
 def group_form_by_component(form):

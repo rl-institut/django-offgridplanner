@@ -1,0 +1,1088 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-31 15:29+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "English"
+msgstr ""
+
+msgid "Thai"
+msgstr ""
+
+msgid "Unsupported file type. Please upload a CSV or Excel file."
+msgstr ""
+
+msgid "Failed to process the file: {str(e)}"
+msgstr ""
+
+msgid "Plot type undefined"
+msgstr ""
+
+msgid "Calculation aborted"
+msgstr ""
+
+msgid ""
+"There are no results of the energy system optimization. There were no "
+"feasible solution."
+msgstr ""
+
+msgid ""
+"Due to high grid costs, all consumers have been equipped with solar home "
+"systems. A grid was not built, therefore no optimization of the energy "
+"system was carried out."
+msgstr ""
+
+msgid "Demand estimation"
+msgstr ""
+
+msgid "Spatial Grid Optimization"
+msgstr ""
+
+msgid "Energy Converter Design Optimization"
+msgstr ""
+
+msgid "Project Setup"
+msgstr ""
+
+msgid "Consumer Selection"
+msgstr ""
+
+msgid "Demand Estimation"
+msgstr ""
+
+msgid "Grid Design"
+msgstr ""
+
+msgid "Energy System Design"
+msgstr ""
+
+msgid "Calculating"
+msgstr ""
+
+msgid "Simulation Results"
+msgstr ""
+
+msgid "Hi"
+msgstr ""
+
+msgid "Please click on the link to confirm your registration"
+msgstr ""
+
+msgid "If you think, it's not you, then just ignore this email."
+msgstr ""
+
+msgid "Log In"
+msgstr ""
+
+msgid "Do you not have an account yet?"
+msgstr ""
+
+msgid "Sign up"
+msgstr ""
+
+msgid "Forgot your password?"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Welcome to the Offgridplanner"
+msgstr ""
+
+msgid "Do you already have an account?"
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+msgid "Sign In"
+msgstr ""
+
+msgid "My Profile"
+msgstr ""
+
+msgid "Sign Out"
+msgstr ""
+
+msgid "Sign Up"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "License"
+msgstr ""
+
+msgid "Imprint"
+msgstr ""
+
+msgid "Privacy"
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Model Calculation"
+msgstr ""
+
+msgid "Calculation status is retrieved..."
+msgstr ""
+
+msgid "Send email when calculation is finished."
+msgstr ""
+
+msgid "Go to Page with missing data"
+msgstr ""
+
+msgid "Set Consumer Properties"
+msgstr ""
+
+msgid "Consumer Type"
+msgstr ""
+
+msgid "Consumer Category"
+msgstr ""
+
+msgid "Latitude"
+msgstr ""
+
+msgid "Longitude"
+msgstr ""
+
+msgid "Grid-/SHS-Options"
+msgstr ""
+
+msgid ""
+"The off-grid planning process identifies consumers for whom connection costs "
+"surpass a specified threshold during grid optimization. Economically, it may "
+"not be feasible to connect these consumers to the grid. Instead, equipping "
+"them with a solar home system is a more viable solution. Further details "
+"about this option are available on the Grid-Design page. Additionally, this "
+"page offers an option to adjust the threshold, ensuring all consumers can "
+"connect to the grid. On this very page, you also have the discretion to "
+"manually determine the connection status of specific consumers, such as "
+"schools and health centers. You can decide whether these entities should be "
+"mandatorily connected to the grid, or if the decision should be left to the "
+"optimizer based on the set threshold."
+msgstr ""
+
+msgid "Delete Consumer"
+msgstr ""
+
+msgid "Household"
+msgstr ""
+
+msgid "Enterprise"
+msgstr ""
+
+msgid "Degree"
+msgstr ""
+
+msgid "Optimize"
+msgstr ""
+
+msgid "Grid"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Number of Selected Households:"
+msgstr ""
+
+msgid "Number of Selected Enterprises:"
+msgstr ""
+
+msgid "Number of Selected Public Services:"
+msgstr ""
+
+msgid "Import Consumers"
+msgstr ""
+
+msgid "Export Consumers"
+msgstr ""
+
+msgid "File type: CSV"
+msgstr ""
+
+msgid "File type: XLSX"
+msgstr ""
+
+msgid ""
+"The first row of the CSV or Excel file should contain the column headers, "
+"with subsequent rows containing the respective values. The file must include "
+"a \\"
+msgstr ""
+
+msgid "Show Advanced Options"
+msgstr ""
+
+msgid "Select Individual Large Enterprise Loads"
+msgstr ""
+
+msgid ""
+"Note: Productive use enterprises selected above will not by default have "
+"added any 'large loads' (such as milling machines or electric welders etc.) "
+"and will only have typical low power appliances included. The functionality "
+"below allows the user to add, remove, and view specific types and quantities "
+"of large loads for each individual enterprise consumer."
+msgstr ""
+
+msgid "Large loads to add"
+msgstr ""
+
+msgid "Motor"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Search location within Nigeria"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Video Tutorial"
+msgstr ""
+
+msgid "Your browser does not support the video tag."
+msgstr ""
+
+msgid "Don't show again"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "Use Custom Demand Time Series:"
+msgstr ""
+
+msgid ""
+"Electricity Demand Profile Illustration: First Monday of Simulation Period"
+msgstr ""
+
+msgid "Show Total Demand"
+msgstr ""
+
+msgid "Show Single Household Profile"
+msgstr ""
+
+msgid "Set Own Custom Shares of Households Allocated per Consumption Category"
+msgstr ""
+
+msgid "The default values correspond to the national average of rural areas"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid ""
+"Several typical standardized household demand profiles have been developed "
+"from\n"
+"                      roughly 3600 energy appliance ownership and usage "
+"surveys that were conducted\n"
+"                      across Nigeria in 2020 in 3 prioritized geopolitical "
+"zones. Survey details can\n"
+"                      be found in the publication here:"
+msgstr ""
+
+msgid ""
+"The open-source Remote Area Multi-Energy Profiles simulation software (RAMP) "
+"has\n"
+"                      been used to develop 5 typical non-urban Nigerian "
+"household energy consumption\n"
+"                      categories (from Very Low to Very High). The pre-"
+"created default options below\n"
+"                      represent weighted combinations of each of these "
+"consumption categories that\n"
+"                      match the observed data in each of the geographic "
+"zones. "
+msgstr ""
+
+msgid "Schematic of the Selected Off-Grid System"
+msgstr ""
+
+msgid "Demand"
+msgstr ""
+
+msgid "Shortage"
+msgstr ""
+
+msgid "Surplus"
+msgstr ""
+
+msgid "PV"
+msgstr ""
+
+msgid "design"
+msgstr ""
+
+msgid "Battery"
+msgstr ""
+
+msgid "Diesel Genset"
+msgstr ""
+
+msgid "Inverter"
+msgstr ""
+
+msgid "Rectifier"
+msgstr ""
+
+msgid "AC Bus"
+msgstr ""
+
+msgid "DC Bus"
+msgstr ""
+
+msgid "September 2022"
+msgstr ""
+
+msgid "The PV modules are simulated via"
+msgstr ""
+
+msgid "incorporating the"
+msgstr ""
+
+msgid "radiation data"
+msgstr ""
+
+msgid "Revoke pending calculation?"
+msgstr ""
+
+msgid "Revoke"
+msgstr ""
+
+msgid "Wait"
+msgstr ""
+
+msgid "Watch video tutorial for further explanation of this parameter"
+msgstr ""
+
+msgid "Off Grid Planning Tool"
+msgstr ""
+
+msgid ""
+"The open source tool originated from the PeopleSuN project and serves the "
+"planning of off-grid systems in Nigeria. The tool aims to perform a spatial "
+"optimization of the distribution grid as well as the design of the energy "
+"converters and energy storage."
+msgstr ""
+
+msgid "The features of the tool are listed below:"
+msgstr ""
+
+msgid "Automatic identification of buildings from OpenStreetMap"
+msgstr ""
+
+msgid "Spatial optimization of the distribution grid"
+msgstr ""
+
+msgid ""
+"Design optimization of the generation systems (PV systems, battery systems, "
+"inverters and diesel-engines)"
+msgstr ""
+
+msgid ""
+"Automatic identification of buildings that are better to be served by "
+"individual solar home systems."
+msgstr ""
+
+msgid ""
+"The tool can be tested without registration. However, users are recommended "
+"to create an account to get access to larger computing capacity and to be "
+"able to store models."
+msgstr ""
+
+msgid "Test it (without an account)"
+msgstr ""
+
+msgid "Map-based Consumer Selection"
+msgstr ""
+
+msgid ""
+"For the spatial optimization of the electric grid, the geolocation of the "
+"consumers must be provided. For this, a map from OpenStreetMap is integrated "
+"into the tool. The determination of the geocoordinates of the consumers can "
+"be done in three ways:"
+msgstr ""
+
+msgid ""
+"Automatic detection of buildings within areas marked using drawing tools."
+msgstr ""
+
+msgid "Manual selection of consumer locations by placing markers on the map."
+msgstr ""
+
+msgid "Manual input of the geocoordinates using input fields."
+msgstr ""
+
+msgid ""
+"PeopleSuN's project includes a demand modeling tool which utilizes both "
+"quantitative and qualitative survey data collected from various non-urban "
+"Nigerian villages. With an extensive dataset that includes responses from "
+"thousands of households and enterprises, it models appliance ownership, "
+"electricity consumption trends, and available expenditures for electricity "
+"services, and determines affordable monthly costs. The tool uses statistical "
+"models in conjunction with stochastic algorithms to generate likely "
+"distributions of electricity demand and expenditures. Initially, this is "
+"applied to the surveyed areas and then extrapolated to cover all non-urban "
+"regions in Nigeria. The model generates different consumer categories/"
+"profiles based on geographical zones and wealth categories, aiding in a "
+"nuanced and accurate prediction of electricity demand."
+msgstr ""
+
+msgid "Spatial Optimization of the Distribution Grid"
+msgstr ""
+
+msgid ""
+"The spatial grid optimization tool operates through a sequence of steps that "
+"ensure efficient energy system design. The tool identifies consumers, sorts "
+"them based on proximity to the load center, and meticulously calculates the "
+"optimal setup required to connect all consumers within the grid, adhering to "
+"constraints on maximum connections per consumer and maximum distance between "
+"consumers. The tool employs a clustering algorithm to determine optimal pole "
+"locations, constructs a minimum spanning tree (MST) for efficient pole "
+"interconnectivity, and connects each consumer to their nearest pole. If "
+"needed, the number of poles is increased, ensuring all constraints are met. "
+"Furthermore, long links exceeding the maximum allowed distance are segmented "
+"into smaller ones with additional poles. Thus, the tool offers a "
+"comprehensive solution for optimal grid design."
+msgstr ""
+
+msgid "Design Optimization of the Generation System"
+msgstr ""
+
+msgid ""
+"This tool excels in the design and optimization of off-grid energy systems, "
+"integrating different types of energy converters including photovoltaic (PV) "
+"systems and diesel generators, along with components like battery systems, "
+"inverters, and rectifiers. The tool uses ERA5 satellite data and PVLIB for "
+"the modeling of solar potentials in PV systems. The design optimization of "
+"the tool revolves around minimizing the Levelized Cost of Energy (LCOE), a "
+"method that considers both capital and operational costs. This results in an "
+"optimal configuration that satisfies consumer demands, modeled as a mixed-"
+"integer linear model. Leveraging the open-source modeling framework OEMOF "
+"and a high-efficiency MILP solver, the tool offers an effective solution for "
+"complex optimization challenges. The insights generated by the tool - "
+"including installed capacities, time series of system operations, investment "
+"costs, CO<sub>2</sub> emissions, and fuel requirements - provide "
+"stakeholders with invaluable information for strategic decision-making."
+msgstr ""
+
+msgid "About"
+msgstr ""
+
+msgid ""
+"PeopleSuN is a project funded by the German Federal Ministry of Education "
+"and Research (BMBF) within the funding initiative 'Client II - International "
+"Partnerships for Sustainable Innovations'. The off-grid tool was developed "
+"by the Department of Energy Engineering and Environmental Protection at the "
+"Technische Universität Berlin in cooperation with the Reiner-Lemoine-"
+"Institute."
+msgstr ""
+
+msgid "Using the planing tool without registration"
+msgstr ""
+
+msgid ""
+"To test the planning tool, you do not need to register an account, a "
+"temporary account will be created automatically. However, if you use the "
+"planning tool without registering, please note:"
+msgstr ""
+
+msgid "Your data will be automatically deleted after three hours"
+msgstr ""
+
+msgid "If you log out, you lose access to your data"
+msgstr ""
+
+msgid "The modeling time is limited to"
+msgstr ""
+
+msgid "days"
+msgstr ""
+
+msgid "The number of allowed consumers is limited to"
+msgstr ""
+
+msgid "The calculation time of your optimization model is limited to 5 minutes"
+msgstr ""
+
+msgid "Please enter the letters shown below"
+msgstr ""
+
+msgid "Captcha"
+msgstr ""
+
+msgid "(Hint: capital letters only)"
+msgstr ""
+
+msgid "Enter the capital letters shown above"
+msgstr ""
+
+msgid "Continue"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Cookies"
+msgstr ""
+
+msgid ""
+"This website uses cookies. These are strictly necessary to allow core "
+"website functionality such as user login and account management. The website "
+"cannot be used without them."
+msgstr ""
+
+msgid "Accept"
+msgstr ""
+
+msgid "Decline"
+msgstr ""
+
+msgid "Planning Steps"
+msgstr ""
+
+msgid ""
+"Offgridplanner was developed to guide users through the entire planning "
+"process of an off-grid system, from demand estimation and spatial grid "
+"optimization to design optimization and unit commitment of energy "
+"converters. However, individual planning steps can be skipped if needed; "
+"simply deselect the relevant options accordingly."
+msgstr ""
+
+msgid "Grid Layout"
+msgstr ""
+
+msgid "Export as .xls"
+msgstr ""
+
+msgid "Export as PDF"
+msgstr ""
+
+msgid "Summary of Results"
+msgstr ""
+
+msgid "Levelized Cost of Electricity (w/o SHS)"
+msgstr ""
+
+msgid "Total upfront Investment Cost"
+msgstr ""
+
+msgid "Share of Generation-Related Costs in LCOE"
+msgstr ""
+
+msgid "Share of Grid-Related Costs in the LCOE"
+msgstr ""
+
+msgid "Capacity PV"
+msgstr ""
+
+msgid "Capacity Battery"
+msgstr ""
+
+msgid "Capacity Diesel Generator"
+msgstr ""
+
+msgid "Renewable Energy Share"
+msgstr ""
+
+msgid "Number of grid-connected Consumers"
+msgstr ""
+
+msgid "Total annual Consumption (w/o SHS)"
+msgstr ""
+
+msgid "Annual average Demand per Consumer"
+msgstr ""
+
+msgid "Calculation Time"
+msgstr ""
+
+msgid "Download Results (xlsx-Format)"
+msgstr ""
+
+msgid "Download Results (PDF)"
+msgstr ""
+
+msgid "Recalculate"
+msgstr ""
+
+msgid "My Projects"
+msgstr ""
+
+msgid "Results"
+msgstr ""
+
+msgid "GRID"
+msgstr ""
+
+msgid "Number of SHS Consumers"
+msgstr ""
+
+msgid "Number of Poles"
+msgstr ""
+
+msgid "Distribution Cable Length"
+msgstr ""
+
+msgid "Average Length Distribution"
+msgstr ""
+
+msgid "Connection Cable Length"
+msgstr ""
+
+msgid "Average Length Connection"
+msgstr ""
+
+msgid "ENERGY CONVERTERS"
+msgstr ""
+
+msgid "Surplus Electricity"
+msgstr ""
+
+msgid "Total Amount of Shortage"
+msgstr ""
+
+msgid "Capacity Inverter"
+msgstr ""
+
+msgid "Capacity Rectifier"
+msgstr ""
+
+msgid "Annual Fuel Consumption"
+msgstr ""
+
+msgid "Annual CO2 Emissions"
+msgstr ""
+
+msgid "Annual CO2 Savings due to PV"
+msgstr ""
+
+msgid "DEMAND"
+msgstr ""
+
+msgid "Total annual Consumption"
+msgstr ""
+
+msgid "Peak Demand"
+msgstr ""
+
+msgid "Base Load"
+msgstr ""
+
+msgid "Total annual Shortage"
+msgstr ""
+
+msgid "Max. Shortage per Time Step"
+msgstr ""
+
+msgid "Total annual Surplus"
+msgstr ""
+
+msgid "ECONOMIC DATA"
+msgstr ""
+
+msgid "Grid upfront Investment Cost"
+msgstr ""
+
+msgid "PV upfront Investment Cost"
+msgstr ""
+
+msgid "Battery upfront Investment Cost"
+msgstr ""
+
+msgid "Inverter upfront Investment Cost"
+msgstr ""
+
+msgid "Diesel Generator upfront Investment Cost"
+msgstr ""
+
+msgid "Rectifier Investment Cost"
+msgstr ""
+
+msgid "Annual Fuel Cost"
+msgstr ""
+
+msgid "Total annualized Cost"
+msgstr ""
+
+msgid ""
+"Annualized costs provide a comprehensive view of the expenses related to an "
+"investment over its duration. These costs include the initial investment "
+"expenses, the costs for replacing assets with a lifespan shorter than the "
+"project, variable costs, fuel expenses, and the residual value at the end of "
+"the project lifetime. By incorporating the time value of money using a "
+"specified interest rate, annualized costs translate these multifaceted "
+"expenditures into a standardized yearly figure. The Capital Recovery Factor "
+"(CRF) is utilized in the calculation to ensure a consistent and accurate "
+"understanding of the total costs over time."
+msgstr ""
+
+msgid "Grid's annualized Cost"
+msgstr ""
+
+msgid "PV's annualized Cost"
+msgstr ""
+
+msgid "Battery's annualized Cost"
+msgstr ""
+
+msgid "Inverter's annualized Cost"
+msgstr ""
+
+msgid "Diesel Generator's annualized Cost"
+msgstr ""
+
+msgid "Rectifier's annualized Cost"
+msgstr ""
+
+msgid "Optimal Capacity of Components"
+msgstr ""
+
+msgid "Breakdown of the LCOE"
+msgstr ""
+
+msgid "Sankey Diagram Representing the Energy Flow in the System"
+msgstr ""
+
+msgid "*electricity surplus is not shown"
+msgstr ""
+
+msgid "Demand Coverage by Renewable and Non-Renewable Resources"
+msgstr ""
+
+msgid "Annual Energy Flows with 1-Hour Resolution"
+msgstr ""
+
+msgid "Duration Curves for All Components"
+msgstr ""
+
+msgid "Cumulative CO2 Emissions"
+msgstr ""
+
+msgid "No results"
+msgstr ""
+
+msgid "Yes, start calculation"
+msgstr ""
+
+msgid "No, go to project setup"
+msgstr ""
+
+msgid ""
+"You have a calculation in progress that has not yet been completed. "
+"Therefore, you cannot start another calculation. You can either revoke the "
+"pending calculation or wait for it to be finished."
+msgstr ""
+
+msgid "Projects"
+msgstr ""
+
+msgid "New Project"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "Project Name"
+msgstr ""
+
+msgid "Creation Date"
+msgstr ""
+
+msgid "Last Update"
+msgstr ""
+
+msgid "Model Status"
+msgstr ""
+
+msgid "Duplicate Project"
+msgstr ""
+
+msgid "Delete Project"
+msgstr ""
+
+msgid "Edit Project"
+msgstr ""
+
+msgid "Show Results"
+msgstr ""
+
+msgid "You do not yet have any saved projects"
+msgstr ""
+
+msgid "Are you sure you want to delete the project?"
+msgstr ""
+
+msgid "Create Example Model"
+msgstr ""
+
+msgid ""
+"You have not created any projects yet. Would you like a sample project to be "
+"set up for you?"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Scenario step"
+msgstr ""
+
+msgid "Scenario"
+msgstr ""
+
+msgid "My projects"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Personal info"
+msgstr ""
+
+msgid "Permissions"
+msgstr ""
+
+msgid "Important dates"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "This email has already been taken."
+msgstr ""
+
+#, python-format
+msgid ""
+"I have read and accept the <a target='_blank' href='%(privacy_url)s'>privacy "
+"statement</a> from open_plan"
+msgstr ""
+
+msgid "The given email must be set"
+msgstr ""
+
+msgid "Name of User"
+msgstr ""
+
+msgid "email address"
+msgstr ""
+
+msgid "Information successfully updated"
+msgstr ""
+
+msgid "Project Name"
+msgstr ""
+
+msgid "Project Description"
+msgstr ""
+
+msgid "The interest rate in investment calculations signifies the cost of capital and the potential return from an alternative investment of similar risk. It helps express the time value of money, crucial for determining the present value of future cash flows. This assists in evaluating and comparing investment opportunities. Default value of 12.3% is taken from World Bank reported average lending interest rate data of 2022. Please make sure to check this value for your project."
+msgstr ""
+
+msgid "Project Lifetime"
+msgstr ""
+
+msgid "The period during which the system will be in operation. Components whose lifetime is below that of the project lifetime must be replaced during operation, which will be taken into account in the cost calculation. In addition, the residual value of the components is determined at the end of the project lifetime."
+msgstr ""
+
+msgid "Simulation Period"
+msgstr ""
+
+msgid "Number of days used for the modelling period. For economic calculations, the project lifetime will be used."
+msgstr ""
+
+msgid "Percentage of households with very low demand (0.6kWh/hh/day)"
+msgstr ""
+
+msgid "Percentage of households with low demand (1.5kWh/hh/day)"
+msgstr ""
+
+msgid "Percentage of households with middle demand  (2.2kWh/hh/day)"
+msgstr ""
+
+msgid "Percentage of households with high demand (2.9kWh/hh/day)"
+msgstr ""
+
+msgid "Percentage of households with very high demand  (3.4kWh/hh/day)"
+msgstr ""
+
+msgid "Set Total Annual Consumption"
+msgstr ""
+
+msgid "The demand curve will be scaled to meet the given total demand"
+msgstr ""
+
+msgid "Set Peak Demand"
+msgstr ""
+
+msgid "The demand curve will be scaled to meet the given peak demand"
+msgstr ""
+
+msgid "Lifetime"
+msgstr ""
+
+msgid "Lifespan of the component, after expiration a replacement investment must be made"
+msgstr ""
+
+msgid "Max. Length"
+msgstr ""
+
+msgid "Maximum allowed length of the distribution cable"
+msgstr ""
+
+msgid "Max. Length"
+msgstr ""
+
+msgid "Maximum allowed length of the connection cable"
+msgstr ""
+
+msgid "Max. Number of Connections"
+msgstr ""
+
+msgid "Maximum number of consumers that can be connected to one pole"
+msgstr ""
+
+msgid "Connection Cost"
+msgstr ""
+
+msgid "Costs that arise when connecting a consumer in addition to the material costs of the cable."
+msgstr ""
+
+msgid "Solar Home Systems"
+msgstr ""
+
+msgid "For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended"
+msgstr ""
+
+msgid "Max. Specific Grid Cost"
+msgstr ""
+
+msgid "For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended"
+msgstr ""
+
+msgid "Battery"
+msgstr ""
+
+msgid "Optimize Capacity"
+msgstr ""
+
+msgid "Capacity"
+msgstr ""
+
+msgid "OpEx"
+msgstr ""
+
+msgid "Operating Expense (OpEx) is the cost associated with the operation of the component"
+msgstr ""
+
+msgid "Min. SOC"
+msgstr ""
+
+msgid "Minimum State of Charge (SOC) of a battery refers to the lowest level at which the battery is allowed to discharge in order to prevent damage and prolong its lifespan"
+msgstr ""
+
+msgid "Max. SOC"
+msgstr ""
+
+msgid "Maximum State of Charge (SOC) of a battery refers to the highest level at which the battery can be safely charged to prevent overcharging and ensure longevity"
+msgstr ""
+
+msgid "C-Rate in"
+msgstr ""
+
+msgid "C-Rate out"
+msgstr ""
+
+msgid "Roundtrip Efficiency"
+msgstr ""
+
+msgid "Diesel Genset"
+msgstr ""
+
+msgid "OpEx"
+msgstr ""
+
+msgid "Operating Expense (OpEx) refers to the fixed annual costs incurred in the operation of a component, specifically excluding fuel and other variable expenses"
+msgstr ""
+
+msgid "Variable Cost"
+msgstr ""
+
+msgid "Fuel Cost"
+msgstr ""
+
+msgid "Fuel LHV"
+msgstr ""
+
+msgid "Min. Efficiency"
+msgstr ""
+
+msgid "Max. Efficiency"
+msgstr ""
+
+msgid "Min. Load"
+msgstr ""
+
+msgid "Max. Load"
+msgstr ""
+
+msgid "Inverter"
+msgstr ""
+
+msgid "CapEx"
+msgstr ""
+
+msgid "Capital Expenditure (CapEx) is the money that has to be spent to purchase the component"
+msgstr ""
+
+msgid "Efficiency"
+msgstr ""
+
+msgid "PV"
+msgstr ""
+
+msgid "Rectifier"
+msgstr ""
+
+msgid "Shortage"
+msgstr ""
+
+msgid "Max. Total Shortage"
+msgstr ""
+
+msgid "Max. Shortage Each Timestep"
+msgstr ""
+
+msgid "Shortage Penalty Cost"
+msgstr ""

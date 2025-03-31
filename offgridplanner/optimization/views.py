@@ -17,6 +17,7 @@ from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
+from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.optimization.grid import identify_consumers_on_map
 from offgridplanner.optimization.helpers import (
@@ -324,11 +325,11 @@ def file_nodes_to_js(request):  # UploadFile = File(...)
             try:
                 df, msg = check_imported_consumer_data(df)
                 if df is None and msg is not None:
-                    return JsonResponse({"responseMsg": msg}, status=200)
+                    return JsonResponse({"responseMsg": _(msg)}, status=200)
             except Exception as e:
                 err_msg = str(e)
                 msg = f"Failed to import file. Internal error message: {err_msg}"
-                return JsonResponse({"responseMsg": msg}, status=200)
+                return JsonResponse({"responseMsg": _(msg)}, status=200)
             return JsonResponse(
                 data={"is_load_center": False, "map_elements": df.to_dict("records")},
                 status=200,
@@ -397,7 +398,9 @@ def import_demand(request, proj_id):
     if file_extension not in ["csv", "xlsx"]:
         return JsonResponse(
             {
-                "responseMsg": "Unsupported file type. Please upload a CSV or Excel file."
+                "responseMsg": _(
+                    "Unsupported file type. Please upload a CSV or Excel file."
+                )
             },
             status=400,
         )
@@ -412,7 +415,7 @@ def import_demand(request, proj_id):
 
         df, error_msg = check_imported_demand_data(df, project_dict)
         if df is None:
-            return JsonResponse({"responseMsg": error_msg}, status=400)
+            return JsonResponse({"responseMsg": _(error_msg)}, status=400)
 
         custom_demand = project.customdemand
         custom_demand.uploaded_data = df.to_json()
@@ -421,7 +424,7 @@ def import_demand(request, proj_id):
 
     except Exception as e:
         return JsonResponse(
-            {"responseMsg": f"Failed to process the file: {str(e)}"}, status=500
+            {"responseMsg": _(f"Failed to process the file: {str(e)}")}, status=500
         )
 
 
@@ -497,7 +500,7 @@ def load_plot_data(request, proj_id, plot_type=None):
             }
         )
     else:
-        return JsonResponse({"msg": "Plot type undefined"}, status=400)
+        return JsonResponse({"msg": _("Plot type undefined")}, status=400)
 
 
 @require_http_methods(["POST"])
@@ -614,7 +617,7 @@ def abort_calculation(request, proj_id):
     revoke_task(task_id)
     simulation.task_id = None
     simulation.save()
-    response = {"msg": "Calculation aborted"}
+    response = {"msg": _("Calculation aborted")}
     return JsonResponse(response)
 
 
@@ -727,12 +730,12 @@ def load_results(request, proj_id):
     df["do_grid_optimization"] = opts.do_grid_optimization
     df["do_es_design_optimization"] = opts.do_es_design_optimization
     if infeasible is True:
-        df["responseMsg"] = (
+        df["responseMsg"] = _(
             "There are no results of the energy system optimization. There were no feasible "
             "solution."
         )
     elif int(df["n_consumers"]) == int(df["n_shs_consumers"]):
-        df["responseMsg"] = (
+        df["responseMsg"] = _(
             "Due to high grid costs, all consumers have been equipped with solar home "
             "systems. A grid was not built, therefore no optimization of the energy system was "
             "carried out."

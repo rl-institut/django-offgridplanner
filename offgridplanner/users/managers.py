@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager as DjangoUserManager
+from django.utils.translation import gettext_lazy as _
 
 if TYPE_CHECKING:
     from .models import User  # noqa: F401
@@ -15,7 +16,7 @@ class UserManager(DjangoUserManager["User"]):
         Create and save a user with the given email and password.
         """
         if not email:
-            msg = "The given email must be set"
+            msg = _("The given email must be set")
             raise ValueError(msg)
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)

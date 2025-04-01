@@ -74,7 +74,7 @@ class WeatherData(models.Model):
 
 class Simulation(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
-    task_id = models.CharField(max_length=80, null=True, blank=True)
+    task_id = models.CharField(max_length=80, blank=True, default="")
     status = models.CharField(max_length=25, default="not yet started")
 
     def __str__(self):

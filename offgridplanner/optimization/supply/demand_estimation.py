@@ -3,9 +3,9 @@ import logging
 import pandas as pd
 from django.forms import model_to_dict
 
-logger = logging.getLogger(__name__)
-
 from config.settings.base import FULL_PATH_PROFILES
+
+logger = logging.getLogger(__name__)
 
 LOAD_PROFILES = pd.read_parquet(path=FULL_PATH_PROFILES, engine="pyarrow")
 

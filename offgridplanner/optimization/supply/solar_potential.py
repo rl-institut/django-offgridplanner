@@ -8,7 +8,6 @@ of a photovoltaic (PV) system based on the weather data. The module's integratio
 combined with detailed solar panel and inverter specifications, enables it to calculate solar potential time series
 """
 
-import os
 import warnings
 from pathlib import Path
 

@@ -11,6 +11,6 @@ class BatteryDesignWidget(RadioSelect):
         super().__init__(*args, **kwargs)
         self.attrs.update(
             {
-                "onchange": f"check_optimization_strategy('{self.attrs.get("component", "")}')"
+                "onchange": f"check_optimization_strategy('{self.attrs.get('component', '')}')"
             }
         )

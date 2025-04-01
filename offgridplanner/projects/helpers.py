@@ -1,6 +1,5 @@
 import csv
 import io
-import os
 from collections import defaultdict
 from pathlib import Path
 
@@ -122,18 +121,18 @@ def csv_to_dict(filepath, label_col="label"):
     return result
 
 
-def convert_value(value, type):
+def convert_value(value, dtype):
     if value == "":
         return None
 
-    if type == "float":
+    if dtype == "float":
         return float(value)
-    elif type == "int":
+    elif dtype == "int":
         return int(value)
-    elif type == "bool":
+    elif dtype == "bool":
         return bool(value)
     else:
-        msg = f"Type {type} not supported"
+        msg = f"Type {dtype} not supported"
         raise ValueError(msg)
 
 

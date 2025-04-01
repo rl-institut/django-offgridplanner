@@ -46,11 +46,7 @@ def projects_list(request, proj_id=None):
         # TODO this should not be useful
         # project.created_at = project.created_at.date()
         # project.updated_at = project.updated_at.date()
-        if bool(os.environ.get("DOCKERIZED")):
-            status = "pending"  # TODO connect this to the worker
-            # status = worker.AsyncResult(user.task_id).status.lower()
-        else:
-            status = "success"
+        status = "pending" if bool(os.environ.get("DOCKERIZED")) else "success"
         if status in ["success", "failure", "revoked"]:
             # TODO this is not useful
             # user.task_id = ''

@@ -133,7 +133,7 @@ def add_buildings_inside_boundary(request, proj_id):
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")
     df["shs_options"] = df["shs_options"].fillna(0)
     df["custom_specification"] = df["custom_specification"].fillna("")
-    df["is_connected"] = df["is_connected"].fillna(True)
+    df["is_connected"] = df["is_connected"].fillna(value=True)
     nodes_list = df.to_dict("records")
     return JsonResponse({"executed": True, "msg": "", "new_consumers": nodes_list})
 
@@ -178,7 +178,7 @@ def db_links_to_js(request, proj_id):
 
 # @json_view
 @require_http_methods(["GET"])
-def db_nodes_to_js(request, proj_id=None, markers_only=False):
+def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:

@@ -97,13 +97,10 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 
 def optimize_grid(proj_id):
-    try:
-        grid_opt = GridOptimizer(proj_id)
-        grid_opt.optimize_grid()
-        grid_opt.results_to_db()
-    except Exception as e:
-        logger.exception(f"An exception occurred during the optimization: {e}")
-        raise
+    grid_opt = GridOptimizer(proj_id)
+    grid_opt.optimize_grid()
+    grid_opt.results_to_db()
+    return "Finished grid optimization"
 
 
 class GridOptimizer(BaseOptimizer):

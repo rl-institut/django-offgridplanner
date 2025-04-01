@@ -65,14 +65,10 @@ from offgridplanner.optimization.base_optimizer import BaseOptimizer
 
 
 def optimize_energy_system(proj_id):
-    try:
-        ensys_opt = EnergySystemOptimizer(proj_id=proj_id)
-        ensys_opt.optimize()
-        ensys_opt.results_to_db()
-        return True
-    except Exception as exc:
-        logger.exception(f"An error occurred during optimization: {exc}")
-        raise
+    ensys_opt = EnergySystemOptimizer(proj_id=proj_id)
+    ensys_opt.optimize()
+    ensys_opt.results_to_db()
+    return "Finished energy system optimization"
 
 
 class EnergySystemOptimizer(BaseOptimizer):

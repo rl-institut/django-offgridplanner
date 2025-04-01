@@ -2,6 +2,7 @@ import csv
 import io
 import os
 from collections import defaultdict
+from pathlib import Path
 
 import pandas as pd
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -111,8 +112,8 @@ def csv_to_dict(filepath, label_col="label"):
     result = {}
 
     file_path = staticfiles_storage.path(filepath)
-    if os.path.exists(file_path):
-        with open(file_path, encoding="utf-8-sig") as csvfile:
+    if Path(file_path).exists():
+        with Path(file_path).open(encoding="utf-8-sig") as csvfile:
             reader = csv.DictReader(csvfile, delimiter=";")
             for row in reader:
                 label = row.pop(label_col)  # Remove label from row data

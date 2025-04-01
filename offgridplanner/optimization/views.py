@@ -147,9 +147,13 @@ def remove_buildings_inside_boundary(
     data = json.loads(request.body)
     df = pd.DataFrame.from_records(data["map_elements"])
     if not df.empty:
-        boundaries = pd.DataFrame.from_records(
-            data["boundary_coordinates"][0][0],
-        ).values.tolist()
+        boundaries = (
+            pd.DataFrame.from_records(
+                data["boundary_coordinates"][0][0],
+            )
+            .to_numpy()
+            .tolist()
+        )
         df["inside_boundary"] = identify_consumers_on_map.are_points_in_boundaries(
             df,
             boundaries=boundaries,
@@ -197,7 +201,10 @@ def db_nodes_to_js(request, proj_id=None, markers_only=False):
             ]
             power_house = df[df["node_type"] == "power-house"]
             if markers_only is True:
-                if len(power_house) > 0 and power_house["how_added"].iat[0] == "manual":
+                if (
+                    len(power_house) > 0
+                    and power_house["how_added"].iloc[0] == "manual"
+                ):
                     df = df[df["node_type"].isin(["power-house", "consumer"])]
                 else:
                     df = df[df["node_type"] == "consumer"]
@@ -211,7 +218,7 @@ def db_nodes_to_js(request, proj_id=None, markers_only=False):
             is_load_center = True
             if (
                 len(power_house.index) > 0
-                and power_house["how_added"].iat[0] == "manual"
+                and power_house["how_added"].iloc[0] == "manual"
             ):
                 is_load_center = False
             return JsonResponse(
@@ -354,10 +361,10 @@ def load_demand_plot_data(request, proj_id=None):
     for tier in ["very_low", "low", "middle", "high", "very_high"]:
         tier_verbose = f"{tier.title().replace('_', ' ')} Consumption"
         profile_col = f"Household_Distribution_Based_{tier_verbose}"
-        timeseries[tier_verbose] = load_profiles[profile_col].values.tolist()
+        timeseries[tier_verbose] = load_profiles[profile_col].to_numpy().tolist()
         timeseries["Average"] = np.add(
             getattr(custom_demand, tier)
-            * np.array(load_profiles[profile_col].values.tolist()),
+            * np.array(load_profiles[profile_col].to_numpy().tolist()),
             timeseries["Average"],
         )
 

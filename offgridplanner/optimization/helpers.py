@@ -240,5 +240,5 @@ def check_imported_demand_data(df, project_dict):
             f"hourly frequency, which requires {len(ts.index)} data points. However, only {len(df.index)} data points were provided."
         )
 
-    df.index = ts.values[: len(df.index)]
+    df.index = ts.to_numpy()[: len(df.index)]
     return df.to_frame("demand"), ""

@@ -48,7 +48,7 @@ def get_consumer_within_boundaries(df):
     )
     # excluding the buildings which are outside the drawn boundary
     mask_building_within_boundaries = {
-        key: is_point_in_boundaries(value, df.values.tolist())
+        key: is_point_in_boundaries(value, df.to_numpy().tolist())
         for key, value in building_coord.items()
     }
     building_coordinates_within_boundaries = {

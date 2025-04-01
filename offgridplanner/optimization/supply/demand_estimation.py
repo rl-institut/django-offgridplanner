@@ -168,8 +168,7 @@ def compute_standard_demand(consumer_type, consumer_type_counts, load_profiles):
     else:
         ts_string_prefix = f"{consumer_type.title().replace('_', ' ')}"
     ts_cols = [f"{ts_string_prefix}_{ts}" for ts in consumer_type_counts.index]
-    # import pdb; pdb.set_trace()
-    total_demand = load_profiles[ts_cols].dot(consumer_type_counts.values)
+    total_demand = load_profiles[ts_cols].dot(consumer_type_counts.to_numpy())
 
     return total_demand
 

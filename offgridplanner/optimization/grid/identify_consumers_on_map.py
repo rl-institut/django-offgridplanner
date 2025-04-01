@@ -70,7 +70,9 @@ def convert_overpass_json_to_geojson(json_dict):
         dict obtained using the overpass api.
     """
     ts = time.time()
-    timestamp = datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.datetime.fromtimestamp(ts, tz=datetime.UTC).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
     node_coordinates = {
         element["id"]: [element["lat"], element["lon"]]

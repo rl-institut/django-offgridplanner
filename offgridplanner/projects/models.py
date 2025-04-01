@@ -8,8 +8,8 @@ from django.forms.models import model_to_dict
 
 
 def default_start_date():
-    current_year = datetime.datetime.now().year
-    return datetime.datetime(current_year - 1, 1, 1)
+    current_year = datetime.datetime.now(tz=datetime.UTC).year
+    return datetime.datetime(current_year - 1, 1, 1, tzinfo=datetime.UTC)
 
 
 class Options(models.Model):

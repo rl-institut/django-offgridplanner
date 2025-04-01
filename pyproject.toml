@@ -137,7 +137,8 @@ ignore = [
   "PD901", # Avoid using the generic variable name `df` for DataFrames
   "F403", # Star imports (ignored because useful for Django urls)
   "F405", # `...` may be undefined, or defined from star imports
-    "COM812" # Deactivated to avoid unexpecter behavior with the formatter (disable warning)
+    "COM812", # Deactivated to avoid unexpecter behavior with the formatter (disable warning)
+    "DJ006" # Deativated to allow using "exclude" for fields in ModelForm
 ]
 # The fixes in extend-unsafe-fixes will require
 # provide the `--unsafe-fixes` flag when fixing.

@@ -1,11 +1,7 @@
-import json
 import os
-from collections import defaultdict
 
-import pandas as pd
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -13,22 +9,20 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
-from offgridplanner.projects.helpers import (
-    reorder_dict,
-    group_form_by_component,
-    get_param_from_metadata,
-    FORM_FIELD_METADATA,
-)
-from offgridplanner.steps.forms import CustomDemandForm, EnergySystemDesignForm
-from offgridplanner.steps.forms import GridDesignForm
+from offgridplanner.optimization.models import Simulation
+from offgridplanner.optimization.tasks import task_is_finished
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
+from offgridplanner.projects.helpers import get_param_from_metadata
+from offgridplanner.projects.helpers import group_form_by_component
+from offgridplanner.projects.helpers import reorder_dict
+from offgridplanner.projects.models import Project
+from offgridplanner.steps.forms import CustomDemandForm
+from offgridplanner.steps.forms import EnergySystemDesignForm
+from offgridplanner.steps.forms import GridDesignForm
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
-from offgridplanner.projects.models import Project
-from offgridplanner.optimization.models import Simulation
-from offgridplanner.optimization.tasks import task_is_finished
 from offgridplanner.users.models import User
 
 STEPS = {
@@ -199,9 +193,7 @@ def demand_estimation(request, proj_id=None):
         if request.method == "GET":
             form = CustomDemandForm(instance=custom_demand)
             calibration_initial = custom_demand.calibration_option
-            calibration_active = (
-                True if custom_demand.calibration_option is not None else False
-            )
+            calibration_active = custom_demand.calibration_option is not None
             context = {
                 "calibration": {
                     "active": calibration_active,

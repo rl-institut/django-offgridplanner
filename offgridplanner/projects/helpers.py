@@ -1,11 +1,10 @@
 import csv
 import io
-import os
 from collections import defaultdict
-
-from django.contrib.staticfiles.storage import staticfiles_storage
+from pathlib import Path
 
 import pandas as pd
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
@@ -112,8 +111,8 @@ def csv_to_dict(filepath, label_col="label"):
     result = {}
 
     file_path = staticfiles_storage.path(filepath)
-    if os.path.exists(file_path):
-        with open(file_path, encoding="utf-8-sig") as csvfile:
+    if Path(file_path).exists():
+        with Path(file_path).open(encoding="utf-8-sig") as csvfile:
             reader = csv.DictReader(csvfile, delimiter=";")
             for row in reader:
                 label = row.pop(label_col)  # Remove label from row data
@@ -122,18 +121,19 @@ def csv_to_dict(filepath, label_col="label"):
     return result
 
 
-def convert_value(value, type):
+def convert_value(value, dtype):
     if value == "":
         return None
 
-    if type == "float":
+    if dtype == "float":
         return float(value)
-    elif type == "int":
+    elif dtype == "int":
         return int(value)
-    elif type == "bool":
+    elif dtype == "bool":
         return bool(value)
     else:
-        raise ValueError(f"Type {type} not supported")
+        msg = f"Type {dtype} not supported"
+        raise ValueError(msg)
 
 
 def get_param_from_metadata(param, model=None):

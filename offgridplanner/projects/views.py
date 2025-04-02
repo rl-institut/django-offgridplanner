@@ -1,10 +1,5 @@
 import io
-import json
 import os
-import time
-from collections import defaultdict
-
-import numpy as np
 
 # from jsonview.decorators import json_view
 import pandas as pd
@@ -13,25 +8,21 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms import model_to_dict
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from offgridplanner.projects.helpers import (
-    load_project_from_dict,
-    prepare_data_for_export,
-)
+from offgridplanner.optimization.models import Nodes
+from offgridplanner.projects.helpers import load_project_from_dict
+from offgridplanner.projects.helpers import prepare_data_for_export
+from offgridplanner.projects.models import Options
+from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
-from offgridplanner.optimization.models import Nodes
-from offgridplanner.projects.models import Options
-from offgridplanner.projects.models import Project
 from offgridplanner.users.models import User
 
 
@@ -55,11 +46,7 @@ def projects_list(request, proj_id=None):
         # TODO this should not be useful
         # project.created_at = project.created_at.date()
         # project.updated_at = project.updated_at.date()
-        if bool(os.environ.get("DOCKERIZED")):
-            status = "pending"  # TODO connect this to the worker
-            # status = worker.AsyncResult(user.task_id).status.lower()
-        else:
-            status = "success"
+        status = "pending" if bool(os.environ.get("DOCKERIZED")) else "success"
         if status in ["success", "failure", "revoked"]:
             # TODO this is not useful
             # user.task_id = ''
@@ -135,7 +122,7 @@ def export_project_results(request, proj_id):
         # format_right = workbook.add_format({"align": "right"})
         # format_left = workbook.add_format({"align": "left"})
 
-        for sheet_name, df in zip(dataframes.keys(), prepared_data):
+        for sheet_name, df in zip(dataframes.keys(), prepared_data, strict=False):
             df.astype(str).to_excel(writer, sheet_name=sheet_name, index=False)
             worksheet = writer.sheets[sheet_name]
             # set_column_width(worksheet, df, format_right if sheet_name != "results" else format_left)
@@ -186,9 +173,12 @@ def get_project_data(project):
 
     missing_qs = [key for key, qs in model_qs.items() if not qs.exists()]
     if missing_qs:
-        raise ValueError(
+        msg = (
             f"The project does not contain all data required for the optimization."
-            f" The following models are missing: {missing_qs}",
+            f" The following models are missing: {missing_qs}"
+        )
+        raise ValueError(
+            msg,
         )
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
     return proj_data

@@ -11,12 +11,15 @@ class BaseJsonData(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
     data = models.JSONField(null=True)
 
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f"{self.__class__.__name__} {self.id}: Project {self.project.name}"
+
     @property
     def df(self):
         return pd.read_json(StringIO(self.data)) if self.data else None
-
-    class Meta:
-        abstract = True
 
 
 class Nodes(BaseJsonData):
@@ -27,7 +30,7 @@ class Nodes(BaseJsonData):
         """
         nodes = self.df
         consumer_type_df = nodes[
-            (nodes["consumer_type"] == consumer_type) & (nodes["is_connected"] == True)
+            (nodes["consumer_type"] == consumer_type) & (nodes["is_connected"] is True)
         ]
         return consumer_type_df
 
@@ -45,9 +48,7 @@ class Nodes(BaseJsonData):
             .custom_specification.loc["enterprise"]
         )
         machinery.replace(";", "")
-        if not machinery.eq("").all():
-            return True
-        return False
+        return bool(not machinery.eq("").all())
 
 
 class Links(BaseJsonData):
@@ -73,8 +74,11 @@ class WeatherData(models.Model):
 
 class Simulation(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
-    task_id = models.CharField(max_length=80, null=True, blank=True)
+    task_id = models.CharField(max_length=80, blank=True, default="")
     status = models.CharField(max_length=25, default="not yet started")
+
+    def __str__(self):
+        return f"Simulation {self.id}: Project {self.project.name}"
 
 
 class Results(models.Model):
@@ -139,6 +143,9 @@ class Results(models.Model):
     epc_inverter = models.FloatField(null=True, blank=True)
     epc_rectifier = models.FloatField(null=True, blank=True)
     epc_battery = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Results {self.id}: Project {self.project.name}"
 
 
 # TODO check what is saved in these models and potentially restructure in db

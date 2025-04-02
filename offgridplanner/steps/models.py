@@ -1,5 +1,7 @@
 from collections import defaultdict
+
 from django.db import models
+
 from offgridplanner.projects.models import Project
 
 
@@ -15,6 +17,9 @@ class CustomDemand(models.Model):
     annual_total_consumption = models.FloatField(blank=True, null=True)
     annual_peak_consumption = models.FloatField(blank=True, null=True)
     uploaded_data = models.JSONField(null=True)
+
+    def __str__(self):
+        return f"CustomDemand {self.id}: Project {self.project.name}"
 
     @property
     def calibration_option(self):
@@ -66,6 +71,9 @@ class GridDesign(models.Model):
     shs_max_grid_cost = models.FloatField(
         blank=True, null=True, db_column="shs__max_grid_cost"
     )
+
+    def __str__(self):
+        return f"GridDesign {self.id}: Project {self.project.name}"
 
 
 class EnergySystemDesign(models.Model):
@@ -300,8 +308,13 @@ class EnergySystemDesign(models.Model):
         null=True,
     )  # Field renamed because it contained more than one '_' in a row.
 
+    def __str__(self):
+        return f"EnergySystemDesign {self.id}: Project {self.project.name}"
+
     def to_nested_dict(self):
-        nested_dict = lambda: defaultdict(nested_dict)
+        def nested_dict():
+            return defaultdict(nested_dict)
+
         data = nested_dict()
 
         for field in self._meta.fields:

@@ -35,4 +35,4 @@ def send_mail(to_address, msg, subject="Activate your PeopleSun-Account"):
             )
         except smtplib.SMTPAuthenticationError as e:
             print("\n{}\n{}".format(e, os.environ.get("MAIL_ADDRESS").replace("@", "")))
-            warnings.warn(str(e), category=UserWarning)
+            warnings.warn(str(e), category=UserWarning, stacklevel=2)

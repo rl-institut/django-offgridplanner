@@ -56,7 +56,7 @@ class UserSignupForm(SignupForm):
     def save(self, request):
         # Ensure you call the parent class's save.
         # .save() returns a User object.
-        user = super(UserSignupForm, self).save(request)
+        user = super().save(request)
 
         # Add your own processing here.
 

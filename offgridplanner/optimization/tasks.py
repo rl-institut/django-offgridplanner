@@ -54,6 +54,4 @@ def revoke_task(task_id):
 
 def task_is_finished(task_id):
     status = get_status(task_id)
-    if status in ["success", "failure", "revoked"]:
-        return True
-    return False
+    return status in ["success", "failure", "revoked"]

@@ -8,8 +8,8 @@ from django.forms.models import model_to_dict
 
 
 def default_start_date():
-    current_year = datetime.datetime.now().year
-    return datetime.datetime(current_year - 1, 1, 1)
+    current_year = datetime.datetime.now(tz=datetime.UTC).year
+    return datetime.datetime(current_year - 1, 1, 1, tzinfo=datetime.UTC)
 
 
 class Options(models.Model):
@@ -18,14 +18,13 @@ class Options(models.Model):
     do_grid_optimization = models.BooleanField(default=True)
     do_es_design_optimization = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f"Options {self.id}: Project {self.project.name}"
+
 
 class Project(models.Model):
-    def __str__(self):
-        return f"Project {self.id}: {self.name}"
-
-    # id = models.PositiveSmallIntegerField(db_index=True)
-    name = models.CharField(max_length=51, null=True, blank=True)
-    description = models.CharField(max_length=201, null=True, blank=True)
+    name = models.CharField(max_length=51, blank=True, default="")
+    description = models.CharField(max_length=201, blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     interest_rate = models.FloatField(validators=[MinValueValidator(0.0)], blank=False)
@@ -47,6 +46,9 @@ class Project(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
+
+    def __str__(self):
+        return f"Project {self.id}: {self.name}"
 
     def export(self):
         """

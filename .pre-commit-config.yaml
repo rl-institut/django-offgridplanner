@@ -27,20 +27,15 @@ repos:
       - id: django-upgrade
         args: ['--target-version', '5.0']
 
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-    -   id: black
-
   # Run the Ruff linter.
-#  - repo: https://github.com/astral-sh/ruff-pre-commit
-#    rev: v0.9.3
-#    hooks:
-#      # Linter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.3
+    hooks:
+      # Linter
 #      - id: ruff
 #        args: [--fix, --exit-non-zero-on-fix]
-#      # Formatter
-#      - id: ruff-format
+      # Formatter
+      - id: ruff-format
 
 # Run the djLint linter
 #  - repo: https://github.com/Riverside-Healthcare/djLint

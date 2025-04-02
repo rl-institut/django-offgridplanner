@@ -19,7 +19,8 @@ def merge(
     merged_content = ""
     for merge_file in files_to_merge:
         merged_content += merge_file.read_text()
-        merged_content += os.linesep
+        # Removed os.linesep due to unwanted double newline (see also https://stackoverflow.com/a/76125541)
+        merged_content += "\n"
     output_file.write_text(merged_content)
 
 

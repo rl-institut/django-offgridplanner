@@ -1,9 +1,10 @@
-from django.forms import ModelForm, Textarea
-from django.utils.safestring import mark_safe
+from django.forms import ModelForm
+from django.forms import Textarea
 from django.utils.translation import gettext_lazy as _
 
+from offgridplanner.steps.forms import CustomModelForm
+
 from .models import *
-from ..steps.forms import CustomModelForm
 
 
 class ProjectForm(CustomModelForm):
@@ -36,5 +37,5 @@ OPTIONS_LABELS = {
 class OptionForm(ModelForm):
     class Meta:
         model = Options
-        fields = [k for k in OPTIONS_LABELS]
+        fields = list(OPTIONS_LABELS)
         labels = OPTIONS_LABELS

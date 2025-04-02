@@ -48,7 +48,7 @@ def get_consumer_within_boundaries(df):
     )
     # excluding the buildings which are outside the drawn boundary
     mask_building_within_boundaries = {
-        key: is_point_in_boundaries(value, df.values.tolist())
+        key: is_point_in_boundaries(value, df.to_numpy().tolist())
         for key, value in building_coord.items()
     }
     building_coordinates_within_boundaries = {
@@ -70,7 +70,9 @@ def convert_overpass_json_to_geojson(json_dict):
         dict obtained using the overpass api.
     """
     ts = time.time()
-    timestamp = datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.datetime.fromtimestamp(ts, tz=datetime.UTC).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
     node_coordinates = {
         element["id"]: [element["lat"], element["lon"]]
@@ -111,9 +113,7 @@ def obtain_areas_and_mean_coordinates_from_geojson(geojson: dict):
         reference_coordinate = geojson["features"][0]["geometry"]["coordinates"][0][0]
         for building in geojson["features"]:
             xy_coordinates = []
-            latitudes_longitudes = [
-                coord for coord in building["geometry"]["coordinates"][0]
-            ]
+            latitudes_longitudes = list(building["geometry"]["coordinates"][0])
             latitudes = [x[0] for x in latitudes_longitudes]
             longitudes = [x[1] for x in latitudes_longitudes]
             mean_coord = [np.mean(latitudes), np.mean(longitudes)]
@@ -129,6 +129,7 @@ def obtain_areas_and_mean_coordinates_from_geojson(geojson: dict):
             polygon = geometry.Polygon(xy_coordinates)
             area = polygon.area
             perimeter = polygon.length
+            # TODO check what these magic numbers mean
             compactness = 4 * np.pi * area / (perimeter**2) if perimeter else 0
             if area > 4 and not (0.81 < compactness < 1.19 and area < 8):
                 building_mean_coordinates[building["property"]["@id"]] = mean_coord
@@ -166,8 +167,8 @@ def obtain_mean_coordinates_from_geojson(df):
         df1["nodes"] = df1_exploded.groupby(df1_exploded.index).agg({"nodes": list})
         building_mean_coordinates = {}
         if not df1.empty:
-            for row_idx, row in df1.iterrows():
-                latitudes_longitudes = [coord for coord in row["nodes"]]
+            for _row_idx, row in df1.iterrows():
+                latitudes_longitudes = list(row["nodes"])
                 latitudes = [x[0] for x in latitudes_longitudes]
                 longitudes = [x[1] for x in latitudes_longitudes]
                 mean_coord = [np.mean(latitudes), np.mean(longitudes)]

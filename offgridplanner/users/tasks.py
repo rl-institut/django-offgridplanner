@@ -15,6 +15,6 @@ def task_remove_anonymous_users(user_id):
     try:
         user = User.objects.get(id=user_id)
         user.delete()
-        return f"User {user_id} was deleted"
     except User.DoesNotExist:
         return f"User {user_id} does not exist"
+    return f"User {user_id} was deleted"

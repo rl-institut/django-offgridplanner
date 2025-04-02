@@ -2,7 +2,9 @@ from django.forms import ModelForm
 
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
 from offgridplanner.projects.widgets import BatteryDesignWidget
-from offgridplanner.steps.models import CustomDemand, GridDesign, EnergySystemDesign
+from offgridplanner.steps.models import CustomDemand
+from offgridplanner.steps.models import EnergySystemDesign
+from offgridplanner.steps.models import GridDesign
 
 
 def set_field_metadata(field, meta):
@@ -16,7 +18,6 @@ def set_field_metadata(field, meta):
     field.widget.attrs["unit"] = meta.get("unit", "").replace(
         "currency", "USD"
     )  # Store unit as an attribute
-    return
 
 
 class CustomModelForm(ModelForm):
@@ -92,12 +93,15 @@ class CustomDemandForm(CustomModelForm):
     @staticmethod
     def change_percentage_format(value, upper_limit=1):
         # Changes the value from a percentage range 0-1 to 0-100 and viceversa
-        if upper_limit == 1:
+        upper_limit_one = 1
+        upper_limit_hundred = 100
+        if upper_limit == upper_limit_one:
             value /= 100.0
-        elif upper_limit == 100:
+        elif upper_limit == upper_limit_hundred:
             value *= 100
         else:
-            raise ValueError("Upper limit must be either 1 or 100")
+            msg = "Upper limit must be either 1 or 100"
+            raise ValueError(msg)
 
         return value
 

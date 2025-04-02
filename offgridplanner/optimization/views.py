@@ -19,24 +19,22 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 
 from offgridplanner.optimization.grid import identify_consumers_on_map
-from offgridplanner.optimization.helpers import (
-    consumer_data_to_file,
-    check_imported_consumer_data,
-    check_imported_demand_data,
-)
-from offgridplanner.optimization.supply.demand_estimation import (
-    get_demand_timeseries,
-    LOAD_PROFILES,
-)
-from offgridplanner.projects.helpers import df_to_file
-from offgridplanner.projects.models import Project
-from offgridplanner.steps.models import CustomDemand
-from offgridplanner.optimization.models import Nodes, Links, Simulation
-from offgridplanner.optimization.tasks import get_status, revoke_task
+from offgridplanner.optimization.helpers import check_imported_consumer_data
+from offgridplanner.optimization.helpers import check_imported_demand_data
+from offgridplanner.optimization.helpers import consumer_data_to_file
+from offgridplanner.optimization.models import Links
+from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.models import Simulation
+from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
+from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
+from offgridplanner.optimization.tasks import get_status
+from offgridplanner.optimization.tasks import revoke_task
 from offgridplanner.optimization.tasks import task_grid_opt
 from offgridplanner.optimization.tasks import task_is_finished
 from offgridplanner.optimization.tasks import task_supply_opt
-
+from offgridplanner.projects.helpers import df_to_file
+from offgridplanner.projects.models import Project
+from offgridplanner.steps.models import CustomDemand
 
 # @require_http_methods(["POST"])
 # def forward_if_no_task_is_pending(request, proj_id=None):
@@ -103,7 +101,7 @@ def add_buildings_inside_boundary(request, proj_id):
             },
         )
     nodes = defaultdict(list)
-    for label, coordinates in building_coordinates_within_boundaries.items():
+    for coordinates in building_coordinates_within_boundaries.values():
         nodes["latitude"].append(round(coordinates[0], 6))
         nodes["longitude"].append(round(coordinates[1], 6))
         nodes["how_added"].append("automatic")
@@ -135,7 +133,7 @@ def add_buildings_inside_boundary(request, proj_id):
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")
     df["shs_options"] = df["shs_options"].fillna(0)
     df["custom_specification"] = df["custom_specification"].fillna("")
-    df["is_connected"] = df["is_connected"].fillna(True)
+    df["is_connected"] = df["is_connected"].fillna(value=True)
     nodes_list = df.to_dict("records")
     return JsonResponse({"executed": True, "msg": "", "new_consumers": nodes_list})
 
@@ -149,14 +147,18 @@ def remove_buildings_inside_boundary(
     data = json.loads(request.body)
     df = pd.DataFrame.from_records(data["map_elements"])
     if not df.empty:
-        boundaries = pd.DataFrame.from_records(
-            data["boundary_coordinates"][0][0],
-        ).values.tolist()
+        boundaries = (
+            pd.DataFrame.from_records(
+                data["boundary_coordinates"][0][0],
+            )
+            .to_numpy()
+            .tolist()
+        )
         df["inside_boundary"] = identify_consumers_on_map.are_points_in_boundaries(
             df,
             boundaries=boundaries,
         )
-        df = df[df["inside_boundary"] == False]
+        df = df[df["inside_boundary"] is False]
         df = df.drop(columns=["inside_boundary"])
         return JsonResponse({"map_elements": df.to_dict("records")})
 
@@ -176,7 +178,7 @@ def db_links_to_js(request, proj_id):
 
 # @json_view
 @require_http_methods(["GET"])
-def db_nodes_to_js(request, proj_id=None, markers_only=False):
+def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
@@ -199,7 +201,10 @@ def db_nodes_to_js(request, proj_id=None, markers_only=False):
             ]
             power_house = df[df["node_type"] == "power-house"]
             if markers_only is True:
-                if len(power_house) > 0 and power_house["how_added"].iat[0] == "manual":
+                if (
+                    len(power_house) > 0
+                    and power_house["how_added"].iloc[0] == "manual"
+                ):
                     df = df[df["node_type"].isin(["power-house", "consumer"])]
                 else:
                     df = df[df["node_type"] == "consumer"]
@@ -213,7 +218,7 @@ def db_nodes_to_js(request, proj_id=None, markers_only=False):
             is_load_center = True
             if (
                 len(power_house.index) > 0
-                and power_house["how_added"].iat[0] == "manual"
+                and power_house["how_added"].iloc[0] == "manual"
             ):
                 is_load_center = False
             return JsonResponse(
@@ -356,10 +361,10 @@ def load_demand_plot_data(request, proj_id=None):
     for tier in ["very_low", "low", "middle", "high", "very_high"]:
         tier_verbose = f"{tier.title().replace('_', ' ')} Consumption"
         profile_col = f"Household_Distribution_Based_{tier_verbose}"
-        timeseries[tier_verbose] = load_profiles[profile_col].values.tolist()
+        timeseries[tier_verbose] = load_profiles[profile_col].to_numpy().tolist()
         timeseries["Average"] = np.add(
             getattr(custom_demand, tier)
-            * np.array(load_profiles[profile_col].values.tolist()),
+            * np.array(load_profiles[profile_col].to_numpy().tolist()),
             timeseries["Average"],
         )
 
@@ -421,7 +426,7 @@ def import_demand(request, proj_id):
 
     except Exception as e:
         return JsonResponse(
-            {"responseMsg": f"Failed to process the file: {str(e)}"}, status=500
+            {"responseMsg": f"Failed to process the file: {e!s}"}, status=500
         )
 
 
@@ -432,8 +437,8 @@ def load_plot_data(request, proj_id, plot_type=None):
         energy_flow["battery"] = (
             energy_flow["battery_discharge"] - energy_flow["battery_charge"]
         )
-        energy_flow.drop(columns=["battery_charge", "battery_discharge"], inplace=True)
-        energy_flow.reset_index(drop=True, inplace=True)
+        energy_flow = energy_flow.drop(columns=["battery_charge", "battery_discharge"])
+        energy_flow = energy_flow.reset_index(drop=True)
         energy_flow = energy_flow.dropna(how="all", axis=0).fillna(0).to_dict("list")
         return JsonResponse({"energy_flow": energy_flow})
     elif plot_type == "duration_curve":

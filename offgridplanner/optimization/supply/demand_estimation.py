@@ -3,9 +3,9 @@ import logging
 import pandas as pd
 from django.forms import model_to_dict
 
-logger = logging.getLogger(__name__)
-
 from config.settings.base import FULL_PATH_PROFILES
+
+logger = logging.getLogger(__name__)
 
 LOAD_PROFILES = pd.read_parquet(path=FULL_PATH_PROFILES, engine="pyarrow")
 
@@ -68,7 +68,8 @@ def calibrate_profiles(demand_df, custom_demand):
     elif calibration_option == "annual_total_consumption":
         calibration_factor = calibration_target / demand_df.sum().sum()
     else:
-        raise ValueError(f"Unknown calibration option: {calibration_option}")
+        msg = f"Unknown calibration option: {calibration_option}"
+        raise ValueError(msg)
 
     return demand_df * calibration_factor
 
@@ -167,8 +168,7 @@ def compute_standard_demand(consumer_type, consumer_type_counts, load_profiles):
     else:
         ts_string_prefix = f"{consumer_type.title().replace('_', ' ')}"
     ts_cols = [f"{ts_string_prefix}_{ts}" for ts in consumer_type_counts.index]
-    # import pdb; pdb.set_trace()
-    total_demand = load_profiles[ts_cols].dot(consumer_type_counts.values)
+    total_demand = load_profiles[ts_cols].dot(consumer_type_counts.to_numpy())
 
     return total_demand
 

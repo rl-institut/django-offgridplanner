@@ -52,29 +52,22 @@ import pyomo.environ as po
 from oemof import solph
 
 from config.settings.base import SOLVER_NAME
+from offgridplanner.optimization.base_optimizer import BaseOptimizer
+from offgridplanner.optimization.models import DemandCoverage
+from offgridplanner.optimization.models import DurationCurve
+from offgridplanner.optimization.models import Emissions
+from offgridplanner.optimization.models import EnergyFlow
+from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.supply import solar_potential
-from offgridplanner.optimization.models import (
-    Links,
-    DemandCoverage,
-    Emissions,
-    EnergyFlow,
-    DurationCurve,
-)
 
 logger = logging.getLogger(__name__)
 
-from offgridplanner.optimization.base_optimizer import BaseOptimizer
-
 
 def optimize_energy_system(proj_id):
-    try:
-        ensys_opt = EnergySystemOptimizer(proj_id=proj_id)
-        ensys_opt.optimize()
-        ensys_opt.results_to_db()
-        return True
-    except Exception as exc:
-        logger.error(f"An error occurred during optimization: {exc}")
-        raise exc
+    ensys_opt = EnergySystemOptimizer(proj_id=proj_id)
+    ensys_opt.optimize()
+    ensys_opt.results_to_db()
+    return "Finished energy system optimization"
 
 
 class EnergySystemOptimizer(BaseOptimizer):
@@ -108,7 +101,7 @@ class EnergySystemOptimizer(BaseOptimizer):
             self.num_households = len(
                 self.nodes[
                     (self.nodes["consumer_type"] == "household")
-                    & (self.nodes["is_connected"] == True)
+                    & (self.nodes["is_connected"] is True)
                 ].index,
             )
             links, _ = Links.objects.get_or_create(project=self.project)
@@ -551,7 +544,7 @@ class EnergySystemOptimizer(BaseOptimizer):
             self._process_results()
         else:
             print("No solution found")
-        if list(res["Solver"])[0]["Termination condition"] == "infeasible":
+        if next(iter(res["Solver"]))["Termination condition"] == "infeasible":
             self.infeasible = True
 
     def _process_results(self):
@@ -793,12 +786,18 @@ class EnergySystemOptimizer(BaseOptimizer):
         demand_coverage.save()
 
     def _emissions_to_db(self):
-        if self.capacity_genset < 60:
-            co2_emission_factor = 1.580
-        elif self.capacity_genset < 300:
-            co2_emission_factor = 0.883
+        # TODO check what the source is for these values and link here
+        emissions_genset = {
+            "small": {"max_capacity": 60, "emission_factor": 1.580},
+            "medium": {"max_capacity": 300, "emission_factor": 0.883},
+            "large": {"emission_factor": 0.699},
+        }
+        if self.capacity_genset < emissions_genset["small"]["max_capacity"]:
+            co2_emission_factor = emissions_genset["small"]["emission_factor"]
+        elif self.capacity_genset < emissions_genset["medium"]["max_capacity"]:
+            co2_emission_factor = emissions_genset["medium"]["emission_factor"]
         else:
-            co2_emission_factor = 0.699
+            co2_emission_factor = emissions_genset["large"]["emission_factor"]
         # store fuel co2 emissions (kg_CO2 per L of fuel)
         df = pd.DataFrame()
         df["non_renewable_electricity_production"] = (
@@ -839,22 +838,16 @@ class EnergySystemOptimizer(BaseOptimizer):
         df["diesel_genset_duration"] = (
             100 * np.sort(self.sequences_genset)[::-1] / self.sequences_genset.max()
         )
-        if self.sequences_pv.max() > 0:
-            div = self.sequences_pv.max()
-        else:
-            div = 1
+        div = self.sequences_pv.max() if self.sequences_pv.max() > 0 else 1
         df["pv_duration"] = 100 * np.sort(self.sequences_pv)[::-1] / div
-        if not self.sequences_rectifier.abs().sum() == 0:
+        if self.sequences_rectifier.abs().sum() != 0:
             df["rectifier_duration"] = 100 * np.nan_to_num(
                 np.sort(self.sequences_rectifier)[::-1]
                 / self.sequences_rectifier.max(),
             )
         else:
             df["rectifier_duration"] = 0
-        if self.sequences_inverter.max() > 0:
-            div = self.sequences_inverter.max()
-        else:
-            div = 1
+        div = self.sequences_inverter.max() if self.sequences_inverter.max() > 0 else 1
         df["inverter_duration"] = 100 * np.sort(self.sequences_inverter)[::-1] / div
         if not self.sequences_battery_charge.max() > 0:
             div = 1

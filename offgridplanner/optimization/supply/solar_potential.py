@@ -8,8 +8,8 @@ of a photovoltaic (PV) system based on the weather data. The module's integratio
 combined with detailed solar panel and inverter specifications, enables it to calculate solar potential time series
 """
 
-import os
 import warnings
+from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
@@ -21,8 +21,6 @@ from pvlib.location import Location
 from pvlib.modelchain import ModelChain
 from pvlib.pvsystem import PVSystem
 from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
-
-from django.utils.timezone import make_aware
 
 from config.settings.base import CDS_API_KEY
 from offgridplanner.optimization.models import WeatherData
@@ -207,13 +205,13 @@ def get_closest_grid_point(lat, lon):
 
 
 def create_cdsapirc_file():
-    home_dir = os.path.expanduser("~")
-    file_path = os.path.join(home_dir, ".cdsapirc")
-    if os.path.exists(file_path):
+    home_dir = Path("~").expanduser()
+    file_path = Path(home_dir) / ".cdsapirc"
+    if Path(file_path).exists:
         print(f".cdsapirc file already exists at {file_path}")
         return
     content = f"url: https://cds.climate.copernicus.eu/api/v2\nkey: {CDS_API_KEY}"
-    with open(file_path, "w") as file:
+    with Path(file_path).open("w") as file:
         file.write(content)
     print(f".cdsapirc file created at {file_path}")
 

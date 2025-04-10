@@ -325,6 +325,7 @@ class EnergySystemDesign(models.Model):
                 d = data
                 for part in parts[:-1]:  # Traverse the dictionary except the last key
                     d = d[part]
-                d[parts[-1]] = value  # Set the final value
-
+                d[parts[-1]] = (
+                    value / 100 if "efficiency" in parts[-1] else value
+                )  # Set the final value
         return data

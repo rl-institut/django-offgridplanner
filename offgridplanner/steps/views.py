@@ -92,6 +92,7 @@ def project_setup(request, proj_id=None):
                 project.user = User.objects.get(email=request.user.email)
                 project.options = opts
             project.save()
+            simulation, _ = Simulation.objects.get_or_create(project=project)
 
         return HttpResponseRedirect(
             reverse("steps:consumer_selection", args=[project.id]),

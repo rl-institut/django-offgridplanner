@@ -20,16 +20,16 @@
           <a class="title">Projects</a>
           <div class="radio-inputs">
             <label class="radio">
-              <input type="radio" name="radio">
-              <a class="name" href="{% url 'projects:home' %}">Potential</a>
+              <input type="radio" name="radio" {% if status == "potential" %}checked{% endif %}>
+              <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
             </label>
             <label class="radio">
-              <input type="radio" name="radio" checked>
-              <a class="name" href="{% url 'projects:home' %}">Analyzing</a>
+              <input type="radio" name="radio" {% if status == "analyzing" %}checked{% endif %}>
+              <a class="name" href="{% url 'projects:projects_list' 'analyzing' %}">Analyzing</a>
             </label>
             <label class="radio">
-              <input type="radio" name="radio">
-              <a class="name" href="{% url 'projects:home' %}">Monitoring</a>
+              <input type="radio" name="radio" {% if status == "monitoring" %}checked{% endif %}>
+              <a class="name" href="{% url 'projects:projects_list' 'monitoring' %}">Monitoring</a>
             </label>
           </div>
 
@@ -62,9 +62,9 @@
                         <td>{{ project.simulation.status }}</td>
                         <td>
               <select class="status-select" data-original-status="{{ project.status }}">
-                <option value="Monitoring" {% if project.status == "monitoring" %}selected{% endif %}>Monitoring</option>
-                <option value="Analyzing" {% if project.status == "analyzing" %}selected{% endif %}>Analyzing</option>
-                <option value="Potential" {% if project.status == "potential" %}selected{% endif %}>Potential</option>
+                <option value="monitoring" {% if project.status == "monitoring" %}selected{% endif %}>Monitoring</option>
+                <option value="analyzing" {% if project.status == "analyzing" %}selected{% endif %}>Analyzing</option>
+                <option value="potential" {% if project.status == "potential" %}selected{% endif %}>Potential</option>
               </select>
             </td>
 

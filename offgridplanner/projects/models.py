@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.forms.models import model_to_dict
+from django.utils.translation import gettext_lazy as _
 
 
 def default_start_date():
@@ -23,6 +24,12 @@ class Options(models.Model):
 
 
 class Project(models.Model):
+    STATUS_CHOICES = [
+        ("monitoring", _("Monitoring")),
+        ("analyzing", _("Analyzing")),
+        ("potential", _("Potential")),
+    ]
+
     name = models.CharField(max_length=51, blank=True, default="")
     description = models.CharField(max_length=201, blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
@@ -45,6 +52,9 @@ class Project(models.Model):
         Options,
         on_delete=models.SET_NULL,
         null=True,
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="Potential"
     )
 
     def __str__(self):

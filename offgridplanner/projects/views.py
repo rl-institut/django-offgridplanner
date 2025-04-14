@@ -1,7 +1,6 @@
 import base64
 import io
 import json
-import os
 import urllib
 from http.client import HTTPException
 
@@ -49,24 +48,14 @@ def home(request):
 
 @login_required
 @require_http_methods(["GET"])
-def projects_list(request, proj_id=None):
+def projects_list(request):
     projects = (
         Project.objects.filter(Q(user=request.user))
         .distinct()
         .order_by("date_created")
+        .select_related("simulation")
         .reverse()
     )
-    for project in projects:
-        status = "pending" if bool(os.environ.get("DOCKERIZED")) else "success"
-        if status in ["success", "failure", "revoked"]:
-            # TODO this is not useful
-            if status == "success":
-                # TODO Here I am not sure we should use the status of the project rather the one of the simulation
-                project.status = "finished"
-            else:
-                project.status = status
-            project.save()
-
     return render(request, "pages/user_projects.html", {"projects": projects})
 
 

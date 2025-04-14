@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -135,6 +136,21 @@ def export_project_results(request, proj_id):
         "attachment; filename=offgridplanner_results.xlsx"
     )
     return response
+
+
+@require_http_methods(["POST"])
+def update_project_status(request):
+    data = json.loads(request.body)
+    project_id = int(data.get("proj_id"))
+    new_status = data.get("status")
+    project = Project.objects.get(id=project_id)
+    project.status = new_status
+    project.save()
+    return JsonResponse({"success": True})
+
+
+def export_project_report(proj_id):
+    pass
 
 
 # TODO unused as of now

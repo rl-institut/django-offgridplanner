@@ -7,6 +7,8 @@ $(document).ready(function(){
       const row = select.closest('tr');
       const originalStatus = select.getAttribute('data-original-status');
       const currentStatus = select.value;
+      const proj_id = row.querySelector("#id").innerHTML
+      update_project_status(proj_id, currentStatus)
 
       if (currentStatus !== originalStatus) {
         row.classList.add('greyed');
@@ -44,3 +46,22 @@ function set_and_show_error_msg() {
         document.getElementById('msgBox').style.display = "block";
     }
 }
+
+async function update_project_status(proj_id, status) {
+    const response = await fetch(updateProjectStatusUrl, {
+        headers: {
+            'Content-Type': 'application/json',
+             'X-CSRFToken': csrfToken
+             },
+        method: 'POST',
+        body: JSON.stringify({
+            proj_id: proj_id,
+            status: status,
+        }),
+    });
+    if (response.ok) {
+        console.log("Updated project status");
+    } else {
+        throw new Error("Failed to fetch data");
+    }
+};

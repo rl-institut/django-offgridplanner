@@ -1,3 +1,25 @@
+
+$(document).ready(function(){
+   window.scrollTo(0, 0);
+
+   document.querySelectorAll('.status-select').forEach(function(select) {
+    select.addEventListener('change', function() {
+      const row = select.closest('tr');
+      const originalStatus = select.getAttribute('data-original-status');
+      const currentStatus = select.value;
+
+      if (currentStatus !== originalStatus) {
+        row.classList.add('greyed');
+      } else {
+        row.classList.remove('greyed');
+      }
+    });
+  });
+
+});
+
+
+
 function show_modal_example_model() {
     // Select the table by its ID 'projectTable'
     var table = document.getElementById('projectTable');

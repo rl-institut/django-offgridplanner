@@ -545,12 +545,13 @@ def waiting_for_results(request):
     model = data["model"]
     finished = False
     wait_time = 10
-
     status = get_status(task_id)
+    sim = Simulation.objects.get(task_id=task_id)
+    sim.status = "calculating"
+    sim.save()
 
     if task_is_finished(task_id):
         print(f"Task {model} optimization finished")
-        sim = Simulation.objects.get(task_id=task_id)
         project = sim.project
 
         # Grid opt is finished, proceed to supply opt

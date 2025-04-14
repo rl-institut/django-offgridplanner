@@ -54,7 +54,7 @@
             <td>{{ project.name }}</td>
             <td>{{ project.date_created }}</td>
             <td>{{ project.date_updated }}</td>
-            <td>{{ project.status }}</td>
+            <td>{{ project.simulation.status }}</td>
             <td>
                           <span style="float:right;">
                             <form action="{% url 'projects:project_duplicate' project.id %}"

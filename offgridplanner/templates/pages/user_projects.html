@@ -3,6 +3,11 @@
 {% load static %}
 {% load i18n %}
 
+{% block head_block %}
+<link href="{% static 'css/main.css' %}" rel="stylesheet">
+{% endblock head_block %}
+
+
 {% block content %}
 <body>
 <main>
@@ -55,6 +60,14 @@
             <td>{{ project.date_created }}</td>
             <td>{{ project.date_updated }}</td>
             <td>{{ project.simulation.status }}</td>
+            <td>
+              <select class="status-select" data-original-status="{{ project.status }}">
+                <option value="Monitoring" {% if project.status == "monitoring" %}selected{% endif %}>Monitoring</option>
+                <option value="Analyzing" {% if project.status == "analyzing" %}selected{% endif %}>Analyzing</option>
+                <option value="Potential" {% if project.status == "potential" %}selected{% endif %}>Potential</option>
+              </select>
+            </td>
+
             <td>
                           <span style="float:right;">
                             <form action="{% url 'projects:project_duplicate' project.id %}"

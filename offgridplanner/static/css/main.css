@@ -3171,3 +3171,13 @@ input:checked + .slider:before {
   background-color: #fff;
   font-weight: 600;
 }
+
+.greyed {
+    background-color: #e9ecef; /* Matches Bootstrap disabled look */
+    color: #6c757d;
+    border: 1px solid #ced4da;
+}
+
+.disabled {
+    cursor: not-allowed;
+}

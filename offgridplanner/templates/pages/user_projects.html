@@ -4,43 +4,58 @@
 {% load i18n %}
 
 {% block content %}
-  <body>
-    <main>
-      <section class="dashboard">
-        <div>
-          <div class="row">
-            <div class="col">
-              <div class="chart" style="height: auto; padding-bottom: 10px">
-                <div class="chart__header">
-                  <a class="title">Projects</a>
-                  <span style="float:right;"><a>&nbsp;
+<body>
+<main>
+  <section class="dashboard">
+    <section class="dashboard" style="height: auto">
+      <div class="chart"
+           style="height: auto;
+                      padding-bottom: 10px">
+        <div class="chart__header">
+          <a class="title">Projects</a>
+          <div class="radio-inputs">
+            <label class="radio">
+              <input type="radio" name="radio">
+              <a class="name" href="{% url 'projects:home' %}">Potential</a>
+            </label>
+            <label class="radio">
+              <input type="radio" name="radio" checked>
+              <a class="name" href="{% url 'projects:home' %}">Analyzing</a>
+            </label>
+            <label class="radio">
+              <input type="radio" name="radio">
+              <a class="name" href="{% url 'projects:home' %}">Monitoring</a>
+            </label>
+          </div>
+
+          <span style="float:right;"><a>
                     <a href="{% url 'steps:project_setup' %}"
                        class="btn btn--long text-right">New Project</a>
                   </a></span>
-                </div>
-                <span class="title"></span>
-                <table id="projectTable">
-                  <tr style="border-bottom:1px solid black">
-                    <th>ID</th>
-                    <th>Project Name</th>
-                    <th>Creation Date</th>
-                    <th>Last Update</th>
-                    <th>Model Status</th>
-                    <th></th>
-                    <!-- Added an empty header for the new column -->
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  {% if projects|length > 0 %}
-                    {% for project in projects %}
-                      <tr>
-                        <td>{{ project.id }}</td>
-                        <td>{{ project.name }}</td>
-                        <td>{{ project.date_created }}</td>
-                        <td>{{ project.date_updated }}</td>
-                        <td>{{ project.status }}</td>
-                        <td>
+        </div>
+        <span class="title"></span>
+        <table id="projectTable">
+          <tr style="border-bottom:1px solid black">
+            <th>ID</th>
+            <th>Project Name</th>
+            <th>Creation Date</th>
+            <th>Last Update</th>
+            <th>Model Status</th>
+            <th></th>
+            <!-- Added an empty header for the new column -->
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          {% if projects|length > 0 %}
+          {% for project in projects %}
+          <tr>
+            <td>{{ project.id }}</td>
+            <td>{{ project.name }}</td>
+            <td>{{ project.date_created }}</td>
+            <td>{{ project.date_updated }}</td>
+            <td>{{ project.status }}</td>
+            <td>
                           <span style="float:right;">
                             <form action="{% url 'projects:project_duplicate' project.id %}"
                                   method="POST">
@@ -52,51 +67,48 @@
                                       value="Duplicate">Duplicate Project</button>
                             </form>
                           </span>
-                        </td>
-                        <td>
-                        </span>
-                      </td>
-                      <td>
+            </td>
+            <td>
+            </td>
+            <td>
                         <span style="float:right;">
                           <a onclick="document.getElementById('projectID{{ project.id }}').style.display='block'"
                              class="grey_button"
                              style="color:white">Delete Project</a>
                         </span>
-                      </td>
-                      <td>
+            </td>
+            <td>
                         <span style="float:right;">
                           <a href="{% url 'steps:project_setup' project.id %}" class="grey_button">Edit Project</a>
                         </span>
-                      </td>
-                      <td>
+            </td>
+            <td>
                         <span style="float:right;">
                           <a href="{% url 'steps:simulation_results' project.id %}" class="grey_button">Show Results</a>
                         </span>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                {% else %}
-                  <tr>
-                    <td>You do not yet have any saved projects</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <!-- Added an empty cell for the new column -->
-                  </tr>
-                {% endif %}
-              </table>
-              <span class="subtitle"></span>
-            </div>
-          </div>
-        </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td>You do not yet have any saved projects</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <!-- Added an empty cell for the new column -->
+          </tr>
+          {% endif %}
+        </table>
+        <span class="subtitle"></span>
       </div>
-    </div>
-  </div>
-</div>
-</section>
-{% if projects|length > 0 %}
-  {% for project in projects %}
+      </div>
+      </div>
+      </div>
+      </div>
+    </section>
+    {% if projects|length > 0 %}
+    {% for project in projects %}
     <div id=projectID{{ project.id }} class="modal">
       <form class="modal-content"
             action="{% url 'projects:project_delete' project.id %}"
@@ -114,28 +126,29 @@
         </div>
       </form>
     </div>
-  {% endfor %}
-{% endif %}
-<div id="projectExample"
-     class="modal"
-     style="background-color: rgba(0,0,0,0.5);
+    {% endfor %}
+    {% endif %}
+    <div id="projectExample"
+         class="modal"
+         style="background-color: rgba(0,0,0,0.5);
             z-index: 999;
             text-align: left">
-  <form class="modal-content" style="max-width: 24rem">
-    <div class="container">
-      <h1>Create Example Model</h1>
-      <p>You have not created any projects yet. Would you like a sample project to be set up for you?</p>
-      <button onclick="create_example_project()" type="button" class="deletebtn">Yes</button>
-      <button onclick="document.getElementById('projectExample').style.display='none'"
-              type="button"
-              class="deletebtn">No</button>
+      <form class="modal-content" style="max-width: 24rem">
+        <div class="container">
+          <h1>Create Example Model</h1>
+          <p>You have not created any projects yet. Would you like a sample project to be set up for you?</p>
+          <button onclick="create_example_project()" type="button" class="deletebtn">Yes</button>
+          <button onclick="document.getElementById('projectExample').style.display='none'"
+                  type="button"
+                  class="deletebtn">No</button>
+        </div>
+      </form>
     </div>
-  </form>
-</div>
+  </section>
 </main>
 </body>
 {% endblock content %}
 {% block end_body_scripts %}
-  <script src="{% static 'js/pages/user_projects.js' %}"></script>
-  <script src="{% static 'js/backend_communication.js' %}"></script>
+<script src="{% static 'js/pages/user_projects.js' %}"></script>
+<script src="{% static 'js/backend_communication.js' %}"></script>
 {% endblock end_body_scripts %}

@@ -34,15 +34,17 @@ def home(request):
 
 @login_required
 @require_http_methods(["GET"])
-def projects_list(request):
+def projects_list(request, status="analyzing"):
     projects = (
-        Project.objects.filter(Q(user=request.user))
+        Project.objects.filter(Q(user=request.user, status=status))
         .distinct()
         .order_by("date_created")
         .select_related("simulation")
         .reverse()
     )
-    return render(request, "pages/user_projects.html", {"projects": projects})
+    return render(
+        request, "pages/user_projects.html", {"projects": projects, "status": status}
+    )
 
 
 @require_http_methods(["GET", "POST"])

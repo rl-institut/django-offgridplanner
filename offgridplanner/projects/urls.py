@@ -22,6 +22,6 @@ urlpatterns = [
         export_project_report,
         name="export_project_report",
     ),
-    path("map/", map_view, name="map"),
+    path("projects/potential/map/", potential_map, name="potential_map"),
     path("api/locations/", locations_geojson, name="locations_geojson"),
 ]

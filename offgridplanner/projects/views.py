@@ -195,7 +195,7 @@ def get_project_data(project):
     return proj_data
 
 
-def map_view(request):
+def potential_map(request):
     return render(request, "pages/map.html")
 
 

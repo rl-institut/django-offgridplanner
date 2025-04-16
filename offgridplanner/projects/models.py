@@ -31,7 +31,6 @@ class Project(models.Model):
     STATUS_CHOICES = [
         ("monitoring", _("Monitoring")),
         ("analyzing", _("Analyzing")),
-        ("potential", _("Potential")),
     ]
 
     name = models.CharField(max_length=51, blank=True, default="")
@@ -59,7 +58,7 @@ class Project(models.Model):
         null=True,
     )
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="Potential"
+        max_length=20, choices=STATUS_CHOICES, default="analyzing"
     )
 
     def __str__(self):

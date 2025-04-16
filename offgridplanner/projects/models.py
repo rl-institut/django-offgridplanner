@@ -80,3 +80,16 @@ class Project(models.Model):
         # add nodes
         # add customdemand
         return dm
+
+
+class MapTestSite(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    building_count = models.PositiveSmallIntegerField()
+    grid_dist = models.FloatField()
+
+    class Meta:
+        unique_together = ("latitude", "longitude")
+
+    def __str__(self):
+        return f"TestSite {self.id}"

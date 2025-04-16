@@ -27,4 +27,6 @@ urlpatterns = [
         download_excel_results,
         name="download_excel_results",
     ),
+    path("map/", map_view, name="map"),
+    path("api/locations/", locations_geojson, name="locations_geojson"),
 ]

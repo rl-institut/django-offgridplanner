@@ -31,6 +31,7 @@ from offgridplanner.projects.exports import prepare_data_for_export
 from offgridplanner.projects.exports import project_data_df_to_xlsx
 from offgridplanner.projects.helpers import collect_project_dataframes
 from offgridplanner.projects.helpers import load_project_from_dict
+from offgridplanner.projects.models import MapTestSite
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.decorators import user_owns_project
@@ -192,6 +193,35 @@ def get_project_data(project):
         )
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
     return proj_data
+
+
+def map_view(request):
+    return render(request, "pages/map.html")
+
+
+def locations_geojson(request):
+    features = [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [loc.longitude, loc.latitude],
+            },
+            "properties": {
+                "name": loc.id,
+                "building_count": loc.building_count,
+                "grid_dist": loc.grid_dist,
+            },
+        }
+        for loc in MapTestSite.objects.all()
+    ]
+
+    return JsonResponse(
+        {
+            "type": "FeatureCollection",
+            "features": features,
+        }
+    )
 
 
 # TODO refactor function to pass ruff

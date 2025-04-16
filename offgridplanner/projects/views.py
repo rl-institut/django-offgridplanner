@@ -200,6 +200,12 @@ def potential_map(request):
 
 
 def locations_geojson(request):
+    # get filter value
+    min_building_count = request.GET.get("min_building_count")
+    qs = MapTestSite.objects.all()
+    if min_building_count:
+        qs = qs.filter(building_count__gte=int(min_building_count))
+
     features = [
         {
             "type": "Feature",
@@ -213,7 +219,7 @@ def locations_geojson(request):
                 "grid_dist": loc.grid_dist,
             },
         }
-        for loc in MapTestSite.objects.all()
+        for loc in qs
     ]
 
     return JsonResponse(

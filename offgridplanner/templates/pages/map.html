@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link href="{% static 'css/pages/potential_map.css' %}" rel="stylesheet"/>
 {% endblock head_block %}
 
 {% block content %}
@@ -42,7 +43,12 @@
           <div>
             <p>Select a location from the map to initiate site analysis</p>
           </div>
-          <div id="map" class="row" style="height: 600px; width: 100%"></div>
+          <div id="map" class="row" style="height: 600px; width: 100%">
+            <label for="buildingFilter">Minimum building count:</label>
+<input type="range" id="buildingFilter" min="0" max="100" value="0">
+<span id="filterValue">0</span>
+
+          </div>
         </div>
       </section>
     </div>
@@ -59,28 +65,7 @@ const projectSetupUrl = `{% url 'steps:project_setup' %}`;
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script>
-  const map = L.map('map').setView([9.0725, 7.5377], 5); // Centered on Europe
+<script src="{% static 'js/pages/potential_map.js' %}"></script>
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-  }).addTo(map);
-
-  const markers = L.markerClusterGroup();
-
-  fetch("{% url 'projects:locations_geojson' %}")
-      .then(response => response.json())
-      .then(data => {
-          data.features.forEach(feature => {
-              const coords = feature.geometry.coordinates;
-              const props = feature.properties;
-              const content = `<h3>ID: ${props.name}</h3><p>Building count: ${props.building_count}</p><p>Grid distance: ${props.grid_dist}</p><a href={% url 'steps:project_setup' %}>Create project from site</a>`;
-              const marker = L.marker([coords[1], coords[0]])
-              .bindPopup(content);
-              markers.addLayer(marker);
-          });
-          map.addLayer(markers);
-      });
-</script>
 {% endblock end_body_scripts %}
 </html>

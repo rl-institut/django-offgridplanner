@@ -20,6 +20,7 @@ from django.views.decorators.http import require_http_methods
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.projects.helpers import load_project_from_dict
 from offgridplanner.projects.helpers import prepare_data_for_export
+from offgridplanner.projects.models import MapTestSite
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
@@ -179,3 +180,32 @@ def get_project_data(project):
         )
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
     return proj_data
+
+
+def map_view(request):
+    return render(request, "pages/map.html")
+
+
+def locations_geojson(request):
+    features = [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [loc.longitude, loc.latitude],
+            },
+            "properties": {
+                "name": loc.id,
+                "building_count": loc.building_count,
+                "grid_dist": loc.grid_dist,
+            },
+        }
+        for loc in MapTestSite.objects.all()
+    ]
+
+    return JsonResponse(
+        {
+            "type": "FeatureCollection",
+            "features": features,
+        }
+    )

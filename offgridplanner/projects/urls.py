@@ -22,4 +22,6 @@ urlpatterns = [
         export_project_report,
         name="export_project_report",
     ),
+    path("map/", map_view, name="map"),
+    path("api/locations/", locations_geojson, name="locations_geojson"),
 ]

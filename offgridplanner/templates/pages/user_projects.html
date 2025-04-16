@@ -18,10 +18,10 @@
                       padding-bottom: 10px">
         <div class="chart__header">
           <a class="title">Projects</a>
-          <div class="radio-inputs">
+          <div class="radio-inputs" id="status_header" >
             <label class="radio">
-              <input type="radio" name="radio" {% if status == "potential" %}checked{% endif %}>
-              <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
+              <input type="radio" name="radio">
+              <a class="name" href="{% url 'projects:potential_map' %}">Potential</a>
             </label>
             <label class="radio">
               <input type="radio" name="radio" {% if status == "analyzing" %}checked{% endif %}>
@@ -33,10 +33,13 @@
             </label>
           </div>
 
-          <span style="float:right;"><a>
+          <span style="float:right;">
+          {% if status == "analyzing" %}<a>
                     <a href="{% url 'steps:project_setup' %}"
                        class="btn btn--long text-right">New Project</a>
-                  </a></span>
+                  </a>
+          {% endif %}
+          </span>
         </div>
         <span class="title"></span>
         <table id="projectTable">
@@ -64,7 +67,6 @@
               <select class="status-select" data-original-status="{{ project.status }}">
                 <option value="monitoring" {% if project.status == "monitoring" %}selected{% endif %}>Monitoring</option>
                 <option value="analyzing" {% if project.status == "analyzing" %}selected{% endif %}>Analyzing</option>
-                <option value="potential" {% if project.status == "potential" %}selected{% endif %}>Potential</option>
               </select>
             </td>
 

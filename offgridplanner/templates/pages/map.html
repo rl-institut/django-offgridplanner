@@ -18,7 +18,26 @@
       <section class="dashboard">
         <div class="chart" style="height: auto; padding-bottom: 10px">
           <div class="chart__header">
-            <span class="title">Potential project sites</span>
+            <a class="title">Potential project sites</a>
+                      <div class="radio-inputs" id="status_header" >
+            <label class="radio">
+              <input type="radio" name="radio" checked>
+              <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
+            </label>
+            <label class="radio">
+              <input type="radio" name="radio">
+              <a class="name" href="{% url 'projects:projects_list' 'analyzing' %}">Analyzing</a>
+            </label>
+            <label class="radio">
+              <input type="radio" name="radio">
+              <a class="name" href="{% url 'projects:projects_list' 'monitoring' %}">Monitoring</a>
+            </label>
+          </div>
+          <span style="float:right;"><a>
+                    <a href="{% url 'projects:potential_map' %}"
+                       class="btn btn--long text-right">List view</a>
+                  </a></span>
+
           </div>
           <div>
             <p>Select a location from the map to initiate site analysis</p>

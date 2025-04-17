@@ -24,7 +24,7 @@ fetch(siteLocationsUrl)
       data.features.forEach(feature => {
           const coords = feature.geometry.coordinates;
           const props = feature.properties;
-          const content = `<h3>ID: ${props.name}</h3><p>Building count: ${props.building_count}</p><p>Grid distance: ${props.grid_dist}</p><a href={% url 'steps:project_setup' %}>Create project from site</a>`;
+          const content = `<h3>ID: ${props.name}</h3><p>Building count: ${props.building_count}</p><p>Grid distance: ${props.grid_dist}</p><a href=${projectSetupUrl}>Create project from site</a>`;
           const marker = L.marker([coords[1], coords[0]])
           .bindPopup(content);
           markers.addLayer(marker);

@@ -25,6 +25,7 @@ from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.optimization.models import Simulation
+# from offgridplanner.optimization.pre_processing import collect_supply_opt_json_data
 from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
 from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
 from offgridplanner.optimization.tasks import get_status
@@ -492,8 +493,9 @@ def start_calculation(request, proj_id):
     # forward, redirect = await async_queries.check_data_availability(user.id, project_id)
     # if forward is False:
     #     return JsonResponse({'task_id': '', 'redirect': redirect})
-    task_id = optimization(proj_id)
-    simulation.task_id = task_id
+    task_grid, task_supply = optimization(proj_id)
+    simulation.task_grid = task_grid
+    simulation.task_supply = task_supply
     simulation.save()
 
     return JsonResponse({"task_id": task_id, "redirect": ""})
@@ -529,12 +531,17 @@ def optimization(proj_id):
     simulation = Simulation.objects.get(project=project)
     simulation.status = "queued"
     simulation.save()
+    # TODO check what json needs to be passed for grid opt
+    grid_opt_json = None
+    # models that are needed for supply opt: energy system, lon lat (for weather data), nodes and customdemand (for demand)
+    # -> sequences should be pre-processed so that the supply optimizer really only does that
+
+    # supply_opt_json = get_supply_opt_json_data(proj_id)
     # TODO I am not sure to understand why the supply optimisation does not solely depend on what the user ticked ...
-    if opts.do_grid_optimization is True:
-        task = task_grid_opt.delay(proj_id)
-    else:
-        task = task_supply_opt.delay(proj_id)
-    return task.id
+    task_grid = task_grid_opt.delay(grid_opt_json) if opts.do_grid_optimization is True else ""
+    task_supply = task_supply_opt.delay(supply_opt_json) if opts.do_es_design_optimization is True else ""
+
+    return task_grid.id, task_supply.id
 
 
 def waiting_for_results(request):
@@ -553,7 +560,7 @@ def waiting_for_results(request):
         sim = Simulation.objects.get(task_id=task_id)
         project = sim.project
 
-        # Grid opt is finished, proceed to supply opt
+        # Grid opt is finished, proceed to supply opt #TODO these should just be running in parallel if truly separate
         if model == "grid" and project.options.do_es_design_optimization:
             new_task = task_supply_opt.delay(project.id)
             sim.task_id = new_task.id

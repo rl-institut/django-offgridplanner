@@ -35,8 +35,8 @@ def task_grid_opt(proj_id):
     autoretry_for=(Exception,),
     retry_kwargs={"max_retries": 1, "countdown": 10},
 )
-def task_supply_opt(proj_id):
-    result = optimize_energy_system(proj_id)
+def task_supply_opt(energy_system_json):
+    result = optimize_energy_system(energy_system_json)
     return result
 
 

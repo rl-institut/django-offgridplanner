@@ -87,7 +87,6 @@ from k_means_constrained import KMeansConstrained
 from pyproj import Proj
 from scipy.sparse.csgraph import minimum_spanning_tree
 
-from offgridplanner.optimization.base_optimizer import BaseOptimizer
 from offgridplanner.optimization.models import Links
 
 logger = logging.getLogger(__name__)
@@ -103,7 +102,7 @@ def optimize_grid(proj_id):
     return "Finished grid optimization"
 
 
-class GridOptimizer(BaseOptimizer):
+class GridOptimizer:
     def __init__(self, proj_id):
         super().__init__(proj_id)
         print("Initiating grid optimizer...")

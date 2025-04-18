@@ -43,41 +43,42 @@ two primary modes: dispatch and design.
     optimization process.
 """
 
+import json
 import logging
 import time
 
 import numpy as np
 import pandas as pd
 import pyomo.environ as po
+from django.http import JsonResponse
 from oemof import solph
 
 from config.settings.base import SOLVER_NAME
-from offgridplanner.optimization.base_optimizer import BaseOptimizer
 from offgridplanner.optimization.models import DemandCoverage
 from offgridplanner.optimization.models import DurationCurve
 from offgridplanner.optimization.models import Emissions
 from offgridplanner.optimization.models import EnergyFlow
-from offgridplanner.optimization.models import Links
-from offgridplanner.optimization.supply import solar_potential
 
 logger = logging.getLogger(__name__)
 
 
-def optimize_energy_system(proj_id):
-    ensys_opt = EnergySystemOptimizer(proj_id=proj_id)
+def optimize_energy_system(energy_system_json):
+    ensys_opt = EnergySystemOptimizer(supply_opt_json=energy_system_json)
     ensys_opt.optimize()
-    ensys_opt.results_to_db()
-    return "Finished energy system optimization"
+    # ensys_opt.results_to_db()
+    # TODO ensys_opt results should be the raw oemof results and the post_processing should be done in projects
+    return ensys_opt.results
 
 
-class EnergySystemOptimizer(BaseOptimizer):
+class EnergySystemOptimizer:
     def __init__(
         self,
-        proj_id,
+        supply_opt_json,
     ):
         print("start es opt")
-        super().__init__(proj_id)
-        energy_system_design = self.project.energysystemdesign.to_nested_dict()
+        supply_opt_dict = json.loads(supply_opt_json)
+        energy_system_design = supply_opt_dict["energy_system_design"]
+        supply_opt_sequences = supply_opt_dict["sequences"]
         if (
             energy_system_design["pv"]["settings"]["is_selected"] is True
             or energy_system_design["battery"]["settings"]["is_selected"] is True
@@ -98,31 +99,13 @@ class EnergySystemOptimizer(BaseOptimizer):
         self.rectifier = energy_system_design["rectifier"]
         self.shortage = energy_system_design["shortage"]
         self.fuel_density_diesel = 0.846
-        if not self.nodes.empty:
-            self.num_households = len(
-                self.nodes[
-                    (self.nodes["consumer_type"] == "household")
-                    & (self.nodes["is_connected"] == True)  # noqa:E712
-                ].index,
-            )
-            links, _ = Links.objects.get_or_create(project=self.project)
-            self.links = links.df if links.data is not None else None
-            if not self.nodes[self.nodes["consumer_type"] == "power_house"].empty:
-                lat, lon = self.nodes[self.nodes["consumer_type"] == "power_house"][
-                    "latitude",
-                    "longitude",
-                ].to_list()
-            else:
-                lat, lon = self.nodes[["latitude", "longitude"]].mean().to_list()
-        else:
-            lat, lon = 9.055158, 7.497112
-            self.num_households = 1
-            self.links = links, _ = Links.objects.get_or_create(project=self.project)
-        self.solar_potential = solar_potential.get_dc_feed_in_sync_db_query(
-            lat,
-            lon,
-            self.dt_index,
-        ).loc[self.dt_index]
+        self.dt_index = pd.DatetimeIndex(
+            pd.to_datetime(supply_opt_sequences["index"]), freq="h"
+        )
+        self.demand = pd.Series(supply_opt_sequences["demand"], index=self.dt_index)
+        self.solar_potential = pd.Series(
+            supply_opt_sequences["solar_potential"], index=self.dt_index
+        )
         self.solar_potential_peak = self.solar_potential.max()
         self.demand_peak = self.demand.max()
         self.infeasible = False
@@ -131,7 +114,7 @@ class EnergySystemOptimizer(BaseOptimizer):
     def optimize(self):  # noqa: C901,PLR0912,PLR0915 TODO refactor function / build system through tabular instead
         # define an empty dictionary for all epc values
         start_execution_time = time.monotonic()
-        self.epc = {}
+
         energy_system = solph.EnergySystem(
             timeindex=self.dt_index.copy(),
             infer_last_interval=True,
@@ -143,14 +126,6 @@ class EnergySystemOptimizer(BaseOptimizer):
         b_el_dc = solph.Bus(label="electricity_dc")
         b_fuel = solph.Bus(label="fuel")
         # -------------------- PV --------------------
-        self.epc["pv"] = (
-            self.crf
-            * self.capex_multi_investment(
-                capex_0=self.pv["parameters"]["capex"],
-                component_lifetime=self.pv["parameters"]["lifetime"],
-            )
-            + self.pv["parameters"]["opex"]
-        )
         # Make decision about different simulation modes of the PV
         if self.pv["settings"]["is_selected"] is False:
             pv = solph.components.Source(
@@ -166,7 +141,7 @@ class EnergySystemOptimizer(BaseOptimizer):
                         fix=self.solar_potential / self.solar_potential_peak,
                         nominal_value=None,
                         investment=solph.Investment(
-                            ep_costs=self.epc["pv"] * self.n_days / 365,
+                            ep_costs=self.pv["parameters"]["epc"],
                         ),
                         variable_costs=0,
                     ),
@@ -197,14 +172,6 @@ class EnergySystemOptimizer(BaseOptimizer):
             outputs={b_fuel: solph.Flow(variable_costs=fuel_cost)},
         )
         # optimize capacity of the fuel generator
-        self.epc["diesel_genset"] = (
-            self.crf
-            * self.capex_multi_investment(
-                capex_0=self.diesel_genset["parameters"]["capex"],
-                component_lifetime=self.diesel_genset["parameters"]["lifetime"],
-            )
-            + self.diesel_genset["parameters"]["opex"]
-        )
         if self.diesel_genset["settings"]["is_selected"] is False:
             diesel_genset = solph.components.Transformer(
                 label="diesel_genset",
@@ -227,7 +194,7 @@ class EnergySystemOptimizer(BaseOptimizer):
                             max=1,
                             nonconvex=solph.NonConvex(),
                             investment=solph.Investment(
-                                ep_costs=self.epc["diesel_genset"] * self.n_days / 365,
+                                ep_costs=self.diesel_genset["parameters"]["epc"],
                             ),
                         ),
                     },
@@ -246,7 +213,7 @@ class EnergySystemOptimizer(BaseOptimizer):
                                 "variable_cost"
                             ],
                             investment=solph.Investment(
-                                ep_costs=self.epc["diesel_genset"] * self.n_days / 365,
+                                ep_costs=self.diesel_genset["parameters"]["epc"],
                             ),
                         ),
                     },
@@ -275,14 +242,6 @@ class EnergySystemOptimizer(BaseOptimizer):
             )
 
         # -------------------- RECTIFIER --------------------
-        self.epc["rectifier"] = (
-            self.crf
-            * self.capex_multi_investment(
-                capex_0=self.rectifier["parameters"]["capex"],
-                component_lifetime=self.rectifier["parameters"]["lifetime"],
-            )
-            + self.rectifier["parameters"]["opex"]
-        )
 
         if self.rectifier["settings"]["is_selected"] is False:
             rectifier = solph.components.Transformer(
@@ -298,7 +257,7 @@ class EnergySystemOptimizer(BaseOptimizer):
                     b_el_ac: solph.Flow(
                         nominal_value=None,
                         investment=solph.Investment(
-                            ep_costs=self.epc["rectifier"] * self.n_days / 365,
+                            ep_costs=self.rectifier["parameters"]["epc"],
                         ),
                         variable_costs=0,
                     ),
@@ -325,14 +284,6 @@ class EnergySystemOptimizer(BaseOptimizer):
             )
 
         # -------------------- INVERTER --------------------
-        self.epc["inverter"] = (
-            self.crf
-            * self.capex_multi_investment(
-                capex_0=self.inverter["parameters"]["capex"],
-                component_lifetime=self.inverter["parameters"]["lifetime"],
-            )
-            + self.inverter["parameters"]["opex"]
-        )
         if self.inverter["settings"]["is_selected"] is False:
             inverter = solph.components.Transformer(
                 label="inverter",
@@ -347,7 +298,7 @@ class EnergySystemOptimizer(BaseOptimizer):
                     b_el_dc: solph.Flow(
                         nominal_value=None,
                         investment=solph.Investment(
-                            ep_costs=self.epc["inverter"] * self.n_days / 365,
+                            ep_costs=self.inverter["parameters"]["epc"],
                         ),
                         variable_costs=0,
                     ),
@@ -374,15 +325,6 @@ class EnergySystemOptimizer(BaseOptimizer):
             )
 
         # -------------------- BATTERY --------------------
-        self.epc["battery"] = (
-            self.crf
-            * self.capex_multi_investment(
-                capex_0=self.battery["parameters"]["capex"],
-                component_lifetime=self.battery["parameters"]["lifetime"],
-            )
-            + self.battery["parameters"]["opex"]
-        )
-
         if self.battery["settings"]["is_selected"] is False:
             battery = solph.components.GenericStorage(
                 label="battery",
@@ -396,7 +338,7 @@ class EnergySystemOptimizer(BaseOptimizer):
                 label="battery",
                 nominal_storage_capacity=None,
                 investment=solph.Investment(
-                    ep_costs=self.epc["battery"] * self.n_days / 365,
+                    ep_costs=self.battery["parameters"]["epc"],
                 ),
                 inputs={b_el_dc: solph.Flow(variable_costs=0)},
                 outputs={b_el_dc: solph.Flow(investment=solph.Investment(ep_costs=0))},
@@ -537,16 +479,19 @@ class EnergySystemOptimizer(BaseOptimizer):
             solve_kwargs={"tee": True},
             cmdline_options=solver_option[self.solver],
         )
-        self.model = model
+        # self.model = model
         if len(model.solutions) > 0:
             energy_system.results["meta"] = solph.processing.meta_results(model)
-            self.results_main = solph.processing.results(model)
-
-            self._process_results()
+            results = solph.processing.results(model)
+            return results
         else:
             print("No solution found")
-        if next(iter(res["Solver"]))["Termination condition"] == "infeasible":
-            self.infeasible = True
+            if next(iter(res["Solver"]))["Termination condition"] == "infeasible":
+                self.infeasible = True
+                return JsonResponse(
+                    {"message": "The performed optimization is infeasible"}
+                )
+            return JsonResponse({"message": "An error ocurred during the optimization"})
 
     def _process_results(self):
         nodes = [

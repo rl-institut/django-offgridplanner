@@ -861,53 +861,68 @@ async function show_email_and_project_in_navbar(project_id = null) {
 }
 
 
-
-
-
-
-
-
 let shouldStop = false;
 
-
-async function wait_for_results(project_id, task_id, time, model) {
-    // Get the current URL
-    var url = window.location.href;
-
-    // If the url includes /calculating, proceed with the request
-    if (url.includes("/calculating") && !shouldStop) {
-        console.log("Fetching results...")
-        try {
-            const response = await fetch(waitingForResultsUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({'project_id': project_id, 'task_id': task_id, 'time': time, 'model': model})
-            });
-
-            if (response.ok) {
-                const res = await response.json();
-                if (res.finished === true) {
-                    window.location.href = window.location.origin + '/steps/simulation_results/' + proj_id;
-                } else if (!shouldStop) {
-                    document.getElementById("statusMsg").innerHTML = res.status;
-                    await wait_for_results(project_id, res.task_id, res.time, res.model);
-                }
-            } else {
-                if (response.status === 303 || response.status === 422) {
-                    shouldStop = true;
-                    window.location.href = "/?internal_error";
-                }
+async function wait_for_both_results(project_id, token_supply, token_grid) {
+    const [supplyRes, gridRes] = await Promise.all([
+        check_optimization(project_id, token_supply, 0, 'supply'),
+        check_optimization(project_id, token_grid, 0, 'grid')
+    ]);
+    // Once both are finished, send results together for final processing
+    const response = await fetch(processResultsUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            results: {
+                supply: supplyRes.results,
+                grid: gridRes.results
             }
-        } catch (error) {
-            console.error("There was a problem with the fetch operation:", error.message);
-        }
+        })
+    });
+
+    if (response.ok) {
+        window.location.href = window.location.origin + '/steps/simulation_results/' + project_id;
+    } else {
+        console.error("Failed to process final results");
+        window.location.href = "/?internal_error";
     }
 }
 
 
+async function check_optimization(project_id, token, time, model) {
+    if (!window.location.href.includes("/calculating") || shouldStop) return;
+
+    try {
+        const response = await fetch(waitingForResultsUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ 'project_id': project_id, 'token': token, 'time': time, 'model': model })
+        });
+
+        if (response.ok) {
+            const res = await response.json();
+            if (res.finished === true) {
+                return { results: res.results }; // Return the result for batch processing
+            } else {
+                document.getElementById("statusMsg").innerHTML = `Waiting for ${model} optimization...`;
+                return await check_optimization(project_id, res.token, res.time, res.model);
+            }
+        } else {
+            if (response.status === 303 || response.status === 422) {
+                shouldStop = true;
+                window.location.href = "/?internal_error";
+            }
+        }
+    } catch (error) {
+        console.error("Fetch error:", error.message);
+    }
+}
 async function forward_if_no_task_is_pending(project_id) {
     try {
         const response = await fetch("forward_if_no_task_is_pending/", {
@@ -965,38 +980,24 @@ function start_calculation(project_id) {
             'X-CSRFToken': csrfToken
         }
     })
-        .then(response => response.json())
-        .then(res => {
-            if (res.redirect && res.redirect.length > 0) {
-                const msg = 'Input data is missing for the opt_models. It appears that you have not gone' +
+    .then(response => response.json())
+    .then(res => {
+        if (res.redirect && res.redirect.length > 0) {
+            const msg = 'Input data is missing for the opt_models. It appears that you have not gone' +
                     ' through all the pages to enter the input data. You will be redirected to the ' +
                     ' corresponding page.';
                 console.log(msg);
-                document.getElementById('responseMsg').innerHTML = msg;
-                const baseURL = window.location.origin;
-                const redirectLink = baseURL + res.redirect;
-                console.log(redirectLink);
-                document.getElementById('redirectLink').href = redirectLink;
-                document.getElementById('msgBox').style.display = 'block';
-            } else {
-                if (typeof res.task_id === 'undefined') {
-                    console.log('The task_id is not defined.');
-                } else if (res.task_id === '') {
-                    console.log('The task_id is an empty string.');
-                } else {
-                    console.log('The task_id is:', res.task_id);
-                }
-                wait_for_results(project_id, res.task_id, 0, 'grid');
-            }
-        })
-        .catch(error => {
-            console.error('There was an error!', error);
-            if (typeof res !== 'undefined' && typeof res.task_id !== 'undefined') {
-                console.log('The task_id at the time of error is:', res.task_id);
-            } else {
-                console.log('The task_id is not available or not defined at the time of error.');
-            }
-        });
+            document.getElementById('responseMsg').innerHTML = msg;
+            const redirectLink = window.location.origin + res.redirect;
+            document.getElementById('redirectLink').href = redirectLink;
+            document.getElementById('msgBox').style.display = 'block';
+        } else {
+            wait_for_both_results(project_id, res.token_supply, res.token_grid);
+        }
+    })
+    .catch(error => {
+        console.error('There was an error!', error);
+    });
 }
 
 

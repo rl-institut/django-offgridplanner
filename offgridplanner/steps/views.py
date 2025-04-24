@@ -9,8 +9,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
+from config.settings.base import PENDING
 from offgridplanner.optimization.models import Simulation
-from offgridplanner.optimization.tasks import task_is_finished
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
 from offgridplanner.projects.helpers import get_param_from_metadata
@@ -314,16 +314,6 @@ def calculating(request, proj_id=None):
             raise PermissionDenied
 
         simulation, _ = Simulation.objects.get_or_create(project=project)
-        preprocessor = PreProcessor(proj_id)
-        supply_opt_json = preprocessor.collect_supply_opt_json_data()
-        grid_opt_json = preprocessor.collect_grid_opt_json_data()
-        es_optimizer = EnergySystemOptimizer(supply_opt_json)
-        grid_optimizer = GridOptimizer(grid_opt_json)
-        es_results = es_optimizer.optimize()
-        grid_results = grid_optimizer.optimize()
-        import pdb
-
-        pdb.set_trace()
         if "anonymous" in project.user.email:
             msg = "You will be forwarded after the model calculation is completed."
             email_opt = False
@@ -334,17 +324,20 @@ def calculating(request, proj_id=None):
             )
             email_opt = False
         # TODO there was also the condition len(project.task_id) > 20 but I'm not sure why it is needed
-        if simulation.task_id != "" and not task_is_finished(simulation.task_id):
-            msg = (
-                "CAUTION: You have a calculation in progress that has not yet been completed. Therefore you cannot"
-                " start another calculation. You can cancel the already running calculation by clicking on the"
-                " following button:"
-            )
+        for opt_type in ["grid", "supply"]:
+            token = getattr(simulation, f"token_{opt_type}")
+            status = getattr(simulation, f"status_{opt_type}")
+            # TODO fix abort now that there are two task ids
+            if token != "" and status == PENDING:
+                msg = (
+                    "CAUTION: You have a calculation in progress that has not yet been completed. Therefore you cannot"
+                    " start another calculation. You can cancel the already running calculation by clicking on the"
+                    " following button:"
+                )
 
         context = {
             "proj_id": proj_id,
             "msg": msg,
-            "task_id": simulation.task_id,
             "time": 3,
             "email_opt": email_opt,
         }

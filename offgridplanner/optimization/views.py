@@ -1,8 +1,8 @@
 # TODO maybe link task to project and not to user...
 
 import json
+import logging
 import os
-import time
 from collections import defaultdict
 
 import numpy as np
@@ -16,6 +16,9 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 
+from config.settings.base import DONE
+from config.settings.base import ERROR
+from config.settings.base import PENDING
 from offgridplanner.optimization.grid import identify_consumers_on_map
 from offgridplanner.optimization.helpers import check_imported_consumer_data
 from offgridplanner.optimization.helpers import check_imported_demand_data
@@ -25,17 +28,19 @@ from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.optimization.models import Simulation
+from offgridplanner.optimization.processing import GridProcessor
+from offgridplanner.optimization.processing import PreProcessor
+from offgridplanner.optimization.processing import SupplyProcessor
+from offgridplanner.optimization.requests import optimization_check_status
+from offgridplanner.optimization.requests import optimization_server_request
 from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
 from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
-from offgridplanner.optimization.tasks import get_status
 from offgridplanner.optimization.tasks import revoke_task
-from offgridplanner.optimization.tasks import task_grid_opt
-from offgridplanner.optimization.tasks import task_is_finished
-from offgridplanner.optimization.tasks import task_supply_opt
 from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
 
+logger = logging.getLogger(__name__)
 # @require_http_methods(["POST"])
 # def forward_if_no_task_is_pending(request, proj_id=None):
 #     if proj_id is not None:
@@ -43,13 +48,13 @@ from offgridplanner.steps.models import CustomDemand
 #         if project.user.email != request.user.email:
 #             raise PermissionDenied
 #     if (
-#         user.task_id is not None
-#         and len(user.task_id) > 20
-#         and not task_is_finished(user.task_id)
+#         user.token is not None
+#         and len(user.token) > 20
+#         and not task_is_finished(user.token)
 #     ):
-#         res = {"forward": False, "task_id": user.task_id}
+#         res = {"forward": False, "token": user.token}
 #     else:
-#         res = {"forward": True, "task_id": ""}
+#         res = {"forward": True, "token": ""}
 #     return JsonResponse(res)
 
 
@@ -486,17 +491,32 @@ def load_plot_data(request, proj_id, plot_type=None):
 @require_http_methods(["POST"])
 def start_calculation(request, proj_id):
     project = get_object_or_404(Project, id=proj_id)
-
+    opts = project.options
     simulation = project.simulation
     # TODO set up redirect later if we keep this
     # forward, redirect = await async_queries.check_data_availability(user.id, project_id)
     # if forward is False:
-    #     return JsonResponse({'task_id': '', 'redirect': redirect})
-    task_id = optimization(proj_id)
-    simulation.task_id = task_id
+    #     return JsonResponse({'token': '', 'redirect': redirect})
+    preprocessor = PreProcessor(proj_id)
+    supply_opt_json = preprocessor.collect_supply_opt_json_data()
+    grid_opt_json = preprocessor.collect_grid_opt_json_data()
+    token_grid = (
+        optimization_server_request(grid_opt_json, "grid")["id"]
+        if opts.do_grid_optimization is True
+        else ""
+    )
+    token_supply = (
+        optimization_server_request(supply_opt_json, "supply")["id"]
+        if opts.do_es_design_optimization is True
+        else ""
+    )
+    simulation.token_grid = token_grid
+    simulation.token_supply = token_supply
     simulation.save()
 
-    return JsonResponse({"task_id": task_id, "redirect": ""})
+    return JsonResponse(
+        {"token_supply": token_supply, "token_grid": token_grid, "redirect": ""}
+    )
 
 
 # async def check_data_availability(user_id, project_id):
@@ -523,79 +543,82 @@ def start_calculation(request, proj_id):
 # return True, None
 
 
-def optimization(proj_id):
-    project = get_object_or_404(Project, id=proj_id)
-    opts = project.options
-    simulation = Simulation.objects.get(project=project)
-    simulation.status = "queued"
-    simulation.save()
-    # TODO I am not sure to understand why the supply optimisation does not solely depend on what the user ticked ...
-    if opts.do_grid_optimization is True:
-        task = task_grid_opt.delay(proj_id)
-    else:
-        task = task_supply_opt.delay(proj_id)
-    return task.id
+@require_http_methods(["POST"])
+def waiting_for_results(request, proj_id):
+    data = json.loads(request.body)
 
-
-def waiting_for_results(request):
-    body_unicode = request.body.decode("utf-8")
-    data = json.loads(body_unicode)
-    total_time = data["time"]
-    task_id = data["task_id"]
+    token = data["token"]
     model = data["model"]
-    finished = False
-    wait_time = 10
+    total_time = data["time"]
+    results = None
+    # TODO handle wait time between sim checks
+    wait_time = 3
 
-    status = get_status(task_id)
-
-    if task_is_finished(task_id):
-        print(f"Task {model} optimization finished")
-        sim = Simulation.objects.get(task_id=task_id)
-        project = sim.project
-
-        # Grid opt is finished, proceed to supply opt
-        if model == "grid" and project.options.do_es_design_optimization:
-            new_task = task_supply_opt.delay(project.id)
-            sim.task_id = new_task.id
-            sim.save()
-            finished = False
-            model = "supply"
-            status = "power supply optimization is running..."
-            task_id = new_task.id
-
-        # Supply opt is finished
-        else:
-            sim.status = (
-                "finished" if status in ["success", "failure", "revoked"] else status
-            )
-            # TODO: decide whether to keep or clear task_id
-            # sim.task_id = ""
-            sim.save()
-            finished = True
-            status = sim.status
+    # Fetch the right simulation object
+    if model == "grid":
+        simulation = get_object_or_404(Simulation, token_grid=token)
     else:
-        print(f"Task {model} optimization pending")
-        # If the task is still running, retry after a calculated delay
-        time.sleep(wait_time)
-        total_time += wait_time
+        simulation = get_object_or_404(Simulation, token_supply=token)
 
-    # Prepare response structure
-    response = {
-        "time": total_time,
-        "status": status,
-        "task_id": task_id,
-        "model": model,
-        "finished": finished,
-    }
-    return JsonResponse(response)
+    # Check the optimization server
+    response = optimization_check_status(token=token)
+    status = response.get("status")
+    print(f"{model} {status}")
+    if status not in [DONE, ERROR, PENDING]:
+        logger.warning("Simulation returned unexpected status")
+
+    if status == DONE:
+        try:
+            model = response.get("server_info")
+            server_results = response.get("results")
+            results = server_results
+            logger.info("Simulation finished")
+        except Exception:
+            logger.exception("Error parsing results")
+            status = ERROR
+    elif status == ERROR:
+        results = json.dumps(response.get("results", {}).get(ERROR))
+        logger.warning("Simulation failed with errors.")
+
+    # Update simulation status
+    if model == "grid":
+        simulation.status_grid = status
+    else:
+        simulation.status_supply = status
+    simulation.save()
+    # time.sleep(wait_time)
+    return JsonResponse(
+        {
+            "token": token,
+            "model": model,
+            "time": total_time + wait_time,
+            "status": status,
+            "finished": status != PENDING,
+            "results": results,
+        }
+    )
+
+
+def process_optimization_results(request, proj_id):
+    # Processes the results (contains both optimization result objects)
+    data = json.loads(request.body)
+    results = data.get("results", {})
+    grid_processor = GridProcessor(proj_id=proj_id, results_json=results.get("grid"))
+    grid_processor.grid_results_to_db()
+    supply_processor = SupplyProcessor(
+        proj_id=proj_id, results_json=results.get("supply")
+    )
+    supply_processor.supply_results_to_db()
+
+    return JsonResponse({"msg": "Optimization results saved to database"})
 
 
 def abort_calculation(request, proj_id):
     # TODO error handling in case there is an issue with task revoke?
     simulation = Simulation.objects.get(project=proj_id)
-    task_id = simulation.task_id
-    revoke_task(task_id)
-    simulation.task_id = ""
+    token = simulation.token
+    revoke_task(token)
+    simulation.token = ""
     simulation.save()
     response = {"msg": "Calculation aborted"}
     return JsonResponse(response)

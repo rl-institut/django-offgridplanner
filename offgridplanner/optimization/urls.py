@@ -49,7 +49,16 @@ urlpatterns = [
         start_calculation,
         name="start_calculation",
     ),
-    path("waiting_for_results", waiting_for_results, name="waiting_for_results"),
+    path(
+        "waiting_for_results/<int:proj_id>",
+        waiting_for_results,
+        name="waiting_for_results",
+    ),
+    path(
+        "process_optimization_results/<int:proj_id>",
+        process_optimization_results,
+        name="process_optimization_results",
+    ),
     path(
         "abort_calculation/<int:proj_id>", abort_calculation, name="abort_calculation"
     ),

@@ -76,7 +76,8 @@
   const proj_id = '{{ proj_id }}';
   const csrfToken = '{{ csrf_token }}';
   const startCalculationUrl = `{% url 'optimization:start_calculation' proj_id %}`;
-  const waitingForResultsUrl = `{% url 'optimization:waiting_for_results' %}`;
+  const waitingForResultsUrl = `{% url 'optimization:waiting_for_results' proj_id %}`;
+  const processResultsUrl = `{% url 'optimization:process_optimization_results' proj_id %}`;
   const abortCalculationUrl = `{% url 'optimization:abort_calculation' proj_id %}`;
 </script>
 <script>

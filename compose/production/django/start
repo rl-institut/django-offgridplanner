@@ -4,6 +4,9 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+echo COLLECTSTATIC
+python /app/manage.py collectstatic --noinput
+
 compress_enabled() {
 python << END
 import sys
@@ -24,9 +27,6 @@ if compress_enabled; then
   echo COMPRESSING
   python /app/manage.py compress
 fi
-
-echo COLLECTSTATIC
-python /app/manage.py collectstatic --noinput
 
 echo RUNNING
 exec /usr/local/bin/gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn_worker.UvicornWorker

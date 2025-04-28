@@ -71,6 +71,12 @@ RUN chmod +x /entrypoint
 COPY --chown=django:django ./compose/production/django/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
+
+COPY --chown=django:django ./compose/production/django/start_migrate /start_migrate
+RUN sed -i 's/\r$//g' /start_migrate
+RUN chmod +x /start_migrate
+
+
 COPY --chown=django:django ./compose/production/django/celery/worker/start /start-celeryworker
 RUN sed -i 's/\r$//g' /start-celeryworker
 RUN chmod +x /start-celeryworker
@@ -99,3 +105,4 @@ RUN DATABASE_URL="" \
   python manage.py compilemessages
 
 ENTRYPOINT ["/entrypoint"]
+CMD ${STARTUP_COMMAND}

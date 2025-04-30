@@ -1,5 +1,5 @@
 import io
-import os
+import json
 
 # from jsonview.decorators import json_view
 import pandas as pd
@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -35,33 +36,17 @@ def home(request):
 
 @login_required
 @require_http_methods(["GET"])
-def projects_list(request, proj_id=None):
+def projects_list(request, status="analyzing"):
     projects = (
-        Project.objects.filter(Q(user=request.user))
+        Project.objects.filter(Q(user=request.user, status=status))
         .distinct()
         .order_by("date_created")
+        .select_related("simulation")
         .reverse()
     )
-    for project in projects:
-        # TODO this should not be useful
-        # project.created_at = project.created_at.date()
-        # project.updated_at = project.updated_at.date()
-        status = "pending" if bool(os.environ.get("DOCKERIZED")) else "success"
-        if status in ["success", "failure", "revoked"]:
-            # TODO this is not useful
-            # user.task_id = ''
-            # user.project_id = None
-            if status == "success":
-                # TODO Here I am not sure we should use the status of the project rather the one of the simulation
-                project.status = "finished"
-            else:
-                project.status = status
-            project.save()
-            # TODO this is not useful
-            # user.task_id = ''
-            # user.project_id = None
-
-    return render(request, "pages/user_projects.html", {"projects": projects})
+    return render(
+        request, "pages/user_projects.html", {"projects": projects, "status": status}
+    )
 
 
 @require_http_methods(["GET", "POST"])
@@ -137,6 +122,17 @@ def export_project_results(request, proj_id):
         "attachment; filename=offgridplanner_results.xlsx"
     )
     return response
+
+
+@require_http_methods(["POST"])
+def update_project_status(request):
+    data = json.loads(request.body)
+    project_id = int(data.get("proj_id"))
+    new_status = data.get("status")
+    project = Project.objects.get(id=project_id)
+    project.status = new_status
+    project.save()
+    return JsonResponse({"success": True})
 
 
 def export_project_report(proj_id):

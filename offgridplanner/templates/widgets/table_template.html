@@ -1,0 +1,23 @@
+{% load static %}
+{% load i18n %}
+
+<div class="table-container-scrollable">
+  <table class="minimal-table">
+    <thead>
+      <tr>
+        <th>Site Name</th>
+        <th>Consumers</th>
+        <th>Distance to Grid</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for site in sites %}
+      <tr>
+        <td>{{ site.id }}</td>
+        <td>{{ site.building_count }}</td>
+        <td>{{ site.grid_dist }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

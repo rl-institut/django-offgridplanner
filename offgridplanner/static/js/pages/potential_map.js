@@ -1,6 +1,7 @@
 const filterControl = L.control({ position: 'topleft' });
 
 const map = L.map('map').setView([9.0725, 7.5377], 5); // Centered on Europe
+let sites = {};
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
@@ -8,19 +9,40 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const markers = L.markerClusterGroup();
 
-const buildingFilter = document.getElementById('buildingFilter');
-const filterValue = document.getElementById('filterValue');
+document.addEventListener('DOMContentLoaded', () => {
+  const filterForm = document.getElementById("filter-form");
 
-buildingFilter.addEventListener('input', () => {
-  const val = buildingFilter.value;
-  filterValue.textContent = val;
-  loadFilteredData(val);
+  filterForm.addEventListener('submit', async (event) => {
+    event.preventDefault(); // prevent the default behavior (e.g., link navigation)
+    const formData = new FormData(filterForm);
+
+    console.log(Object.fromEntries(formData.entries()));
+    try {
+      const response = await fetch(filterLocationsUrl,
+          {
+              method: "post",
+              headers: {'X-CSRFToken': csrfToken },
+              body: formData
+          });
+      if (!response.ok)
+      {
+          throw new Error('Failed to fetch content');
+      }
+
+      const data = await response.json();
+      document.querySelector('#sites-table').innerHTML = data.table;
+    } catch (error) {
+      console.error('Error loading content :', error);
+    }
+  });
+  // click button once upon loading the page
+  document.getElementById("filter-btn").click()
 });
-
 
 fetch(siteLocationsUrl)
   .then(response => response.json())
   .then(data => {
+      sites = data.features;
       data.features.forEach(feature => {
           const coords = feature.geometry.coordinates;
           const props = feature.properties;

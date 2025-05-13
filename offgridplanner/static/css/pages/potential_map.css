@@ -25,3 +25,36 @@
   margin-right: 8px;
   opacity: 0.7;
 }
+
+.table-container-scrollable {
+  max-height: 300px; /* limit height */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.minimal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+}
+
+.minimal-table th,
+.minimal-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.minimal-table th {
+  background-color: #f9f9f9;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.minimal-table tbody tr:hover {
+  background-color: #f0f8ff; /* light blue */
+}

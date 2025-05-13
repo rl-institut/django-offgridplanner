@@ -29,4 +29,5 @@ urlpatterns = [
     ),
     path("projects/potential/map/", potential_map, name="potential_map"),
     path("api/locations/", locations_geojson, name="locations_geojson"),
+    path("ajax/filter_locations/", filter_locations, name="filter_locations"),
 ]

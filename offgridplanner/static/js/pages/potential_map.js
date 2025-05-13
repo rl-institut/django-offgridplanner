@@ -1,5 +1,3 @@
-const filterControl = L.control({ position: 'topleft' });
-
 const map = L.map('map').setView([9.0725, 7.5377], 5); // Centered on Europe
 let sites = {};
 
@@ -11,63 +9,53 @@ const markers = L.markerClusterGroup();
 
 document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById("filter-form");
+  const filterBtn = document.getElementById("filter-btn");
 
-  filterForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // prevent the default behavior (e.g., link navigation)
+  let markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
+
+  const updateMapAndTable = async (event) => {
+    event.preventDefault();
+
     const formData = new FormData(filterForm);
 
-    console.log(Object.fromEntries(formData.entries()));
     try {
-      const response = await fetch(filterLocationsUrl,
-          {
-              method: "post",
-              headers: {'X-CSRFToken': csrfToken },
-              body: formData
-          });
-      if (!response.ok)
-      {
-          throw new Error('Failed to fetch content');
-      }
+      const response = await fetch(filterLocationsUrl, {
+        method: "post",
+        headers: { 'X-CSRFToken': csrfToken },
+        body: formData
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch content");
 
       const data = await response.json();
+
+      // Update table
       document.querySelector('#sites-table').innerHTML = data.table;
-    } catch (error) {
-      console.error('Error loading content :', error);
-    }
-  });
-  // click button once upon loading the page
-  document.getElementById("filter-btn").click()
-});
 
-fetch(siteLocationsUrl)
-  .then(response => response.json())
-  .then(data => {
-      sites = data.features;
-      data.features.forEach(feature => {
-          const coords = feature.geometry.coordinates;
-          const props = feature.properties;
-          const content = `<h3>ID: ${props.name}</h3><p>Building count: ${props.building_count}</p><p>Grid distance: ${props.grid_dist}</p><a href=${projectSetupUrl}>Create project from site</a>`;
-          const marker = L.marker([coords[1], coords[0]])
-          .bindPopup(content);
-          markers.addLayer(marker);
+      // Update map
+      markersLayer.clearLayers(); // Remove old markers
+      data.geojson.forEach(feature => {
+        const [lng, lat] = feature.geometry.coordinates;
+        const props = feature.properties;
+        const content = `
+          <h3>ID: ${props.id}</h3>
+          <p>Building count: ${props.building_count}</p>
+          <p>Grid distance: ${props.grid_dist}</p>
+          <a href="${projectSetupUrl}">Create project from site</a>`;
+        const marker = L.marker([lat, lng]).bindPopup(content);
+        markersLayer.addLayer(marker);
       });
-      map.addLayer(markers);
-  });
+    } catch (error) {
+      console.error('Error loading content:', error);
+    }
+  };
 
-filterControl.onAdd = function () {
-  const div = L.DomUtil.create('div', 'filter-control');
-  div.innerHTML = `
-    <label for="buildingFilter">Min Buildings</label><br>
-    <input type="range" id="buildingFilter" min="0" max="1000" value="0" step="1">
-    <span id="filterValue">0</span>
-  `;
-  return div;
-};
+  // Bind the submit handler
+  filterForm.addEventListener('submit', updateMapAndTable);
 
-filterControl.addTo(map);
-
-// Prevent map dragging when interacting with slider
-L.DomEvent.disableClickPropagation(filterControl.getContainer());
+  // Trigger the filter on first load
+  filterBtn.click();
+});
 
 //const legend = L.control({ position: 'bottomright' });
 

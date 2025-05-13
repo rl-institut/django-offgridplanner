@@ -86,6 +86,8 @@
 <script>
 const siteLocationsUrl = `{% url 'projects:locations_geojson' %}`;
 const projectSetupUrl = `{% url 'steps:project_setup' %}`;
+const filterLocationsUrl = `{% url 'projects:filter_locations' %}`;
+const csrfToken = `{{ csrf_token }}`;
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>

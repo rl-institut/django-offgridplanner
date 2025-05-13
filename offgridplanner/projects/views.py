@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
@@ -215,3 +216,25 @@ def locations_geojson(request):
             "features": features,
         }
     )
+
+
+def filter_locations(request):
+    data = {}
+    site_filter = {}
+    for param, dtype in zip(
+        ["min_building_count", "max_building_count", "min_grid_dist"],
+        [int, int, float],
+        strict=False,
+    ):
+        val = request.POST.get(param) if request.POST.get(param) != "" else 0
+        site_filter[param] = dtype(val)
+
+    sites = MapTestSite.objects.filter(
+        building_count__gte=site_filter["min_building_count"],
+        building_count__lte=site_filter["max_building_count"],
+        grid_dist__gte=site_filter["min_grid_dist"],
+    )
+
+    context = {"sites": sites}
+    data["table"] = render_to_string("widgets/table_template.html", context, request)
+    return JsonResponse(data)

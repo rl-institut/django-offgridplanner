@@ -271,3 +271,321 @@ def check_imported_demand_data(df, project_dict):
 
     df.index = ts.to_numpy()[: len(df.index)]
     return df.to_frame("demand"), ""
+
+
+GRID_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["nodes", "grid_design", "yearly_demand"],
+    "properties": {
+        "nodes": {
+            "type": "object",
+            "required": [
+                "latitude",
+                "longitude",
+                "how_added",
+                "node_type",
+                "consumer_type",
+                "custom_specification",
+                "shs_options",
+                "consumer_detail",
+                "is_connected",
+            ],
+            "properties": {
+                "latitude": {
+                    "type": "object",
+                    "additionalProperties": {"type": "number"},
+                },
+                "longitude": {
+                    "type": "object",
+                    "additionalProperties": {"type": "number"},
+                },
+                "how_added": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"},
+                },
+                "node_type": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"},
+                },
+                "consumer_type": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"},
+                },
+                "custom_specification": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"},
+                },
+                "shs_options": {
+                    "type": "object",
+                    "additionalProperties": {"type": "integer"},
+                },
+                "consumer_detail": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"},
+                },
+                "is_connected": {
+                    "type": "object",
+                    "additionalProperties": {"type": "boolean"},
+                },
+            },
+            "additionalProperties": False,
+        },
+        "grid_design": {
+            "type": "object",
+            "required": ["distribution_cable", "connection_cable", "pole", "mg", "shs"],
+            "properties": {
+                "distribution_cable": {
+                    "type": "object",
+                    "required": ["capex", "max_length", "epc"],
+                    "properties": {
+                        "capex": {"type": "number"},
+                        "max_length": {"type": "number"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "connection_cable": {
+                    "type": "object",
+                    "required": ["capex", "max_length", "epc"],
+                    "properties": {
+                        "capex": {"type": "number"},
+                        "max_length": {"type": "number"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "pole": {
+                    "type": "object",
+                    "required": ["capex", "max_n_connections", "epc"],
+                    "properties": {
+                        "capex": {"type": "number"},
+                        "max_n_connections": {"type": "integer"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "mg": {
+                    "type": "object",
+                    "required": ["connection_cost", "epc"],
+                    "properties": {
+                        "connection_cost": {"type": "number"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "shs": {
+                    "type": "object",
+                    "required": ["include", "max_grid_cost"],
+                    "properties": {
+                        "include": {"type": "boolean"},
+                        "max_grid_cost": {"type": "number"},
+                    },
+                },
+            },
+        },
+        "yearly_demand": {"type": "number"},
+    },
+    "additionalProperties": False,
+}
+
+GRID_V2_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["node_fields", "nodes", "grid_design", "yearly_demand"],
+    "properties": {
+        "node_fields": {"type": "array", "items": {"type": "string"}},
+        "nodes": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": [
+                    {"type": "integer"},  # id
+                    {"type": "string", "enum": ["automatic", "k-means"]},  # how_added
+                    {
+                        "type": "string",
+                        "enum": ["consumer", "power-house"],
+                    },  # node_type
+                    {
+                        "type": "string",
+                        "enum": ["enterprise", "household", "n.a.", "public_service"],
+                    },  # consumer_type
+                    {"type": "string"},  # custom_specification
+                    {"type": "integer", "enum": [0]},  # shs_options
+                    {
+                        "type": "string",
+                        "enum": [
+                            "Education_School",
+                            "Food_Bar",
+                            "Food_Drinks",
+                            "Health_CHPS",
+                            "Retail_Other",
+                            "Trades_Beauty or Hair",
+                            "Trades_Car or Motorbike Repair",
+                            "default",
+                            "n.a.",
+                        ],
+                    },  # consumer_detail
+                    {"type": "boolean"},  # is_connected
+                    {
+                        "type": "array",  # coordinates
+                        "items": [
+                            {"type": "number"},  # latitude
+                            {"type": "number"},  # longitude
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2,
+                    },
+                ],
+                "minItems": 9,
+                "maxItems": 9,
+            },
+        },
+        "grid_design": {
+            "type": "object",
+            "properties": {
+                "distribution_cable": {
+                    "type": "object",
+                    "required": ["lifetime", "capex", "max_length", "epc"],
+                    "properties": {
+                        "lifetime": {"type": "integer"},
+                        "capex": {"type": "number"},
+                        "max_length": {"type": "number"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "connection_cable": {
+                    "type": "object",
+                    "required": ["lifetime", "capex", "max_length", "epc"],
+                    "properties": {
+                        "lifetime": {"type": "integer"},
+                        "capex": {"type": "number"},
+                        "max_length": {"type": "number"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "pole": {
+                    "type": "object",
+                    "required": ["lifetime", "capex", "max_n_connections", "epc"],
+                    "properties": {
+                        "lifetime": {"type": "integer"},
+                        "capex": {"type": "number"},
+                        "max_n_connections": {"type": "integer"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "mg": {
+                    "type": "object",
+                    "required": ["connection_cost", "epc"],
+                    "properties": {
+                        "connection_cost": {"type": "number"},
+                        "epc": {"type": "number"},
+                    },
+                },
+                "shs": {
+                    "type": "object",
+                    "required": ["include", "max_grid_cost"],
+                    "properties": {
+                        "include": {"type": "boolean"},
+                        "max_grid_cost": {"type": "number"},
+                    },
+                },
+            },
+            "required": ["distribution_cable", "connection_cable", "pole", "mg", "shs"],
+        },
+        "yearly_demand": {"type": "number"},
+    },
+}
+
+
+SUPPLY_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "sequences": {
+            "type": "object",
+            "properties": {
+                "index": {
+                    "type": "array",
+                    "items": {"type": "string", "format": "date-time"},
+                }
+            },
+            "required": ["index"],
+        },
+        "energy_system_design": {
+            "type": "object",
+            "properties": {
+                "battery": {"$ref": "#/definitions/component"},
+                "diesel_genset": {"$ref": "#/definitions/component"},
+                "inverter": {"$ref": "#/definitions/component"},
+                "pv": {"$ref": "#/definitions/component"},
+                "rectifier": {"$ref": "#/definitions/component"},
+                "shortage": {
+                    "type": "object",
+                    "properties": {
+                        "settings": {
+                            "type": "object",
+                            "properties": {"is_selected": {"type": "boolean"}},
+                            "required": ["is_selected"],
+                        },
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "max_shortage_total": {"type": "number"},
+                                "max_shortage_timestep": {"type": "number"},
+                                "shortage_penalty_cost": {"type": "number"},
+                            },
+                            "required": [
+                                "max_shortage_total",
+                                "max_shortage_timestep",
+                                "shortage_penalty_cost",
+                            ],
+                        },
+                    },
+                    "required": ["settings", "parameters"],
+                },
+            },
+            "required": [
+                "battery",
+                "diesel_genset",
+                "inverter",
+                "pv",
+                "rectifier",
+                "shortage",
+            ],
+        },
+    },
+    "required": ["sequences", "energy_system_design"],
+    "definitions": {
+        "component": {
+            "type": "object",
+            "properties": {
+                "settings": {
+                    "type": "object",
+                    "properties": {
+                        "is_selected": {"type": "boolean"},
+                        "design": {"type": "boolean"},
+                    },
+                    "required": ["is_selected", "design"],
+                },
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "nominal_capacity": {"type": ["number", "null"]},
+                        "soc_min": {"type": "number"},
+                        "soc_max": {"type": "number"},
+                        "c_rate_in": {"type": "number"},
+                        "c_rate_out": {"type": "number"},
+                        "efficiency": {"type": "number"},
+                        "epc": {"type": "number"},
+                        "variable_cost": {"type": "number"},
+                        "fuel_cost": {"type": "number"},
+                        "fuel_lhv": {"type": "number"},
+                        "min_load": {"type": "number"},
+                        "max_load": {"type": "number"},
+                        "min_efficiency": {"type": "number"},
+                        "max_efficiency": {"type": "number"},
+                    },
+                    "additionalProperties": True,
+                },
+            },
+            "required": ["settings", "parameters"],
+        }
+    },
+}

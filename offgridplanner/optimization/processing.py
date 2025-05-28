@@ -5,7 +5,10 @@ from io import StringIO
 import numpy as np
 import pandas as pd
 from django.shortcuts import get_object_or_404
+from jsonschema import validate
 
+from offgridplanner.optimization.helpers import GRID_V2_SCHEMA, GRID_SCHEMA
+from offgridplanner.optimization.helpers import SUPPLY_SCHEMA
 from offgridplanner.optimization.models import DemandCoverage
 from offgridplanner.optimization.models import DurationCurve
 from offgridplanner.optimization.models import Emissions
@@ -206,13 +209,16 @@ class PreProcessor(OptimizationDataHandler):
         # TODO fix date to actual start_date
         # self.start_datetime = pd.to_datetime(self.project_dict["start_date"]).to_pydatetime()
         # start_datetime hardcoded as only 2022 pv and demand data is available
-        start_datetime = pd.to_datetime("2022").to_pydatetime()
+
+        start_datetime = pd.to_datetime("2022")
         dt_index = pd.date_range(
             start_datetime,
             start_datetime + pd.to_timedelta(self.project.n_days, unit="D"),
             freq="h",
             inclusive="left",
         )
+
+        start_date_for_json = start_datetime.isoformat()
 
         solar_potential = get_dc_feed_in_sync_db_query(
             lat,
@@ -221,7 +227,11 @@ class PreProcessor(OptimizationDataHandler):
         )
 
         sequences = {
-            "index": self.demand.index.strftime("%Y-%m-%dT%H:%M:%S").tolist(),
+            "index": {
+                "start_date": start_date_for_json,
+                "n_days": self.project.n_days,
+                "freq": "h",
+            },
             "demand": self.demand.to_numpy().tolist(),
             "solar_potential": solar_potential.to_numpy().tolist(),
         }
@@ -234,16 +244,49 @@ class PreProcessor(OptimizationDataHandler):
             "energy_system_design": energy_system_design,
         }
 
+        validate(instance=supply_opt_json, schema=SUPPLY_SCHEMA)
+
         return supply_opt_json
 
     def collect_grid_opt_json_data(self):
-        # calculate periodical costs of components out of input capex, opex and lifetime
+        nodes_df = self.project.nodes.df.copy()
+        nodes_df = nodes_df.reset_index(drop=False)
+        nodes_df = nodes_df.rename(columns={"index": "id"})
+        nodes_records = nodes_df.to_dict(orient="records")
+
+        node_fields = [
+            "id",
+            "how_added",
+            "node_type",
+            "consumer_type",
+            "custom_specification",
+            "shs_options",
+            "consumer_detail",
+            "is_connected",
+            "coordinates",
+        ]
+
+        for node in nodes_records:
+            if "latitude" in node and "longitude" in node:
+                node["coordinates"] = [node.pop("latitude"), node.pop("longitude")]
+            else:
+                node["coordinates"] = None
+
+        nodes_values = [
+            [node.get(field, None) for field in node_fields] for node in nodes_records
+        ]
 
         grid_opt_json = {
-            "nodes": self.project.nodes.df.to_json(),
+            # this belongs to V2
+            # "node_fields": node_fields,
+            # "nodes": nodes_values,
+            # this belongs to V1
+            "nodes": self.project.nodes.df.to_dict(orient="list"),
             "grid_design": self.grid_design_dict,
             "yearly_demand": self.demand.sum(),
         }
+        validate(instance=grid_opt_json, schema=GRID_SCHEMA)  # or GRID_SCHEMA
+
         return grid_opt_json
 
 

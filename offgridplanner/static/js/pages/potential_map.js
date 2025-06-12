@@ -99,3 +99,46 @@ function onEachFeature(feature, layer) {
 //    fillOpacity: 0.8
 //  });
 //}
+
+let currentSortIndex = null;
+let sortAscending = true;
+
+function sortTable(colIndex, th) {
+  const table = document.getElementById("sites-table");
+  const tbody = table.querySelector("tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  // Determine sort direction
+  if (currentSortIndex === colIndex) {
+    sortAscending = !sortAscending;
+  } else {
+    sortAscending = true;
+    currentSortIndex = colIndex;
+  }
+
+  // Sort the rows
+  rows.sort((a, b) => {
+    const valA = a.cells[colIndex].textContent.trim();
+    const valB = b.cells[colIndex].textContent.trim();
+    const numA = parseFloat(valA);
+    const numB = parseFloat(valB);
+
+    if (!isNaN(numA) && !isNaN(numB)) {
+      return sortAscending ? numA - numB : numB - numA;
+    } else {
+      return sortAscending
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
+    }
+  });
+
+  // Reattach rows
+  rows.forEach(row => tbody.appendChild(row));
+
+  // Reset all headers
+  const headers = th.parentElement.children;
+  Array.from(headers).forEach(header => header.classList.remove("asc", "desc"));
+
+  // Set class on current header
+  th.classList.add(sortAscending ? "asc" : "desc");
+}

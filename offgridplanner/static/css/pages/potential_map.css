@@ -58,3 +58,22 @@
 .minimal-table tbody tr:hover {
   background-color: #f0f8ff; /* light blue */
 }
+
+  .sort-arrow {
+    margin-left: 5px;
+    font-size: 0.8em;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  .asc .sort-arrow {
+    transform: rotate(180deg); /* Points up */
+  }
+
+  .desc .sort-arrow {
+    transform: rotate(0deg);   /* Points down */
+  }
+
+  th.asc, th.desc {
+    background-color: #f0f0f0;
+  }

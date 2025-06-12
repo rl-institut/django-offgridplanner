@@ -10,19 +10,16 @@ const markers = L.markerClusterGroup();
 document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById("filter-form");
   const filterBtn = document.getElementById("filter-btn");
+  const resetBtn = document.getElementById("reset-btn");
 
   let markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
 
-  const updateMapAndTable = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(filterForm);
-
+  async function sendRequest(body) {
     try {
       const response = await fetch(filterLocationsUrl, {
-        method: "post",
+        method: "POST",
         headers: { 'X-CSRFToken': csrfToken },
-        body: formData
+        body: body
       });
 
       if (!response.ok) throw new Error("Failed to fetch content");
@@ -33,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('#sites-table').innerHTML = data.table;
 
       // Update map
-      markersLayer.clearLayers(); // Remove old markers
+      markersLayer.clearLayers();
       data.geojson.forEach(feature => {
         const [lng, lat] = feature.geometry.coordinates;
         const props = feature.properties;
@@ -48,15 +45,29 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Error loading content:', error);
     }
-  };
+  }
 
-  // Bind the submit handler
-  filterForm.addEventListener('submit', updateMapAndTable);
+  // Filter button click
+  filterBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(filterForm);
+    await sendRequest(formData);
+  });
+
+  // Reset button click
+  resetBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("reset", "true");
+    await sendRequest(formData);
+    document.getElementById("filter-min_building_count").value = "";
+    document.getElementById("filter-diameter_max").value = "";
+    document.getElementById("filter-min_grid_dist").value = "";
+  });
 
   // Trigger the filter on first load
   filterBtn.click();
 });
-
 //const legend = L.control({ position: 'bottomright' });
 
 //legend.onAdd = function () {

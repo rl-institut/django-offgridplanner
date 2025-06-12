@@ -200,56 +200,30 @@ def potential_map(request):
     return render(request, "pages/map.html")
 
 
-def locations_geojson(request):
-    # get filter value
-    min_building_count = request.GET.get("min_building_count")
-    qs = MapTestSite.objects.all()
-    if min_building_count:
-        qs = qs.filter(building_count__gte=int(min_building_count))
-
-    features = [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [loc.longitude, loc.latitude],
-            },
-            "properties": {
-                "name": loc.id,
-                "building_count": loc.building_count,
-                "grid_dist": loc.grid_dist,
-            },
-        }
-        for loc in qs
-    ]
-
-    return JsonResponse(
-        {
-            "type": "FeatureCollection",
-            "features": features,
-        }
-    )
-
 
 def filter_locations(request):
     """
     Filter the locations based on the given filters and return both the table html and the geoJSON to populate the map
     """
+    reset = request.POST.get("reset")
     data = {}
-    site_filter = {}
-    for param, dtype in zip(
-        ["min_building_count", "max_building_count", "min_grid_dist"],
-        [int, int, float],
-        strict=False,
-    ):
-        val = request.POST.get(param) if request.POST.get(param) != "" else 0
-        site_filter[param] = dtype(val)
+    if reset:
+        sites = MapTestSite.objects.all()
+    else:
+        site_filter = {}
+        for param, dtype in zip(
+            ["min_building_count", "diameter_max", "min_grid_dist"],
+            [int, int, float],
+            strict=False,
+        ):
+            val = request.POST.get(param) if request.POST.get(param) != "" else 0
+            site_filter[param] = dtype(val)
 
-    sites = MapTestSite.objects.filter(
-        building_count__gte=site_filter["min_building_count"],
-        building_count__lte=site_filter["max_building_count"],
-        grid_dist__gte=site_filter["min_grid_dist"],
-    )
+        sites = MapTestSite.objects.filter(
+            building_count__gte=site_filter["min_building_count"],
+            diameter_max__lte=site_filter["diameter_max"],
+            grid_dist__gte=site_filter["min_grid_dist"],
+        )
 
     # generate table HTML
     context = {"sites": sites}

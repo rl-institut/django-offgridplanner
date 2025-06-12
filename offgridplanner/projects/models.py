@@ -81,6 +81,14 @@ class MapTestSite(models.Model):
     longitude = models.FloatField()
     building_count = models.PositiveSmallIntegerField()
     grid_dist = models.FloatField()
+    diameter_max = models.FloatField()
+    distance_from_road = models.FloatField()
+    lcoe = models.FloatField()
+    capex = models.FloatField()
+    res = models.FloatField()
+    co2_savings = models.FloatField()
+    consumption_total = models.FloatField()
+
 
     class Meta:
         unique_together = ("latitude", "longitude")

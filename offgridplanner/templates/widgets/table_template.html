@@ -5,17 +5,31 @@
   <table class="minimal-table">
     <thead>
       <tr>
-        <th>Site Name</th>
-        <th>Consumers</th>
-        <th>Distance to Grid</th>
+        <th onclick="sortTable(0, this)">ID <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(1, this)">Consumers <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(2, this)">Diameter <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(3, this)">Grid Dist. <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(4, this)">Road Dist. <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(5, this)">LCOE <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(6, this)">RES <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(7, this)">CAPEX <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(8, this)">CO2 Savings <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(9, this)">Total consumption <span class="sort-arrow">↕</span></th>
       </tr>
     </thead>
     <tbody>
       {% for site in sites %}
       <tr>
         <td>{{ site.id }}</td>
-        <td>{{ site.building_count }}</td>
-        <td>{{ site.grid_dist }}</td>
+        <td>{{ site.building_count|floatformat:2 }}</td>
+        <td>{{ site.diameter_max|floatformat:2 }}</td>
+        <td>{{ site.grid_dist|floatformat:2 }}</td>
+        <td>{{ site.road_dist|floatformat:2 }}</td>
+        <td>{{ site.lcoe|floatformat:2 }}</td>
+        <td>{{ site.res|floatformat:2 }}</td>
+        <td>{{ site.capex|floatformat:2 }}</td>
+        <td>{{ site.co2_savings|floatformat:2 }}</td>
+        <td>{{ site.consumption_total|floatformat:2 }}</td>
       </tr>
       {% endfor %}
     </tbody>

@@ -20,12 +20,7 @@
 	<link rel="stylesheet" href="{% static 'node_modules/aos/dist/aos.css' %}">-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
-
-
 	<title>{% block title %} Offgridplanner {% endblock title %}</title>
-
-
 
 	{% block head_block %}
 	{% endblock head_block %}
@@ -46,20 +41,11 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <!--<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js" integrity="sha512-/HL24m2nmyI2+ccX+dSHphAHqLw60Oj5sK8jf59VWtFWZi9vx7jzoxbZmcBeeTeCUc7z1mTs3LfyXGuBU32t+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 {% block start_body_scripts %}{% endblock %}
 
-
 {% block navbar %}
-
-    {% if signup %}
-    {% setvar "navbar--signup" as navbar_class %}
-    {% elif scenario_create %}
-    {% setvar "navbar--scenario" as navbar_class %}
-    {% else %}
-    {% setvar "" as navbar_class %}
-    {% endif %}
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light {{ navbar_class }} navbar2">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light navbar2">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'projects:home' %}">
                 <img src="{% static 'assets/logos/open_plan_logo_horizontal.png' %}" alt="open_plan Logo">
@@ -69,36 +55,17 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    {% if not scenario_create %}
                     <li class="nav-item">
                         <div class="dropdown dropdown--navbar">
-                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% translate "Documentation" %}
-                    </button>
-                    <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ documentation_url }}" target="_blank" rel="noreferrer">{% translate "User Manual" %}</a></li>
-                    <li><a class="dropdown-item" href="https://www.youtube.com/@open_plan2303/videos" target="_blank" rel="noreferrer">{% translate "Video-tutorials" %}</a></li>
-                    <li><a class="dropdown-item" href="https://github.com/open-plan-tool" target="_blank" rel="noreferrer">{% translate "Github" %}</a></li>
-                    <li><a class="dropdown-item" href="{% url 'projects:home' %}" target="_blank" rel="noreferrer">{% translate "Use cases" %}</a></li>
-                    </ul>
-                </div>
+                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% translate "About us" %}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'about' %}">{% translate "Overview" %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'projects:home' %}">{% translate "Contact" %}</a></li>
+                            </ul>
+                        </div>
                     </li>
-                    <li class="nav-item">
-                        <div class="dropdown dropdown--navbar">
-                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% translate "About us" %}
-                    </button>
-                    <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'about' %}">{% translate "Overview" %}</a></li>
-                    <li><a class="dropdown-item" href="{% url 'projects:home' %}">{% translate "Contact" %}</a></li>
-                    <li><a class="dropdown-item" href="{% url 'projects:home' %}">{% translate "Sponsoring" %}</a></li>
-                    </ul>
-                </div>
-                    </li>
-                    {% elif signup %}
-                    <!--For user signup the nav bar does not display all options-->
-                    {% endif %}
-
                     <li class="nav-item dropdown locale" id="language-switcher">
                         <form action="{% url 'set_language' %}" method="post">
                             {% csrf_token %}
@@ -124,11 +91,7 @@
             </div>
         </div>
     </nav>
-
 {% endblock navbar %}
-
-{% block topology %}{% endblock %}
-
 
 {% block index %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -139,11 +102,7 @@
   {% url 'landing_commune' as landing_commune_url %}
 {% endif %}
 
-
-
-
 <main class="landing-page">
-
 	<section class="cellular2 section" id="hero" data-aos="fade-up">
 		<div>
 			<div class="cellular2__text">
@@ -160,9 +119,6 @@
 	<section class="application2">
 		<div>
 			<h2>{% translate "Application areas" %}</h2>
-			<!--div class="dev__text">
-				<p style="font-size: 1.5rem;">{% translate "Use the GUI to include sector-coupling and optimize the energy system model subject to equality constraints" %}</p>
-			</div-->
 			<div class="application2__cards">
 				<div class="application2__card">
 					<img src="{% static 'assets/icons/i_heating_hex.png' %}" alt="" width="60">
@@ -177,17 +133,8 @@
 					<a href="{% url 'projects:home' %}" class="btn btn--medium btn--hollow">{% translate "General energy system analysis" %}</a>
 				</div>
 			</div>
-			<!-- THIS SHOULD BE ADDED TO THE DOCUMENTATION div class="dev__text">
-<p>{% translate "If you want to collaborate or are interested in the project, you can find more information on:" %}</p>
-<div class="dev__links">
-	<a href="publications_en.html" class="btn btn--hollow">Publications</a>
-	<a href="https://github.com/open-plan-tool" class="btn btn--hollow">GitHub</a>
-	<a href="https://open-plan-documentation.readthedocs.io/en/latest/" class="btn btn--hollow">Read the Docs</a>
-	<a href="https://www.youtube.com/channel/UCg8NUlNM4m9iT94K3Zf8S2A" class="btn btn--hollow" target="_blank" rel="noopener noreferrer">YouTube</a>
-</div-->
 		</div>
 	</section>
-
 
 	<section class="newsletter2">
         <div>
@@ -203,58 +150,37 @@
                 <span class="newsletter2__form--privacy">
                     <input type="checkbox" name="accept_privacy" required="" id="id_accept_privacy">
                     <label for="id_accept_privacy">
-                        {% url 'projects:home' as url_privacy%}
+                        {% url 'privacy' as url_privacy%}
                         {% blocktranslate with url=url_privacy %} I have read and accept the <a target="_blank" href="{{ url }}">privacy statement </a> from open_plan<span class="asteriskField">*</span> {% endblocktranslate %}
                     </label>
                 </span>
-
             </form>
         </div>
     </section>
 
     <section class="logos2">
         <div>
-            <a href="https://www.dgs.de/aktuell/" target="_blank" rel="noopener noreferrer">
-                <img src="{% static 'assets/logos/2020-03-09_DGS.png' %}" alt="Deutsche Gesellschaft für Sonnenenergie logo" width="196" height="76">
-            </a>
             <a href="https://reiner-lemoine-institut.de/en/" target="_blank" rel="noopener noreferrer">
                 <img src="{% static 'assets/logos/rlilogo.png' %}" alt="Reiner Lemoine Institut logo" width="97" height="71">
             </a>
-            <a href="https://www.ifam.fraunhofer.de" target="_blank" rel="noopener noreferrer">
-                <img src="{% static 'assets/logos/logo_ifam.png' %}" alt="Fraunhofer IFAM logo" width="219" height="62">
-            </a>
-            <a href="https://energielenker.de/" target="_blank" rel="noopener noreferrer">
-                <img src="{% static 'assets/logos/EnergieLenker_logo.png' %}" alt="Energie Lenker logo" width="135" height="135">
-            </a>
-            <a href="https://oekozentrum.nrw/" target="_blank" rel="noopener noreferrer">
-                <img src="{% static 'assets/logos/oeko_zentrum_NRW_logo.png' %}" alt="Oeko Zentrum NRW logo" width="157" height="157">
-            </a>
-            {% if "de" in LANGUAGE_NAME %}
-            <a href="https://www.bmwi.de/Navigation/DE/Home/home.html" target="_blank" rel="noopener noreferrer">
-                <img src="{% static 'assets/logos/BMWK_Fz_2017_WebSVG_de.svg' %}" alt="Federal Ministry for Economic Affairs and Energy logo" width="140" height="145">
-            </a>
-            {% else %}
-            <a href="https://www.bmwi.de/Navigation/EN/Home/home.html" target="_blank" rel="noopener noreferrer">
-                <img src="{% static 'assets/logos/BMWK_Fz_2017_WebSVG_en.png' %}" alt="Federal Ministry for Economic Affairs and Energy logo" width="140" height="145">
-            </a>
-            {% endif %}
         </div>
     </section>
 </main>
 {% endblock index %}
 
 
-
 <!-- modal to show debug messages -->
-<div class="modal fade" id="messagesModal" tabindex="-1" role="dialog" aria-labelledby="messagesModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		{% include 'messages.html' %}
-	</div>
-</div>
+{% if messages %}
+    <script>
+        $(document).ready(function() {
+            var messagesModal = new bootstrap.Modal(document.getElementById('messagesModal'))
+            messagesModal.show();
+        });
+    </script>
+{% endif %}
 
 {% block content %}
 {% endblock %}
-
 
 {% block footer %}
 <footer class="footer footer2">
@@ -281,17 +207,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="{% static 'node_modules/aos/dist/aos.js' %}"></script>
 <script src="{% static 'js/project.js' %}"></script>
-
-
-{% if messages %}
-<script>
-	$(document).ready(function(){
-			var messagesModal = new bootstrap.Modal(document.getElementById('messagesModal'))
-			messagesModal.show();
-	});
-
-</script>
-{% endif %}
 
 </body>
 </html>

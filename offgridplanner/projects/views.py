@@ -28,9 +28,14 @@ from offgridplanner.users.models import User
 
 @require_http_methods(["GET"])
 def home(request):
+    return render(request, "pages/landing_page.html")
+
+
+@require_http_methods(["GET"])
+def ogp_nigeria_home(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("projects:projects_list"))
-    return render(request, "pages/landing_page.html")
+    return render(request, "pages/ogp_nigeria_home.html")
 
 
 @login_required

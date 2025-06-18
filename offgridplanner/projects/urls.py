@@ -6,6 +6,7 @@ app_name = "projects"
 
 urlpatterns = [
     path("", home, name="home"),
+    path("nigeria", ogp_nigeria_home, name="ogp_nigeria_home"),
     path("projects", projects_list, name="projects_list"),
     path("<int:proj_id>", projects_list, name="projects_list"),
     path("duplicate/<int:proj_id>", project_duplicate, name="project_duplicate"),

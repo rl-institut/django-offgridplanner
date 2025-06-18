@@ -23,14 +23,14 @@
 
 
 
-	<title>{% block title %} OpenPlan {% endblock title %}</title>
+	<title>{% block title %} Offgridplanner {% endblock title %}</title>
 
 
 
 	{% block head_block %}
 	{% endblock head_block %}
 	{% if DEBUG == True %}
-	{% include "scss.html" %}
+	{#% include "scss.html" %#}
 	{% else %}
 	<link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
 	{% endif %}
@@ -48,10 +48,83 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js" integrity="sha512-/HL24m2nmyI2+ccX+dSHphAHqLw60Oj5sK8jf59VWtFWZi9vx7jzoxbZmcBeeTeCUc7z1mTs3LfyXGuBU32t+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% block start_body_scripts %}{% endblock %}
 
-{% setvar "https://open-plan-documentation.readthedocs.io/en/latest/" as documentation_url %}
 
 {% block navbar %}
-{% include "navbar.html" with user=user documentation_url=documentation_url %}
+
+    {% if signup %}
+    {% setvar "navbar--signup" as navbar_class %}
+    {% elif scenario_create %}
+    {% setvar "navbar--scenario" as navbar_class %}
+    {% else %}
+    {% setvar "" as navbar_class %}
+    {% endif %}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light {{ navbar_class }} navbar2">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'projects:home' %}">
+                <img src="{% static 'assets/logos/open_plan_logo_horizontal.png' %}" alt="open_plan Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    {% if not scenario_create %}
+                    <li class="nav-item">
+                        <div class="dropdown dropdown--navbar">
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% translate "Documentation" %}
+                    </button>
+                    <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ documentation_url }}" target="_blank" rel="noreferrer">{% translate "User Manual" %}</a></li>
+                    <li><a class="dropdown-item" href="https://www.youtube.com/@open_plan2303/videos" target="_blank" rel="noreferrer">{% translate "Video-tutorials" %}</a></li>
+                    <li><a class="dropdown-item" href="https://github.com/open-plan-tool" target="_blank" rel="noreferrer">{% translate "Github" %}</a></li>
+                    <li><a class="dropdown-item" href="{% url 'projects:home' %}" target="_blank" rel="noreferrer">{% translate "Use cases" %}</a></li>
+                    </ul>
+                </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="dropdown dropdown--navbar">
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% translate "About us" %}
+                    </button>
+                    <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'about' %}">{% translate "Overview" %}</a></li>
+                    <li><a class="dropdown-item" href="{% url 'projects:home' %}">{% translate "Contact" %}</a></li>
+                    <li><a class="dropdown-item" href="{% url 'projects:home' %}">{% translate "Sponsoring" %}</a></li>
+                    </ul>
+                </div>
+                    </li>
+                    {% elif signup %}
+                    <!--For user signup the nav bar does not display all options-->
+                    {% endif %}
+
+                    <li class="nav-item dropdown locale" id="language-switcher">
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ redirect_to }}" />
+
+                            <select class="selectpicker" name="language" onchange="this.form.submit()">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                <option
+                                    class="nav-link"
+                                    value="{{ language.code }}"
+                                    {% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}
+                                >
+                                    {{ language.code }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
 {% endblock navbar %}
 
 {% block topology %}{% endblock %}
@@ -193,10 +266,8 @@
 		</div>
 		<div class="footer__links">
 			<ul>
-				<!--li><a href="{% url 'about' %}">{% translate "About" %}</a></li>
-				<li><a href="{% url 'projects:home' %}">{% translate "Contact" %}</a></li-->
 				<li><a href="{% url 'projects:home' %}">{% translate "License" %}</a></li>
-				<li><a href="{% url 'projects:home' %}">{% translate "Imprint" %}</a></li>
+				<li><a href="{% url 'imprint' %}">{% translate "Imprint" %}</a></li>
 				<li><a href="{% url 'privacy' %}">{% translate "Privacy" %}</a></li>
 			</ul>
 		</div>

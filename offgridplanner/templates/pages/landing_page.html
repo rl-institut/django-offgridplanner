@@ -23,7 +23,10 @@
 	<title>{% block title %} Offgridplanner {% endblock title %}</title>
 
 	{% block head_block %}
-	{% endblock head_block %}
+        <link rel="stylesheet"
+            href="{% static 'css/pages/landing_page.css' %}"
+            type="text/css" />
+    {% endblock head_block %}
 	{% if DEBUG == True %}
 	{#% include "scss.html" %#}
 	{% else %}
@@ -122,15 +125,15 @@
 			<div class="application2__cards">
 				<div class="application2__card">
 					<img src="{% static 'assets/icons/i_heating_hex.png' %}" alt="" width="60">
-					<a href="{{ landing_commune_url }}" class="btn btn--medium btn--hollow">{% translate "Municipal heating planning" %}</a>
+					<a href="{{ landing_commune_url }}" class="btn btn--medium">{% translate "Municipal heating planning" %}</a>
 				</div>
 				<div class="application2__card">
 					<img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="" width="60">
-					<a href="{% url 'projects:home' %}" class="btn btn--medium btn--hollow">{% translate "Cellular energy systems" %}</a>
+					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Cellular energy systems" %}</a>
 				</div>
 				<div class="application2__card">
 					<img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="" width="60">
-					<a href="{% url 'projects:home' %}" class="btn btn--medium btn--hollow">{% translate "General energy system analysis" %}</a>
+					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "General energy system analysis" %}</a>
 				</div>
 			</div>
 		</div>

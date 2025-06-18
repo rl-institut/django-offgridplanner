@@ -109,9 +109,9 @@
 	<section class="cellular section" id="hero" data-aos="fade-up">
 		<div>
 			<div class="cellular__text">
-				<h1>{% translate "The open-source planning tool for the energy transition" %}</h1>
-				<span>{% translate "With the OpenPlan Tool, you can plan and design energy systems in an open and free framework. " %}</span>
-				<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "To OpenPlan Tool" %}</a>
+				<h1>{% translate "Offgridplanner – Smarter Tools for Off-Grid Energy System Planning" %}</h1>
+				<span>{% translate "The Offgridplanner is a powerful open-source software developed by researchers at the Reiner Lemoine Institute to support the planning and optimization of off-grid electricity supply systems. Whether you're designing a mini-grid for a rural community or exploring decentralized energy access strategies, Offgridplanner offers advanced functionailities to streamline your work." %}</span>
+                <span>{% translate "The tool simulates and optimizes off-grid layouts by analyzing building and customer locations, estimating energy demand, and calculating optimal configurations for both distribution networks and energy systems." %}</span>
 			</div>
 			<div class="cellular__image">
 				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
@@ -121,20 +121,47 @@
 
 	<section class="application">
 		<div>
-			<h2>{% translate "Application areas" %}</h2>
+			<h2>{% translate "Available Regions" %}</h2>
 			<div class="application__cards">
 				<div class="application__card">
 					<img src="{% static 'assets/icons/i_heating_hex.png' %}" alt="" width="60">
-					<a href="{{ landing_commune_url }}" class="btn btn--medium">{% translate "Municipal heating planning" %}</a>
+					<a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Nigeria" %}</a>
 				</div>
 				<div class="application__card">
 					<img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="" width="60">
-					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Cellular energy systems" %}</a>
+					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Offgridplanner Thailand" %}</a>
 				</div>
 				<div class="application__card">
 					<img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="" width="60">
-					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "General energy system analysis" %}</a>
+					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Offgridplanner Mozambique" %}</a>
 				</div>
+			</div>
+		</div>
+	</section>
+
+    <section class="cellular section" id="hero" data-aos="fade-up">
+		<div>
+            <div class="cellular__image">
+				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
+			</div>
+			<div class="cellular__text">
+				<h3>{% translate "What Can Offgridplanner Do?" %}</h3>
+				<span>{% translate "Automatically identify buildings using OpenStreetMap data" %}</span>
+                <span>{% translate "Optimize the spatial layout of distribution grids" %}</span>
+                <span>{% translate "Design generation systems e.g. PV arrays, batteries, inverters, and diesel generators" %}</span>
+                <span>{% translate "Determine whether the most viable option for electrifying customers is via a mini-grid connection or a standalone solar home system" %}</span>
+			</div>
+		</div>
+	</section>
+
+    <section class="cellular section" id="hero" data-aos="fade-up">
+		<div>
+			<div class="cellular__text">
+				<h3>{% translate "Who Is It For?" %}</h3>
+				<span>{% translate "Offgridplanner is ideal for project developers, researchers, public institutions, and energy access practitioners working on off-grid electrification strategies." %}</span>
+			</div>
+			<div class="cellular__image">
+				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
 			</div>
 		</div>
 	</section>
@@ -142,8 +169,9 @@
 	<section class="newsletter">
         <div>
             <div class="newsletter__heading">
-                <h2>{% translate "Register to our Newsletter" %}</h2>
+                <h2>{% translate "Are you interested to explore other regions?" %}</h2>
             </div>
+            <span>{% translate "We are happy to develop the tool further and adapt it to other regions, if you have the need for a specific country, or region, please reach out to us!" %}</span>
             <form class="newsletter__form" method="post" action="https://flow.cleverreach.com/fl/a176f5ea-761f-432f-8eec-b38a043ce09e/confirm">
                 <span class="newsletter__form--input">
                     <input type="text" tabindex="-1" autocomplete="false" style="display:none !important;" class="cr-nope" name="email_confirm">
@@ -154,7 +182,7 @@
                     <input type="checkbox" name="accept_privacy" required="" id="id_accept_privacy">
                     <label for="id_accept_privacy">
                         {% url 'privacy' as url_privacy%}
-                        {% blocktranslate with url=url_privacy %} I have read and accept the <a target="_blank" href="{{ url }}">privacy statement </a> from open_plan<span class="asteriskField">*</span> {% endblocktranslate %}
+                        {% blocktranslate with url=url_privacy %} I have read and accept the <a target="_blank" href="{{ url }}">privacy statement </a> from offgridplanner<span class="asteriskField">*</span> {% endblocktranslate %}
                     </label>
                 </span>
             </form>

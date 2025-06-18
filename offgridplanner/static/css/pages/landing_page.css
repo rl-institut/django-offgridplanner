@@ -182,6 +182,9 @@
     font-size: 1.953rem;
     font-weight: 700;
     color: #fff; }
+.newsletter span {
+    color: #fff;
+}
 .newsletter__form {
     display: flex;
     flex-direction: column;

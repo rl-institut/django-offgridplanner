@@ -51,7 +51,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light navbar2">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'projects:home' %}">
-                <img src="{% static 'assets/logos/open_plan_logo_horizontal.png' %}" alt="open_plan Logo">
+                <img src="{% static 'assets/logos/open_plan_logo_horizontal.png' %}" alt="offgridplanner Logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -106,32 +106,32 @@
 {% endif %}
 
 <main class="landing-page">
-	<section class="cellular2 section" id="hero" data-aos="fade-up">
+	<section class="cellular section" id="hero" data-aos="fade-up">
 		<div>
-			<div class="cellular2__text">
+			<div class="cellular__text">
 				<h1>{% translate "The open-source planning tool for the energy transition" %}</h1>
 				<span>{% translate "With the OpenPlan Tool, you can plan and design energy systems in an open and free framework. " %}</span>
 				<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "To OpenPlan Tool" %}</a>
 			</div>
-			<div class="cellular2__image">
+			<div class="cellular__image">
 				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
 			</div>
 		</div>
 	</section>
 
-	<section class="application2">
+	<section class="application">
 		<div>
 			<h2>{% translate "Application areas" %}</h2>
-			<div class="application2__cards">
-				<div class="application2__card">
+			<div class="application__cards">
+				<div class="application__card">
 					<img src="{% static 'assets/icons/i_heating_hex.png' %}" alt="" width="60">
 					<a href="{{ landing_commune_url }}" class="btn btn--medium">{% translate "Municipal heating planning" %}</a>
 				</div>
-				<div class="application2__card">
+				<div class="application__card">
 					<img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="" width="60">
 					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Cellular energy systems" %}</a>
 				</div>
-				<div class="application2__card">
+				<div class="application__card">
 					<img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="" width="60">
 					<a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "General energy system analysis" %}</a>
 				</div>
@@ -139,18 +139,18 @@
 		</div>
 	</section>
 
-	<section class="newsletter2">
+	<section class="newsletter">
         <div>
-            <div class="newsletter2__heading">
+            <div class="newsletter__heading">
                 <h2>{% translate "Register to our Newsletter" %}</h2>
             </div>
-            <form class="newsletter2__form" method="post" action="https://flow.cleverreach.com/fl/a176f5ea-761f-432f-8eec-b38a043ce09e/confirm">
-                <span class="newsletter2__form--input">
+            <form class="newsletter__form" method="post" action="https://flow.cleverreach.com/fl/a176f5ea-761f-432f-8eec-b38a043ce09e/confirm">
+                <span class="newsletter__form--input">
                     <input type="text" tabindex="-1" autocomplete="false" style="display:none !important;" class="cr-nope" name="email_confirm">
-                    <input class="newsletter2__form--email" type="email" placeholder="name@email.com" name="email" required="" >
+                    <input class="newsletter__form--email" type="email" placeholder="name@email.com" name="email" required="" >
                     <button type="submit">{% translate "Register" %}</button>
                 </span>
-                <span class="newsletter2__form--privacy">
+                <span class="newsletter__form--privacy">
                     <input type="checkbox" name="accept_privacy" required="" id="id_accept_privacy">
                     <label for="id_accept_privacy">
                         {% url 'privacy' as url_privacy%}
@@ -161,7 +161,7 @@
         </div>
     </section>
 
-    <section class="logos2">
+    <section class="logos">
         <div>
             <a href="https://reiner-lemoine-institut.de/en/" target="_blank" rel="noopener noreferrer">
                 <img src="{% static 'assets/logos/rlilogo.png' %}" alt="Reiner Lemoine Institut logo" width="97" height="71">
@@ -186,7 +186,7 @@
 {% endblock %}
 
 {% block footer %}
-<footer class="footer footer2">
+<footer class="footer">
 	<div>
 		<div class="footer__logo">
 			<a href="{% url 'projects:home' %}">

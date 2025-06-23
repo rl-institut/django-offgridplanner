@@ -336,7 +336,7 @@
   padding-right: 1rem;
 }
 .newsletter__heading {
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 .newsletter__heading h2 {
   padding-top: 1rem;
@@ -346,6 +346,12 @@
 }
 .newsletter span {
   color: #fff;
+}
+.newsletter__text {
+    display:inline-block;
+    width: 100%;
+    max-width: 50rem;
+    padding-bottom: 1rem;
 }
 .newsletter__form {
   display: flex;

@@ -143,7 +143,7 @@
                             <li title="Photovoltaic panels">PV modules</li>
                             <li title="Battery storage">Batteries</li>
                             <li title="Power conversion equipment">Inverters</li>
-                            <li title="Diesel">Diesel</li>
+                            <li title="Diesel Generator">Diesel Generator</li>
                         </ul>
                     </div>
                 </div>
@@ -151,19 +151,93 @@
                     <p class="card__description">
                     Plan offgrid-systems in Nigeria
                     </p>
-                    <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">Offgridplanner Nigeria</a>
+                    <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Nigeria" %}</a>
                     <a href="https://www.peoplesun.org/" class="footer-logo" title="Visit project partner" target="_blank" rel="noopener">
                         <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="Partner Logo">
                     </a>
                 </div>
             </div>
-            <div class="application__card">
-                <img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="" width="60">
-                <a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Offgridplanner Thailand" %}</a>
+            <div class="application__card modern-card">
+                <div class="card__header">
+                <!--ToDo: needs a proper and free2use image/svg from thailand outline-->
+                    <img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="Thailand Outline" class="country-outline">
+                </div>
+                <div class="card__content">
+                    <div class="card__list-column">
+                        <p class="list-title">
+                            <span class="category-icon" title="Core functions">🛠️</span> Features
+                        </p>
+                        <ul class="details-list">
+                            <li title="Geospatial energy system optimization and design">Geospatial energy system</li>
+                            <li title="solar home system option">solar home system option</li>
+                        </ul>
+                    </div>
+                    <div class="card__list-column">
+                        <p class="list-title">
+                            <span class="category-icon" title="System parts">🧩</span> Components
+                        </p>
+                        <ul class="details-list">
+                            <li title="Photovoltaic panels">PV modules</li>
+                            <li title="Battery storage">Batteries</li>
+                            <li title="Power conversion equipment">Inverters</li>
+                            <li title="Diesel Generator">Diesel Generator</li>
+                            <li title="fuel cell, electrolyser, storage tank">Hydrogen Storage</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card__footer">
+                    <p class="card__description">
+                    Plan offgrid-systems in Thailand
+                    </p>
+                    <!--ToDo: needs the url to offgridplanner thailand website-->
+                    <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Thailand" %}</a>
+                    <!--ToDo: needs the url and logo from project below-->
+                    <a href="https://www.peoplesun.org/" class="footer-logo" title="Visit project partner" target="_blank" rel="noopener">
+                        <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="Partner Logo">
+                    </a>
+                </div>
             </div>
-            <div class="application__card">
-                <img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="" width="60">
-                <a href="{% url 'projects:home' %}" class="btn btn--medium">{% translate "Offgridplanner Mozambique" %}</a>
+            <div class="application__card modern-card">
+                <div class="card__header">
+                <!--ToDo: needs a proper and free2use image/svg from mozambique outline-->
+                    <img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="Mozambique Outline" class="country-outline">
+                </div>
+                <div class="card__content">
+                    <div class="card__list-column">
+                        <p class="list-title">
+                            <span class="category-icon" title="Core functions">🛠️</span> Features
+                        </p>
+                        <ul class="details-list">
+                        <!--ToDo: add the correct features here-->
+                            <li title="Geospatial energy system optimization and design">Geospatial energy system</li>
+                            <li title="solar home system option">solar home system option</li>
+                        </ul>
+                    </div>
+                    <div class="card__list-column">
+                        <p class="list-title">
+                            <span class="category-icon" title="System parts">🧩</span> Components
+                        </p>
+                        <ul class="details-list">
+                        <!--ToDo: add the correct components here-->
+                            <li title="Photovoltaic panels">PV modules</li>
+                            <li title="Battery storage">Batteries</li>
+                            <li title="Power conversion equipment">Inverters</li>
+                            <li title="Diesel Generator">Diesel Generator</li>
+                            <li title="fuel cell, electrolyser, storage tank">Hydrogen Storage</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card__footer">
+                    <p class="card__description">
+                    Plan offgrid-systems in Mozambique
+                    </p>
+                    <!--ToDo: needs the url to offgridplanner mozambique website-->
+                    <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Mozambique" %}</a>
+                    <!--ToDo: needs the url and logo from project below-->
+                    <a href="https://www.peoplesun.org/" class="footer-logo" title="Visit project partner" target="_blank" rel="noopener">
+                        <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="Partner Logo">
+                    </a>
+                </div>
             </div>
 		</div>
 	</section>

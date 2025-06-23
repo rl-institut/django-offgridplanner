@@ -21,6 +21,7 @@
   font-size: 2.5rem;
   color: #343434;
   margin-bottom: 1rem;
+  margin-left: 1rem;
 }
 .hero__text span {
   display: block;
@@ -54,6 +55,7 @@
   padding-top: 7rem;
   padding-right: 7rem;
   padding-bottom: 4rem;
+  padding-left: 2rem;
 }
 .cellular__text h1 {
   text-align: left;

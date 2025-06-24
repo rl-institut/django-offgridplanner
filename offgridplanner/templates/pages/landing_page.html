@@ -1,266 +1,348 @@
-{% extends 'base.html' %}
-
 {% load static %}
 {% load i18n %}
+{% load custom_template_tags %}
 
-{% block head_block %}
-  <link rel="stylesheet"
-        href="{% static 'css/pages/landing_page.css' %}"
-        type="text/css" />
-{% endblock head_block %}
-{% block content %}
-  <main>
-    <section id="section" class="dashboard" style="background-color: var(--ccb);">
-      <div class="container" style="background-color: transparent;">
-        <div class="row" style="background-color: transparent;">
-          <div class="row parallax"
-               style="animation: loadingEffect 0.3s;
-                      background-color: transparent">
-            <div class="col-md-6 no-reveal">
-              <h1 style="color: var(--cdg); margin-top: 60px">Off Grid Planning Tool</h1>
-              <p style="color: var(--cdg); text-align: justify;">
-                <p style="color: var(--cdg); text-align: justify;">
-                  The open source tool originated from the PeopleSuN project and serves the planning of
-                  off-grid systems in Nigeria. The tool aims to perform a spatial optimization of the
-                  distribution grid as well as the design of the energy converters and energy storage.
-                </p>
-                <p style="color: var(--cdg); text-align: justify;">
-                  The features of the tool are listed
-                  below:
-                </p>
-                <ul style="color: var(--cdg); text-align: justify;">
-                  <li>Automatic identification of buildings from OpenStreetMap</li>
-                  <li>Spatial optimization of the distribution grid</li>
-                  <li>
-                    Design optimization of the generation systems (PV systems, battery systems, inverters
-                    and diesel-engines)
-                  </li>
-                  <li>
-                    Automatic identification of buildings that are better to be served by individual solar
-                    home systems.
-                  </li>
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	{% block favicon %}
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/favicon/apple-touch-icon.png' %}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/favicon/favicon.ico' %}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/favicon/favicon.ico' %}">
+	<link rel="manifest" href="{% static 'assets/favicon/tool/site.webmanifest' %}">
+	{% endblock favicon %}
+	<link rel="mask-icon" href="{% static 'assets/favicon/safari-pinned-tab.svg' %}" color="#5bbad5">
+	<meta name="msregion-TileColor" content="#2b5797">
+	<meta name="theme-color" content="#ffffff">
+	<!--<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'node_modules/aos/dist/aos.css' %}">-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+	<title>{% block title %} Offgridplanner {% endblock title %}</title>
+
+	{% block head_block %}
+        <link rel="stylesheet"
+            href="{% static 'css/pages/landing_page.css' %}"
+            type="text/css" />
+    {% endblock head_block %}
+	{% if DEBUG == True %}
+	{#% include "scss.html" %#}
+	{% else %}
+	<link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
+	{% endif %}
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+	<!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+</head>
+
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js" integrity="sha512-/HL24m2nmyI2+ccX+dSHphAHqLw60Oj5sK8jf59VWtFWZi9vx7jzoxbZmcBeeTeCUc7z1mTs3LfyXGuBU32t+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% block start_body_scripts %}{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light navbar2">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'projects:home' %}">
+                <img src="{% static 'assets/logos/open_plan_logo_horizontal.png' %}" alt="offgridplanner Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <div class="dropdown dropdown--navbar">
+                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% translate "About us" %}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'about' %}">{% translate "Overview" %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'projects:home' %}">{% translate "Contact" %}</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown locale" id="language-switcher">
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ redirect_to }}" />
+
+                            <select class="selectpicker" name="language" onchange="this.form.submit()">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                <option
+                                    class="nav-link"
+                                    value="{{ language.code }}"
+                                    {% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}
+                                >
+                                    {{ language.code }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </li>
                 </ul>
-                <p style="color: var(--cdg); text-align: justify;">
-                  The tool can be tested without registration. However, users are recommended to create an
-                  account to get access to larger computing capacity and to be able to store models.
-                </p>
-                <button class="btn btn--long text-right"
-                        type="button"
-                        onclick="document.getElementById('msgBox').style.display='block'"
-                        style="background-color: var(--cdg);
-                               color: var(--ccb)">Test it (without an account)</button>
-              </p>
             </div>
-            <div class="col-md-6 no-reveal">
-              <img src="{% static 'images/off_grid_grey.svg' %}" />
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
-    <section class="dashboard">
-      <div class="container">
-        <div class="row" style="margin-top: 100px">
-          <div class="col-md-6">
-            <img src="{% static 'images/map_selection.svg' %}" style="float: left" />
-          </div>
-          <div class="col-md-6">
-            <h1 style="color: var(--ccb); margin-top: 20px">Map-based Consumer Selection</h1>
-            <p style="color: var(--ccb); text-align: justify;">
-              For the spatial optimization of the electric grid, the geolocation of the consumers must be
-              provided. For this, a map from OpenStreetMap is integrated into the tool. The determination of
-              the geocoordinates of the consumers can be done in three ways:
-            </p>
-            <p style="color: var(--ccb); text-align: justify;">
-              1. Automatic detection of buildings within areas marked using drawing tools.
-            </p>
-            <p style="color: var(--ccb); text-align: justify;">
-              2. Manual selection of consumer locations by placing markers on the map.
-            </p>
-            <p style="color: var(--ccb); text-align: justify;">3. Manual input of the geocoordinates using input fields.</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <h1 style="color: var(--ccb); margin-top: 20px">Demand Estimation</h1>
-            <p style="color: var(--ccb); text-align: justify;">
-              PeopleSuN's project includes a demand modeling tool which utilizes both quantitative and
-              qualitative survey data collected from various non-urban Nigerian villages. With an extensive
-              dataset that includes responses from thousands of households and enterprises, it models
-              appliance ownership, electricity consumption trends, and available expenditures for electricity
-              services, and determines affordable monthly costs. The tool uses statistical models in
-              conjunction with stochastic algorithms to generate likely distributions of electricity demand
-              and expenditures. Initially, this is applied to the surveyed areas and then extrapolated to
-              cover all non-urban regions in Nigeria. The model generates different consumer categories/profiles
-              based on geographical zones and wealth categories, aiding in a nuanced and accurate
-              prediction of electricity demand.
-            </p>
-          </div>
-          <div class="col-md-6">
-            <img src="{% static 'images/plot.svg' %}" style="margin-top: 60px" />
-          </div>
-        </div>
-        <div class="row" style="margin-top: 100px">
-          <div class="col-md-6">
-            <img src="{% static 'images/grid_opt.svg' %}" style="float: left" />
-          </div>
-          <div class="col-md-6">
-            <h1 style="color: var(--ccb); margin-top: 20px">Spatial Optimization of the Distribution Grid</h1>
-            <p style="color: var(--ccb); text-align: justify;">
-              The spatial grid optimization tool operates through a sequence of steps that ensure efficient
-              energy system design. The tool identifies consumers, sorts them based on proximity to the load
-              center, and meticulously calculates the optimal setup required to connect all consumers within
-              the grid, adhering to constraints on maximum connections per consumer and maximum distance
-              between consumers.
-              The tool employs a clustering algorithm to determine optimal pole locations, constructs a
-              minimum spanning tree (MST) for efficient pole interconnectivity, and connects each consumer to
-              their nearest pole. If needed, the number of poles is increased, ensuring all constraints are
-              met. Furthermore, long links exceeding the maximum allowed distance are segmented into smaller
-              ones with additional poles. Thus, the tool offers a comprehensive solution for optimal grid
-              design.
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <h1 style="color: var(--ccb); margin-top: 60px">Design Optimization of the Generation System</h1>
-            <p style="color: var(--ccb); text-align: justify;">
-              This tool excels in the design and optimization of off-grid energy systems, integrating
-              different types of energy converters including photovoltaic (PV) systems and diesel generators,
-              along with components like battery systems, inverters, and rectifiers. The tool uses ERA5
-              satellite data and PVLIB for the modeling of solar potentials in PV systems.
-              The design optimization of the tool revolves around minimizing the Levelized Cost of Energy
-              (LCOE), a method that considers both capital and operational costs. This results in an optimal
-              configuration that satisfies consumer demands, modeled as a mixed-integer linear model.
-              Leveraging the open-source modeling framework OEMOF and a high-efficiency MILP solver, the
-              tool offers an effective solution for complex optimization challenges. The insights generated by
-              the tool - including installed capacities, time series of system operations, investment costs,
-              CO<sub>2</sub> emissions, and fuel requirements - provide stakeholders with invaluable
-              information for strategic decision-making.
-            </p>
-          </div>
-          <div class="col-md-6">
-            <img src="{% static 'images/design_opt.svg' %}" />
-          </div>
-        </div>
-      </div>
-    </section>
-    <div class="container-fluid"
-         style="background-color: var(--ccb);
-                width: 100%;
-                padding-bottom: 2rem;
-                margin-bottom: 0px">
-      <div class="container" style="background-color: var(--ccb); width: 100%">
-        <div class="row">
-          <h1 style="color: var(--cdg); text-align: left;">About</h1>
-          <p style="color: var(--cdg); text-align: left">
-            PeopleSuN is a project funded by the German Federal Ministry of Education and Research (BMBF) within
-            the
-            funding initiative "Client II - International Partnerships for Suistainable Innovations". The
-            off-grid tool was developed
-            by the Department of Energy Engineering and Environmental Protection at the Technische Universität
-            Berlin in cooperation with the Reiner-Lemoine-Institute.
-          </p>
-          <div class="image-container">
-            <a href="https://www.tu.berlin/energietechnik" target="_blank">
-              <img src="{% static 'assets/logos/LogoTUB.svg' %}" style="width: 100px" />
-            </a>
-            <a href="https://reiner-lemoine-institut.de/" target="_blank">
-              <img src="{% static 'assets/logos/LogoRLI.svg' %}" style="width: 120px" />
-            </a>
-            <a href="https://www.bmbf.de/" target="_blank">
-              <img src="{% static 'assets/logos/LogoBMBF.svg' %}" />
-            </a>
-            <a href="https://www.bmbf-client.de/" target="_blank">
-              <img src="{% static 'assets/logos/logo-client2-en.svg' %}" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="msgBox"
-         class="modal"
-         style="background-color: rgba(0,0,0,0.5);
-                z-index: 999">
-      <form class="modal-content" id="myForm" style="max-width: 40rem">
-        <div class="container">
-          <h1 style="text-align:left;">Using the planing tool without registration</h1>
-          <p style="text-align:left;">
-            To test the planning tool, you do not need to register an account, a
-            temporary account will be created automatically. However, if you use the planning tool without
-            registering, please note:
-          </p>
-          <p style="text-align:left;">&bull; Your data will be automatically deleted after three hours</p>
-          <p style="text-align:left;">&bull; If you log out, you lose access to your data</p>
-          <p style="text-align:left;">&bull; The modeling time is limited to {{ MAX_DAYS }} days</p>
-          <p style="text-align:left;">
-            &bull; The number of allowed consumers is limited
-            to {{ MAX_CONSUMER_ANONYMOUS }}
-          </p>
-          <p style="text-align:left;">
-            &bull; The calculation time of your optimization model is limited to 5
-            minutes
-          </p>
-          <p style="text-align:left;">Please enter the letters shown below</p>
-          <div style="display: flex; align-items: center;">
-            <img id="captcha_img3" style="margin-right: 1rem;" />
-            <a style="font-family: Lucida Sans Unicode;
-                      font-weight: 900;
-                      font-size: 2rem"
-               type="button"
-               onclick="get_captcha();">&#x21bb;</a>
-          </div>
-          <div style="text-align: left;">
-            <p style="display:inline; text-align:left;">
-              Captcha <i>(Hint: capital letters only)</i>
-            </p>
-          </div>
-          <input type="text"
-                 class="form-control"
-                 style="max-width: 20rem"
-                 id="captcha_input3"
-                 placeholder="Enter the capital letters shown above"
-                 value=""
-                 required />
-          <p id="responseMsg3"></p>
-          <div class="clearfix">
-            <button id="myButton"
-                    onclick="anonymous_login();"
-                    type="button"
-                    class="deletebtn">Continue</button>
-            <button onclick="document.getElementById('msgBox').style.display='none'"
-                    type="button"
-                    class="cancelbtn">Chancel</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div id="consentCookie"
-         class="modal"
-         style="background-color: rgba(0,0,0,0.5);
-                z-index: 999">
-      <form class="modal-content" style="max-width: 40rem">
-        <div class="container">
-          <h1 style="text-align:left;">Cookies</h1>
-          <p style="text-align:left;">
-            This website uses cookies. These are strictly necessary to allow core
-            website functionality such as user login and account management. The website cannot be used
-            without them.
-          </p>
-          <div class="clearfix">
-            <button onclick="consent_cookie(); document.getElementById('consentCookie').style.display='none';"
-                    type="button"
-                    class="deletebtn">Accept</button>
-            <button onclick="document.getElementById('consentCookie').style.display='none'"
-                    type="button"
-                    class="cancelbtn">Decline</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </main>
-{% endblock content %}
+    </nav>
+{% endblock navbar %}
 
-  {% block end_body_scripts %}
-    <script src="{% static 'js/backend_communication.js' %}"></script>
-  {% endblock end_body_scripts %}
+{% block index %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% if LANGUAGE_CODE == 'de' %}
+	{% url 'landing_commune_de' as landing_commune_url %}
+{% else %}
+  {% url 'landing_commune' as landing_commune_url %}
+{% endif %}
+
+<main class="landing-page">
+	<section class="cellular section" id="hero" data-aos="fade-up">
+		<div>
+			<div class="cellular__text">
+				<h1>{% translate "Offgridplanner – Smarter Tools for Off-Grid Energy System Planning" %}</h1>
+				<span>{% translate "The Offgridplanner is a powerful open-source software developed by researchers at the Reiner Lemoine Institute to support the planning and optimization of off-grid electricity supply systems. Whether you're designing a mini-grid for a rural community or exploring decentralized energy access strategies, Offgridplanner offers advanced functionailities to streamline your work." %}</span>
+                <span>{% translate "The tool simulates and optimizes off-grid layouts by analyzing building and customer locations, estimating energy demand, and calculating optimal configurations for both distribution networks and energy systems." %}</span>
+			</div>
+			<div class="cellular__image">
+				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
+			</div>
+            <!--ToDo: needs a proper and free2use arrow icon -->
+            <img class="arrow" src="{% static 'assets/icons/i_arrow_down.png' %}" />
+		</div>
+	</section>
+
+	<section class="regions">
+        <div>
+            <h2>{% translate "Available Regions" %}</h2>
+            <div class="region__cards">
+                <div class="region-card">
+                    <div class="card__header">
+                        <img src="{% static 'assets/map_outlines/nigeria_blue.png' %}" alt="Nigeria Outline" class="country-outline">
+                    </div>
+                    <div class="card__content">
+                        <div class="card__list-column">
+                            <p class="list-title">
+                                <span class="category-icon" title="Core functions">🛠️</span> Features
+                            </p>
+                            <ul class="details-list">
+                                <li title="Geospatial energy system optimization and design">Geospatial energy system</li>
+                                <li title="solar home system option">solar home system option</li>
+                            </ul>
+                        </div>
+                        <div class="card__list-column">
+                            <p class="list-title">
+                                <span class="category-icon" title="System parts">🧩</span> Components
+                            </p>
+                            <ul class="details-list">
+                                <li title="Photovoltaic panels">PV modules</li>
+                                <li title="Battery storage">Batteries</li>
+                                <li title="Power conversion equipment">Inverters</li>
+                                <li title="Diesel Generator">Diesel Generator</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card__footer">
+                        <p class="card__description">
+                        Plan offgrid-systems in Nigeria
+                        </p>
+                        <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Nigeria" %}</a>
+                        <a href="https://www.peoplesun.org/" class="footer-logo" title="Visit project partner" target="_blank" rel="noopener">
+                            <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="Partner Logo">
+                        </a>
+                    </div>
+                </div>
+                <div class="region-card">
+                    <div class="card__header">
+                    <!--ToDo: needs a proper and free2use image/svg from thailand outline-->
+                        <img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="Thailand Outline" class="country-outline">
+                    </div>
+                    <div class="card__content">
+                        <div class="card__list-column">
+                            <p class="list-title">
+                                <span class="category-icon" title="Core functions">🛠️</span> Features
+                            </p>
+                            <ul class="details-list">
+                                <li title="Geospatial energy system optimization and design">Geospatial energy system</li>
+                                <li title="solar home system option">solar home system option</li>
+                            </ul>
+                        </div>
+                        <div class="card__list-column">
+                            <p class="list-title">
+                                <span class="category-icon" title="System parts">🧩</span> Components
+                            </p>
+                            <ul class="details-list">
+                                <li title="Photovoltaic panels">PV modules</li>
+                                <li title="Battery storage">Batteries</li>
+                                <li title="Power conversion equipment">Inverters</li>
+                                <li title="Diesel Generator">Diesel Generator</li>
+                                <li title="fuel cell, electrolyser, storage tank">Hydrogen Storage</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card__footer">
+                        <p class="card__description">
+                        Plan offgrid-systems in Thailand
+                        </p>
+                        <!--ToDo: needs the url to offgridplanner thailand website-->
+                        <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Thailand" %}</a>
+                        <!--ToDo: needs the url and logo from project below-->
+                        <a href="https://www.peoplesun.org/" class="footer-logo" title="Visit project partner" target="_blank" rel="noopener">
+                            <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="Partner Logo">
+                        </a>
+                    </div>
+                </div>
+                <div class="region-card">
+                    <div class="card__header">
+                    <!--ToDo: needs a proper and free2use image/svg from mozambique outline-->
+                        <img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="Mozambique Outline" class="country-outline">
+                    </div>
+                    <div class="card__content">
+                        <div class="card__list-column">
+                            <p class="list-title">
+                                <span class="category-icon" title="Core functions">🛠️</span> Features
+                            </p>
+                            <ul class="details-list">
+                            <!--ToDo: add the correct features here-->
+                                <li title="Geospatial energy system optimization and design">Geospatial energy system</li>
+                                <li title="solar home system option">solar home system option</li>
+                            </ul>
+                        </div>
+                        <div class="card__list-column">
+                            <p class="list-title">
+                                <span class="category-icon" title="System parts">🧩</span> Components
+                            </p>
+                            <ul class="details-list">
+                            <!--ToDo: add the correct components here-->
+                                <li title="Photovoltaic panels">PV modules</li>
+                                <li title="Battery storage">Batteries</li>
+                                <li title="Power conversion equipment">Inverters</li>
+                                <li title="Diesel Generator">Diesel Generator</li>
+                                <li title="fuel cell, electrolyser, storage tank">Hydrogen Storage</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card__footer">
+                        <p class="card__description">
+                        Plan offgrid-systems in Mozambique
+                        </p>
+                        <!--ToDo: needs the url to offgridplanner mozambique website-->
+                        <a href="{% url 'projects:ogp_nigeria_home' %}" class="btn btn--medium">{% translate "Offgridplanner Mozambique" %}</a>
+                        <!--ToDo: needs the url and logo from project below-->
+                        <a href="https://www.peoplesun.org/" class="footer-logo" title="Visit project partner" target="_blank" rel="noopener">
+                            <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="Partner Logo">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</section>
+
+    <section class="cellular section" id="text-content1" data-aos="fade-up">
+		<div>
+            <div class="cellular__image">
+				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
+			</div>
+			<div class="cellular__text">
+				<h3>{% translate "What Can Offgridplanner Do?" %}</h3>
+				<span>{% translate "Automatically identify buildings using OpenStreetMap data" %}</span>
+                <span>{% translate "Optimize the spatial layout of distribution grids" %}</span>
+                <span>{% translate "Design generation systems e.g. PV arrays, batteries, inverters, and diesel generators" %}</span>
+                <span>{% translate "Determine whether the most viable option for electrifying customers is via a mini-grid connection or a standalone solar home system" %}</span>
+			</div>
+		</div>
+	</section>
+
+    <section class="cellular section" id="text-content2" data-aos="fade-up">
+		<div>
+			<div class="cellular__text">
+				<h3>{% translate "Who Is It For?" %}</h3>
+				<span>{% translate "Offgridplanner is ideal for project developers, researchers, public institutions, and energy access practitioners working on off-grid electrification strategies." %}</span>
+			</div>
+			<div class="cellular__image">
+				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
+			</div>
+		</div>
+	</section>
+
+	<section class="newsletter">
+        <div>
+            <div class="newsletter__heading">
+                <h2>{% translate "Are you interested to explore other regions?" %}</h2>
+            </div>
+            <span class="newsletter__text">{% translate "We are happy to develop the tool further and adapt it to other regions, if you have the need for a specific country, or region, please reach out to us!" %}</span>
+            <form class="newsletter__form" method="post" action="https://flow.cleverreach.com/fl/a176f5ea-761f-432f-8eec-b38a043ce09e/confirm">
+                <span class="newsletter__form--input">
+                    <input type="text" tabindex="-1" autocomplete="false" style="display:none !important;" class="cr-nope" name="email_confirm">
+                    <input class="newsletter__form--email" type="email" placeholder="name@email.com" name="email" required="" >
+                    <button type="submit">{% translate "Register" %}</button>
+                </span>
+                <span class="newsletter__form--privacy">
+                    <input type="checkbox" name="accept_privacy" required="" id="id_accept_privacy">
+                    <label for="id_accept_privacy">
+                        {% url 'privacy' as url_privacy%}
+                        {% blocktranslate with url=url_privacy %} I have read and accept the <a target="_blank" href="{{ url }}">privacy statement </a> from offgridplanner<span class="asteriskField">*</span> {% endblocktranslate %}
+                    </label>
+                </span>
+            </form>
+        </div>
+    </section>
+
+    <section class="logos">
+        <div>
+            <a href="https://reiner-lemoine-institut.de/en/" target="_blank" rel="noopener noreferrer">
+                <img src="{% static 'assets/logos/LogoRLI.png' %}" alt="Reiner Lemoine Institut logo" width="97" height="71">
+            </a>
+        </div>
+    </section>
+</main>
+{% endblock index %}
+
+
+<!-- modal to show debug messages -->
+{% if messages %}
+    <script>
+        $(document).ready(function() {
+            var messagesModal = new bootstrap.Modal(document.getElementById('messagesModal'))
+            messagesModal.show();
+        });
+    </script>
+{% endif %}
+
+{% block content %}
+{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+	<div>
+		<div class="footer__logo">
+			<a href="{% url 'projects:home' %}">
+				<img src="{% static 'assets/logos/open_plan_logo_horizontal.png' %}" alt="open_plan logo">
+			</a>
+		</div>
+		<div class="footer__links">
+			<ul>
+				<li><a href="{% url 'projects:home' %}">{% translate "License" %}</a></li>
+				<li><a href="{% url 'imprint' %}">{% translate "Imprint" %}</a></li>
+				<li><a href="{% url 'privacy' %}">{% translate "Privacy" %}</a></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+{% endblock footer %}
+
+{% block end_body_scripts %}{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/project.js' %}"></script>
+
+</body>
+</html>

@@ -14,7 +14,7 @@
 	<link rel="manifest" href="{% static 'assets/favicon/tool/site.webmanifest' %}">
 	{% endblock favicon %}
 	<link rel="mask-icon" href="{% static 'assets/favicon/safari-pinned-tab.svg' %}" color="#5bbad5">
-	<meta name="msapplication-TileColor" content="#2b5797">
+	<meta name="msregion-TileColor" content="#2b5797">
 	<meta name="theme-color" content="#ffffff">
 	<!--<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 	<link rel="stylesheet" href="{% static 'node_modules/aos/dist/aos.css' %}">-->
@@ -121,11 +121,11 @@
 		</div>
 	</section>
 
-	<section class="application">
+	<section class="regions">
         <div>
             <h2>{% translate "Available Regions" %}</h2>
-            <div class="application__cards">
-                <div class="modern-card">
+            <div class="region__cards">
+                <div class="region-card">
                     <div class="card__header">
                         <img src="{% static 'assets/map_outlines/nigeria_blue.png' %}" alt="Nigeria Outline" class="country-outline">
                     </div>
@@ -161,7 +161,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="application__card modern-card">
+                <div class="region-card">
                     <div class="card__header">
                     <!--ToDo: needs a proper and free2use image/svg from thailand outline-->
                         <img src="{% static 'assets/icons/i_cells_hex.png' %}" alt="Thailand Outline" class="country-outline">
@@ -201,7 +201,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="application__card modern-card">
+                <div class="region-card">
                     <div class="card__header">
                     <!--ToDo: needs a proper and free2use image/svg from mozambique outline-->
                         <img src="{% static 'assets/icons/i_analysis_hex.png' %}" alt="Mozambique Outline" class="country-outline">
@@ -247,7 +247,7 @@
         </div>
 	</section>
 
-    <section class="cellular section" id="hero" data-aos="fade-up">
+    <section class="cellular section" id="text-content1" data-aos="fade-up">
 		<div>
             <div class="cellular__image">
 				<img src="{% static 'assets/illustrations/cellular_bg.png' %}" alt="">
@@ -262,7 +262,7 @@
 		</div>
 	</section>
 
-    <section class="cellular section" id="hero" data-aos="fade-up">
+    <section class="cellular section" id="text-content2" data-aos="fade-up">
 		<div>
 			<div class="cellular__text">
 				<h3>{% translate "Who Is It For?" %}</h3>

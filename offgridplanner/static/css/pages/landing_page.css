@@ -134,7 +134,7 @@
     color: #343434;
 }
 
-.application {
+.regions {
   padding-top: 6rem;
   padding-bottom: 6rem;
   display: flex;
@@ -143,30 +143,30 @@
   background-color: #f3f7fc;
   text-align: center;
 }
-.application > div {
+.regions > div {
   width: 100%;
   max-width: 82rem;
   padding-left: 1rem;
   padding-right: 1rem;
 }
-.application h2 {
+.regions h2 {
   font-size: 1.953rem;
   font-weight: 700;
   color: #17405c;
   margin-bottom: 4rem;
 }
-.application__cards {
+.region__cards {
   display: flex;
   gap: 2rem;
   justify-content: center;
 }
 @media (max-width: 1024px) {
-  .application__cards {
+  .region__cards {
     flex-wrap: wrap;
   }
 }
 
-.modern-card {
+.region-card {
   gap: 1.5rem;
   padding: 2rem;
   display: flex;
@@ -179,7 +179,7 @@
   max-width: 28rem;
   transition: transform 0.3s ease-in-out;
 }
-.modern-card:hover {
+.region-card:hover {
   transform: translateY(-5px);
 }
 .card__header {
@@ -250,7 +250,7 @@ transform: scale(1.05);
     flex-direction: column;
     gap: 1rem;
   }
-  .modern-card {
+  .region-card {
     max-width: 90%;
   }
 }

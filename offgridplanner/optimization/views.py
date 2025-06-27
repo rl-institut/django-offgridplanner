@@ -213,12 +213,7 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
                     df = df[df["node_type"].isin(["power-house", "consumer"])]
                 else:
                     df = df[df["node_type"] == "consumer"]
-            df["latitude"] = df["latitude"].astype(float)
-            df["longitude"] = df["longitude"].astype(float)
-            df["shs_options"] = df["shs_options"].fillna(0)
-            df["custom_specification"] = df["custom_specification"].fillna("")
-            df["shs_options"] = df["shs_options"].astype(int)
-            df["is_connected"] = df["is_connected"].astype(bool)
+            df = df.fillna("null")
             nodes_list = df.to_dict("records")
             is_load_center = True
             if (
@@ -586,7 +581,10 @@ def waiting_for_results(request, proj_id):
             logger.exception("Error parsing results")
             status = ERROR
     elif status == ERROR:
-        results = json.dumps(response.get("results", {}).get(ERROR))
+        try:
+            results = json.dumps(response.get("results", {}).get(ERROR))
+        except AttributeError:
+            results = None
         logger.warning("Simulation failed with errors.")
 
     # Update simulation status
@@ -616,6 +614,7 @@ def process_optimization_results(request, proj_id):
     supply_processor = SupplyProcessor(
         proj_id=proj_id, results_json=results.get("supply")
     )
+    supply_processor.process_supply_optimization_results()
     supply_processor.supply_results_to_db()
 
     return JsonResponse({"msg": "Optimization results saved to database"})

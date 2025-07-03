@@ -93,8 +93,12 @@ def get_weather_data(lat, lon, start, end):
     df = pd.DataFrame.from_records(qs.values()).set_index("dt").astype(float)
 
     # TODO the data is saved in DB as time-aware, right now we don't need this
-    df.index = index
-
+    # TODO when n_days < 360, there is a length mismatch between the index and the db data, this is a quick fix but we should look at it properly later
+    try:
+        df.index = index
+    except ValueError:
+        df = df[:-1]
+        df.index = index
     # if ts_changed:
     #     df.index = index
 

@@ -113,7 +113,7 @@ def csv_to_dict(filepath, label_col="label"):
     file_path = staticfiles_storage.path(filepath)
     if Path(file_path).exists():
         with Path(file_path).open(encoding="utf-8-sig") as csvfile:
-            reader = csv.DictReader(csvfile, delimiter=";")
+            reader = csv.DictReader(csvfile)
             for row in reader:
                 label = row.pop(label_col)  # Remove label from row data
                 result[label] = row  # Store remaining fields under this label
@@ -191,3 +191,4 @@ def reorder_dict(d, old_index, new_index):
 
 
 FORM_FIELD_METADATA = csv_to_dict("data/form_parameters.csv")
+OUTPUT_KPIS = csv_to_dict("data/output_kpis.csv")

@@ -98,6 +98,8 @@ class Results(models.Model):
     cost_grid = models.PositiveIntegerField(null=True, blank=True)
     cost_shs = models.PositiveIntegerField(null=True, blank=True)
     lcoe = models.PositiveIntegerField(null=True, blank=True)
+    lcoe_share_grid = models.FloatField(null=True, blank=True)
+    lcoe_share_supply = models.FloatField(null=True, blank=True)
     res = models.FloatField(null=True, blank=True)
     shortage_total = models.FloatField(null=True, blank=True)
     surplus_rate = models.FloatField(null=True, blank=True)
@@ -130,11 +132,12 @@ class Results(models.Model):
     average_annual_demand_per_consumer = models.FloatField(null=True, blank=True)
     total_annual_consumption = models.FloatField(null=True, blank=True)
     upfront_invest_grid = models.FloatField(null=True, blank=True)
-    upfront_invest_diesel_gen = models.FloatField(null=True, blank=True)
+    upfront_invest_diesel_genset = models.FloatField(null=True, blank=True)
     upfront_invest_inverter = models.FloatField(null=True, blank=True)
     upfront_invest_rectifier = models.FloatField(null=True, blank=True)
     upfront_invest_battery = models.FloatField(null=True, blank=True)
     upfront_invest_pv = models.FloatField(null=True, blank=True)
+    upfront_invest_total = models.FloatField(null=True, blank=True)
     co2_emissions = models.FloatField(null=True, blank=True)
     fuel_consumption = models.FloatField(null=True, blank=True)
     base_load = models.FloatField(null=True, blank=True)
@@ -147,7 +150,7 @@ class Results(models.Model):
     epc_battery = models.FloatField(null=True, blank=True)
 
     def __str__(self):
-        return f"Results {self.id}: Project {self.project.name}"
+        return f"Results {self.id}: Project {self.simulation.project.name}"
 
 
 # TODO check what is saved in these models and potentially restructure in db

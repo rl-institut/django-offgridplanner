@@ -1,0 +1,44 @@
+label,verbose,unit,
+n_poles,Number of Poles,
+n_consumers,Number of grid-connected Consumers,
+n_shs_consumers,Number of SHS Consumers,
+length_distribution_cable,Distribution Cable Length,m
+average_length_distribution_cable,Average Length Distribution,m
+length_connection_cable,Connection Cable Length,m
+average_length_connection_cable,Average Length Connection,m
+cost_grid,Grid's annualized Cost,USD/a
+lcoe,Levelized Cost of Electricity (w/o SHS),cent/kWh
+lcoe_share_grid,Share of Grid-Related Costs in the LCOE,%
+lcoe_share_supply,Share of Generation-Related Costs in LCOE,%
+res,Renewable Energy Share,%
+max_voltage_drop,Max. Voltage drop,%
+shortage_total,Total annual Shortage,%
+surplus_rate,Total annual Surplus,%
+time,Total simulation time,s
+co2_savings,Annual CO2 savings,t/a
+total_annual_consumption,Total annual Consumption,kWh/a
+average_annual_demand_per_consumer,Annual average Demand per Consumer,kWh
+upfront_invest_grid,Grid upfront Investment Cost,USD
+upfront_invest_diesel_genset,Diesel Generator upfront Investment Cost,USD
+upfront_invest_inverter,Inverter upfront Investment Cost,USD
+upfront_invest_rectifier,Rectifier upfront Investment Cost,USD
+upfront_invest_battery,Battery upfront Investment Cost,USD
+upfront_invest_pv,PV upfront Investment Cost,USD
+upfront_invest_total,Total upfront Investment Cost,USD
+battery_capacity,Capacity Battery,kWh
+pv_capacity,Capacity PV,kWp
+diesel_genset_capacity,Capacity Diesel Generator,kW
+inverter_capacity,Capacity Inverter,kW
+rectifier_capacity,Capacity Rectifier,kW
+co2_emissions,Annual CO2 Emissions,t/a
+fuel_consumption,Annual Fuel Consumption,liter/a
+peak_demand,Peak Demand,kW
+base_load,Base Load,kW
+max_shortage,Max. Shortage per Time Step,%
+cost_fuel,Annual fuel cost,USD/a
+epc_pv,PV's annualized Cost,USD/a
+epc_diesel_genset,Diesel Generator's annualized Cost,USD/a
+epc_inverter,Inverter's annualized Cost,USD/a
+epc_rectifier,Rectifier's annualized Cost,USD/a
+epc_battery,Battery's annualized Cost,USD/a
+epc_total,Total annualized Cost,USD/a

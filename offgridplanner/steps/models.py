@@ -2,12 +2,17 @@ from collections import defaultdict
 
 from django.db import models
 
+from offgridplanner.projects.helpers import FORM_FIELD_METADATA
 from offgridplanner.projects.models import Project
 
 
 class NestedModel(models.Model):
     class Meta:
         abstract = True
+
+    @staticmethod
+    def is_percentage_field(field_name):
+        return FORM_FIELD_METADATA[field_name]["unit"] == "%"
 
     def to_nested_dict(self):
         def nested_dict():
@@ -24,7 +29,7 @@ class NestedModel(models.Model):
                 for part in parts[:-1]:  # Traverse the dictionary except the last key
                     d = d[part]
                 d[parts[-1]] = (
-                    value / 100 if "efficiency" in parts[-1] else value
+                    value / 100 if self.is_percentage_field(field.name) else value
                 )  # Set the final value
 
         return data

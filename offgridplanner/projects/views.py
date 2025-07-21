@@ -19,9 +19,10 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.projects.forms import SiteExplorationForm
 from offgridplanner.projects.helpers import load_project_from_dict
 from offgridplanner.projects.helpers import prepare_data_for_export
-from offgridplanner.projects.models import MapTestSite
+from offgridplanner.projects.models import MapTestSite, SiteExploration
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
@@ -182,11 +183,14 @@ def get_project_data(project):
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
     return proj_data
 
-
+@require_http_methods(["GET", "POST"])
 def potential_map(request):
-    return render(request, "pages/map.html")
+    user = request.user
+    site_exploration, _ = SiteExploration.objects.get_or_create(user=user)
+    form = SiteExplorationForm(instance=site_exploration)
 
-
+    context = {"form": form}
+    return render(request, "pages/map.html", context=context)
 
 def filter_locations(request):
     """

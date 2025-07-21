@@ -5,9 +5,41 @@ from pathlib import Path
 
 import pandas as pd
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.template.loader import render_to_string
 
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
+
+
+def format_exploration_sites_data(sites):
+    """
+    Takes the JSON from the site exploration API and fits the data into the corresponding geojson/table format to be
+    displayed on the exploration site.
+    Parameters:
+        sites: JSON data from fetch_exploration_progress["minigrids"]
+    Returns:
+        geojson_data: Data to construct the map markers
+        table_data: Data formatted into table_template.html
+    """
+    # generate geoJSON for map
+    features = [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": site["centroid"]["coordinates"],
+            },
+            "properties": {
+                "name": site["id"],
+            },
+        }
+        for site in sites
+    ]
+
+    # generate table HTML
+    context = {"sites": sites}
+    table = render_to_string("widgets/table_template.html", context)
+    return features, table
 
 
 def load_project_from_dict(model_data, user=None):

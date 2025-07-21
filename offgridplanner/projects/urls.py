@@ -28,5 +28,7 @@ urlpatterns = [
         name="download_excel_results",
     ),
     path("projects/potential/map/", potential_map, name="potential_map"),
-    path("ajax/filter_locations/", filter_locations, name="filter_locations"),
+    path("ajax/start_exploration/", start_exploration, name="start_exploration"),
+    path("ajax/stop_exploration/", stop_exploration, name="stop_exploration"),
+    path("ajax/load_exploration_sites/", load_exploration_sites, name="load_exploration_sites"),
 ]

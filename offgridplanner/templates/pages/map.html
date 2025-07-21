@@ -22,24 +22,24 @@
         <div class="chart" style="height: auto; padding-bottom: 10px">
           <div class="chart__header">
             <a class="title">Potential project sites</a>
-                      <div class="radio-inputs" id="status_header" >
-            <label class="radio">
-              <input type="radio" name="radio" checked>
-              <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
-            </label>
-            <label class="radio">
-              <input type="radio" name="radio">
-              <a class="name" href="{% url 'projects:projects_list' 'analyzing' %}">Analyzing</a>
-            </label>
-            <label class="radio">
-              <input type="radio" name="radio">
-              <a class="name" href="{% url 'projects:projects_list' 'monitoring' %}">Monitoring</a>
-            </label>
-          </div>
-          <span style="float:right;"><a>
-                    <a href="{% url 'projects:potential_map' %}"
+            <div class="radio-inputs" id="status_header">
+              <label class="radio">
+                <input type="radio" name="radio" checked>
+                <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
+              </label>
+              <label class="radio">
+                <input type="radio" name="radio">
+                <a class="name" href="{% url 'projects:projects_list' 'analyzing' %}">Analyzing</a>
+              </label>
+              <label class="radio">
+                <input type="radio" name="radio">
+                <a class="name" href="{% url 'projects:projects_list' 'monitoring' %}">Monitoring</a>
+              </label>
+            </div>
+            <span style="float:right;">
+                  <a href="{% url 'projects:potential_map' %}"
                        class="btn btn--long text-right">List view</a>
-                  </a></span>
+            </span>
 
           </div>
           <div class="container-fluid">
@@ -50,13 +50,15 @@
                   {{ form | crispy }}
                 </form>
 
+                <div style="display:flex">
                   <button id="exploration-btn" type="submit" class="btn btn-primary">Run Exploration</button>
-                  <span class="spinner" id="loading_spinner-create" style="display:none; margin-top: 0.5rem">
+                  <span class="spinner" id="loading_spinner" style="display:none; margin-top: 0.5rem">
                     <svg viewBox="25 25 50 50">
                       <circle r="20" cy="50" cx="50"></circle>
                     </svg>
 			            </span>
                   <button id="stop-btn" class="btn btn-primary">Stop</button>
+                </div>
               </div>
               <div class="col-md-1"></div>
               <div id="map" class="col-md-8" style="height: 400px">
@@ -75,9 +77,14 @@
 
 {% block end_body_scripts %}
 <script>
-const projectSetupUrl = `{% url 'steps:project_setup' %}`;
-const filterLocationsUrl = `{% url 'projects:filter_locations' %}`;
-const csrfToken = `{{ csrf_token }}`;
+  const projectSetupUrl = `{% url 'steps:project_setup' %}`;
+  const startExplorationUrl = `{% url 'projects:start_exploration' %}`;
+  const stopExplorationUrl = `{% url 'projects:stop_exploration' %}`;
+  const loadExplorationSitesUrl = `{% url 'projects:load_exploration_sites' %}`;
+  const csrfToken = `{{ csrf_token }}`;
+  const table_data = {{ table_data | default:"undefined" | safe }};
+  const map_data = {{ map_data | default:"undefined" | safe }};
+  const existing_mgs = {{ existing_mgs | safe }};
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>

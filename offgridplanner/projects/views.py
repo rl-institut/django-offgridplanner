@@ -16,7 +16,6 @@ from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from openpyxl.drawing.image import PILImage
@@ -31,11 +30,14 @@ from offgridplanner.projects.exports import create_pdf_report
 from offgridplanner.projects.exports import prepare_data_for_export
 from offgridplanner.projects.exports import project_data_df_to_xlsx
 from offgridplanner.projects.helpers import collect_project_dataframes
+from offgridplanner.optimization.requests import fetch_exploration_progress
+from offgridplanner.optimization.requests import start_site_exploration
+from offgridplanner.optimization.requests import stop_site_exploration
 from offgridplanner.projects.forms import SiteExplorationForm
 from offgridplanner.projects.helpers import load_project_from_dict
-from offgridplanner.projects.models import MapTestSite, SiteExploration
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
+from offgridplanner.projects.models import SiteExploration
 from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
@@ -196,6 +198,7 @@ def get_project_data(project):
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
     return proj_data
 
+
 @require_http_methods(["GET", "POST"])
 def potential_map(request):
     user = request.user
@@ -205,51 +208,45 @@ def potential_map(request):
     context = {"form": form}
     return render(request, "pages/map.html", context=context)
 
-def filter_locations(request):
+
+def start_exploration(request):
     """
     Filter the locations based on the given filters and return both the table html and the geoJSON to populate the map
     """
-    reset = request.POST.get("reset")
     data = {}
-    if reset:
-        sites = MapTestSite.objects.all()
-    else:
-        site_filter = {}
-        for param, dtype in zip(
-            ["min_building_count", "diameter_max", "min_grid_dist"],
-            [int, int, float],
-            strict=False,
-        ):
-            val = request.POST.get(param) if request.POST.get(param) != "" else 0
-            site_filter[param] = dtype(val)
+    site_exploration = request.user.siteexploration
+    form = SiteExplorationForm(request.POST, instance=site_exploration)
+    if form.is_valid():
+        exploration_id = start_site_exploration(json.dumps(form.cleaned_data))
+        print(f"Exploration ID: {exploration_id}")
+        site_exploration.exploration_id = exploration_id
+        site_exploration.save()
+        data["status"] = "RUNNING"
 
-        sites = MapTestSite.objects.filter(
-            building_count__gte=site_filter["min_building_count"],
-            diameter_max__lte=site_filter["diameter_max"],
-            grid_dist__gte=site_filter["min_grid_dist"],
-        )
+    return JsonResponse(data)
 
-    # generate table HTML
-    context = {"sites": sites}
-    data["table"] = render_to_string("widgets/table_template.html", context, request)
 
-    # generate geoJSON for map
-    features = [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [site.longitude, site.latitude],
-            },
-            "properties": {
-                "name": site.id,
-                "building_count": site.building_count,
-                "grid_dist": site.grid_dist,
-            },
-        }
-        for site in sites
-    ]
-    data["geojson"] = features
+def stop_exploration(request):
+    site_exploration = request.user.siteexploration
+    exploration_id = site_exploration.exploration_id
+    res = stop_site_exploration(exploration_id)
+    site_exploration.exploration_id = None
+    site_exploration.save()
+    return JsonResponse(res)
+
+
+def load_exploration_sites(request):
+    site_exploration = request.user.siteexploration
+    exploration_id = site_exploration.exploration_id
+    res = fetch_exploration_progress(exploration_id)
+    # Save the results for loading later
+    site_exploration.latest_exploration_results = res
+    site_exploration.save()
+    status = res["status"]
+    data = {"status": status}
+    if res["minigrids"]:
+        sites = res["minigrids"]
+        data["geojson"], data["table"] = format_exploration_sites_data(sites)
 
     return JsonResponse(data)
 

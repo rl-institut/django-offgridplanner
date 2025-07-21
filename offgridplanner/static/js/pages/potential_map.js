@@ -9,65 +9,92 @@ const markers = L.markerClusterGroup();
 
 document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById("filter-form");
-  const filterBtn = document.getElementById("filter-btn");
-  const resetBtn = document.getElementById("reset-btn");
+  const startExplorationBtn = document.getElementById("exploration-btn");
+  const stopBtn = document.getElementById('stop-btn');
 
-  let markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
+  markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
 
-  async function sendRequest(body) {
-    try {
-      const response = await fetch(filterLocationsUrl, {
-        method: "POST",
-        headers: { 'X-CSRFToken': csrfToken },
-        body: body
-      });
+    document.getElementById('stop-btn').addEventListener('click', () => {
+        const response = fetch(stopExplorationUrl);
+        shouldStop = true;
+    });
 
-      if (!response.ok) throw new Error("Failed to fetch content");
-
-      const data = await response.json();
-
-      // Update table
-      document.querySelector('#sites-table').innerHTML = data.table;
-
-      // Update map
-      markersLayer.clearLayers();
-      data.geojson.forEach(feature => {
-        const [lng, lat] = feature.geometry.coordinates;
-        const props = feature.properties;
-        const content = `
-          <h3>ID: ${props.id}</h3>
-          <p>Building count: ${props.building_count}</p>
-          <p>Grid distance: ${props.grid_dist}</p>
-          <a href="${projectSetupUrl}">Create project from site</a>`;
-        const marker = L.marker([lat, lng]).bindPopup(content);
-        markersLayer.addLayer(marker);
-      });
-    } catch (error) {
-      console.error('Error loading content:', error);
-    }
-  }
-
-  // Filter button click
-  filterBtn.addEventListener("click", async (event) => {
+  startExplorationBtn.addEventListener("click", async (event) => {
     event.preventDefault();
     const formData = new FormData(filterForm);
     await sendRequest(formData);
+    startExplorationBtn.disabled = true;
   });
-
-  // Reset button click
-  resetBtn.addEventListener("click", async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("reset", "true");
-    await sendRequest(formData);
-    document.getElementById("filter-min_building_count").value = "";
-    document.getElementById("filter-diameter_max").value = "";
-    document.getElementById("filter-min_grid_dist").value = "";
-  });
-
-  // Trigger the filter on first load
-  filterBtn.click();
 });
+
+async function sendRequest(body) {
+  shouldStop = false;
+  const response = await fetch(startExplorationUrl, {
+    method: "POST",
+    headers: { 'X-CSRFToken': csrfToken },
+    body: body
+  });
+  if (!response.ok) {
+    console.error("Failed to start exploration");
+    return;
+  }
+  const data = await response.json();
+  startExplorationBtn.disabled = true;
+
+  if (data.status === "FINISHED") {
+    updateResults(data.table, data.geojson);
+  } else if (data.status === "RUNNING") {
+    $("#loading_spinner").show();
+    await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10s
+    pollExplorationResults();
+  }
+}
+
+async function pollExplorationResults() {
+  while (!shouldStop) {
+    const response = await fetch(loadExplorationSitesUrl);
+    console.log("Polling exploration data...")
+
+    if (!response.ok) {
+      console.error("Failed to fetch exploration results");
+      $("#loading_spinner").hide();
+      break;
+    }
+
+    const data = await response.json();
+    updateResults(data.table, data.geojson);
+
+    if (data.status === "FINISHED" || data.status === "STOPPED") {
+      $("#loading_spinner").hide();
+      break;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10s
+  }
+  $("#loading_spinner").hide();
+}
+
+function updateResults(table_data, map_data) {
+  if (table_data !== undefined) {
+      // Update table
+      document.querySelector('#sites-table').innerHTML = table_data;
+      }
+  if (map_data !== undefined) {
+      // Update map
+      potentialSitesLayer.clearLayers();
+      map_data.forEach(feature => {
+        const [lng, lat] = feature.centroid.coordinates;
+        const content = `
+          <h3>ID: ${feature.id}</h3>
+//          <p>Building count: ${feature.pv_capacity}</p>
+//          <p>Grid distance: ${feature.status}</p>
+        `;
+        const marker = L.marker([lat, lng], { icon: newMarker }).bindPopup(content);
+        potentialSitesLayer.addLayer(marker);
+    });
+    }
+  }
+
 //const legend = L.control({ position: 'bottomright' });
 
 //legend.onAdd = function () {

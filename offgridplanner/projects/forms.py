@@ -39,3 +39,9 @@ class OptionForm(ModelForm):
         model = Options
         fields = list(OPTIONS_LABELS)
         labels = OPTIONS_LABELS
+
+
+class SiteExplorationForm(ModelForm):
+    class Meta:
+        model = SiteExploration
+        fields = ["consumer_count_min", "diameter_max", "distance_from_grid_min", "match_distance_max"]

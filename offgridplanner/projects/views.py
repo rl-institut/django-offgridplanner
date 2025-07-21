@@ -31,8 +31,9 @@ from offgridplanner.projects.exports import create_pdf_report
 from offgridplanner.projects.exports import prepare_data_for_export
 from offgridplanner.projects.exports import project_data_df_to_xlsx
 from offgridplanner.projects.helpers import collect_project_dataframes
+from offgridplanner.projects.forms import SiteExplorationForm
 from offgridplanner.projects.helpers import load_project_from_dict
-from offgridplanner.projects.models import MapTestSite
+from offgridplanner.projects.models import MapTestSite, SiteExploration
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.decorators import user_owns_project
@@ -195,11 +196,14 @@ def get_project_data(project):
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
     return proj_data
 
-
+@require_http_methods(["GET", "POST"])
 def potential_map(request):
-    return render(request, "pages/map.html")
+    user = request.user
+    site_exploration, _ = SiteExploration.objects.get_or_create(user=user)
+    form = SiteExplorationForm(instance=site_exploration)
 
-
+    context = {"form": form}
+    return render(request, "pages/map.html", context=context)
 
 def filter_locations(request):
     """

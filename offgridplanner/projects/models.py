@@ -8,6 +8,8 @@ from django.db import models
 from django.forms.models import model_to_dict
 from django.utils.translation import gettext_lazy as _
 
+from offgridplanner.users.models import User
+
 # Create a list containing (two-letter-code, country-name) tuples from the pycountry data
 COUNTRIES = [(country.alpha_2, country.name) for country in pycountry.countries]
 
@@ -100,3 +102,14 @@ class MapTestSite(models.Model):
 
     def __str__(self):
         return f"TestSite {self.id}"
+
+
+class SiteExploration(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    exploration_id = models.TextField(null=True)
+    consumer_count_min = models.PositiveSmallIntegerField(default=100,
+                                                          validators=[MinValueValidator(31), MaxValueValidator(500)])
+    diameter_max = models.FloatField(default=500, validators=[MinValueValidator(0.1), MaxValueValidator(10000)])
+    distance_from_grid_min = models.FloatField(default=60000, validators=[MinValueValidator(20000), MaxValueValidator(120000)])
+    match_distance_max = models.FloatField(default=5000, validators=[MinValueValidator(100), MaxValueValidator(20000)])
+    latest_exploration_results = models.JSONField(null=True)

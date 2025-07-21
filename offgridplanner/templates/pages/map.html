@@ -42,26 +42,29 @@
                   </a></span>
 
           </div>
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Filters on the left -->
-      <div class="col-md-3">
-        <form id="filter-form">
-            {% csrf_token %}
-          {{ form | crispy }}
-          <button id="filter-btn" type="submit" class="btn btn-primary">Run Exploration</button>
-<!--          <button id="reset-btn" type="submit" class="btn btn-primary">Reset filters</button>-->
-        </form>
-      </div>
-      <div class="col-md-1"></div>
-      <div id="map" class="col-md-8" style="height: 400px">
-        <label for="buildingFilter">Minimum building count:</label>
-        <input type="range" id="buildingFilter" min="0" max="100" value="0">
-        <span id="filterValue">0</span>
-      </div>
-    </div>
-    <div id="sites-table"></div>
-  </div>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-3">
+                <form id="filter-form">
+                  {% csrf_token %}
+                  {{ form | crispy }}
+                </form>
+
+                  <button id="exploration-btn" type="submit" class="btn btn-primary">Run Exploration</button>
+                  <span class="spinner" id="loading_spinner-create" style="display:none; margin-top: 0.5rem">
+                    <svg viewBox="25 25 50 50">
+                      <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+			            </span>
+                  <button id="stop-btn" class="btn btn-primary">Stop</button>
+              </div>
+              <div class="col-md-1"></div>
+              <div id="map" class="col-md-8" style="height: 400px">
+              </div>
+            </div>
+            <div id="sites-table"></div>
+        </div>
+        </div>
       </section>
     </div>
 

@@ -1,11 +1,31 @@
-const map = L.map('map').setView([9.0725, 7.5377], 5); // Centered on Europe
-let sites = {};
-
+const map = L.map('map').setView([-18.784571809675114, 34.49966395], 5); // Centered on Europe
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
 }).addTo(map);
 
-const markers = L.markerClusterGroup();
+const existingSitesLayer = L.markerClusterGroup().addTo(map);
+const potentialSitesLayer = L.markerClusterGroup().addTo(map);
+
+// Custom
+const existingMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+const newMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+let shouldStop = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById("filter-form");
@@ -14,10 +34,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
 
-    document.getElementById('stop-btn').addEventListener('click', () => {
-        const response = fetch(stopExplorationUrl);
-        shouldStop = true;
-    });
+  // Load previous data on first load
+  updateResults(table_data, map_data);
+
+  // load existing Minigrids on map
+  existing_mgs.forEach(feature => {
+  const [lng, lat] = feature.centroid.coordinates;
+
+  const content = `
+    <h3>PREVIOUS SITE</h3>
+    <p>ID: ${feature.id}</p>
+          <p>PV capacity: ${feature.pv_capacity}</p>
+          <p>Grid distance: ${feature.status}</p>
+    `;
+
+  const marker = L.marker([lat, lng], { icon: existingMarker }).bindPopup(content);
+  existingSitesLayer.addLayer(marker);
+});
+
+  //  Add event listeners for start and stop buttons
+  stopBtn.addEventListener('click', () => {
+     const response = fetch(stopExplorationUrl);
+     $("#loading_spinner").hide();
+     shouldStop = true;
+     startExplorationBtn.disabled = false;
+  });
 
   startExplorationBtn.addEventListener("click", async (event) => {
     event.preventDefault();

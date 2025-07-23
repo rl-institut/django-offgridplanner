@@ -25,6 +25,7 @@ from reportlab.platypus import Image
 from svglib.svglib import svg2rlg
 
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.processing import PreProcessor
 from offgridplanner.projects.exports import create_pdf_report
 from offgridplanner.projects.exports import prepare_data_for_export
@@ -205,7 +206,23 @@ def potential_map(request):
     site_exploration, _ = SiteExploration.objects.get_or_create(user=user)
     form = SiteExplorationForm(instance=site_exploration)
 
-    context = {"form": form}
+    # Save the existing MG data in the session storage to avoid sending an API request every time
+    if "existing_mgs" in request.session:
+        existing_mgs = request.session["existing_mgs"]
+    else:
+        existing_mgs = fetch_existing_minigrids()
+        request.session["existing_mgs"] = existing_mgs
+
+    context = {"form": form, "existing_mgs": json.dumps(existing_mgs)}
+    geojson_initial, _ = format_exploration_sites_data(existing_mgs)
+    potential_sites = site_exploration.latest_exploration_results["minigrids"]
+    if potential_sites:
+        geojson_potential, table_initial = format_exploration_sites_data(
+            potential_sites
+        )
+        context["table_data"] = table_initial
+        context["map_data"] = geojson_initial
+
     return render(request, "pages/map.html", context=context)
 
 

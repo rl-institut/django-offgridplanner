@@ -136,48 +136,12 @@ function updateResults(table_data, map_data) {
     }
   }
 
-//const legend = L.control({ position: 'bottomright' });
-
-//legend.onAdd = function () {
-//  const div = L.DomUtil.create('div', 'info legend');
-//  const grades = [0, 10, 20, 40, 60, 80];
-//
-//  for (let i = 0; i < grades.length; i++) {
-//    div.innerHTML +=
-//      `<i style="background:${getColor(grades[i] + 1)}"></i> ` +
-//      `${grades[i]}${grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+'}`;
-//  }
-//
-//  return div;
-//};
-
-//legend.addTo(map);
-
-//function getColor(building_count) {
-//  // Customize the ranges as you like
-//  return building_count > 80 ? '#800026' :
-//         building_count > 60 ? '#BD0026' :
-//         building_count > 40 ? '#E31A1C' :
-//         building_count > 20 ? '#FD8D3C' :
-//         building_count > 10 ? '#FEB24C' :
-//                               '#FFEDA0';
-//}
 
 function onEachFeature(feature, layer) {
   const props = feature.properties;
   layer.bindPopup(`ID: ${props.id}<br>Buildings: ${props.building_count}<br>Grid Distance: ${props.grid_dist}`);
 }
 
-//function pointToLayer(feature, latlng) {
-//  return L.circleMarker(latlng, {
-//    radius: 8,
-//    fillColor: getColor(feature.properties.building_count),
-//    color: '#000',
-//    weight: 1,
-//    opacity: 1,
-//    fillOpacity: 0.8
-//  });
-//}
 
 let currentSortIndex = null;
 let sortAscending = true;

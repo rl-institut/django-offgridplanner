@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.requests import fetch_exploration_progress
 from offgridplanner.optimization.requests import start_site_exploration
 from offgridplanner.optimization.requests import stop_site_exploration
@@ -192,7 +193,23 @@ def potential_map(request):
     site_exploration, _ = SiteExploration.objects.get_or_create(user=user)
     form = SiteExplorationForm(instance=site_exploration)
 
-    context = {"form": form}
+    # Save the existing MG data in the session storage to avoid sending an API request every time
+    if "existing_mgs" in request.session:
+        existing_mgs = request.session["existing_mgs"]
+    else:
+        existing_mgs = fetch_existing_minigrids()
+        request.session["existing_mgs"] = existing_mgs
+
+    context = {"form": form, "existing_mgs": json.dumps(existing_mgs)}
+    geojson_initial, _ = format_exploration_sites_data(existing_mgs)
+    potential_sites = site_exploration.latest_exploration_results["minigrids"]
+    if potential_sites:
+        geojson_potential, table_initial = format_exploration_sites_data(
+            potential_sites
+        )
+        context["table_data"] = table_initial
+        context["map_data"] = geojson_initial
+
     return render(request, "pages/map.html", context=context)
 
 

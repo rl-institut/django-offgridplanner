@@ -141,16 +141,27 @@
   }
 }
 
-.arrow {
-  animation: bouncing 1s infinite ease-in-out;
-  bottom: 0;
-  display: block;
-  height: 33px;
+.arrow-down {
+  position: fixed;
+  bottom: 20px;
   left: 50%;
-  margin-left: -25px;
-  position: absolute;
-  width: 50px;
-  color: var(--h2-color);
+  animation: bouncing 1.5s infinite ease-in-out;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.arrow-down::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  margin: auto;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-top: 25px solid var(--h2-color); /* Color of Arrow/Triangle */
 }
 
 .regions {

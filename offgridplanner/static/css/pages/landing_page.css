@@ -255,7 +255,7 @@
 }
 .footer-logo {
   display: inline-block;
-  width: 48px;
+  width: 25%;
   height: 48px;
   transition: transform 0.2s ease-in-out;
 }

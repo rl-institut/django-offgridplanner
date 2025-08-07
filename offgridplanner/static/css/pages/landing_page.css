@@ -221,7 +221,7 @@
 }
 .card__content {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   background-color: var(--card-color);
   border-radius: 8px;

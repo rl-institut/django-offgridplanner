@@ -32,8 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const startExplorationBtn = document.getElementById("exploration-btn");
   const stopBtn = document.getElementById('stop-btn');
 
-  markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
-
   // Load previous data on first load
   updateResults(table_data, map_data);
 
@@ -50,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const marker = L.marker([lat, lng], { icon: existingMarker }).bindPopup(content);
   existingSitesLayer.addLayer(marker);
-});
+  });
 
   //  Add event listeners for start and stop buttons
   stopBtn.addEventListener('click', () => {
@@ -64,7 +62,32 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     const formData = new FormData(filterForm);
     await sendRequest(formData);
-    startExplorationBtn.disabled = true;
+  });
+
+  // Add event listener to edit button for exploration sites
+    document.querySelectorAll('#edit-btn').forEach(button => {
+    button.addEventListener('click', async event => {
+      const siteId = event.currentTarget.getAttribute("data-site-id");
+      try {
+        const response = await fetch(populateSiteDataUrl, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ site_id: siteId })  // Optional payload
+        });
+
+        if (!response.ok) {
+          throw new Error('Edit request failed');
+        }
+
+        const result = await response.json();
+        console.log("Edit successful:", result);
+      } catch (err) {
+        console.error("Edit failed:", err);
+      }
+    });
   });
 });
 
@@ -80,8 +103,8 @@ async function sendRequest(body) {
     return;
   }
   const data = await response.json();
-  startExplorationBtn.disabled = true;
-
+  document.getElementById("exploration-btn").disabled = true;
+  document.querySelector('#sites-table').innerHTML = "";
   if (data.status === "FINISHED") {
     updateResults(data.table, data.geojson);
   } else if (data.status === "RUNNING") {
@@ -124,16 +147,16 @@ function updateResults(table_data, map_data) {
       // Update map
       potentialSitesLayer.clearLayers();
       map_data.forEach(feature => {
-        const [lng, lat] = feature.centroid.coordinates;
+      let [lng, lat] = feature.geometry.coordinates;
+      let id = feature.properties.name;
+
         const content = `
-          <h3>ID: ${feature.id}</h3>
-//          <p>Building count: ${feature.pv_capacity}</p>
-//          <p>Grid distance: ${feature.status}</p>
+          <h3>ID: ${id}</h3>
         `;
         const marker = L.marker([lat, lng], { icon: newMarker }).bindPopup(content);
         potentialSitesLayer.addLayer(marker);
     });
-    }
+  }
   }
 
 

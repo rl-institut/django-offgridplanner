@@ -17,9 +17,7 @@
 <main>
   <section class="dashboard">
     <div class="row">
-
-      <section class="dashboard">
-        <div class="chart" style="height: auto; padding-bottom: 10px">
+       <div class="chart" style="height: auto; padding-bottom: 10px">
           <div class="chart__header">
             <a class="title">Potential project sites</a>
             <div class="radio-inputs" id="status_header">
@@ -38,7 +36,7 @@
             </div>
             <span style="float:right;">
                   <a href="{% url 'projects:potential_map' %}"
-                       class="btn btn--long text-right">List view</a>
+                     class="btn btn--long text-right">List view</a>
             </span>
 
           </div>
@@ -65,11 +63,9 @@
               </div>
             </div>
             <div id="sites-table"></div>
+          </div>
         </div>
-        </div>
-      </section>
     </div>
-
   </section>
 </main>
 </body>
@@ -81,9 +77,10 @@
   const startExplorationUrl = `{% url 'projects:start_exploration' %}`;
   const stopExplorationUrl = `{% url 'projects:stop_exploration' %}`;
   const loadExplorationSitesUrl = `{% url 'projects:load_exploration_sites' %}`;
+  const populateSiteDataUrl = `{% url 'projects:populate_site_data' %}`;
   const csrfToken = `{{ csrf_token }}`;
-  const table_data = {{ table_data | default:"undefined" | safe }};
-  const map_data = {{ map_data | default:"undefined" | safe }};
+  const table_data = {{ table_data | safe }};
+  const map_data = {{ map_data | safe }};
   const existing_mgs = {{ existing_mgs | safe }};
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

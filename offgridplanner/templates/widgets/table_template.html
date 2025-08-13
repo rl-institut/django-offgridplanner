@@ -15,6 +15,7 @@
         <th onclick="sortTable(7, this)">CAPEX <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(8, this)">CO2 Savings <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(9, this)">Total consumption <span class="sort-arrow">↕</span></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -30,7 +31,7 @@
         <td>{{ site.capex|floatformat:2 }}</td>
         <td>{{ site.co2_savings|floatformat:2 }}</td>
         <td>{{ site.consumption_total|floatformat:2 }}</td>
-        <td><button id="edit-btn"  class="btn btn-primary-small">Edit</button></td>
+        <td><button id="edit-btn" data-site-id="{{ site.id }}" class="btn btn-primary-small">Edit</button></td>
       </tr>
       {% endfor %}
     </tbody>

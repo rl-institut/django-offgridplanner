@@ -25,5 +25,10 @@ urlpatterns = [
     path("projects/potential/map/", potential_map, name="potential_map"),
     path("ajax/start_exploration/", start_exploration, name="start_exploration"),
     path("ajax/stop_exploration/", stop_exploration, name="stop_exploration"),
-    path("ajax/load_exploration_sites/", load_exploration_sites, name="load_exploration_sites"),
+    path(
+        "ajax/load_exploration_sites/",
+        load_exploration_sites,
+        name="load_exploration_sites",
+    ),
+    path("ajax/populate_site_data/", populate_site_data, name="populate_site_data"),
 ]

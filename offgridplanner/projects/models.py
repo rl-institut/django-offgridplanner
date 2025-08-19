@@ -78,27 +78,6 @@ class Project(models.Model):
         return dm
 
 
-class MapTestSite(models.Model):
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    building_count = models.PositiveSmallIntegerField()
-    grid_dist = models.FloatField()
-    diameter_max = models.FloatField()
-    distance_from_road = models.FloatField()
-    lcoe = models.FloatField()
-    capex = models.FloatField()
-    res = models.FloatField()
-    co2_savings = models.FloatField()
-    consumption_total = models.FloatField()
-
-
-    class Meta:
-        unique_together = ("latitude", "longitude")
-
-    def __str__(self):
-        return f"TestSite {self.id}"
-
-
 class SiteExploration(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     exploration_id = models.TextField(null=True)

@@ -325,7 +325,9 @@ def populate_site_data(request):
             {"error": "Something went wrong fetching the site data"}, status=400
         )
 
-    return HttpResponseRedirect(reverse("steps:project_setup", args=proj.id))
+    return JsonResponse(
+        {"redirect_url": reverse("steps:project_setup", args=[proj.id])}
+    )
 
 
 # TODO refactor function to pass ruff

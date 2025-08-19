@@ -78,17 +78,18 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ site_id: siteId })  // Optional payload
         });
 
-        if (!response.ok) {
-          throw new Error('Edit request failed');
-        }
+      const data = await response.json();
 
-        const result = await response.json();
-        console.log("Edit successful:", result);
-      } catch (err) {
-        console.error("Edit failed:", err);
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else if (data.error) {
+        console.error(data.error);
       }
-    });
+    } catch (err) {
+      console.error("Error in fetch:", err);
+    }
   });
+ });
 });
 
 async function sendRequest(body) {

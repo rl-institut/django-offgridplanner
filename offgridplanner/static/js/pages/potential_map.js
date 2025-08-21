@@ -65,31 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Add event listener to edit button for exploration sites
-    document.querySelectorAll('#edit-btn').forEach(button => {
-    button.addEventListener('click', async event => {
-      const siteId = event.currentTarget.getAttribute("data-site-id");
-      try {
-        const response = await fetch(populateSiteDataUrl, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ site_id: siteId })  // Optional payload
-        });
-
-      const data = await response.json();
-
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
-      } else if (data.error) {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Error in fetch:", err);
-    }
-  });
- });
+  attachEditListeners();
 });
 
 async function sendRequest(body) {
@@ -143,6 +119,7 @@ function updateResults(table_data, map_data) {
   if (table_data !== undefined) {
       // Update table
       document.querySelector('#sites-table').innerHTML = table_data;
+      attachEditListeners();
       }
   if (map_data !== undefined) {
       // Update map
@@ -208,4 +185,32 @@ function sortTable(colIndex, th) {
 
   // Set class on current header
   th.classList.add(sortAscending ? "asc" : "desc");
+}
+
+function attachEditListeners() {
+    document.querySelectorAll('#edit-btn').forEach(button => {
+    button.addEventListener('click', async event => {
+      const siteId = event.currentTarget.getAttribute("data-site-id");
+      try {
+        const response = await fetch(populateSiteDataUrl, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ site_id: siteId })  // Optional payload
+        });
+
+      const data = await response.json();
+
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else if (data.error) {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Error in fetch:", err);
+    }
+  });
+ });
 }

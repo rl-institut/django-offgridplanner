@@ -31,6 +31,7 @@ OPTIONS_LABELS = {
     "do_es_design_optimization": _(
         "Energy Converter Design Optimization",
     ),  # TODO if set False then disable step 'energy_system_design'
+
 }
 
 
@@ -39,3 +40,15 @@ class OptionForm(ModelForm):
         model = Options
         fields = list(OPTIONS_LABELS)
         labels = OPTIONS_LABELS
+
+# Bachirou added
+class BoundForm(ModelForm):
+    class Meta:
+        model = Options
+        fields = ["latitude_min", "latitude_max", "longitude_min", "longitude_max"]
+        labels = {
+            "latitude_min": _("Latitude min"),
+            "latitude_max": _("Latitude max"),
+            "longitude_min": _("Longitude min"),
+            "longitude_max": _("Longitude max"),
+        }

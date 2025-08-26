@@ -31,7 +31,6 @@ OPTIONS_LABELS = {
     "do_es_design_optimization": _(
         "Energy Converter Design Optimization",
     ),  # TODO if set False then disable step 'energy_system_design'
-
 }
 
 
@@ -40,6 +39,7 @@ class OptionForm(ModelForm):
         model = Options
         fields = list(OPTIONS_LABELS)
         labels = OPTIONS_LABELS
+
 
 # Bachirou added
 class BoundForm(ModelForm):

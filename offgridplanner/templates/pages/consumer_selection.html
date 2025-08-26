@@ -180,7 +180,7 @@
                                     align-items: center;
                                     justify-content: center;
                                     margin-right: 10px;
-                                    color: #fff">Export Consumers</a>
+                                    color: #fff">Export Consumers {{bounds}}</a>
                           <select class="form-select"
                                   id="fileTypeDropdown"
                                   style="max-width: 150px;
@@ -341,10 +341,10 @@
       // url of API urls
       const csrfToken = '{{ csrf_token }}';
       //const project_id = {{ proj_id }};
-      const latitude_min = '{{ bounds.latitude_min}};
-      const latitude_max = '{{ bounds.latitude_max}};
-      const longitude_min = '{{ bounds.longitude_min}};
-      const longitude_max = '{{ bounds.longitude_max}};
+      const latitude_min = `{{ bounds.latitude_min}}`;
+      const latitude_max = `{{ bounds.latitude_max}}`;
+      const longitude_min = `{{ bounds.longitude_min}}`;
+      const longitude_max = `{{ bounds.longitude_max}}`;
       const public_service_list = {{ public_service_list | safe }};
       const enterprise_list = {{ enterprise_list | safe }};
       const large_load_list = {{ large_load_list | safe }};

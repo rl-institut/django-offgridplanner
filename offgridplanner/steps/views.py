@@ -17,14 +17,14 @@ from offgridplanner.optimization.supply.demand_estimation import ENTERPRISE_LIST
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_MAPPING
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
+from offgridplanner.projects.forms import BoundForm  # Bachirou
 from offgridplanner.projects.forms import OptionForm
-from offgridplanner.projects.forms import BoundForm # Bachirou
 from offgridplanner.projects.forms import ProjectForm
 from offgridplanner.projects.helpers import OUTPUT_KPIS
 from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
 from offgridplanner.projects.helpers import reorder_dict
-from offgridplanner.projects.models import Project
+from offgridplanner.projects.models import Project, Options
 from offgridplanner.steps.forms import CustomDemandForm
 from offgridplanner.steps.forms import EnergySystemDesignForm
 from offgridplanner.steps.forms import GridDesignForm
@@ -57,24 +57,26 @@ def project_setup(request, proj_id=None):
             raise PermissionDenied
     else:
         project = None
+
+    max_days = int(os.environ.get("MAX_DAYS", 365))
+
     if request.method == "GET":
-        max_days = int(os.environ.get("MAX_DAYS", 365))
 
         context = {}
         if project is not None:
             form = ProjectForm(instance=project)
             opts = OptionForm(instance=project.options)
-            bounds = BoundForm(instance=project.options) # Added Bachirou
+            bounds = BoundForm(instance=project.options)  # Added Bachirou
             context.update({"proj_id": project.id})
         else:
             form = ProjectForm(initial=get_param_from_metadata("default", "Project"))
             opts = OptionForm()
-            bounds = BoundForm() # Bachirou
+            bounds = BoundForm()  # Bachirou
         context.update(
             {
                 "form": form,
                 "opts_form": opts,
-                "bounds_form": bounds, # Bachirou added
+                "bounds_form": bounds,  # Bachirou added
                 # fields that should be rendered in left column (for use in template tags)
                 "left_col_fields": ["name", "n_days", "description"],
                 "max_days": max_days,
@@ -91,13 +93,20 @@ def project_setup(request, proj_id=None):
 
         return render(request, "pages/project_setup.html", context)
     if request.method == "POST":
+        context = {}
         if project is None:
             form = ProjectForm(request.POST)
             opts_form = OptionForm(request.POST)
         else:
             form = ProjectForm(request.POST, instance=project)
             opts_form = OptionForm(request.POST, instance=project.options)
-            bound_form = BoundForm(request.POST, instance =project.options) # Added Bachirou and 95 check
+            bound_form = BoundForm(
+                request.POST, instance=project.options
+            )  # Added Bachirou and 95 check
+            context.update({"proj_id": project.id})
+
+
+        # TODO here add a validation error
         if form.is_valid() and opts_form.is_valid() and bound_form.is_valid():
             opts = opts_form.save()
             if project is None:
@@ -106,9 +115,24 @@ def project_setup(request, proj_id=None):
                 project.options = opts
             project.save()
 
-        return HttpResponseRedirect(
-            reverse("steps:consumer_selection", args=[project.id]),
-        )
+            return HttpResponseRedirect(
+                reverse("steps:consumer_selection", args=[project.id]),
+            )
+        else:
+            context.update(
+                {
+                    "form": form,
+                    "opts_form": opts_form,
+                    "bounds_form": bound_form,  # Bachirou added
+                    # fields that should be rendered in left column (for use in template tags)
+                    "left_col_fields": ["name", "n_days", "description"],
+                    "max_days": max_days,
+                    "step_id": list(STEPS.keys()).index("project_setup") + 1,
+                    "step_list": STEP_LIST_RIBBON,
+                },
+            )
+            return render(request, "pages/project_setup.html", context)
+
 
 
 # @login_required()
@@ -127,7 +151,10 @@ def consumer_selection(request, proj_id=None):
         for ix, machine in enumerate(sorted(LARGE_LOAD_LIST), 1)
     }
 
+    # TODO find the project number --> Options --> give to context_dict as `bounds`
+
     context = {
+        "bounds" : Options.objects.filter(project__id=proj_id).get(),
         "public_service_list": public_service_list,
         "enterprise_list": enterprise_list,
         "large_load_list": large_load_list,

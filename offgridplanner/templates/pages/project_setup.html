@@ -67,6 +67,15 @@
               {% endfor %}
               <input type="submit" id="submitFormBtn" hidden="true">
             </div>
+            <div class="form-control" style="background-color: var(--bcc)">
+              {% for field in bounds_form %}
+              <label class="form-label">{{ field.label | safe }}</label>
+              <div class="input-group">
+                {{ field|add_class:"form-control" }}
+                {% if field.field.widget.attrs.unit != "" %}<span class="input-group-text">{{ field.field.widget.attrs.unit }}</span>{% endif %}
+              </div>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </form>

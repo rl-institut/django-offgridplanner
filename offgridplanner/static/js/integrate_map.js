@@ -28,6 +28,7 @@ var is_load_center = true;
 const nigeriaBounds = [
     [4.2, 2.7], // Southwest corner
     [13.9, 14.7] // Northeast corner
+
 ];
 let map;
 

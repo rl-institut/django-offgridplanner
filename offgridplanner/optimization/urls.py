@@ -43,7 +43,6 @@ urlpatterns = [
         load_plot_data,
         name="load_plot_data",
     ),
-    path("load-results/<int:proj_id>", load_results, name="load_results"),
     path(
         "start_calculation/<int:proj_id>",
         start_calculation,

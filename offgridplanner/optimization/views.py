@@ -27,6 +27,7 @@ from offgridplanner.optimization.helpers import convert_file_to_df
 from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.processing import GridProcessor
 from offgridplanner.optimization.processing import PreProcessor
@@ -213,12 +214,7 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
                     df = df[df["node_type"].isin(["power-house", "consumer"])]
                 else:
                     df = df[df["node_type"] == "consumer"]
-            df["latitude"] = df["latitude"].astype(float)
-            df["longitude"] = df["longitude"].astype(float)
-            df["shs_options"] = df["shs_options"].fillna(0)
-            df["custom_specification"] = df["custom_specification"].fillna("")
-            df["shs_options"] = df["shs_options"].astype(int)
-            df["is_connected"] = df["is_connected"].astype(bool)
+            df = df.fillna("null")
             nodes_list = df.to_dict("records")
             is_load_center = True
             if (
@@ -586,7 +582,10 @@ def waiting_for_results(request, proj_id):
             logger.exception("Error parsing results")
             status = ERROR
     elif status == ERROR:
-        results = json.dumps(response.get("results", {}).get(ERROR))
+        try:
+            results = json.dumps(response.get("results", {}).get(ERROR))
+        except AttributeError:
+            results = None
         logger.warning("Simulation failed with errors.")
 
     # Update simulation status
@@ -610,14 +609,25 @@ def waiting_for_results(request, proj_id):
 def process_optimization_results(request, proj_id):
     # Processes the results (contains both optimization result objects)
     data = json.loads(request.body)
-    results = data.get("results", {})
-    grid_processor = GridProcessor(proj_id=proj_id, results_json=results.get("grid"))
+    sim_res = data.get("results", {})
+    grid_processor = GridProcessor(proj_id=proj_id, results_json=sim_res.get("grid"))
     grid_processor.grid_results_to_db()
     supply_processor = SupplyProcessor(
-        proj_id=proj_id, results_json=results.get("supply")
+        proj_id=proj_id, results_json=sim_res.get("supply")
     )
+    supply_processor.process_supply_optimization_results()
     supply_processor.supply_results_to_db()
-
+    # Process shared results (after both grid and supply have been processed)
+    results = Results.objects.get(simulation__project__id=proj_id)
+    results.lcoe_share_supply = (
+        (results.epc_total - results.cost_grid) / results.epc_total * 100
+    )
+    results.lcoe_share_grid = 100 - results.lcoe_share_supply
+    assets = ["grid", "diesel_genset", "inverter", "rectifier", "battery", "pv"]
+    results.upfront_invest_total = sum(
+        [getattr(results, f"upfront_invest_{key}") for key in assets]
+    )
+    results.save()
     return JsonResponse({"msg": "Optimization results saved to database"})
 
 
@@ -630,138 +640,3 @@ def abort_calculation(request, proj_id):
     simulation.save()
     response = {"msg": "Calculation aborted"}
     return JsonResponse(response)
-
-
-def load_results(request, proj_id):
-    project = get_object_or_404(Project, id=proj_id)
-    opts = project.options
-    res = project.simulation.results
-    df = pd.Series(model_to_dict(res))
-    infeasible = bool(df["infeasible"]) if "infeasible" in df else False
-    if df.empty:
-        return JsonResponse({})
-    # TODO figure out this logic - I changed it so it would run through but it doesnt make so much sense to me
-    # if df['lcoe'] is None and opts.do_es_design_optimization is True:
-    #     return JsonResponse({})
-    # elif df['n_poles']is None and opts.do_grid_optimization is True:
-    #     return JsonResponse({})
-    if opts.do_grid_optimization is True:
-        df["average_length_distribution_cable"] = (
-            df["length_distribution_cable"] / df["n_distribution_links"]
-        )
-        df["average_length_connection_cable"] = (
-            df["length_connection_cable"] / df["n_connection_links"]
-        )
-        df["gridLcoe"] = float(df["cost_grid"]) / float(df["epc_total"]) * 100
-    else:
-        df["average_length_distribution_cable"] = None
-        df["average_length_connection_cable"] = None
-        df["gridLcoe"] = 0
-    df[["time_grid_design", "time_energy_system_design"]] = df[
-        ["time_grid_design", "time_energy_system_design"]
-    ].fillna(0)
-    df["time"] = df["time_grid_design"] + df["time_energy_system_design"]
-    unit_dict = {
-        "n_poles": "",
-        "n_consumers": "",
-        "n_shs_consumers": "",
-        "length_distribution_cable": "m",
-        "average_length_distribution_cable": "m",
-        "length_connection_cable": "m",
-        "average_length_connection_cable": "m",
-        "cost_grid": "USD/a",
-        "lcoe": "",
-        "gridLcoe": "%",
-        "esLcoe": "%",
-        "res": "%",
-        "max_voltage_drop": "%",
-        "shortage_total": "%",
-        "surplus_rate": "%",
-        "time": "s",
-        "co2_savings": "t/a",
-        "total_annual_consumption": "kWh/a",
-        "average_annual_demand_per_consumer": "W",
-        "upfront_invest_grid": "USD",
-        "upfront_invest_diesel_gen": "USD",
-        "upfront_invest_inverter": "USD",
-        "upfront_invest_rectifier": "USD",
-        "upfront_invest_battery": "USD",
-        "upfront_invest_pv": "USD",
-        "upfront_invest_converters": "USD",
-        "upfront_invest_total": "USD",
-        "battery_capacity": "kWh",
-        "pv_capacity": "kW",
-        "diesel_genset_capacity": "kW",
-        "inverter_capacity": "kW",
-        "rectifier_capacity": "kW",
-        "co2_emissions": "t/a",
-        "fuel_consumption": "liter/a",
-        "peak_demand": "kW",
-        "base_load": "kW",
-        "max_shortage": "%",
-        "cost_fuel": "USD/a",
-        "epc_pv": "USD/a",
-        "epc_diesel_genset": "USD/a",
-        "epc_inverter": "USD/a",
-        "epc_rectifier": "USD/a",
-        "epc_battery": "USD/a",
-        "epc_total": "USD/a",
-    }
-    if opts.do_es_design_optimization is True:
-        df["esLcoe"] = (
-            (float(df["epc_total"]) - float(df["cost_grid"]))
-            / float(df["epc_total"])
-            * 100
-        )
-        if int(df["n_consumers"]) != int(df["n_shs_consumers"]) and not infeasible:
-            df["upfront_invest_converters"] = sum(
-                df[ix] for ix in df.index if "upfront" in ix and "grid" not in ix
-            )
-            df["upfront_invest_total"] = (
-                df["upfront_invest_converters"] + df["upfront_invest_grid"]
-            )
-        else:
-            df["upfront_invest_converters"] = None
-            df["upfront_invest_total"] = None
-    else:
-        df["upfront_invest_converters"] = None
-        df["upfront_invest_total"] = None
-        df["esLcoe"] = 0
-    # TODO formatting, figure out later
-    # for col in df.keys():
-    #     if unit_dict[col] in ['%', 's', 'kW', 'kWh']:
-    #         df[col] = df[col].where(df[col] != 'None', 0)
-    #         if df[col].isna().sum() == 0:
-    #             df[col] = df[col].astype(float).round(1).astype(str)
-    #     elif unit_dict[col] in ['USD', 'kWh/a', 'USD/a']:
-    #         if df[col].isna().sum() == 0 and df.loc[0, col] != 'None':
-    #             df[col] = "{:,}".format(df[col].astype(float).astype(int).iat[0])
-    #     df[col] = df[col] + ' ' + unit_dict[col]
-    df = df[list(unit_dict.keys())].astype(float).round(1)
-    df["do_grid_optimization"] = opts.do_grid_optimization
-    df["do_es_design_optimization"] = opts.do_es_design_optimization
-    if infeasible is True:
-        df["responseMsg"] = (
-            "There are no results of the energy system optimization. There were no feasible "
-            "solution."
-        )
-    elif int(df["n_consumers"]) == int(df["n_shs_consumers"]):
-        df["responseMsg"] = (
-            "Due to high grid costs, all consumers have been equipped with solar home "
-            "systems. A grid was not built, therefore no optimization of the energy system was "
-            "carried out."
-        )
-    else:
-        df["responseMsg"] = ""
-    return JsonResponse(df.astype(str).to_dict(), status=200)
-
-
-# TODO define later based on results models - could also be a method in the results model
-def remove_results(user_id, project_id):
-    # await remove(sa_tables.Results, user_id, project_id)
-    # await remove(sa_tables.DemandCoverage, user_id, project_id)
-    # await remove(sa_tables.EnergyFlow, user_id, project_id)
-    # await remove(sa_tables.Emissions, user_id, project_id)
-    # await remove(sa_tables.DurationCurve, user_id, project_id)
-    # await remove(sa_tables.Links, user_id, project_id)
-    pass

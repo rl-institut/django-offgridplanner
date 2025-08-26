@@ -1,73 +1,73 @@
-﻿label;verbose;type;default;unit;model;help_text
-name;Project Name;str;;;Project;
-description;Project Description;str;;;Project;
-interest_rate;;float;12.3;%;Project;The interest rate in investment calculations signifies the cost of capital and the potential return from an alternative investment of similar risk. It helps express the time value of money, crucial for determining the present value of future cash flows. This assists in evaluating and comparing investment opportunities. Default value of 12.3% is taken from World Bank reported average lending interest rate data of 2022. Please make sure to check this value for your project.
-lifetime;Project Lifetime;int;25;Years;Project;The period during which the system will be in operation. Components whose lifetime is below that of the project lifetime must be replaced during operation, which will be taken into account in the cost calculation. In addition, the residual value of the components is determined at the end of the project lifetime.
-n_days;Simulation Period;int;365;Days;Project;Number of days used for the modelling period. For economic calculations, the project lifetime will be used.
-very_low;;float;0.663;%;CustomDemand;Percentage of households with very low demand (0.6kWh/hh/day)
-low;;float;0.215;%;CustomDemand;Percentage of households with low demand (1.5kWh/hh/day)
-middle;;float;0.076;%;CustomDemand;Percentage of households with middle demand  (2.2kWh/hh/day)
-high;;float;0.031;%;CustomDemand;Percentage of households with high demand (2.9kWh/hh/day)
-very_high;;float;0.015;%;CustomDemand;Percentage of households with very high demand  (3.4kWh/hh/day)
-annual_total_consumption;Set Total Annual Consumption;float;;kWh;CustomDemand;The demand curve will be scaled to meet the given total demand
-annual_peak_consumption;Set Peak Demand;float;;kW;CustomDemand;The demand curve will be scaled to meet the given peak demand
-distribution_cable_lifetime;Lifetime;int;25;Years;GridDesign;Lifespan of the component, after expiration a replacement investment must be made
-distribution_cable_capex;CapEx;float;10;currency/m;GridDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-distribution_cable_max_length;Max. Length;float;50;m;GridDesign;Maximum allowed length of the distribution cable
-connection_cable_lifetime;Lifetime;int;25;Years;GridDesign;Lifespan of the component, after expiration a replacement investment must be made
-connection_cable_capex;CapEx;float;4;currency/m;GridDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-connection_cable_max_length;Max. Length;float;20;m;GridDesign;Maximum allowed length of the connection cable
-pole_lifetime;Lifetime;int;25;Years;GridDesign;Lifespan of the component, after expiration a replacement investment must be made
-pole_capex;CapEx;float;800;currency/m;GridDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-pole_max_n_connections;Max. Number of Connections;int;5;n;GridDesign;Maximum number of consumers that can be connected to one pole
-mg_connection_cost;Connection Cost;float;140;currency/con;GridDesign;Costs that arise when connecting a consumer in addition to the material costs of the cable.
-include_shs;Solar Home Systems;bool;True;;GridDesign;For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended
-shs_max_grid_cost;Max. Specific Grid Cost;float;0.6;currency/kWh;GridDesign;For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended
-battery_settings_is_selected;Battery;bool;True;;EnergySystemDesign;
-battery_settings_design;Optimize Capacity;bool;True;;EnergySystemDesign;
-battery_parameters_nominal_capacity;Capacity;float;;kWh;EnergySystemDesign;
-battery_parameters_lifetime;Lifetime;int;7;Years;EnergySystemDesign;Lifespan of the component, after expiration a replacement investment must be made
-battery_parameters_capex;CapEx;float;314;currency/kWh;EnergySystemDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-battery_parameters_opex;OpEx;float;24;currency/kW/year;EnergySystemDesign;Operating Expense (OpEx) is the cost associated with the operation of the component
-battery_parameters_soc_min;Min. SOC;float;0;%;EnergySystemDesign;Minimum State of Charge (SOC) of a battery refers to the lowest level at which the battery is allowed to discharge in order to prevent damage and prolong its lifespan
-battery_parameters_soc_max;Max. SOC;float;10;%;EnergySystemDesign;Maximum State of Charge (SOC) of a battery refers to the highest level at which the battery can be safely charged to prevent overcharging and ensure longevity
-battery_parameters_c_rate_in;C-Rate in;float;1;-;EnergySystemDesign;
-battery_parameters_c_rate_out;C-Rate out;float;1;-;EnergySystemDesign;
-battery_parameters_efficiency;Roundtrip Efficiency;float;96;%;EnergySystemDesign;
-diesel_genset_settings_is_selected;Diesel Genset;bool;True;;EnergySystemDesign;
-diesel_genset_settings_design;Optimize Capacity;bool;True;;EnergySystemDesign;
-diesel_genset_parameters_nominal_capacity;Capacity;float;;kW;EnergySystemDesign;
-diesel_genset_parameters_lifetime;Lifetime;int;8;Years;EnergySystemDesign;Lifespan of the component, after expiration a replacement investment must be made
-diesel_genset_parameters_capex;CapEx;float;350;currency/kW;EnergySystemDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-diesel_genset_parameters_opex;OpEx;float;25;currency/kW/year;EnergySystemDesign;Operating Expense (OpEx) refers to the fixed annual costs incurred in the operation of a component, specifically excluding fuel and other variable expenses
-diesel_genset_parameters_variable_cost;Variable Cost;float;0;currency/kWh;EnergySystemDesign;
-diesel_genset_parameters_fuel_cost;Fuel Cost;float;1.7;currency/L;EnergySystemDesign;
-diesel_genset_parameters_fuel_lhv;Fuel LHV;float;11.8;kWh/kg;EnergySystemDesign;
-diesel_genset_parameters_min_efficiency;Min. Efficiency;float;22;%;EnergySystemDesign;
-diesel_genset_parameters_max_efficiency;Max. Efficiency;float;30;%;EnergySystemDesign;
-diesel_genset_parameters_min_load;Min. Load;float;20;%;EnergySystemDesign;
-diesel_genset_parameters_max_load;Max. Load;float;100;%;EnergySystemDesign;
-inverter_settings_is_selected;Inverter;bool;True;;EnergySystemDesign;
-inverter_settings_design;Optimize Capacity;bool;True;;EnergySystemDesign;
-inverter_parameters_nominal_capacity;Capacity;float;;kW;EnergySystemDesign;
-inverter_parameters_lifetime;Lifetime;int;25;Years;EnergySystemDesign;Lifespan of the component, after expiration a replacement investment must be made
-inverter_parameters_capex;CapEx;float;415;currency/kW;EnergySystemDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-inverter_parameters_opex;OpEx;float;9;currency/kW/year;EnergySystemDesign;Operating Expense (OpEx) is the cost associated with the operation of the component
-inverter_parameters_efficiency;Efficiency;float;95;%;EnergySystemDesign;
-pv_settings_is_selected;PV;bool;True;;EnergySystemDesign;
-pv_settings_design;Optimize Capacity;bool;True;;EnergySystemDesign;
-pv_parameters_nominal_capacity;Capacity;float;441;kWp;EnergySystemDesign;
-pv_parameters_lifetime;Lifetime;int;25;Years;EnergySystemDesign;Lifespan of the component, after expiration a replacement investment must be made
-pv_parameters_capex;CapEx;float;441;currency/kWp;EnergySystemDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-pv_parameters_opex;OpEx;float;8.8;currency/kWp/year;EnergySystemDesign;Operating Expense (OpEx) is the cost associated with the operation of the component
-rectifier_settings_is_selected;Rectifier;bool;True;;EnergySystemDesign;
-rectifier_settings_design;Optimize Capacity;bool;True;;EnergySystemDesign;
-rectifier_parameters_nominal_capacity;Capacity;float;5;kW;EnergySystemDesign;
-rectifier_parameters_lifetime;Lifetime;int;25;Years;EnergySystemDesign;Lifespan of the component, after expiration a replacement investment must be made
-rectifier_parameters_capex;CapEx;float;415;currency/kW;EnergySystemDesign;Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-rectifier_parameters_opex;OpEx;float;0;currency/kW/year;EnergySystemDesign;Operating Expense (OpEx) is the cost associated with the operation of the component
-rectifier_parameters_efficiency;Efficiency;float;95;%;EnergySystemDesign;
-shortage_settings_is_selected;Shortage;bool;False;;EnergySystemDesign;
-shortage_parameters_max_shortage_total;Max. Total Shortage;float;10;%;EnergySystemDesign;
-shortage_parameters_max_shortage_timestep;Max. Shortage Each Timestep;float;20;%;EnergySystemDesign;
-shortage_parameters_shortage_penalty_cost;Shortage Penalty Cost;float;0.8;currency/kWh;EnergySystemDesign;
+﻿label,verbose,type,default,unit,model,help_text
+name,Project Name,str,,,Project,
+description,Project Description,str,,,Project,
+interest_rate,,float,12.3,%,Project,"The interest rate in investment calculations signifies the cost of capital and the potential return from an alternative investment of similar risk. It helps express the time value of money, crucial for determining the present value of future cash flows. This assists in evaluating and comparing investment opportunities. Default value of 12.3% is taken from World Bank reported average lending interest rate data of 2022. Please make sure to check this value for your project."
+lifetime,Project Lifetime,int,25,Years,Project,"The period during which the system will be in operation. Components whose lifetime is below that of the project lifetime must be replaced during operation, which will be taken into account in the cost calculation. In addition, the residual value of the components is determined at the end of the project lifetime."
+n_days,Simulation Period,int,365,Days,Project,"Number of days used for the modelling period. For economic calculations, the project lifetime will be used."
+very_low,,float,0.663,%,CustomDemand,Percentage of households with very low demand (0.6kWh/hh/day)
+low,,float,0.215,%,CustomDemand,Percentage of households with low demand (1.5kWh/hh/day)
+middle,,float,0.076,%,CustomDemand,Percentage of households with middle demand  (2.2kWh/hh/day)
+high,,float,0.031,%,CustomDemand,Percentage of households with high demand (2.9kWh/hh/day)
+very_high,,float,0.015,%,CustomDemand,Percentage of households with very high demand  (3.4kWh/hh/day)
+annual_total_consumption,Set Total Annual Consumption,float,,kWh,CustomDemand,The demand curve will be scaled to meet the given total demand
+annual_peak_consumption,Set Peak Demand,float,,kW,CustomDemand,The demand curve will be scaled to meet the given peak demand
+distribution_cable_lifetime,Lifetime,int,25,Years,GridDesign,Lifespan of the component, after expiration a replacement investment must be made
+distribution_cable_capex,CapEx,float,10,currency/m,GridDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+distribution_cable_max_length,Max. Length,float,50,m,GridDesign,Maximum allowed length of the distribution cable
+connection_cable_lifetime,Lifetime,int,25,Years,GridDesign,Lifespan of the component, after expiration a replacement investment must be made
+connection_cable_capex,CapEx,float,4,currency/m,GridDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+connection_cable_max_length,Max. Length,float,20,m,GridDesign,Maximum allowed length of the connection cable
+pole_lifetime,Lifetime,int,25,Years,GridDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+pole_capex,CapEx,float,800,currency/m,GridDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+pole_max_n_connections,Max. Number of Connections,int,5,n,GridDesign,Maximum number of consumers that can be connected to one pole
+mg_connection_cost,Connection Cost,float,140,currency/con,GridDesign,Costs that arise when connecting a consumer in addition to the material costs of the cable.
+include_shs,Solar Home Systems,bool,True,,GridDesign,"For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended"
+shs_max_grid_cost,Max. Specific Grid Cost,float,0.6,currency/kWh,GridDesign,"For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended"
+battery_settings_is_selected,Battery,bool,True,,EnergySystemDesign,
+battery_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+battery_parameters_nominal_capacity,Capacity,float,,kWh,EnergySystemDesign,
+battery_parameters_lifetime,Lifetime,int,7,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+battery_parameters_capex,CapEx,float,314,currency/kWh,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+battery_parameters_opex,OpEx,float,24,currency/kW/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+battery_parameters_soc_min,Min. SOC,float,0,%,EnergySystemDesign,Minimum State of Charge (SOC) of a battery refers to the lowest level at which the battery is allowed to discharge in order to prevent damage and prolong its lifespan
+battery_parameters_soc_max,Max. SOC,float,100,%,EnergySystemDesign,Maximum State of Charge (SOC) of a battery refers to the highest level at which the battery can be safely charged to prevent overcharging and ensure longevity
+battery_parameters_c_rate_in,C-Rate in,float,1,-,EnergySystemDesign,
+battery_parameters_c_rate_out,C-Rate out,float,1,-,EnergySystemDesign,
+battery_parameters_efficiency,Roundtrip Efficiency,float,96,%,EnergySystemDesign,
+diesel_genset_settings_is_selected,Diesel Genset,bool,True,,EnergySystemDesign,
+diesel_genset_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+diesel_genset_parameters_nominal_capacity,Capacity,float,,kW,EnergySystemDesign,
+diesel_genset_parameters_lifetime,Lifetime,int,8,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+diesel_genset_parameters_capex,CapEx,float,350,currency/kW,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+diesel_genset_parameters_opex,OpEx,float,25,currency/kW/year,EnergySystemDesign,"Operating Expense (OpEx) refers to the fixed annual costs incurred in the operation of a component, specifically excluding fuel and other variable expenses"
+diesel_genset_parameters_variable_cost,Variable Cost,float,0,currency/kWh,EnergySystemDesign,
+diesel_genset_parameters_fuel_cost,Fuel Cost,float,1.7,currency/L,EnergySystemDesign,
+diesel_genset_parameters_fuel_lhv,Fuel LHV,float,11.8,kWh/kg,EnergySystemDesign,
+diesel_genset_parameters_min_efficiency,Min. Efficiency,float,22,%,EnergySystemDesign,
+diesel_genset_parameters_max_efficiency,Max. Efficiency,float,30,%,EnergySystemDesign,
+diesel_genset_parameters_min_load,Min. Load,float,20,%,EnergySystemDesign,
+diesel_genset_parameters_max_load,Max. Load,float,100,%,EnergySystemDesign,
+inverter_settings_is_selected,Inverter,bool,True,,EnergySystemDesign,
+inverter_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+inverter_parameters_nominal_capacity,Capacity,float,,kW,EnergySystemDesign,
+inverter_parameters_lifetime,Lifetime,int,25,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+inverter_parameters_capex,CapEx,float,415,currency/kW,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+inverter_parameters_opex,OpEx,float,9,currency/kW/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+inverter_parameters_efficiency,Efficiency,float,95,%,EnergySystemDesign,
+pv_settings_is_selected,PV,bool,True,,EnergySystemDesign,
+pv_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+pv_parameters_nominal_capacity,Capacity,float,,kWp,EnergySystemDesign,
+pv_parameters_lifetime,Lifetime,int,25,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+pv_parameters_capex,CapEx,float,441,currency/kWp,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+pv_parameters_opex,OpEx,float,8.8,currency/kWp/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+rectifier_settings_is_selected,Rectifier,bool,True,,EnergySystemDesign,
+rectifier_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+rectifier_parameters_nominal_capacity,Capacity,float,5,kW,EnergySystemDesign,
+rectifier_parameters_lifetime,Lifetime,int,25,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+rectifier_parameters_capex,CapEx,float,415,currency/kW,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+rectifier_parameters_opex,OpEx,float,0,currency/kW/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+rectifier_parameters_efficiency,Efficiency,float,95,%,EnergySystemDesign,
+shortage_settings_is_selected,Shortage,bool,False,,EnergySystemDesign,
+shortage_parameters_max_shortage_total,Max. Total Shortage,float,10,%,EnergySystemDesign,
+shortage_parameters_max_shortage_timestep,Max. Shortage Each Timestep,float,20,%,EnergySystemDesign,
+shortage_parameters_shortage_penalty_cost,Shortage Penalty Cost,float,0.8,currency/kWh,EnergySystemDesign,

@@ -1,6 +1,8 @@
 import os
 
+import pandas as pd
 from django.core.exceptions import PermissionDenied
+from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -18,6 +20,7 @@ from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import BoundForm # Bachirou
 from offgridplanner.projects.forms import ProjectForm
+from offgridplanner.projects.helpers import OUTPUT_KPIS
 from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
 from offgridplanner.projects.helpers import reorder_dict
@@ -313,12 +316,27 @@ def calculating(request, proj_id=None):
 @require_http_methods(["GET"])
 def simulation_results(request, proj_id=None):
     step_id = list(STEPS.keys()).index("calculating") + 1
+
+    project = get_object_or_404(Project, id=proj_id)
+    opts = project.options
+    res = project.simulation.results
+    df = pd.Series(model_to_dict(res))
+
+    df = df.astype(float)
+    output_kpis = OUTPUT_KPIS.copy()
+
+    for kpi in output_kpis:
+        output_kpis[kpi]["value"] = df[kpi].round(1)
+
     return render(
         request,
         "pages/simulation_results.html",
         context={
             "proj_id": proj_id,
             "step_id": step_id,
+            "results": output_kpis,
+            "do_grid_optimization": opts.do_grid_optimization,
+            "do_supply_optimization": opts.do_es_design_optimization,
             "step_list": STEP_LIST_RIBBON,
         },
     )

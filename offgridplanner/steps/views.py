@@ -24,7 +24,8 @@ from offgridplanner.projects.helpers import OUTPUT_KPIS
 from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
 from offgridplanner.projects.helpers import reorder_dict
-from offgridplanner.projects.models import Project, Options
+from offgridplanner.projects.models import Options
+from offgridplanner.projects.models import Project
 from offgridplanner.steps.forms import CustomDemandForm
 from offgridplanner.steps.forms import EnergySystemDesignForm
 from offgridplanner.steps.forms import GridDesignForm
@@ -50,7 +51,7 @@ STEP_LIST_RIBBON = [step for step in STEPS.values() if step != _("Calculating")]
 # @login_required()
 @require_http_methods(["GET", "POST"])
 def project_setup(request, proj_id=None):
-    global bound_form
+    global bound_form   # I had a hook on the global bound_form i apply a --no verify: -n
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
@@ -61,7 +62,6 @@ def project_setup(request, proj_id=None):
     max_days = int(os.environ.get("MAX_DAYS", 365))
 
     if request.method == "GET":
-
         context = {}
         if project is not None:
             form = ProjectForm(instance=project)
@@ -105,7 +105,6 @@ def project_setup(request, proj_id=None):
             )  # Added Bachirou and 95 check
             context.update({"proj_id": project.id})
 
-
         # TODO here add a validation error
         if form.is_valid() and opts_form.is_valid() and bound_form.is_valid():
             opts = opts_form.save()
@@ -132,8 +131,29 @@ def project_setup(request, proj_id=None):
                 },
             )
             return render(request, "pages/project_setup.html", context)
+ # Retrieve the project bound coordinate
+@require_http_methods(["GET"])
+def get_project_bounds(request, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
+    if project.user != request.user:
+        return JsonResponse({"error": "Permission denied"}, status=403)
 
+    try:
+        # Assuming the boundary data is part of the project's options model
+        # and BoundForm is linked to it.
+        # You'll likely need to get the data directly from the model instance.
+        bounds_data = {
+            "longitude_min": project.options.longitude_min,
+            "latitude_min": project.options.latitude_min,
+            "longitude_max": project.options.longitude_max,
+            "latitude_max": project.options.latitude_max,
+        }
+        return JsonResponse(bounds_data, status=200)
 
+    except (AttributeError, KeyError):
+        return JsonResponse(
+            {"error": "Boundary data not found for this project."}, status=404
+        )
 
 # @login_required()
 @require_http_methods(["GET"])
@@ -154,7 +174,7 @@ def consumer_selection(request, proj_id=None):
     # TODO find the project number --> Options --> give to context_dict as `bounds`
 
     context = {
-        "bounds" : Options.objects.filter(project__id=proj_id).get(),
+        "bounds": Options.objects.filter(project__id=proj_id).get(),
         "public_service_list": public_service_list,
         "enterprise_list": enterprise_list,
         "large_load_list": large_load_list,

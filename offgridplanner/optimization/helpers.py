@@ -11,6 +11,7 @@ from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_M
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
 from offgridplanner.projects.helpers import df_to_file
+from offgridplanner.projects.models import Options  # Import the Class options
 
 
 def validate_file_extension(filename):
@@ -103,18 +104,20 @@ def check_geographic_bounds(df):
     ):
         error_msg = "Distance between consumers exceeds maximum allowed distance."
         raise ValidationError(error_msg)
-
-    nigeria_bounds = {
-        "latitude_min": 4.2,
-        "latitude_max": 13.9,
-        "longitude_min": 2.7,
-        "longitude_max": 14.7,
+    dic01 = Options.objects.all()
+    import pdb; pdb.set_trace()
+    Options.objects.all()
+    niger_bounds = {
+        "latitude_min": 11.7,
+        "latitude_max": 23.53,
+        "longitude_min": 0.29,
+        "longitude_max": 15.99,
     }
     out_of_bounds = df[
-        (df["latitude"] < nigeria_bounds["latitude_min"])
-        | (df["latitude"] > nigeria_bounds["latitude_max"])
-        | (df["longitude"] < nigeria_bounds["longitude_min"])
-        | (df["longitude"] > nigeria_bounds["longitude_max"])
+        (df["latitude"] < niger_bounds["latitude_min"])
+        | (df["latitude"] > niger_bounds["latitude_max"])
+        | (df["longitude"] < niger_bounds["longitude_min"])
+        | (df["longitude"] > niger_bounds["longitude_max"])
     ]
     if not out_of_bounds.empty:
         error_msg = "Some latitude/longitude values are outside the bounds of Nigeria."

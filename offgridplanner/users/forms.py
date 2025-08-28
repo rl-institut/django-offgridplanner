@@ -5,6 +5,7 @@ from django.forms import BooleanField
 from django.forms import CharField
 from django.forms import EmailField
 from django.forms import TextInput
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import User
@@ -49,9 +50,12 @@ class UserSignupForm(SignupForm):
     def __init__(self, *args, **kwargs):
         privacy_url = kwargs.pop("privacy_url", "")
         super().__init__(*args, **kwargs)
-        self.fields["accept_privacy"].label = _(
-            "I have read and accept the <a target='_blank' href='%(privacy_url)s'>privacy statement</a> from PeopleSun",
-        ) % {"privacy_url": privacy_url}
+        self.fields["accept_privacy"].label = mark_safe(  # noqa: S308
+            _(
+                "I have read and accept the <a target='_blank' href='%(privacy_url)s'>privacy statement</a> from PeopleSun",
+            )
+            % {"privacy_url": privacy_url}
+        )
 
     def save(self, request):
         # Ensure you call the parent class's save.

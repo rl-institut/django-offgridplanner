@@ -10,35 +10,30 @@
 {% block index %}
 
     <main class="signup">
-      <div class="container">
-                <h1 style="text-align:left;">Login</h1>
-                <form method="post" class="signup-frame__form">
-                  {% csrf_token %}
-                  {{ form|crispy }}
-                  <!--div style="text-align: left;">
-                      <input type="checkbox" class="form-check-input" id="isEnabled"/>
-                      <label for="isEnabled" style="margin-left: 5px;"><span>Remember me</span></label>
-                  </div-->
-                  <p style="text-align:left;">&nbsp
-                      {% translate "Do you not have an account yet?" %} <a
-                      href="{% url 'account_signup' %}">{% translate "Sign up" %}</a>
-                  <p style="text-align: left">
-                    <a href="{% url 'account_reset_password' %}">{% trans "Forgot your password?" %}</a>
-                  </p>
-
-                  </p>
-
-                  <button class="btn btn--large" type="submit"
-                          id="loginbutton">{% translate "Login" %}</button>
-                </form>
-                <!--button onclick="document.getElementById('login').style.display='none'" type="button" class="cancelbtn">
-                    Close
-                </button>
-                <p id="responseMsg"></p-->
-
+        <div class="signup-frame">
+            <div class="signup-frame__img">
+                <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="PeopleSun logo">
+            </div>
+            <div class="signup-frame__heading">Login</div>
+            <form method="post" class="signup-frame__form">
+                {% csrf_token %}
+                {{ form|crispy }}
+            </form>
+            <!--div style="text-align: left;">
+                <input type="checkbox" class="form-check-input" id="isEnabled"/>
+                <label for="isEnabled" style="margin-left: 5px;"><span>Remember me</span></label>
+            </div-->
+            <div class="signup-frame__subheading">
+                {% translate "Do you not have an account yet?" %} <a
+                href="{% url 'account_signup' %}">{% translate "Sign up" %}</a>
             </div>
 
+            <button class="btn btn--large" type="submit"
+                    id="loginbutton">{% translate "Login" %}</button>
+            <!--button onclick="document.getElementById('login').style.display='none'" type="button" class="cancelbtn">
+                Close
+            </button>
+            <p id="responseMsg"></p-->
+        </div>
     </main>
-
-
 {% endblock index %}

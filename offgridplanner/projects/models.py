@@ -18,18 +18,18 @@ class Options(models.Model):
     do_grid_optimization = models.BooleanField(default=True)
     do_es_design_optimization = models.BooleanField(default=True)
 
-    # import pdb; pdb.set_trace() # Add column in the DB and check the validation of the coord boundaries
+    # Add column in the DB and check the validation of the coord boundaries
     latitude_min = models.FloatField(
-        default=11.7, validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
+        default=4.2, validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
     )
     latitude_max = models.FloatField(
-        default=23.53, validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
+        default=13.9, validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
     )
     longitude_min = models.FloatField(
-        default=0.29, validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
+        default=2.7, validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
     )
     longitude_max = models.FloatField(
-        default=15.99, validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
+        default=14.7, validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
     )
 
     def __str__(self):
@@ -42,7 +42,7 @@ class Project(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     interest_rate = models.FloatField(
-        default=12, validators=[MinValueValidator(0.0)], blank=False
+        default=11.3, validators=[MinValueValidator(0.0)], blank=False
     )
     lifetime = models.PositiveSmallIntegerField(
         default=25,

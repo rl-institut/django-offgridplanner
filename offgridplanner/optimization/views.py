@@ -308,11 +308,10 @@ def consumer_to_db(request, proj_id=None):
 
 @require_http_methods(["POST"])
 def file_nodes_to_js(request):
-    #TODO GET the project id Bachirou
+    # TODO GET the project id Bachirou
     proj_id = request.POST.get("proj_id")
-    #print("Project id", projec_id)
-    #import pdb; set_trace()
-
+    # print("Project id", projec_id)
+    # import pdb; set_trace()
 
     if "file" not in request.FILES:
         return JsonResponse({"responseMsg": "No file uploaded."}, status=400)
@@ -340,10 +339,11 @@ def file_nodes_to_js(request):
         status=200,
     )
 
-#import pdb; pdb.set_trace()
+
+# import pdb; pdb.set_trace()
 def load_demand_plot_data(request, proj_id=None):
     # if is_ajax(request):
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     time_range = range(24)
     nodes = Nodes.objects.get(project__id=proj_id)
     custom_demand = CustomDemand.objects.get(project__id=proj_id)
@@ -503,10 +503,12 @@ def start_calculation(request, proj_id):
     preprocessor = PreProcessor(proj_id)
     supply_opt_json = preprocessor.collect_supply_opt_json_data()
     grid_opt_json = preprocessor.collect_grid_opt_json_data()
-    import pdb; pdb.set_trace() ## Save to json in a file , grid and supply
+    # import pdb
+
+    # pdb.set_trace()  ## Save to json in a file , grid and supply
     # Open a file in write mode and dump the supply_opt_json data
-    #with open(supply_filename, 'w') as f:        # Added by Bachirou
-        #json.dump(supply_opt_json, f, indent=4)
+    # with open(supply_filename, 'w') as f:        # Added by Bachirou
+    # json.dump(supply_opt_json, f, indent=4)
 
     try:
         token_grid = (

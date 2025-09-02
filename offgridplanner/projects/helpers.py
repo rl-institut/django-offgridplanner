@@ -190,5 +190,7 @@ def reorder_dict(d, old_index, new_index):
     return dict(items)
 
 
+# FORM_FIELD_METADATA = {}
+# OUTPUT_KPIS = {}
 FORM_FIELD_METADATA = csv_to_dict("data/form_parameters.csv")
 OUTPUT_KPIS = csv_to_dict("data/output_kpis.csv")

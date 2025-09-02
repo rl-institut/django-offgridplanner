@@ -4,6 +4,7 @@ import pandas as pd
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -17,7 +18,7 @@ from offgridplanner.optimization.supply.demand_estimation import ENTERPRISE_LIST
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_MAPPING
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
-from offgridplanner.projects.forms import BoundForm  # Bachirou
+from offgridplanner.projects.forms import BoundForm
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
 from offgridplanner.projects.helpers import OUTPUT_KPIS
@@ -51,7 +52,7 @@ STEP_LIST_RIBBON = [step for step in STEPS.values() if step != _("Calculating")]
 # @login_required()
 @require_http_methods(["GET", "POST"])
 def project_setup(request, proj_id=None):
-    global bound_form   # I had a hook on the global bound_form i apply a --no verify: -n
+
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
@@ -66,17 +67,17 @@ def project_setup(request, proj_id=None):
         if project is not None:
             form = ProjectForm(instance=project)
             opts = OptionForm(instance=project.options)
-            bounds = BoundForm(instance=project.options)  # Added Bachirou
+            bounds = BoundForm(instance=project.options)
             context.update({"proj_id": project.id})
         else:
             form = ProjectForm(initial=get_param_from_metadata("default", "Project"))
             opts = OptionForm()
-            bounds = BoundForm()  # Bachirou
+            bounds = BoundForm()
         context.update(
             {
                 "form": form,
                 "opts_form": opts,
-                "bounds_form": bounds,  # Bachirou added
+                "bounds_form": bounds,
                 # fields that should be rendered in left column (for use in template tags)
                 "left_col_fields": ["name", "n_days", "description"],
                 "max_days": max_days,
@@ -100,9 +101,7 @@ def project_setup(request, proj_id=None):
         else:
             form = ProjectForm(request.POST, instance=project)
             opts_form = OptionForm(request.POST, instance=project.options)
-            bound_form = BoundForm(
-                request.POST, instance=project.options
-            )  # Added Bachirou and 95 check
+            bound_form = BoundForm(request.POST, instance=project.options)
             context.update({"proj_id": project.id})
 
         # TODO here add a validation error
@@ -122,7 +121,7 @@ def project_setup(request, proj_id=None):
                 {
                     "form": form,
                     "opts_form": opts_form,
-                    "bounds_form": bound_form,  # Bachirou added
+                    "bounds_form": bound_form,
                     # fields that should be rendered in left column (for use in template tags)
                     "left_col_fields": ["name", "n_days", "description"],
                     "max_days": max_days,
@@ -131,7 +130,9 @@ def project_setup(request, proj_id=None):
                 },
             )
             return render(request, "pages/project_setup.html", context)
- # Retrieve the project bound coordinate
+
+
+# Retrieve the project bound coordinate
 @require_http_methods(["GET"])
 def get_project_bounds(request, proj_id):
     project = get_object_or_404(Project, id=proj_id)
@@ -154,6 +155,7 @@ def get_project_bounds(request, proj_id):
         return JsonResponse(
             {"error": "Boundary data not found for this project."}, status=404
         )
+
 
 # @login_required()
 @require_http_methods(["GET"])

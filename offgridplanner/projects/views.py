@@ -93,7 +93,8 @@ def project_delete(request, proj_id):
 
     return HttpResponseRedirect(reverse("projects:projects_list"))
 
-#import pdb; pdb.set_trace()
+
+# import pdb; pdb.set_trace()
 @require_http_methods(["GET"])
 def export_project_results(request, proj_id):
     # TODO fix formatting and add units
@@ -151,7 +152,7 @@ def get_project_data(project):
     :param project:
     :return:
     """
-   # import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     options = Options.objects.get(project=project)
 
     model_qs = {
@@ -182,5 +183,5 @@ def get_project_data(project):
             msg,
         )
     proj_data = {key: qs.get() for key, qs in model_qs.items()}
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     return proj_data

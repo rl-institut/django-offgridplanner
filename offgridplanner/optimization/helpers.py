@@ -96,7 +96,7 @@ def convert_column_types(df, column_types):
     return df
 
 
-def check_geographic_bounds(df):
+def check_geographic_bounds(df, project_id):
     max_distance = float(os.environ.get("MAX_LAT_LON_DIST", 0.15))
     if (
         df["latitude"].max() - df["latitude"].min() > max_distance
@@ -104,9 +104,13 @@ def check_geographic_bounds(df):
     ):
         error_msg = "Distance between consumers exceeds maximum allowed distance."
         raise ValidationError(error_msg)
-    dic01 = Options.objects.all()
-    import pdb; pdb.set_trace()
-    Options.objects.all()
+
+    try:
+        project_options_id = Options.objects.get(project_id=project_id)
+    except Options.DoesNotExists:
+        error_msg = f"No project with ID {project_id}."
+        raise ValidationError(error_msg)
+
     niger_bounds = {
         "latitude_min": 11.7,
         "latitude_max": 23.53,
@@ -120,7 +124,7 @@ def check_geographic_bounds(df):
         | (df["longitude"] > niger_bounds["longitude_max"])
     ]
     if not out_of_bounds.empty:
-        error_msg = "Some latitude/longitude values are outside the bounds of Nigeria."
+        error_msg = "Some latitude/longitude values are outside the bounds of Niger."
         raise ValidationError(error_msg)
 
 

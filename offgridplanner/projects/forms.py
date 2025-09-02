@@ -41,7 +41,6 @@ class OptionForm(ModelForm):
         labels = OPTIONS_LABELS
 
 
-# Bachirou added
 class BoundForm(ModelForm):
     class Meta:
         model = Options

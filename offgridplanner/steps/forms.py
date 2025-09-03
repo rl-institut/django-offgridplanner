@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
+from offgridplanner.projects.helpers import csv_to_dict
 from offgridplanner.projects.widgets import BatteryDesignWidget
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
@@ -69,6 +70,7 @@ class CustomDemandForm(CustomModelForm):
             kwargs["initial"] = initial
 
         super().__init__(*args, **kwargs)
+        self.set_help_text_defaults()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -105,6 +107,16 @@ class CustomDemandForm(CustomModelForm):
             raise ValueError(msg)
 
         return value
+
+    def set_help_text_defaults(self):
+        defaults_dict = csv_to_dict(
+            "data/settlement_defaults.csv", label_col="settlement_type"
+        )
+        settlement_type = self.fields["settlement_type"].initial
+        for field in self.percentage_fields:
+            self.fields[field].label = self.fields[field].label.replace(
+                ":default:", defaults_dict[settlement_type][field]
+            )
 
 
 class GridDesignForm(CustomModelForm):

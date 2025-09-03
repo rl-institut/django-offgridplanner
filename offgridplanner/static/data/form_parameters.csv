@@ -5,11 +5,12 @@ interest_rate,,float,12.3,%,Project,"The interest rate in investment calculation
 lifetime,Project Lifetime,int,25,Years,Project,"The period during which the system will be in operation. Components whose lifetime is below that of the project lifetime must be replaced during operation, which will be taken into account in the cost calculation. In addition, the residual value of the components is determined at the end of the project lifetime."
 n_days,Simulation Period,int,365,Days,Project,"Number of days used for the modelling period. For economic calculations, the project lifetime will be used."
 country,Project Country,str,NG,,Project,"Country for the project. The country will be used to center map features on the correct location, but will have no impact on the default demand profiles used, which are specific to Nigeria."
-very_low,,float,0.663,%,CustomDemand,Percentage of households with very low demand (0.6kWh/hh/day)
-low,,float,0.215,%,CustomDemand,Percentage of households with low demand (1.5kWh/hh/day)
-middle,,float,0.076,%,CustomDemand,Percentage of households with middle demand  (2.2kWh/hh/day)
-high,,float,0.031,%,CustomDemand,Percentage of households with high demand (2.9kWh/hh/day)
-very_high,,float,0.015,%,CustomDemand,Percentage of households with very high demand  (3.4kWh/hh/day)
+settlement_type,,str,isolated,,CustomDemand,Assumed type of settlement (isolated or peri-urban)
+very_low,,float,0.663,%,CustomDemand,Percentage of households with very low demand (isolated: 0.3kWh/hh/day / peri-urban: 0.6kWh/hh/day)
+low,,float,0.215,%,CustomDemand,Percentage of households with low demand (isolated: 0.6kWh/hh/day / peri-urban: 1.5kWh/hh/day)
+middle,,float,0.076,%,CustomDemand,Percentage of households with middle demand  (isolated: 1.2kWh/hh/day / peri-urban: 2.2kWh/hh/day)
+high,,float,0.031,%,CustomDemand,Percentage of households with high demand (isolated: 2.4kWh/hh/day / peri-urban: 2.9kWh/hh/day)
+very_high,,float,0.015,%,CustomDemand,Percentage of households with very high demand  (isolated: 2.9kWh/hh/day / peri-urban: 3.4kWh/hh/day)
 annual_total_consumption,Set Total Annual Consumption,float,,kWh,CustomDemand,The demand curve will be scaled to meet the given total demand
 annual_peak_consumption,Set Peak Demand,float,,kW,CustomDemand,The demand curve will be scaled to meet the given peak demand
 distribution_cable_lifetime,Lifetime,int,25,Years,GridDesign,"Lifespan of the component, after expiration a replacement investment must be made"

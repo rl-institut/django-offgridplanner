@@ -11,7 +11,15 @@
 <!-- WRITE HTML CODE WITHIN THESE block content TAGS -->
 {% block content %}
   <section class="wizard">
+
     <div>
+                <div class="wizard__back">
+        <div>
+            <a href="{% url 'projects:projects_list' %}">{% translate "< My projects" %}</a></br>
+            <a href="{% url 'projects:potential_map' %}">{% translate "< Map view" %}</a>
+        </div>
+      </div>
+
       <h1 class="wizard__name">
         <span class="project">{{ proj_name }}</span>
         <!--span class="scenario">{% translate "Scenario" %} {{ scenario.name }}</span -->

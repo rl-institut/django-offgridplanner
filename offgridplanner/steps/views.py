@@ -176,6 +176,13 @@ def demand_estimation(request, proj_id=None):
                     "active": calibration_active,
                     "initial": calibration_initial,
                 },
+                "custom_demand_shares": [
+                    "very_low",
+                    "low",
+                    "middle",
+                    "high",
+                    "very_high",
+                ],
                 "form": form,
                 "proj_id": proj_id,
                 "step_id": step_id,

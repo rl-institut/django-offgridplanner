@@ -7,7 +7,7 @@
 {% load i18n %}
 
 {% block head_block %}
-<link href="{% static 'css/pages/demand_estimation.css' %}" rel="stylesheet">
+<link href="{% static 'css/pages/demand_estimation.css' %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
 <link href="{% static 'css/main.css' %}" rel="stylesheet">
 {% endblock head_block %}
 
@@ -83,7 +83,13 @@
                       <!-- Input Fields Container -->
                       <div class="shares-container">
                         {% for field in form %}
-                        {% if field.name != 'annual_total_consumption' and field.name != 'annual_peak_consumption' %}
+                        {% if field.name == 'settlement_type' %}
+                        <div class="input-group">
+                          <label class="form-label">{{ field.label | safe }}</label>
+                          <div id="settlementType" class="input-group"> {{ field }} </div>
+                        </div></br>
+
+                        {% elif field.name in custom_demand_shares %}
                         <label class="form-label">{{ field.label | safe }}</label>
                         <div class="input-group">
                           {{ field|add_class:"form-control" }}

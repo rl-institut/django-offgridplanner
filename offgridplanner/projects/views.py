@@ -229,14 +229,14 @@ def potential_map(request):
 
     if existing_mgs:
         geojson_initial, _ = format_exploration_sites_data(existing_mgs)
-    potential_sites = site_exploration.latest_exploration_results["minigrids"]
-    if potential_sites:
-        geojson_potential, table_potential = format_exploration_sites_data(
-            potential_sites
-        )
+        potential_sites = site_exploration.latest_exploration_results["minigrids"]
+        if potential_sites:
+            geojson_potential, table_potential = format_exploration_sites_data(
+                potential_sites
+            )
 
-        context["table_data"] = json.dumps(table_potential)
-        context["map_data"] = json.dumps(geojson_potential)
+            context["table_data"] = json.dumps(table_potential)
+            context["map_data"] = json.dumps(geojson_potential)
 
     return render(request, "pages/map.html", context=context)
 

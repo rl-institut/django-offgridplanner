@@ -23,6 +23,7 @@ geopandas
 pvlib
 feedinlib==0.1.0rc4
 pyarrow
+uuid7
 country-bounding-boxes
 pycountry
 reportlab

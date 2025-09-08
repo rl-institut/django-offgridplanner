@@ -16,8 +16,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
+from offgridplanner.optimization.helpers import process_optimization_results
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.requests import fetch_exploration_progress
 from offgridplanner.optimization.requests import fetch_potential_minigrid_data
@@ -284,6 +286,8 @@ def populate_site_data(request):
         # TODO find out where the tax parameter might be needed
         project_input.pop("tax")
         proj, _ = Project.objects.get_or_create(**project_input)
+        proj.options = Options.objects.create()
+        proj.save()
 
         # Save the nodes and links data
         nodes_data = json.loads(res["grid_results"])["nodes"]
@@ -305,6 +309,30 @@ def populate_site_data(request):
             **energy_system_design_input
         )
         energy_system.save()
+
+        # Save the grid model data
+        grid_design_data = json.loads(res["grid_input"])["grid_design"]
+        grid_design_data = from_nested_dict(GridDesign, grid_design_data)
+        grid_design_input = {"project": proj} | grid_design_data
+        grid_design, _ = GridDesign.objects.get_or_create(**grid_design_input)
+        grid_design.save()
+
+        # Create a CustomDemand object to save the demand
+        # TODO if the consumers are changed the custom demand should be overwritten
+        # custom_demand, _ = CustomDemand.objects.get_or_create(project=proj)
+        # demand = json.loads(res["supply_input"])["sequences"]["demand"]
+        # custom_demand.uploaded_data = pd.DataFrame(demand, columns=["demand"]).to_json()
+
+        # Save the optimization results
+        optimization_results = {
+            "supply": json.loads(res["supply_results"]),
+            "grid": json.loads(res["grid_results"]),
+        }
+
+        sim, _ = Simulation.objects.get_or_create(
+            project=proj, status_grid="DONE", status_supply="DONE"
+        )
+        process_optimization_results(proj.id, optimization_results)
 
     except RuntimeError:
         return JsonResponse(

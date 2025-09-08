@@ -54,9 +54,9 @@ urlpatterns = [
         name="waiting_for_results",
     ),
     path(
-        "process_optimization_results/<int:proj_id>",
-        process_optimization_results,
-        name="process_optimization_results",
+        "handle_optimization_results_request/<int:proj_id>",
+        handle_optimization_results_request,
+        name="handle_optimization_results_request",
     ),
     path(
         "abort_calculation/<int:proj_id>", abort_calculation, name="abort_calculation"

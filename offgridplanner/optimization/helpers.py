@@ -10,13 +10,17 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from rest_framework.generics import get_object_or_404
 
-from config.settings.base import DEFAULT_COUNTRY
+from offgridplanner.optimization.models import Results
+from offgridplanner.optimization.processing import GridProcessor
+from offgridplanner.optimization.processing import SupplyProcessor
 from offgridplanner.optimization.supply.demand_estimation import ENTERPRISE_LIST
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_MAPPING
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
 from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Project
+
+from config.settings.base import DEFAULT_COUNTRY
 
 logger = logging.getLogger(__name__)
 
@@ -279,3 +283,24 @@ def check_imported_demand_data(df, project_dict):
 
     df.index = ts.to_numpy()[: len(df.index)]
     return df.to_frame("demand"), ""
+
+
+def process_optimization_results(proj_id, sim_res):
+    grid_processor = GridProcessor(proj_id=proj_id, results_json=sim_res.get("grid"))
+    grid_processor.grid_results_to_db()
+    supply_processor = SupplyProcessor(
+        proj_id=proj_id, results_json=sim_res.get("supply")
+    )
+    supply_processor.process_supply_optimization_results()
+    supply_processor.supply_results_to_db()
+    # Process shared results (after both grid and supply have been processed)
+    results = Results.objects.get(simulation__project__id=proj_id)
+    results.lcoe_share_supply = (
+        (results.epc_total - results.cost_grid) / results.epc_total * 100
+    )
+    results.lcoe_share_grid = 100 - results.lcoe_share_supply
+    assets = ["grid", "diesel_genset", "inverter", "rectifier", "battery", "pv"]
+    results.upfront_invest_total = sum(
+        [getattr(results, f"upfront_invest_{key}") for key in assets]
+    )
+    results.save()

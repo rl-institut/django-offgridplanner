@@ -1940,8 +1940,6 @@ content: "4"; }
 content: "5"; }
 .wizard__steps li:nth-child(6)::before {
 content: "6"; }
-.wizard__steps li:nth-child(7)::before {
-content: "7"; }
 
 .wizard__steps li::before {
     content: attr(data-step-number);

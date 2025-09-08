@@ -18,8 +18,22 @@ class Options(models.Model):
     do_grid_optimization = models.BooleanField(default=True)
     do_es_design_optimization = models.BooleanField(default=True)
 
+    # Add column in the DB and check the validation of the coord boundaries
+    latitude_min = models.FloatField(
+        default=4.2, validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
+    )
+    latitude_max = models.FloatField(
+        default=13.9, validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
+    )
+    longitude_min = models.FloatField(
+        default=2.7, validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
+    )
+    longitude_max = models.FloatField(
+        default=14.7, validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
+    )
+
     def __str__(self):
-        return f"Options {self.id}: Project {self.project.name}"
+        return f"Options {self.id}: Project {self.project_set.first().name}"
 
 
 class Project(models.Model):
@@ -27,7 +41,9 @@ class Project(models.Model):
     description = models.CharField(max_length=201, blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    interest_rate = models.FloatField(validators=[MinValueValidator(0.0)], blank=False)
+    interest_rate = models.FloatField(
+        default=11.3, validators=[MinValueValidator(0.0)], blank=False
+    )
     lifetime = models.PositiveSmallIntegerField(
         default=25,
         validators=[MinValueValidator(1), MaxValueValidator(35)],

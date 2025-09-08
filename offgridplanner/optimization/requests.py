@@ -79,6 +79,7 @@ def request_renewables_ninja_pv_output(lat, lon):
     response = httpx.get(url, headers=headers, params=args)
 
     # Parse JSON to get a pandas.DataFrame of data and dict of metadata
+    # import pdb; pdb.set_trace() # To be commented
     parsed_response = json.loads(response.text)
 
     pv_data = pd.read_json(json.dumps(parsed_response["data"]), orient="index")

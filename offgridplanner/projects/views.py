@@ -217,14 +217,14 @@ def potential_map(request):
 
     if existing_mgs:
         geojson_initial, _ = format_exploration_sites_data(existing_mgs)
-        potential_sites = site_exploration.latest_exploration_results["minigrids"]
-        if potential_sites:
-            geojson_potential, table_potential = format_exploration_sites_data(
-                potential_sites
-            )
+    potential_sites = site_exploration.latest_exploration_results["minigrids"]
+    if potential_sites:
+        geojson_potential, table_potential = format_exploration_sites_data(
+            potential_sites
+        )
 
-            context["table_data"] = json.dumps(table_potential)
-            context["map_data"] = json.dumps(geojson_potential)
+        context["table_data"] = json.dumps(table_potential)
+        context["map_data"] = json.dumps(geojson_potential)
 
     return render(request, "pages/map.html", context=context)
 
@@ -280,9 +280,11 @@ def populate_site_data(request):
 
     try:
         # Extract the project data and create a new project
-        project_input = {"user": request.user, "name": res["id"]} | json.loads(
-            res["project_input"]
-        )
+        project_input = {
+            "user": request.user,
+            "name": res["id"],
+            "uuid": res["id"],
+        } | json.loads(res["project_input"])
         # TODO find out where the tax parameter might be needed
         project_input.pop("tax")
         proj, _ = Project.objects.get_or_create(**project_input)

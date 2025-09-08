@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from django.conf import settings
 from django.core.validators import MaxValueValidator
@@ -32,6 +33,7 @@ class Project(models.Model):
     ]
 
     name = models.CharField(max_length=51, blank=True, default="")
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=201, blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -80,7 +82,7 @@ class Project(models.Model):
 
 class SiteExploration(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    exploration_id = models.TextField(null=True)
+    exploration_id = models.TextField(blank=True, default="")
     consumer_count_min = models.PositiveSmallIntegerField(
         default=100, validators=[MinValueValidator(31), MaxValueValidator(500)]
     )

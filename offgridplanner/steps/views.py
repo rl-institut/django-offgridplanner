@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
 from config.settings.base import PENDING
+from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.supply.demand_estimation import ENTERPRISE_LIST
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_MAPPING
@@ -38,12 +39,11 @@ STEPS = {
     "demand_estimation": _("Demand Estimation"),
     "grid_design": _("Grid Design"),
     "energy_system_design": _("Energy System Design"),
-    "calculating": _("Calculating"),
     "simulation_results": _("Simulation Results"),
 }
 
 # Remove the calculating step from the top ribbon
-STEP_LIST_RIBBON = [step for step in STEPS.values() if step != _("Calculating")]
+STEP_LIST_RIBBON = list(STEPS.values())
 
 
 # @login_required()
@@ -310,11 +310,17 @@ def calculating(request, proj_id=None):
 # @login_required()
 @require_http_methods(["GET"])
 def simulation_results(request, proj_id=None):
-    step_id = list(STEPS.keys()).index("calculating") + 1
+    step_id = list(STEPS.keys()).index("simulation_results") + 1
 
     project = get_object_or_404(Project, id=proj_id)
     opts = project.options
-    res = project.simulation.results
+    res_qs = Results.objects.filter(simulation=project.simulation)
+
+    if res_qs.exists():
+        res = res_qs.get()
+    else:
+        return redirect("steps:calculating", proj_id)
+
     df = pd.Series(model_to_dict(res))
 
     df = df.astype(float)

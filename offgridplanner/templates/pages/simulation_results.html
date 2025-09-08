@@ -154,8 +154,7 @@
                           width: 50%;
                           margin-right: 10px;
                           margin-left: 10px"
-                   href="javascript:void(0);"
-                   onclick="forward_if_no_task_is_pending({{ proj_id }});">Recalculate</a>
+                   href="{% url 'steps:calculating' proj_id %}">Recalculate</a>
                 <a class="btn btn--medium"
                    style="height: 32px;
                           display: flex;

@@ -600,22 +600,6 @@ class SupplyProcessor(OptimizationDataHandler):
     def supply_results_to_db(self):
         self._parsed_dataframes_to_db()
         self._scalar_results_to_db()
-        self._update_project_status_in_db()
-
-    def _update_project_status_in_db(self):
-        # TODO fixup later
-        project_setup = self.project
-        project_setup.status = "finished"
-        # if project_setup.email_notification is True:
-        #     user = sync_queries.get_user_by_id(self.user_id)
-        #     subject = "PeopleSun: Model Calculation finished"
-        #     msg = (
-        #         "The calculation of your optimization model is finished. You can view the results at: "
-        #         f"\n\n{config.DOMAIN}/simulation_results?project_id={self.project_id}\n"
-        #     )
-        #     send_mail(user.email, msg, subject=subject)
-        project_setup.email_notification = False
-        project_setup.save()
 
     def _scalar_results_to_db(self):
         # Annualized cost calculations

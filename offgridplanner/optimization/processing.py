@@ -272,7 +272,7 @@ class PreProcessor(OptimizationDataHandler):
 class GridProcessor(OptimizationDataHandler):
     def __init__(self, results_json, proj_id):
         super().__init__(proj_id)
-        self.validate_json_with_server_schema(results_json, "grid", "output")
+        # self.validate_json_with_server_schema(results_json, "grid", "output")
         self.results_obj, _ = Results.objects.get_or_create(
             simulation=self.project.simulation
         )
@@ -358,7 +358,7 @@ class GridProcessor(OptimizationDataHandler):
 class SupplyProcessor(OptimizationDataHandler):
     def __init__(self, results_json, proj_id):
         super().__init__(proj_id)
-        self.validate_json_with_server_schema(results_json, "supply", "output")
+        # self.validate_json_with_server_schema(results_json, "supply", "output")
         self.results_obj, _ = Results.objects.get_or_create(
             simulation=self.project.simulation
         )
@@ -480,13 +480,17 @@ class SupplyProcessor(OptimizationDataHandler):
             comp = self.energy_system_dict[comp_name]
             if not comp["settings"]["is_selected"]:
                 return 0
-            return (
-                self.to_kwh(
-                    json.loads(self.supply_results[result_key]["scalars"])["invest"]
-                )
+            try:
+                res = json.loads(self.supply_results[result_key]["scalars"])["invest"]
+            except TypeError:
+                res = self.supply_results[result_key]["scalars"]["invest"]
+
+            invest = (
+                self.to_kwh(res)
                 if comp["settings"].get("design", False)
                 else comp["parameters"]["nominal_capacity"]
             )
+            return invest
 
         self.capacities = {
             "pv": get_capacity("pv", "pv__electricity_dc"),

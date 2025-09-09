@@ -1,115 +1,148 @@
-const map = L.map('map').setView([9.0725, 7.5377], 5); // Centered on Europe
-let sites = {};
-
+const map = L.map('map').setView([-18.784571809675114, 34.49966395], 5); // Centered on Europe
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
 }).addTo(map);
 
-const markers = L.markerClusterGroup();
+const existingSitesLayer = L.markerClusterGroup().addTo(map);
+const potentialSitesLayer = L.markerClusterGroup().addTo(map);
+
+// Custom
+const existingMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+const newMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+let shouldStop = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById("filter-form");
-  const filterBtn = document.getElementById("filter-btn");
-  const resetBtn = document.getElementById("reset-btn");
+  const startExplorationBtn = document.getElementById("exploration-btn");
+  const stopBtn = document.getElementById('stop-btn');
 
-  let markersLayer = L.markerClusterGroup().addTo(map); // Reusable marker layer
+  // Load previous data on first load
+  updateResults(table_data, map_data);
 
-  async function sendRequest(body) {
-    try {
-      const response = await fetch(filterLocationsUrl, {
-        method: "POST",
-        headers: { 'X-CSRFToken': csrfToken },
-        body: body
-      });
+  // load existing Minigrids on map
+  existing_mgs.forEach(feature => {
+  const [lng, lat] = feature.centroid.coordinates;
 
-      if (!response.ok) throw new Error("Failed to fetch content");
+  const content = `
+    <h3>PREVIOUS SITE</h3>
+    <p>ID: ${feature.id}</p>
+          <p>PV capacity: ${feature.pv_capacity}</p>
+          <p>Grid distance: ${feature.status}</p>
+    `;
 
-      const data = await response.json();
+  const marker = L.marker([lat, lng], { icon: existingMarker }).bindPopup(content);
+  existingSitesLayer.addLayer(marker);
+  });
 
-      // Update table
-      document.querySelector('#sites-table').innerHTML = data.table;
+  //  Add event listeners for start and stop buttons
+  stopBtn.addEventListener('click', () => {
+     const response = fetch(stopExplorationUrl);
+     $("#loading_spinner").hide();
+     shouldStop = true;
+     startExplorationBtn.disabled = false;
+  });
 
-      // Update map
-      markersLayer.clearLayers();
-      data.geojson.forEach(feature => {
-        const [lng, lat] = feature.geometry.coordinates;
-        const props = feature.properties;
-        const content = `
-          <h3>ID: ${props.id}</h3>
-          <p>Building count: ${props.building_count}</p>
-          <p>Grid distance: ${props.grid_dist}</p>
-          <a href="${projectSetupUrl}">Create project from site</a>`;
-        const marker = L.marker([lat, lng]).bindPopup(content);
-        markersLayer.addLayer(marker);
-      });
-    } catch (error) {
-      console.error('Error loading content:', error);
-    }
-  }
-
-  // Filter button click
-  filterBtn.addEventListener("click", async (event) => {
+  startExplorationBtn.addEventListener("click", async (event) => {
     event.preventDefault();
     const formData = new FormData(filterForm);
     await sendRequest(formData);
   });
 
-  // Reset button click
-  resetBtn.addEventListener("click", async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("reset", "true");
-    await sendRequest(formData);
-    document.getElementById("filter-min_building_count").value = "";
-    document.getElementById("filter-diameter_max").value = "";
-    document.getElementById("filter-min_grid_dist").value = "";
-  });
-
-  // Trigger the filter on first load
-  filterBtn.click();
+  // Add event listener to edit button for exploration sites
+  attachEditListeners();
 });
-//const legend = L.control({ position: 'bottomright' });
 
-//legend.onAdd = function () {
-//  const div = L.DomUtil.create('div', 'info legend');
-//  const grades = [0, 10, 20, 40, 60, 80];
-//
-//  for (let i = 0; i < grades.length; i++) {
-//    div.innerHTML +=
-//      `<i style="background:${getColor(grades[i] + 1)}"></i> ` +
-//      `${grades[i]}${grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+'}`;
-//  }
-//
-//  return div;
-//};
+async function sendRequest(body) {
+  shouldStop = false;
+  const response = await fetch(startExplorationUrl, {
+    method: "POST",
+    headers: { 'X-CSRFToken': csrfToken },
+    body: body
+  });
+  if (!response.ok) {
+    console.error("Failed to start exploration");
+    return;
+  }
+  const data = await response.json();
+  document.getElementById("exploration-btn").disabled = true;
+  document.querySelector('#sites-table').innerHTML = "";
+  if (data.status === "FINISHED") {
+    updateResults(data.table, data.geojson);
+  } else if (data.status === "RUNNING") {
+    $("#loading_spinner").show();
+    await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10s
+    pollExplorationResults();
+  }
+}
 
-//legend.addTo(map);
+async function pollExplorationResults() {
+  while (!shouldStop) {
+    const response = await fetch(loadExplorationSitesUrl);
+    console.log("Polling exploration data...")
 
-//function getColor(building_count) {
-//  // Customize the ranges as you like
-//  return building_count > 80 ? '#800026' :
-//         building_count > 60 ? '#BD0026' :
-//         building_count > 40 ? '#E31A1C' :
-//         building_count > 20 ? '#FD8D3C' :
-//         building_count > 10 ? '#FEB24C' :
-//                               '#FFEDA0';
-//}
+    if (!response.ok) {
+      console.error("Failed to fetch exploration results");
+      $("#loading_spinner").hide();
+      break;
+    }
+
+    const data = await response.json();
+    updateResults(data.table, data.geojson);
+
+    if (data.status === "FINISHED" || data.status === "STOPPED") {
+      $("#loading_spinner").hide();
+      break;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10s
+  }
+  $("#loading_spinner").hide();
+}
+
+function updateResults(table_data, map_data) {
+  if (table_data !== undefined) {
+      // Update table
+      document.querySelector('#sites-table').innerHTML = table_data;
+      attachEditListeners();
+      }
+  if (map_data !== undefined) {
+      // Update map
+      potentialSitesLayer.clearLayers();
+      map_data.forEach(feature => {
+      let [lng, lat] = feature.geometry.coordinates;
+      let id = feature.properties.name;
+
+        const content = `
+          <h3>ID: ${id}</h3>
+        `;
+        const marker = L.marker([lat, lng], { icon: newMarker }).bindPopup(content);
+        potentialSitesLayer.addLayer(marker);
+    });
+  }
+  }
+
 
 function onEachFeature(feature, layer) {
   const props = feature.properties;
   layer.bindPopup(`ID: ${props.id}<br>Buildings: ${props.building_count}<br>Grid Distance: ${props.grid_dist}`);
 }
 
-//function pointToLayer(feature, latlng) {
-//  return L.circleMarker(latlng, {
-//    radius: 8,
-//    fillColor: getColor(feature.properties.building_count),
-//    color: '#000',
-//    weight: 1,
-//    opacity: 1,
-//    fillOpacity: 0.8
-//  });
-//}
 
 let currentSortIndex = null;
 let sortAscending = true;
@@ -152,4 +185,32 @@ function sortTable(colIndex, th) {
 
   // Set class on current header
   th.classList.add(sortAscending ? "asc" : "desc");
+}
+
+function attachEditListeners() {
+    document.querySelectorAll('#edit-btn').forEach(button => {
+    button.addEventListener('click', async event => {
+      const siteId = event.currentTarget.getAttribute("data-site-id");
+      try {
+        const response = await fetch(populateSiteDataUrl, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ site_id: siteId })  // Optional payload
+        });
+
+      const data = await response.json();
+
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else if (data.error) {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Error in fetch:", err);
+    }
+  });
+ });
 }

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 <!DOCTYPE html>
 {% block head_block %}
@@ -15,66 +16,58 @@
 <body>
 <main>
   <section class="dashboard">
-    <div class="row">
+    <div class="dashboard" style="height: auto">
+          <div class="row">
 
-      <section class="dashboard">
-        <div class="chart" style="height: auto; padding-bottom: 10px">
+      <div class="chart" style="height: auto; padding-bottom: 10px">
           <div class="chart__header">
             <a class="title">Potential project sites</a>
-                      <div class="radio-inputs" id="status_header" >
-            <label class="radio">
-              <input type="radio" name="radio" checked>
-              <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
-            </label>
-            <label class="radio">
-              <input type="radio" name="radio">
-              <a class="name" href="{% url 'projects:projects_list' 'analyzing' %}">Analyzing</a>
-            </label>
-            <label class="radio">
-              <input type="radio" name="radio">
-              <a class="name" href="{% url 'projects:projects_list' 'monitoring' %}">Monitoring</a>
-            </label>
-          </div>
-          <span style="float:right;"><a>
-                    <a href="{% url 'projects:potential_map' %}"
-                       class="btn btn--long text-right">List view</a>
-                  </a></span>
+            <div class="radio-inputs" id="status_header">
+              <label class="radio">
+                <input type="radio" name="radio" checked>
+                <a class="name" href="{% url 'projects:projects_list' 'potential' %}">Potential</a>
+              </label>
+              <label class="radio">
+                <input type="radio" name="radio">
+                <a class="name" href="{% url 'projects:projects_list' 'analyzing' %}">Analyzing</a>
+              </label>
+              <label class="radio">
+                <input type="radio" name="radio">
+                <a class="name" href="{% url 'projects:projects_list' 'monitoring' %}">Monitoring</a>
+              </label>
+            </div>
+            <span style="float:right;">
+            </span>
 
           </div>
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Filters on the left -->
-      <div class="col-md-3">
-        <form id="filter-form">
-            {% csrf_token %}
-          <div class="mb-2">
-            <label>Min Consumers</label>
-            <input type="number" id="filter-min_building_count" name="min_building_count" class="form-control" value="100">
-          </div>
-          <div class="mb-2">
-            <label>Max Diameter</label>
-            <input type="number" id="filter-diameter_max" name="diameter_max" class="form-control" value="5000">
-          </div>
-          <div class="mb-2">
-            <label>Min Distance to Grid (km)</label>
-            <input type="number" id="filter-min_grid_dist" name="min_grid_dist" class="form-control" value="25">
-          </div>
-          <button id="filter-btn" type="submit" class="btn btn-primary">Run Exploration</button>
-<!--          <button id="reset-btn" type="submit" class="btn btn-primary">Reset filters</button>-->
-        </form>
-      </div>
-      <div class="col-md-1"></div>
-      <div id="map" class="col-md-8" style="height: 400px">
-        <label for="buildingFilter">Minimum building count:</label>
-        <input type="range" id="buildingFilter" min="0" max="100" value="0">
-        <span id="filterValue">0</span>
-      </div>
-    </div>
-    <div id="sites-table"></div>
-  </div>
-      </section>
-    </div>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-3">
+                <form id="filter-form">
+                  {% csrf_token %}
+                  {{ form | crispy }}
+                </form>
 
+                <div style="display:flex">
+                  <button id="exploration-btn" type="submit" class="btn btn-primary">Run Exploration</button>
+                  <span class="spinner" id="loading_spinner" style="display:none; margin-top: 0.5rem">
+                    <svg viewBox="25 25 50 50">
+                      <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+			            </span>
+                  <button id="stop-btn" class="btn btn-primary">Stop</button>
+                </div>
+              </div>
+              <div class="col-md-1"></div>
+              <div id="map" class="col-md-8" style="height: 400px">
+              </div>
+            </div>
+            <div id="sites-table"></div>
+          </div>
+        </div>
+    </div>
+    </div>
+    </section>
   </section>
 </main>
 </body>
@@ -82,9 +75,15 @@
 
 {% block end_body_scripts %}
 <script>
-const projectSetupUrl = `{% url 'steps:project_setup' %}`;
-const filterLocationsUrl = `{% url 'projects:filter_locations' %}`;
-const csrfToken = `{{ csrf_token }}`;
+  const projectSetupUrl = `{% url 'steps:project_setup' %}`;
+  const startExplorationUrl = `{% url 'projects:start_exploration' %}`;
+  const stopExplorationUrl = `{% url 'projects:stop_exploration' %}`;
+  const loadExplorationSitesUrl = `{% url 'projects:load_exploration_sites' %}`;
+  const populateSiteDataUrl = `{% url 'projects:populate_site_data' %}`;
+  const csrfToken = `{{ csrf_token }}`;
+  const table_data = {{ table_data | safe }};
+  const map_data = {{ map_data | safe }};
+  const existing_mgs = {{ existing_mgs | safe }};
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>

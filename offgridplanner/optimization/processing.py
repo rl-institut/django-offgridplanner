@@ -31,8 +31,6 @@ class OptimizationDataHandler:
         self.supply_components = self.energy_system_dict.keys()
         self.grid_design_dict = self.project.griddesign.to_nested_dict()
         self.grid_components = self.grid_design_dict.keys()
-        self.demand = self.collect_project_demand()
-        self.demand_full_year = self.demand * 365 / self.project.n_days
         self.tax = 0
         self.wacc = self.project.interest_rate / 100
         self.project_lifetime = self.project.lifetime
@@ -186,6 +184,8 @@ class PreProcessor(OptimizationDataHandler):
 
     def __init__(self, proj_id):
         super().__init__(proj_id)
+        self.demand = self.collect_project_demand()
+        self.demand_full_year = self.demand * 365 / self.project.n_days
 
     def get_site_coordinates(self):
         # TODO do currently default coords get set if the user uploads a timeseries instead of selecting consumers?
@@ -272,7 +272,7 @@ class PreProcessor(OptimizationDataHandler):
 class GridProcessor(OptimizationDataHandler):
     def __init__(self, results_json, proj_id):
         super().__init__(proj_id)
-        self.validate_json_with_server_schema(results_json, "grid", "output")
+        # self.validate_json_with_server_schema(results_json, "grid", "output")
         self.results_obj, _ = Results.objects.get_or_create(
             simulation=self.project.simulation
         )
@@ -358,7 +358,7 @@ class GridProcessor(OptimizationDataHandler):
 class SupplyProcessor(OptimizationDataHandler):
     def __init__(self, results_json, proj_id):
         super().__init__(proj_id)
-        self.validate_json_with_server_schema(results_json, "supply", "output")
+        # self.validate_json_with_server_schema(results_json, "supply", "output")
         self.results_obj, _ = Results.objects.get_or_create(
             simulation=self.project.simulation
         )
@@ -480,13 +480,17 @@ class SupplyProcessor(OptimizationDataHandler):
             comp = self.energy_system_dict[comp_name]
             if not comp["settings"]["is_selected"]:
                 return 0
-            return (
-                self.to_kwh(
-                    json.loads(self.supply_results[result_key]["scalars"])["invest"]
-                )
+            try:
+                res = json.loads(self.supply_results[result_key]["scalars"])["invest"]
+            except TypeError:
+                res = self.supply_results[result_key]["scalars"]["invest"]
+
+            invest = (
+                self.to_kwh(res)
                 if comp["settings"].get("design", False)
                 else comp["parameters"]["nominal_capacity"]
             )
+            return invest
 
         self.capacities = {
             "pv": get_capacity("pv", "pv__electricity_dc"),
@@ -565,7 +569,7 @@ class SupplyProcessor(OptimizationDataHandler):
         # Store emissions time series
         self.emissions_df = pd.DataFrame()
         self.emissions_df["non_renewable_electricity_production"] = (
-            np.cumsum(self.demand) * self.co2_emission_factor / 1000
+            np.cumsum(self.sequences["demand"]) * self.co2_emission_factor / 1000
         )
         self.emissions_df["hybrid_electricity_production"] = (
             np.cumsum(self.sequences["genset"]) * self.co2_emission_factor / 1000
@@ -600,22 +604,6 @@ class SupplyProcessor(OptimizationDataHandler):
     def supply_results_to_db(self):
         self._parsed_dataframes_to_db()
         self._scalar_results_to_db()
-        self._update_project_status_in_db()
-
-    def _update_project_status_in_db(self):
-        # TODO fixup later
-        project_setup = self.project
-        project_setup.status = "finished"
-        # if project_setup.email_notification is True:
-        #     user = sync_queries.get_user_by_id(self.user_id)
-        #     subject = "PeopleSun: Model Calculation finished"
-        #     msg = (
-        #         "The calculation of your optimization model is finished. You can view the results at: "
-        #         f"\n\n{config.DOMAIN}/simulation_results?project_id={self.project_id}\n"
-        #     )
-        #     send_mail(user.email, msg, subject=subject)
-        project_setup.email_notification = False
-        project_setup.save()
 
     def _scalar_results_to_db(self):
         # Annualized cost calculations
@@ -665,13 +653,15 @@ class SupplyProcessor(OptimizationDataHandler):
 
         # --- Demand and shortage statistics ---
         results.total_annual_consumption = self.annualize(
-            self.demand.sum() * (100 - self.shortage) / 100
+            self.sequences["demand"].sum() * (100 - self.shortage) / 100
         )
         results.average_annual_demand_per_consumer = (
             results.total_annual_consumption / self.n_households
         )
         results.base_load = np.quantile(self.sequences["demand"], 0.1)
-        results.max_shortage = (self.sequences["shortage"] / self.demand).max() * 100
+        results.max_shortage = (
+            self.sequences["shortage"] / self.sequences["demand"]
+        ).max() * 100
 
         # --- Upfront investment ---
         for key in ["pv", "diesel_genset", "inverter", "rectifier", "battery"]:

@@ -6,8 +6,8 @@
     <thead>
       <tr>
         <th onclick="sortTable(0, this)">ID <span class="sort-arrow">↕</span></th>
-        <th onclick="sortTable(1, this)">Consumers <span class="sort-arrow">↕</span></th>
-        <th onclick="sortTable(2, this)">Diameter <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(1, this)">Province <span class="sort-arrow">↕</span></th>
+        <th onclick="sortTable(2, this)">Consumers <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(3, this)">Grid Dist. <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(4, this)">Road Dist. <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(5, this)">LCOE <span class="sort-arrow">↕</span></th>
@@ -15,22 +15,23 @@
         <th onclick="sortTable(7, this)">CAPEX <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(8, this)">CO2 Savings <span class="sort-arrow">↕</span></th>
         <th onclick="sortTable(9, this)">Total consumption <span class="sort-arrow">↕</span></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       {% for site in sites %}
       <tr>
         <td>{{ site.id }}</td>
-        <td>{{ site.building_count|floatformat:2 }}</td>
-        <td>{{ site.diameter_max|floatformat:2 }}</td>
-        <td>{{ site.grid_dist|floatformat:2 }}</td>
-        <td>{{ site.road_dist|floatformat:2 }}</td>
+        <td>{{ site.province }}</td>
+        <td>{{ site.num_buildings|floatformat:2 }}</td>
+        <td>{{ site.distance_to_grid_m|floatformat:2 }}</td>
+        <td>{{ site.avg_distance_to_road_m|floatformat:2 }}</td>
         <td>{{ site.lcoe|floatformat:2 }}</td>
         <td>{{ site.res|floatformat:2 }}</td>
         <td>{{ site.capex|floatformat:2 }}</td>
         <td>{{ site.co2_savings|floatformat:2 }}</td>
         <td>{{ site.consumption_total|floatformat:2 }}</td>
-        <td><button id="edit-btn"  class="btn btn-primary-small">Edit</button></td>
+        <td><button id="edit-btn" data-site-id="{{ site.id }}" class="btn btn-primary-small">Edit</button></td>
       </tr>
       {% endfor %}
     </tbody>

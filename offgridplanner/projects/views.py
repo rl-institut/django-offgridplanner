@@ -1,6 +1,5 @@
 import io
 import json
-import os
 
 # from jsonview.decorators import json_view
 import pandas as pd
@@ -14,16 +13,26 @@ from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
+from offgridplanner.optimization.helpers import process_optimization_results
+from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.models import Simulation
+from offgridplanner.optimization.requests import fetch_existing_minigrids
+from offgridplanner.optimization.requests import fetch_exploration_progress
+from offgridplanner.optimization.requests import fetch_potential_minigrid_data
+from offgridplanner.optimization.requests import start_site_exploration
+from offgridplanner.optimization.requests import stop_site_exploration
+from offgridplanner.projects.forms import SiteExplorationForm
+from offgridplanner.projects.helpers import format_exploration_sites_data
+from offgridplanner.projects.helpers import from_nested_dict
 from offgridplanner.projects.helpers import load_project_from_dict
 from offgridplanner.projects.helpers import prepare_data_for_export
-from offgridplanner.projects.models import MapTestSite
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
+from offgridplanner.projects.models import SiteExploration
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
@@ -183,55 +192,155 @@ def get_project_data(project):
     return proj_data
 
 
+@require_http_methods(["GET", "POST"])
 def potential_map(request):
-    return render(request, "pages/map.html")
+    user = request.user
+    site_exploration, _ = SiteExploration.objects.get_or_create(user=user)
+    form = SiteExplorationForm(instance=site_exploration)
+
+    # Save the existing MG data in the session storage to avoid sending an API request every time
+    if "existing_mgs" in request.session:
+        existing_mgs = request.session["existing_mgs"]
+    else:
+        try:
+            existing_mgs = fetch_existing_minigrids()
+            request.session["existing_mgs"] = existing_mgs
+        except RuntimeError:
+            existing_mgs = []
+
+    context = {
+        "form": form,
+        "existing_mgs": json.dumps(existing_mgs),
+        "table_data": [],
+        "map_data": [],
+    }
+
+    if existing_mgs:
+        geojson_initial, _ = format_exploration_sites_data(existing_mgs)
+    potential_sites = site_exploration.latest_exploration_results["minigrids"]
+    if potential_sites:
+        geojson_potential, table_potential = format_exploration_sites_data(
+            potential_sites
+        )
+
+        context["table_data"] = json.dumps(table_potential)
+        context["map_data"] = json.dumps(geojson_potential)
+
+    return render(request, "pages/map.html", context=context)
 
 
-
-def filter_locations(request):
+def start_exploration(request):
     """
     Filter the locations based on the given filters and return both the table html and the geoJSON to populate the map
     """
-    reset = request.POST.get("reset")
     data = {}
-    if reset:
-        sites = MapTestSite.objects.all()
-    else:
-        site_filter = {}
-        for param, dtype in zip(
-            ["min_building_count", "diameter_max", "min_grid_dist"],
-            [int, int, float],
-            strict=False,
-        ):
-            val = request.POST.get(param) if request.POST.get(param) != "" else 0
-            site_filter[param] = dtype(val)
-
-        sites = MapTestSite.objects.filter(
-            building_count__gte=site_filter["min_building_count"],
-            diameter_max__lte=site_filter["diameter_max"],
-            grid_dist__gte=site_filter["min_grid_dist"],
-        )
-
-    # generate table HTML
-    context = {"sites": sites}
-    data["table"] = render_to_string("widgets/table_template.html", context, request)
-
-    # generate geoJSON for map
-    features = [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [site.longitude, site.latitude],
-            },
-            "properties": {
-                "name": site.id,
-                "building_count": site.building_count,
-                "grid_dist": site.grid_dist,
-            },
-        }
-        for site in sites
-    ]
-    data["geojson"] = features
+    site_exploration = request.user.siteexploration
+    form = SiteExplorationForm(request.POST, instance=site_exploration)
+    if form.is_valid():
+        exploration_id = start_site_exploration(json.dumps(form.cleaned_data))
+        print(f"Exploration ID: {exploration_id}")
+        site_exploration.exploration_id = exploration_id
+        site_exploration.save()
+        data["status"] = "RUNNING"
 
     return JsonResponse(data)
+
+
+def stop_exploration(request):
+    site_exploration = request.user.siteexploration
+    exploration_id = site_exploration.exploration_id
+    res = stop_site_exploration(exploration_id)
+    # Don't delete the exploration id, since we actually need it to fetch the results for a specific project
+    # site_exploration.exploration_id = None
+    # site_exploration.save()
+    return JsonResponse(res)
+
+
+def load_exploration_sites(request):
+    site_exploration = request.user.siteexploration
+    exploration_id = site_exploration.exploration_id
+    res = fetch_exploration_progress(exploration_id)
+    # Save the results for loading later
+    site_exploration.latest_exploration_results = res
+    site_exploration.save()
+    status = res["status"]
+    data = {"status": status}
+    if res["minigrids"]:
+        sites = res["minigrids"]
+        data["geojson"], data["table"] = format_exploration_sites_data(sites)
+
+    return JsonResponse(data)
+
+
+def populate_site_data(request):
+    site_exploration = request.user.siteexploration
+    exploration_id = site_exploration.exploration_id
+    site_id = json.loads(request.body).get("site_id")
+    res = fetch_potential_minigrid_data(exploration_id, site_id)
+
+    try:
+        # Extract the project data and create a new project
+        project_input = {
+            "user": request.user,
+            "name": res["id"],
+            "uuid": res["id"],
+        } | json.loads(res["project_input"])
+        # TODO find out where the tax parameter might be needed
+        project_input.pop("tax")
+        proj, _ = Project.objects.get_or_create(**project_input)
+        proj.options = Options.objects.create()
+        proj.save()
+
+        # Save the nodes and links data
+        nodes_data = json.loads(res["grid_results"])["nodes"]
+        links_data = json.loads(res["grid_results"])["links"]
+
+        nodes, _ = Nodes.objects.get_or_create(project=proj)
+        links, _ = Links.objects.get_or_create(project=proj)
+        # Format data to be in the same format as db (# TODO change db format to orient="list" eventually)
+        nodes.data = pd.DataFrame(nodes_data).to_json(orient="records")
+        nodes.save()
+        links.data = pd.DataFrame(links_data).to_json(orient="records")
+        links.save()
+
+        # Save the energy system model data
+        energy_system_data = json.loads(res["supply_input"])["energy_system_design"]
+        energy_system_data = from_nested_dict(EnergySystemDesign, energy_system_data)
+        energy_system_design_input = {"project": proj} | energy_system_data
+        energy_system, _ = EnergySystemDesign.objects.get_or_create(
+            **energy_system_design_input
+        )
+        energy_system.save()
+
+        # Save the grid model data
+        grid_design_data = json.loads(res["grid_input"])["grid_design"]
+        grid_design_data = from_nested_dict(GridDesign, grid_design_data)
+        grid_design_input = {"project": proj} | grid_design_data
+        grid_design, _ = GridDesign.objects.get_or_create(**grid_design_input)
+        grid_design.save()
+
+        # Create a CustomDemand object to save the demand
+        # TODO if the consumers are changed the custom demand should be overwritten
+        # custom_demand, _ = CustomDemand.objects.get_or_create(project=proj)
+        # demand = json.loads(res["supply_input"])["sequences"]["demand"]
+        # custom_demand.uploaded_data = pd.DataFrame(demand, columns=["demand"]).to_json()
+
+        # Save the optimization results
+        optimization_results = {
+            "supply": json.loads(res["supply_results"]),
+            "grid": json.loads(res["grid_results"]),
+        }
+
+        sim, _ = Simulation.objects.get_or_create(
+            project=proj, status_grid="DONE", status_supply="DONE"
+        )
+        process_optimization_results(proj.id, optimization_results)
+
+    except RuntimeError:
+        return JsonResponse(
+            {"error": "Something went wrong fetching the site data"}, status=400
+        )
+
+    return JsonResponse(
+        {"redirect_url": reverse("steps:project_setup", args=[proj.id])}
+    )

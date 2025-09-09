@@ -24,6 +24,7 @@ geopandas
 pvlib
 feedinlib==0.1.0rc4
 pyarrow
+uuid7
 # Django
 # ------------------------------------------------------------------------------
 django==5.1.8  # pyup: < 5.1  # https://www.djangoproject.com/

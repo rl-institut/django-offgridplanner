@@ -31,8 +31,6 @@ class OptimizationDataHandler:
         self.supply_components = self.energy_system_dict.keys()
         self.grid_design_dict = self.project.griddesign.to_nested_dict()
         self.grid_components = self.grid_design_dict.keys()
-        self.demand = self.collect_project_demand()
-        self.demand_full_year = self.demand * 365 / self.project.n_days
         self.tax = 0
         self.wacc = self.project.interest_rate / 100
         self.project_lifetime = self.project.lifetime
@@ -186,6 +184,8 @@ class PreProcessor(OptimizationDataHandler):
 
     def __init__(self, proj_id):
         super().__init__(proj_id)
+        self.demand = self.collect_project_demand()
+        self.demand_full_year = self.demand * 365 / self.project.n_days
 
     def get_site_coordinates(self):
         # TODO do currently default coords get set if the user uploads a timeseries instead of selecting consumers?
@@ -565,7 +565,7 @@ class SupplyProcessor(OptimizationDataHandler):
         # Store emissions time series
         self.emissions_df = pd.DataFrame()
         self.emissions_df["non_renewable_electricity_production"] = (
-            np.cumsum(self.demand) * self.co2_emission_factor / 1000
+            np.cumsum(self.sequences["demand"]) * self.co2_emission_factor / 1000
         )
         self.emissions_df["hybrid_electricity_production"] = (
             np.cumsum(self.sequences["genset"]) * self.co2_emission_factor / 1000
@@ -665,13 +665,15 @@ class SupplyProcessor(OptimizationDataHandler):
 
         # --- Demand and shortage statistics ---
         results.total_annual_consumption = self.annualize(
-            self.demand.sum() * (100 - self.shortage) / 100
+            self.sequences["demand"].sum() * (100 - self.shortage) / 100
         )
         results.average_annual_demand_per_consumer = (
             results.total_annual_consumption / self.n_households
         )
         results.base_load = np.quantile(self.sequences["demand"], 0.1)
-        results.max_shortage = (self.sequences["shortage"] / self.demand).max() * 100
+        results.max_shortage = (
+            self.sequences["shortage"] / self.sequences["demand"]
+        ).max() * 100
 
         # --- Upfront investment ---
         for key in ["pv", "diesel_genset", "inverter", "rectifier", "battery"]:

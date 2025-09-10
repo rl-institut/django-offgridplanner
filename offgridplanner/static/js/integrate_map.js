@@ -180,6 +180,10 @@ function initializeMap(center = null, zoom = null, bounds = null) {
 }
 initializeMap();
 
+map.on("moveend", () => {
+  loadAndShowOSMRoads();
+});
+
 function zoomAll(map) {
     let latLonList = map_elements.map(obj => L.latLng(obj.latitude, obj.longitude));
     let bounds = L.latLngBounds(latLonList);
@@ -379,6 +383,50 @@ function load_legend() {
         return div;
     };
     legend.addTo(map);
+}
+
+// OSM Roads Layer
+
+let osmRoadsLayer = null;
+
+function initOSMRoadsLayer() {
+  if (!osmRoadsLayer) {
+    osmRoadsLayer = L.layerGroup().addTo(map);
+  }
+}
+
+function putOSMRoadsOnMap(geojson) {
+  initOSMRoadsLayer();
+  osmRoadsLayer.clearLayers();
+
+  const geojsonLayer = L.geoJSON(geojson, {
+    style: () => ({ color: "#cc99ff", weight: 2, opacity: 0.8 }),
+    onEachFeature: (feature, layer) => {
+      const id = feature.properties?.id || "unknown";
+      layer.bindPopup("OSM way id: " + id);
+    }
+  });
+
+  osmRoadsLayer.addLayer(geojsonLayer);
+}
+
+window.putOSMRoadsOnMap = putOSMRoadsOnMap;
+
+async function loadAndShowOSMRoads() {
+  if (!map) return;
+
+  const bounds = map.getBounds();
+  const bboxStr = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+
+  console.log("Requesting bbox:", bboxStr);
+
+  try {
+    const geojson = await fetchOSMRoads(bboxStr);
+    putOSMRoadsOnMap(geojson);
+    console.log("OSM roads added:", geojson.features.length);
+  } catch (err) {
+    console.error("Could not load OSM roads:", err);
+  }
 }
 
 // Function to load external script dynamically

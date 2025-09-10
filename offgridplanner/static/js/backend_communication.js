@@ -139,6 +139,25 @@ async function plot_results(sequential = false) {
     }
 }
 
+// osm-roads
+function fetchOSMRoads(bbox) {
+  const bboxStr = Array.isArray(bbox) ? bbox.join(",") : bbox;
+  const url = `${osmRoadsUrl}?bbox=${encodeURIComponent(bboxStr)}`;
+
+  return fetch(url, { headers: { "Accept": "application/json" } })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`fetchOSMRoads: HTTP ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch(err => {
+      console.error("fetchOSMRoads error:", err);
+      throw err;
+    });
+}
+
+window.fetchOSMRoads = fetchOSMRoads;
 
 // customer_selection
 function db_links_to_js() {

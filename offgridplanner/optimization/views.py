@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
+from django.http import HttpResponseBadRequest
 from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
@@ -40,6 +41,8 @@ from offgridplanner.optimization.tasks import revoke_task
 from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
+
+from .osm_roads import fetch_roads_from_overpass
 
 logger = logging.getLogger(__name__)
 # @require_http_methods(["POST"])
@@ -230,6 +233,24 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
             status=200,
         )
     return JsonResponse({"msg": "Missing project ID"}, status=400)
+
+
+# osm_roads
+@require_http_methods(["GET"])
+def osm_roads(request):
+    bbox_str = request.GET.get("bbox")
+    if not bbox_str:
+        return HttpResponseBadRequest(
+            "Error: please enter bbox as south,west,north,east"
+        )
+
+    try:
+        south, west, north, east = [float(x) for x in bbox_str.split(",")]
+    except ValueError:
+        return HttpResponseBadRequest("Error: bbox has to contain four numbers")
+
+    geojson = fetch_roads_from_overpass((south, west, north, east))
+    return JsonResponse(geojson)
 
 
 @require_http_methods(["POST"])

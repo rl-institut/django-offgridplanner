@@ -1,5 +1,6 @@
 from django.urls import path
 
+from . import views
 from .views import *
 
 app_name = "optimization"
@@ -61,4 +62,5 @@ urlpatterns = [
     path(
         "abort_calculation/<int:proj_id>", abort_calculation, name="abort_calculation"
     ),
+    path("osm/roads/", views.osm_roads, name="osm_roads"),
 ]

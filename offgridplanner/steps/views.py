@@ -1,6 +1,5 @@
 import os
 
-import numpy as np
 import pandas as pd
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
@@ -15,7 +14,6 @@ from django.views.decorators.http import require_http_methods
 from config.settings.base import PENDING
 from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.models import Simulation
-from offgridplanner.optimization.requests import notify_existing_minigrids
 from offgridplanner.optimization.supply.demand_estimation import ENTERPRISE_LIST
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_MAPPING
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
@@ -340,26 +338,27 @@ def simulation_results(request, proj_id=None):
     )
 
     # Currently the explorer returns projects
-    new_mg_data = {
-        "id": str(project.uuid),
-        "status": "potential",
-        "name": project.name,
-        "operator": "string",
-        "pv_capacity": output_kpis["pv_capacity"]["value"],
-        "pv_estimated": True,
-        "distance_to_grid": 0,
-        "distance_to_road": 0,
-        "centroid": {
-            "bbox": [min_latitude, min_longitude, max_latitude, max_longitude],
-            "type": "Point",
-            "coordinates": [
-                np.average([min_latitude, max_latitude]),
-                np.average([min_longitude, max_latitude]),
-            ],
-        },
-    }
+    # new_mg_data = {
+    #     "id": str(project.uuid),
+    #     "status": "potential",
+    #     "name": project.name,
+    #     "operator": "string",
+    #     "pv_capacity": output_kpis["pv_capacity"]["value"],
+    #     "pv_estimated": True,
+    #     "distance_to_grid": 0,
+    #     "distance_to_road": 0,
+    #     "centroid": {
+    #         "bbox": [min_latitude, min_longitude, max_latitude, max_longitude],
+    #         "type": "Point",
+    #         "coordinates": [
+    #             np.average([min_latitude, max_latitude]),
+    #             np.average([min_longitude, max_latitude]),
+    #         ],
+    #     },
+    # }
 
-    notify_existing_minigrids(new_mg_data)
+    # TODO re-enable this when no error is thrown
+    # notify_existing_minigrids(new_mg_data)
     return render(
         request,
         "pages/simulation_results.html",

@@ -30,7 +30,19 @@ The application is composed of the following services:
 
 ## Getting Started Locally
 ### With Docker Compose
-The environment variables for Docker are defined within the `.envs` folder. To build the container, open a terminal at
+The environment variables for Docker are defined within the `.envs` folder. You also need to define the following variables (for example in a `.env` file):
+
+```
+SIM_API_HOST=<offgrid-planner-optimizer-url>
+RN_API_HOST=https://www.renewables.ninja/api/
+RN_API_TOKEN=<your-renewables-ninja-api-token>
+```
+
+You can sign up to [renewables.ninja](https://www.renewables.ninja/register) for free, and get an API token. 
+To install the offgridplanner optimizer locally, follow instructions at https://github.com/rl-institut/optimizer-offgridplanner, or point `SIM_API_HOST` to the testing instance at https://optimizer-offgridplanner-app.apps2.rl-institut.de.
+
+
+To build the container, open a terminal at
 the project root and run the following for local development:
 ```bash
 docker compose -f docker-compose.local.yml up -d --build

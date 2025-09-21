@@ -8,7 +8,7 @@ urlpatterns = [
     path("<int:proj_id>/edit/step/<int:step_id>", steps, name="ogp_steps"),
     path("project_setup", project_setup, name="project_setup"),
     path("project_setup/<int:proj_id>", project_setup, name="project_setup"),
-    path("<int:proj_id>/bounds", get_project_bounds, name="project_bounds"),  # Bachirou
+    path("<int:proj_id>/bounds/", get_project_bounds, name="project_bounds"),
     path("consumer_selection", consumer_selection, name="consumer_selection"),
     path(
         "consumer_selection/<int:proj_id>",

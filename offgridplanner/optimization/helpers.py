@@ -12,6 +12,7 @@ from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
 from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Options  # Import the Class options
+from offgridplanner.steps.views import get_project_bounds
 
 
 def validate_file_extension(filename):
@@ -111,7 +112,7 @@ def check_geographic_bounds(df, project_id):
         error_msg = f"No project with ID {project_id}."
         raise ValidationError(error_msg)
 
-    niger_bounds = {
+    niger_bounds = { "get_project_bounds": get_project_bounds(project_options_id),
         "latitude_min": 11.7,
         "latitude_max": 23.53,
         "longitude_min": 0.29,

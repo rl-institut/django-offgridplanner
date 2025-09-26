@@ -9,8 +9,12 @@
 <!DOCTYPE html>
 <html lang="en-us">
 {% block head_block %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        rel="stylesheet" />
+  <link href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"
+        rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw-src.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link href="{% static 'css/pages/simulation_results.css' %}"
           rel="stylesheet" />
@@ -569,11 +573,16 @@
       const downloadExcelResultsUrl = `{% url 'projects:download_excel_results' proj_id %}`;
     </script>
   <script src="{% static 'js/integrate_map.js' %}"></script>
+  <script src="{% static 'js/add_drawing_tools_to_map.js' %}"></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="{% static 'js/third_party/plotly.js' %}"></script>
   <script src="{% statici18n LANGUAGE_CODE %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
   <script src="{% static 'js/pages/simulation_results.js' %}"></script>
   <script src="{% static 'js/backend_communication.js' %}"></script>
+  <script>
+    // Add pole editing mode to map (defined in add_drawing_tools_to_map.js)
+    map.addControl(new PoleEditControl());
+  </script>
 {% endblock end_body_scripts %}
 </html>

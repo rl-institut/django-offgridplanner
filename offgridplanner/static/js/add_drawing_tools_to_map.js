@@ -181,7 +181,69 @@ const CustomMarkerControl = L.Control.extend({
     }
 });
 
+// Add button for pole editing mode
+let isPoleEditMode = false;
+let hasUnsavedPoleMoves = false;
 
+const PoleEditControl = L.Control.extend({
+  options: { position: 'topleft' },
+  onAdd: function () {
+    const container = L.DomUtil.create('div', 'leaflet-bar');
+    const btn = L.DomUtil.create('a', '', container);
+    btn.href = '#';
+    btn.title = 'Toggle Pole Edit Mode';
+    btn.innerHTML = '🪜';
+
+    L.DomEvent.on(btn, 'click', (e) => {
+      L.DomEvent.stop(e);
+      togglePoleEditMode();
+    });
+    return container;
+  }
+});
+
+function togglePoleEditMode(saveOnExit = true) {
+  isPoleEditMode = !isPoleEditMode;
+  console.log("Entering pole editing mode")
+
+  poleMarkersById.forEach((marker, id) => {
+    marker.dragging && marker.dragging.disable();
+    marker.off('dragstart');
+    marker.off('dragend');
+
+    if (isPoleEditMode) {
+      marker.dragging.enable();
+      marker.setOpacity(0.9);
+
+      marker.on('dragstart', () => {
+        console.log("starting to drag")
+        if (marker._icon) {
+            marker._icon.classList.add('pole-dragging'); // add a CSS class
+            marker._icon.style.cursor = 'grabbing';
+        }
+          marker.setZIndexOffset(10000);
+        });
+
+        marker.on('dragend', () => {
+          console.log("queened out");
+          hasUnsavedPoleMoves = true;
+
+          if (marker._icon) {
+            marker._icon.classList.remove('pole-dragging');
+            marker._icon.style.cursor = 'grab';
+          }
+          marker.setZIndexOffset(0);
+          marker.setIcon(markerPoleHighlight)
+              });
+            } else {
+              marker.setOpacity(1);
+            }
+          });
+
+  if (!isPoleEditMode && saveOnExit && hasUnsavedPoleMoves) {
+    saveMovedPoles();
+  }
+}
 
 function add_single_consumer_to_array(latitude, longitude, how_added, node_type) {
     let consumer_type = 'household';
@@ -335,7 +397,6 @@ var customControl = L.Control.extend({
 });
 
 
-
 function unique_map_elements() {
     const uniqueLocations = new Set();
     const uniqueMapElements = [];
@@ -392,12 +453,3 @@ function count_consumers(first_update = true) {
         document.getElementById("n_public_services").innerText = num_public_services;
     }
 }
-
-function addDrawingToolsToMap() {
-    map.addControl(new CustomMarkerControl());
-    map.addControl(trashbinControl);
-    map.addControl(searchControl);
-    map.addControl(new customControl());
-    map.addControl(drawControl);
-}
-addDrawingToolsToMap();

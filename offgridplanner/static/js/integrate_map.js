@@ -63,6 +63,12 @@ var markerPole = new L.Icon({
 });
 
 
+var markerPoleHighlight = new L.Icon({
+    iconUrl: "/static/assets/icons/i_pole_highlight.svg",
+    iconSize: [10, 10],
+});
+
+
 var markerShs = new L.Icon({
     iconUrl: "/static/assets/icons/i_shs.svg",
     iconSize: [16, 16],
@@ -73,6 +79,7 @@ var icons = {
     'consumer': markerConsumer,
     'power-house': markerPowerHouse,
     'pole': markerPole,
+    'pole-highlight': markerPoleHighlight,
     'shs': markerShs,
 };
 var image = [
@@ -81,12 +88,16 @@ var image = [
     "/static/icons/i_enterprise.svg",
     "/static/icons/i_public_service.svg",
     "/static/icons/i_pole.svg",
+    "/static/icons/i_pole_highlight.svg",
     "/static/assets/icons/i_shs.svg",
     "/static/assets/icons/i_distribution.svg",
     "/static/assets/icons/i_connection.svg",
 ];
 
 const drawnItems = new L.FeatureGroup();
+let polesLayer = L.layerGroup();
+let poleMarkersById = new Map(); // id -> marker
+let poleOriginalLatLng = new Map(); // id -> {lat, lng}
 
 let is_active = false;
 let countryBounds = [
@@ -142,9 +153,8 @@ function initializeMap(center = null, zoom = null, bounds = null) {
         // Add the layer control to the map
         L.control.layers(baseMaps).addTo(map);
 
-
-
         map.addLayer(drawnItems);
+        map.addLayer(polesLayer);
 
         var zoomAllControl = L.Control.extend({
             options: {
@@ -154,7 +164,7 @@ function initializeMap(center = null, zoom = null, bounds = null) {
             onAdd: function (map) {
                 var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
                 let baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-                let address = "url(" + baseUrl + "//static/images/imgZoomToAll.png)"
+                let address = "url(" + baseUrl + "/static/images/imgZoomToAll.png)"
                 container.style.backgroundColor = 'white';
                 container.style.backgroundImage = address;
                 container.style.backgroundSize = "28px 28px";
@@ -248,11 +258,19 @@ async function put_markers_on_map(array, markers_only) {
 
   // Only add if we actually chose an icon for this node
   if (selectedIcon) {
-  L.marker([node.latitude, node.longitude], { icon: selectedIcon })
-    .on("click", markerOnClick)
-    .addTo(map);
+      const marker = L.marker([node.latitude, node.longitude], { icon: selectedIcon });
+      marker.on("click", markerOnClick);
+
+      if (node.node_type === "pole") {
+        marker.addTo(polesLayer);
+        poleMarkersById.set(counter, marker);
+        // store original position
+        poleOriginalLatLng.set(counter, { lat: node.latitude, lng: node.longitude });
+      } else {
+        marker.addTo(map);
+        }
+       }
     }
-}
 
     // Update the elements with the counts
     if (document.getElementById("n_consumers")) {

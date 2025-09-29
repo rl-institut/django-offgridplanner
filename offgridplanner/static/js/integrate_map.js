@@ -401,4 +401,66 @@ function load_legend() {
     legend.addTo(map);
 }
 
-// Function to load external script dynamically
+async function saveMovedPoles() {
+  const changes = collectPoleChanges();
+  if (changes.length === 0) {
+    hasUnsavedPoleMoves = false;
+    return;
+  }
+
+  try {
+    const resp = await fetch(updatePolePositionsUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify(changes),
+      credentials: 'same-origin',
+    });
+
+    if (!resp.ok) {
+      const msg = await resp.text();
+      throw new Error(msg || 'Save failed');
+    }
+
+    const result = await resp.json();
+    // Update "original" positions to the new ones (commit)
+    changes.forEach(({ id, latitude, longitude }) => {
+      poleOriginalLatLng.set(id, { lat: latitude, lng: longitude });
+    });
+    hasUnsavedPoleMoves = false;
+    console.log(`Saved poles`);
+  } catch (err) {
+    console.error(err);
+    revertPolePositions();
+    alert('Failed to save pole positions. Reverted changes.');
+  }
+}
+
+function revertPolePositions() {
+  poleMarkersById.forEach((marker, id) => {
+    marker.setIcon(markerPole);
+    const orig = poleOriginalLatLng.get(id);
+    if (orig) {
+        marker.setLatLng([orig.lat, orig.lng]);
+    }
+  });
+  hasUnsavedPoleMoves = false;
+}
+
+function collectPoleChanges() {
+  const changes = [];
+  poleMarkersById.forEach((marker, id) => {
+    const { lat, lng } = marker.getLatLng();
+    const orig = poleOriginalLatLng.get(id);
+    if (!orig) return;
+
+    const moved = Math.abs(lat - orig.lat) > 1e-7 || Math.abs(lng - orig.lng) > 1e-7;
+    if (moved) {
+      changes.push({ id, latitude: lat, longitude: lng });
+    }
+  });
+  console.log(changes);
+  return changes;
+}

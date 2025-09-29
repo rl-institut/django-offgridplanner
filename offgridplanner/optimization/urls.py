@@ -62,4 +62,9 @@ urlpatterns = [
     path(
         "abort_calculation/<int:proj_id>", abort_calculation, name="abort_calculation"
     ),
+    path(
+        "update_pole_positions/<int:proj_id>",
+        update_pole_positions,
+        name="update_pole_positions",
+    ),
 ]

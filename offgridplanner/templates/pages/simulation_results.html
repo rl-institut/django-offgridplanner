@@ -562,6 +562,7 @@
 {% endblock progression_content %}
 {% block end_body_scripts %}
     <script>
+      const csrfToken = '{{ csrf_token }}';
       const proj_id = '{{ proj_id }}';
       const boundsDict = {{ bounds_dict | safe }};
       const csrfToken = '{{ csrf_token }}';
@@ -571,6 +572,8 @@
       const loadDemandPlotUrl = `{% url 'optimization:load_demand_plot_data' proj_id %}`;
       const downloadPDFReportUrl = `{% url 'projects:download_pdf_report' proj_id %}`;
       const downloadExcelResultsUrl = `{% url 'projects:download_excel_results' proj_id %}`;
+      const downloadResultsUrl = `{% url 'projects:export_project_results' proj_id %}`;
+      const updatePolePositionsUrl = `{% url 'optimization:update_pole_positions' proj_id %}`;
     </script>
   <script src="{% static 'js/integrate_map.js' %}"></script>
   <script src="{% static 'js/add_drawing_tools_to_map.js' %}"></script>

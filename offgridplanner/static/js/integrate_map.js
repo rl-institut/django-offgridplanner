@@ -60,12 +60,14 @@ var markerPowerHouse = new L.Icon({
 var markerPole = new L.Icon({
     iconUrl: "/static/assets/icons/i_pole.svg",
     iconSize: [10, 10],
+    className: "pole-marker",
 });
 
 
 var markerPoleHighlight = new L.Icon({
     iconUrl: "/static/assets/icons/i_pole_highlight.svg",
     iconSize: [10, 10],
+    className: "pole-highlight",
 });
 
 

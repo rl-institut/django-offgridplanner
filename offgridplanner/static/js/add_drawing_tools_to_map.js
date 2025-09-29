@@ -181,7 +181,6 @@ const CustomMarkerControl = L.Control.extend({
     }
 });
 
-// Add button for pole editing mode
 let isPoleEditMode = false;
 let hasUnsavedPoleMoves = false;
 
@@ -204,7 +203,8 @@ const PoleEditControl = L.Control.extend({
 
 function togglePoleEditMode(saveOnExit = true) {
   isPoleEditMode = !isPoleEditMode;
-  console.log("Entering pole editing mode")
+  // add/remove the dimming class on the map container
+  map.getContainer().classList.toggle('pole-editing', isPoleEditMode);
 
   poleMarkersById.forEach((marker, id) => {
     marker.dragging && marker.dragging.disable();
@@ -212,33 +212,40 @@ function togglePoleEditMode(saveOnExit = true) {
     marker.off('dragend');
 
     if (isPoleEditMode) {
+      console.log("Entering pole edit mode");
+      if (!marker.dragging) {
+        marker.dragging = new L.Handler.MarkerDrag(marker);
+      }
       marker.dragging.enable();
       marker.setOpacity(0.9);
 
       marker.on('dragstart', () => {
-        console.log("starting to drag")
+        marker._icon?.classList.add('pole-dragging');
+        marker._icon && (marker._icon.style.cursor = 'grabbing');
+      });
+
+      marker.on('dragend', () => {
+        hasUnsavedPoleMoves = true;
+        // stop the drag visual
+        marker._icon?.classList.remove('pole-dragging');
+        marker._icon && (marker._icon.style.cursor = 'grab');
+        // switch to the highlight icon
+        marker.setIcon(markerPoleHighlight);
+
         if (marker._icon) {
-            marker._icon.classList.add('pole-dragging'); // add a CSS class
-            marker._icon.style.cursor = 'grabbing';
+          marker._icon.classList.remove('pole-marker');
+          marker._icon.classList.add('pole-highlight');
         }
-          marker.setZIndexOffset(10000);
-        });
-
-        marker.on('dragend', () => {
-          console.log("queened out");
-          hasUnsavedPoleMoves = true;
-
-          if (marker._icon) {
-            marker._icon.classList.remove('pole-dragging');
-            marker._icon.style.cursor = 'grab';
-          }
-          marker.setZIndexOffset(0);
-          marker.setIcon(markerPoleHighlight)
-              });
-            } else {
-              marker.setOpacity(1);
-            }
-          });
+      });
+    } else {
+      console.log("Exiting pole editing mode");
+      // exit mode
+      marker.dragging && marker.dragging.disable();
+      marker.setOpacity(1);
+      marker._icon?.classList.remove('pole-dragging');
+      marker._icon && (marker._icon.style.cursor = '');
+    }
+  });
 
   if (!isPoleEditMode && saveOnExit && hasUnsavedPoleMoves) {
     saveMovedPoles();

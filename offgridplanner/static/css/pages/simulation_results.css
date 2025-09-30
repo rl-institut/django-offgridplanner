@@ -29,3 +29,9 @@
 .leaflet-container.pole-editing .leaflet-marker-pane .leaflet-marker-icon.pole-highlight {
   filter: none !important;
 }
+
+/* Add slight padding around the marker so that they are easier to grab */
+.leaflet-marker-icon.pole-marker {
+  padding: 8px;
+  box-sizing: content-box;
+}

@@ -225,7 +225,7 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
             ):
                 is_load_center = False
 
-        nodes_list = df.to_dict("records")
+        nodes_list = df.reset_index().to_dict("records")
         return JsonResponse(
             {"is_load_center": is_load_center, "map_elements": nodes_list},
             status=200,

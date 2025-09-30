@@ -265,9 +265,9 @@ async function put_markers_on_map(array, markers_only) {
 
       if (node.node_type === "pole") {
         marker.addTo(polesLayer);
-        poleMarkersById.set(counter, marker);
+        poleMarkersById.set(node.label, marker);
         // store original position
-        poleOriginalLatLng.set(counter, { lat: node.latitude, lng: node.longitude });
+        poleOriginalLatLng.set(node.label, { lat: node.latitude, lng: node.longitude });
       } else {
         marker.addTo(map);
         }

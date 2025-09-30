@@ -430,6 +430,8 @@ async function saveMovedPoles() {
       poleOriginalLatLng.set(id, { lat: latitude, lng: longitude });
     });
     hasUnsavedPoleMoves = false;
+    // Refresh the links
+    db_links_to_js();
     console.log(`Saved poles`);
   } catch (err) {
     console.error(err);

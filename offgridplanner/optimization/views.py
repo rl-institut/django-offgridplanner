@@ -17,6 +17,7 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.http import require_POST
+from pyproj import Transformer
 
 from config.settings.base import DONE
 from config.settings.base import ERROR
@@ -645,7 +646,10 @@ def update_pole_positions(request, proj_id):
             return HttpResponseBadRequest("Payload must be a list.")
         nodes = Nodes.objects.get(project__id=proj_id)
         nodes_df = nodes.df
+        links = Links.objects.get(project__id=proj_id)
+        links_df = links.df
         for pole in data:
+            # Change the coordinates in the nodes data
             pid = pole.get("id")
             lat = pole.get("latitude")
             lng = pole.get("longitude")
@@ -655,8 +659,34 @@ def update_pole_positions(request, proj_id):
             if "is_fixed" not in nodes_df:
                 nodes_df["is_fixed"] = False
             nodes_df.loc[pid, "is_fixed"] = True
-        nodes.data = pd.DataFrame(nodes_df).to_json(orient="records")
+            # Change the coordinates in the links data
+            links_from_pole_ix = links_df[links_df["from_node"] == pid].index
+            links_df.loc[links_from_pole_ix, "lat_from"] = lat
+            links_df.loc[links_from_pole_ix, "lon_from"] = lng
+
+            links_to_pole_ix = links_df[links_df["to_node"] == pid].index
+            links_df.loc[links_to_pole_ix, "lat_to"] = lat
+            links_df.loc[links_to_pole_ix, "lon_to"] = lng
+
+            # TODO currently simply moving the poles bypasses any constraints, alternatively re-run the pole/link optimization always
+            # Convert the coordinates back to x and y to re-calculate link length
+            transformer = Transformer.from_crs(
+                "EPSG:4326", "EPSG:32632", always_xy=True
+            )
+            x_from, y_from = transformer.transform(
+                links_df["lon_from"].values, links_df["lat_from"].values
+            )
+            x_to, y_to = transformer.transform(
+                links_df["lon_to"].values, links_df["lat_to"].values
+            )
+
+            # Recompute cable length based on the new coordinates
+            links_df["length"] = np.sqrt((x_to - x_from) ** 2 + (y_to - y_from) ** 2)
+
+        nodes.input_df_to_data_field(nodes_df)
         nodes.save()
+        links.input_df_to_data_field(links_df)
+        links.save()
         return JsonResponse({"status": "Updated pole positions"})
     except Exception as e:  # noqa: BLE001
         return HttpResponseBadRequest(str(e))

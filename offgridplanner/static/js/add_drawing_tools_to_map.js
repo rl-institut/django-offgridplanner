@@ -191,7 +191,12 @@ const PoleEditControl = L.Control.extend({
     const btn = L.DomUtil.create('a', '', container);
     btn.href = '#';
     btn.title = 'Toggle Pole Edit Mode';
-    btn.innerHTML = '🪜';
+    // add an image inside the btn
+    const image = L.DomUtil.create('img', 'my-pole-icon', btn);
+    image.src = '/static/icons/i_electric_pole_high.svg';
+    image.alt = 'Marker';
+    image.style.width = '23px';
+    image.style.height = '23px';
 
     L.DomEvent.on(btn, 'click', (e) => {
       L.DomEvent.stop(e);

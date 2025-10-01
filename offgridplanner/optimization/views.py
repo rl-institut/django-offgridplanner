@@ -200,20 +200,6 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
         df = nodes_qs.get().df if nodes_qs.exists() else pd.DataFrame()
         is_load_center = True
         if not df.empty:
-            df = df[
-                [
-                    "latitude",
-                    "longitude",
-                    "how_added",
-                    "node_type",
-                    "consumer_type",
-                    "consumer_detail",
-                    "custom_specification",
-                    "is_connected",
-                    "shs_options",
-                    "is_fixed",
-                ]
-            ]
             power_house = df[df["node_type"] == "power-house"]
             if markers_only is True:
                 if (

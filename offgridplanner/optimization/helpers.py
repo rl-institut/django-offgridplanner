@@ -295,12 +295,5 @@ def process_optimization_results(proj_id, sim_res):
     supply_processor.supply_results_to_db()
     # Process shared results (after both grid and supply have been processed)
     results = Results.objects.get(simulation__project__id=proj_id)
-    results.lcoe_share_supply = (
-        (results.epc_total - results.cost_grid) / results.epc_total * 100
-    )
-    results.lcoe_share_grid = 100 - results.lcoe_share_supply
-    assets = ["grid", "diesel_genset", "inverter", "rectifier", "battery", "pv"]
-    results.upfront_invest_total = sum(
-        [getattr(results, f"upfront_invest_{key}") for key in assets]
-    )
+    results.process_shared_results()
     results.save()

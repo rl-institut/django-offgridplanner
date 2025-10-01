@@ -709,6 +709,9 @@ def update_pole_positions(request, proj_id):
                 {"status": "An error occurred fetching the updated results"}, status=400
             )
 
+        # Update shared KPIs (like total costs, LCOE share etc.)
+        res.process_shared_results()
+        res.save()
         # Return KPIs to replace in results page
         output_kpis = sanitize_output_kpis(format_results_into_kpi_dict(res))
         return JsonResponse({"status": "Updated pole positions", "kpis": output_kpis})

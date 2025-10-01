@@ -433,7 +433,12 @@ async function saveMovedPoles() {
     hasUnsavedPoleMoves = false;
     // Refresh the links
     db_links_to_js();
-    console.log(`Saved poles`);
+    // Update KPIs
+    if (result.kpis) {
+        updateKpisInDom(result.kpis);
+    }
+
+    console.log(`Updated grid layout`);
   } catch (err) {
     console.error(err);
     revertPolePositions();

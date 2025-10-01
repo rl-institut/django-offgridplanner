@@ -31,7 +31,9 @@ from offgridplanner.optimization.helpers import process_optimization_results
 from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
+from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.models import Simulation
+from offgridplanner.optimization.processing import GridProcessor
 from offgridplanner.optimization.processing import PreProcessor
 from offgridplanner.optimization.requests import optimization_check_status
 from offgridplanner.optimization.requests import optimization_server_request
@@ -39,6 +41,8 @@ from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
 from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
 from offgridplanner.optimization.tasks import revoke_task
 from offgridplanner.projects.helpers import df_to_file
+from offgridplanner.projects.helpers import format_results_into_kpi_dict
+from offgridplanner.projects.helpers import sanitize_output_kpis
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
 
@@ -687,6 +691,26 @@ def update_pole_positions(request, proj_id):
         nodes.save()
         links.input_df_to_data_field(links_df)
         links.save()
-        return JsonResponse({"status": "Updated pole positions"})
+
+        # Update KPIs in database
+        grid_dict = {
+            "nodes": nodes.df.reset_index(names=["label"]).to_dict(orient="list"),
+            "links": links.df.reset_index(names=["label"]).to_dict(orient="list"),
+        }
+        grid_processor = GridProcessor(grid_dict, proj_id)
+        grid_processor.grid_results_to_db()
+
+        res_qs = Results.objects.filter(simulation__project__id=proj_id)
+
+        if res_qs.exists():
+            res = res_qs.get()
+        else:
+            return JsonResponse(
+                {"status": "An error occurred fetching the updated results"}, status=400
+            )
+
+        # Return KPIs to replace in results page
+        output_kpis = sanitize_output_kpis(format_results_into_kpi_dict(res))
+        return JsonResponse({"status": "Updated pole positions", "kpis": output_kpis})
     except Exception as e:  # noqa: BLE001
         return HttpResponseBadRequest(str(e))

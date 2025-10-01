@@ -4,7 +4,6 @@ import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -24,7 +23,7 @@ from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
-from offgridplanner.projects.helpers import OUTPUT_KPIS
+from offgridplanner.projects.helpers import format_results_into_kpi_dict
 from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
 from offgridplanner.projects.helpers import reorder_dict
@@ -331,13 +330,7 @@ def simulation_results(request, proj_id=None):
     else:
         return redirect("steps:calculating", proj_id)
 
-    df = pd.Series(model_to_dict(res))
-
-    df = df.astype(float)
-    output_kpis = OUTPUT_KPIS.copy()
-
-    for kpi in output_kpis:
-        output_kpis[kpi]["value"] = df[kpi].round(1)
+    output_kpis = format_results_into_kpi_dict(res)
 
     country_bounds = get_country_bounds(proj_id)
 

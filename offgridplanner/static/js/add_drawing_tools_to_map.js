@@ -351,10 +351,11 @@ const searchControl = new GeoSearch.GeoSearchControl({
 
 const searchInput = document.getElementById('search-input');
 
-searchInput.addEventListener('keypress', async (event) => {
-    if (event.key === 'Enter') {
-        let query = searchInput.value;
-        if (!query) return;
+if (searchInput) {
+    searchInput.addEventListener('keypress', async (event) => {
+        if (event.key === 'Enter') {
+            let query = searchInput.value;
+            if (!query) return;
 
         let results = await searchProvider.search({query});
         if (results && results.length > 0) {

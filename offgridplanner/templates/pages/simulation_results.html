@@ -18,6 +18,10 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link href="{% static 'css/pages/simulation_results.css' %}"
           rel="stylesheet" />
+<link href="https://unpkg.com/leaflet-geosearch@3.0.6/dist/geosearch.css"
+      rel="stylesheet" />
+<script src="https://unpkg.com/leaflet-geosearch@3.0.6/dist/geosearch.umd.js"></script>
+
 <style>
   .item__name {
     height: 80px;
@@ -506,6 +510,21 @@
       </div>
     </div>
   </section>
+        <div id="msgBox"
+           class="modal"
+           style="background-color: rgba(0,0,0,0.5);
+                  z-index: 999;
+                  text-align: left">
+        <form class="modal-content" style="max-width: 24rem">
+          <div class="container">
+            <h1>Warning</h1>
+            <p id="responseMsg"></p>
+            <button onclick="document.getElementById('msgBox').style.display='none'"
+                    type="button"
+                    class="deletebtn">OK</button>
+          </div>
+        </form>
+      </div>
         <div id="noResults" class="modal" style="padding: 20px;">
           <span class="close" title="{% translate 'Close Modal' %}">&times;</span>
           <form class="modal-content" action="/action_page.php">

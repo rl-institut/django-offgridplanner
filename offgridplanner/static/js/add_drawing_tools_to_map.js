@@ -92,8 +92,10 @@ map.on(L.Draw.Event.CREATED, function (event) {
             polygonDrawer.disable();
             if (!is_active) {
                 add_buildings_inside_boundary({boundariesCoordinates: polygonCoordinates});
+                add_roads_inside_boundary({boundariesCoordinates: polygonCoordinates});
             } else {
                 remove_buildings_inside_boundary({boundariesCoordinates: polygonCoordinates});
+                remove_roads_inside_boundary({boundariesCoordinates: polygonCoordinates});
             }
             removeBoundaries();
         }

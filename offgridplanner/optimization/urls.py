@@ -1,6 +1,5 @@
 from django.urls import path
 
-from . import views
 from .views import *
 
 app_name = "optimization"
@@ -15,6 +14,16 @@ urlpatterns = [
         "remove_buildings_inside_boundary/<int:proj_id>",
         remove_buildings_inside_boundary,
         name="remove_buildings_inside_boundary",
+    ),
+    path(
+        "add_roads_inside_boundary/<int:proj_id>",
+        add_roads_inside_boundary,
+        name="add_roads_inside_boundary",
+    ),
+    path(
+        "remove_roads_inside_boundary/<int:proj_id>",
+        remove_roads_inside_boundary,
+        name="remove_roads_inside_boundary",
     ),
     path("consumer_to_db", consumer_to_db, name="consumer_to_db"),
     path("consumer_to_db/<int:proj_id>", consumer_to_db, name="consumer_to_db"),
@@ -63,5 +72,5 @@ urlpatterns = [
     path(
         "abort_calculation/<int:proj_id>", abort_calculation, name="abort_calculation"
     ),
-    path("osm/roads/", views.osm_roads, name="osm_roads"),
+    path("osm/roads/", osm_roads, name="osm_roads"),
 ]

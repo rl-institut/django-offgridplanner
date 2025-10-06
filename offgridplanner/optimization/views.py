@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
+from django.http import HttpResponseBadRequest
 from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
@@ -19,7 +20,7 @@ from django.views.decorators.http import require_http_methods
 from config.settings.base import DONE
 from config.settings.base import ERROR
 from config.settings.base import PENDING
-from offgridplanner.optimization.grid import identify_consumers_on_map
+from offgridplanner.optimization.grid import osm_utils
 from offgridplanner.optimization.helpers import check_imported_consumer_data
 from offgridplanner.optimization.helpers import check_imported_demand_data
 from offgridplanner.optimization.helpers import consumer_data_to_file
@@ -97,7 +98,7 @@ def add_buildings_inside_boundary(request, proj_id):
             },
         )
     data, building_coordinates_within_boundaries = (
-        identify_consumers_on_map.get_consumer_within_boundaries(df)
+        osm_utils.get_consumer_within_boundaries(df)
     )
     if not building_coordinates_within_boundaries:
         return JsonResponse(
@@ -160,7 +161,7 @@ def remove_buildings_inside_boundary(
             .to_numpy()
             .tolist()
         )
-        df["inside_boundary"] = identify_consumers_on_map.are_points_in_boundaries(
+        df["inside_boundary"] = osm_utils.are_points_in_boundaries(
             df,
             boundaries=boundaries,
         )
@@ -226,6 +227,94 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
                 {"is_load_center": is_load_center, "map_elements": nodes_list},
                 status=200,
             )
+
+
+# osm_roads
+@require_http_methods(["POST"])
+def add_roads_inside_boundary(request, proj_id):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+    js_data = json.loads(request.body)
+    boundary_coordinates = js_data["boundary_coordinates"][0][0]
+
+    df = pd.DataFrame.from_dict(boundary_coordinates).rename(
+        columns={"lat": "latitude", "lng": "longitude"},
+    )
+
+    if df["latitude"].max() - df["latitude"].min() > float(
+        os.environ.get("MAX_LAT_LON_DIST", 0.15)
+    ):
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "The maximum latitude distance selected is too large.",
+            }
+        )
+
+    if df["longitude"].max() - df["longitude"].min() > float(
+        os.environ.get("MAX_LAT_LON_DIST", 0.15)
+    ):
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "The maximum longitude distance selected is too large.",
+            }
+        )
+
+    data, road_geometries = osm_utils.get_roads_within_boundaries(df)
+
+    if not road_geometries:
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "In the selected area, no roads could be identified.",
+            }
+        )
+
+    # roads for JS
+    roads_list = []
+    for road_id, coords in road_geometries.items():
+        roads_list.append(
+            {
+                "road_id": road_id,
+                "coordinates": coords,
+                "how_added": "automatic",
+                "road_type": "osm",
+            }
+        )
+
+    return JsonResponse({"executed": True, "msg": "", "new_roads": roads_list})
+
+
+@require_http_methods(["POST"])
+def remove_roads_inside_boundary(request, proj_id):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+    return JsonResponse({"executed": True, "msg": "Roads removed"})
+
+
+# not currently used
+@require_http_methods(["GET"])
+def osm_roads(request):
+    bbox_str = request.GET.get("bbox")
+    if not bbox_str:
+        return HttpResponseBadRequest(
+            "Error: please enter bbox as south,west,north,east"
+        )
+
+    try:
+        south, west, north, east = [float(x) for x in bbox_str.split(",")]
+    except ValueError:
+        return HttpResponseBadRequest("Error: bbox has to contain four numbers")
+
+    geojson = osm_utils.fetch_roads_from_overpass((south, west, north, east))
+    return JsonResponse(geojson)
 
 
 @require_http_methods(["POST"])

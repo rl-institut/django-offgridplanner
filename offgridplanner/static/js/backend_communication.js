@@ -139,6 +139,25 @@ async function plot_results(sequential = false) {
     }
 }
 
+// osm-roads
+function fetchOSMRoads(bbox) {
+  const bboxStr = Array.isArray(bbox) ? bbox.join(",") : bbox;
+  const url = `${osmRoadsUrl}?bbox=${encodeURIComponent(bboxStr)}`;
+
+  return fetch(url, { headers: { "Accept": "application/json" } })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`fetchOSMRoads: HTTP ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch(err => {
+      console.error("fetchOSMRoads error:", err);
+      throw err;
+    });
+}
+
+window.fetchOSMRoads = fetchOSMRoads;
 
 // customer_selection
 function db_links_to_js() {
@@ -298,6 +317,76 @@ function add_buildings_inside_boundary({boundariesCoordinates} = {}) {
         .catch((error) => {
             console.error("Error fetching data:", error);
         });
+}
+
+function add_roads_inside_boundary({boundariesCoordinates} = {}) {
+    $("*").css("cursor", "wait");
+    fetch(addRoadsUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({ boundary_coordinates: boundariesCoordinates, road_elements }),
+    })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to fetch road data");
+            }
+        })
+        .then((res) => {
+            $("*").css("cursor", "auto");
+            const responseMsg = document.getElementById("responseMsg");
+            responseMsg.innerHTML = res.msg;
+
+            if (res.executed) {
+                responseMsg.innerHTML = "";
+                Array.prototype.push.apply(road_elements, res.new_roads);
+                put_roads_on_map(res.new_roads);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching roads:", error);
+        });
+}
+
+function put_roads_on_map(roads) {
+    roads.forEach((road) => {
+        const latlngs = road.coordinates.map(c => [c[0], c[1]]);
+        const polyline = L.polyline(latlngs, { color: "#cc99ff", weight: 2 });
+        drawnItems.addLayer(polyline);
+    });
+}
+
+async function remove_roads_inside_boundary({boundariesCoordinates} = {}) {
+    $("*").css("cursor", "wait");
+
+    try {
+        const response = await fetch(removeRoadsUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({ boundary_coordinates: boundariesCoordinates, road_elements }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const res = await response.json();
+
+        road_elements = res.road_elements;
+        drawnItems.clearLayers();
+        put_roads_on_map(road_elements);
+    } catch (error) {
+        console.error("Error removing roads:", error.message);
+    } finally {
+        $("*").css("cursor", "auto");
+    }
 }
 
 // TODO move this to map related js, customer_selection

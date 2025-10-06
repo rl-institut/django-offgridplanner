@@ -33,6 +33,8 @@ let polygonCoordinates = [];
 
 let map_elements = [];
 
+let road_elements = [];
+
 var markerConsumer = new L.Icon({
     iconUrl: "/static/assets/icons/i_consumer.svg",
     iconSize: [18, 18],
@@ -84,6 +86,7 @@ var image = [
     "/static/assets/icons/i_shs.svg",
     "/static/assets/icons/i_distribution.svg",
     "/static/assets/icons/i_connection.svg",
+    "/static/assets/icons/i_roads.svg",
 ];
 
 const drawnItems = new L.FeatureGroup();
@@ -179,11 +182,6 @@ function initializeMap(center = null, zoom = null, bounds = null) {
     }
 }
 initializeMap();
-
-map.on("moveend", () => {
-  loadAndShowOSMRoads();
-});
-
 function zoomAll(map) {
     let latLonList = map_elements.map(obj => L.latLng(obj.latitude, obj.longitude));
     let bounds = L.latLngBounds(latLonList);
@@ -360,7 +358,7 @@ function load_legend() {
     }
     var pageName = window.location.pathname;
 
-    var description = ["Load Center", "Household", "Enterprise", "Public Service", "Pole", "Solar Home System", "Distribution", "Connection"];
+    var description = ["Load Center", "Household", "Enterprise", "Public Service", "Pole", "Solar Home System", "Distribution", "Connection", "Road"];
 
     if (pageName === "/simulation_results" && is_load_center === false) {
         description[0] = "Power House";
@@ -383,50 +381,6 @@ function load_legend() {
         return div;
     };
     legend.addTo(map);
-}
-
-// OSM Roads Layer
-
-let osmRoadsLayer = null;
-
-function initOSMRoadsLayer() {
-  if (!osmRoadsLayer) {
-    osmRoadsLayer = L.layerGroup().addTo(map);
-  }
-}
-
-function putOSMRoadsOnMap(geojson) {
-  initOSMRoadsLayer();
-  osmRoadsLayer.clearLayers();
-
-  const geojsonLayer = L.geoJSON(geojson, {
-    style: () => ({ color: "#cc99ff", weight: 2, opacity: 0.8 }),
-    onEachFeature: (feature, layer) => {
-      const id = feature.properties?.id || "unknown";
-      layer.bindPopup("OSM way id: " + id);
-    }
-  });
-
-  osmRoadsLayer.addLayer(geojsonLayer);
-}
-
-window.putOSMRoadsOnMap = putOSMRoadsOnMap;
-
-async function loadAndShowOSMRoads() {
-  if (!map) return;
-
-  const bounds = map.getBounds();
-  const bboxStr = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
-
-  console.log("Requesting bbox:", bboxStr);
-
-  try {
-    const geojson = await fetchOSMRoads(bboxStr);
-    putOSMRoadsOnMap(geojson);
-    console.log("OSM roads added:", geojson.features.length);
-  } catch (err) {
-    console.error("Could not load OSM roads:", err);
-  }
 }
 
 // Function to load external script dynamically

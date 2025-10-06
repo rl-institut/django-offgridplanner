@@ -14,7 +14,10 @@ import time
 import urllib.request
 
 import numpy as np
+import requests
 from shapely import geometry
+
+OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 
 
 def get_consumer_within_boundaries(df):
@@ -257,3 +260,73 @@ def xy_coordinates_from_latitude_longitude(
     x = r * (longitude_rad - ref_longitude_rad) * math.cos(ref_latitude)
     y = r * (latitude_rad - ref_latitude_rad)
     return x, y
+
+
+def fetch_roads_from_overpass(bbox):
+    """
+    bbox: (south, west, north, east)
+    Gets roads of any type from OSM.
+    """
+    query = f"""
+    [out:json][timeout:25];
+    (
+      way["highway"]({bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]});
+    );
+    out geom;
+    """
+
+    resp = requests.post(OVERPASS_URL, data={"data": query}, timeout=60)
+    resp.raise_for_status()
+    data = resp.json()
+
+    features = []
+    for el in data.get("elements", []):
+        if el.get("type") == "way" and "geometry" in el:
+            coords = [[pt["lon"], pt["lat"]] for pt in el["geometry"]]
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "LineString", "coordinates": coords},
+                    "properties": {"id": el.get("id")},
+                }
+            )
+
+    return {"type": "FeatureCollection", "features": features}
+
+
+def get_roads_within_boundaries(df):
+    min_latitude, min_longitude, max_latitude, max_longitude = (
+        df["latitude"].min(),
+        df["longitude"].min(),
+        df["latitude"].max(),
+        df["longitude"].max(),
+    )
+
+    query = (
+        f"[out:json][timeout:2500];"
+        f'(way["highway"]({min_latitude},{min_longitude},{max_latitude},{max_longitude}););'
+        f"(._;>;);out;"
+    )
+
+    resp = requests.post(OVERPASS_URL, data={"data": query}, timeout=60)
+    resp.raise_for_status()
+    data = resp.json()
+
+    road_coords = {}
+    for element in data.get("elements", []):
+        if element["type"] == "way" and "nodes" in element:
+            coords = []
+            for node in element["nodes"]:
+                node_el = next(
+                    (
+                        el
+                        for el in data["elements"]
+                        if el["id"] == node and el["type"] == "node"
+                    ),
+                    None,
+                )
+                if node_el:
+                    coords.append([node_el["lat"], node_el["lon"]])
+            road_coords[element["id"]] = coords
+
+    return data, road_coords

@@ -17,7 +17,17 @@
  * - Customizable map features include zoom control and a bespoke legend, specifically designed for a region with
  *   defined boundaries around Nigeria. This enhances the user experience by providing relevant geographical context
  *   and detail.
- *
+ *    'NE': ('Niger', (0.295646396495, 11.6601671412, 15.9032466977, 23.4716684026)),
+  [11.66, 0.29], // Southwest corner
+  [23.47, 15.99] // Northeast corner
+  map.setView([17.62, 7.995], zoomLevel);
+  [latitude_min, longitude_min], // Southwest corner
+  [latitude_max, longitude_max] // Northeast corner
+  Niger BBox
+  Min Longitude: 0.00° E
+  Min Latitude: 11.71° N
+  Max Longitude: 15.99° E
+  Max Latitude: 23.53° N
  * Overall, this script is a key component in enhancing the interactivity and functionality of the map feature on
  * the FastAPI application, playing a crucial role in both the "consumer-selection" and "results" pages.
  */
@@ -26,10 +36,12 @@
 var is_load_center = true;
 
 const nigerBounds = [
-    [4.2, 2.7], // Southwest corner
-    [13.9, 14.7] // Northeast corner
+    [latitude_min, longitude_min], // Southwest corner
+    [latitude_max, longitude_max] // Northeast corner
 
 ];
+
+console.log(nigerBounds)
 let map;
 
 var legend = L.control({position: "bottomright"});
@@ -100,7 +112,7 @@ function initializeMap(center = null, zoom = null, bounds = null) {
         // Only initialize the map if it hasn't been initialized yet
         map = L.map('map', {
             preferCanvas: true, // This ensures Leaflet renders vectors and geometries on a Canvas.
-            maxBounds: nigeriaBounds,
+            maxBounds: nigerBounds,
             maxBoundsViscosity: 1.0,
         });
 
@@ -113,7 +125,7 @@ function initializeMap(center = null, zoom = null, bounds = null) {
             map.fitBounds(bounds);
         } else {
             // Fallback to a default view if no specific bounds or center/zoom are provided
-            map.setView([9.8838, 5.9231], 6); // Default center and zoom
+            map.setView([17.62, 7.995], 6); // Default center and zoom
         }
 
 
@@ -214,42 +226,53 @@ async function put_markers_on_map(array, markers_only) {
 
     initializeMap(null, null, bounds);
 
-    for (let counter = 0; counter < n; counter++) {
-      const node = array[counter];
-      let selectedIcon = null;
+    for (counter = 0; counter < n; counter++) {
+        if (array[counter]["node_type"] === "consumer") {
+            num_consumers++;  // Increase the consumer counter
 
-      if (node.node_type === "consumer") {
-        num_consumers++;
+            // Count the specific types of consumers
+            if (array[counter]["consumer_type"] === "household") {
+                num_households++;
+            } else if (array[counter]["consumer_type"] === "enterprise") {
+                num_enterprises++;
+            } else if (array[counter]["consumer_type"] === "public_service") {
+                num_public_services++;
+            }
 
-        if (node.consumer_type === "household") num_households++;
-        else if (node.consumer_type === "enterprise") num_enterprises++;
-        else if (node.consumer_type === "public_service") num_public_services++;
-
-        if (markers_only) {
-          if (node.shs_options === 2) selectedIcon = markerShs;
-          else if (node.consumer_type === "household") selectedIcon = markerConsumer;
-          else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
-          else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
+            // Determine the icon to use
+            if (markers_only) {
+                if (array[counter]["shs_options"] == 2) {
+                    selected_icon = markerShs;
+                } else if (array[counter]["consumer_type"] === "household") {
+                    selected_icon = markerConsumer;
+                } else if (array[counter]["consumer_type"] === "enterprise") {
+                    selected_icon = markerEnterprise;
+                } else if (array[counter]["consumer_type"] === "public_service") {
+                    selected_icon = markerPublicservice;
+                }
+            } else {
+                if (array[counter]["is_connected"] === false) {
+                    selected_icon = markerShs;
+                } else if (array[counter]["consumer_type"] === "household") {
+                    selected_icon = markerConsumer;
+                } else if (array[counter]["consumer_type"] === "enterprise") {
+                    selected_icon = markerEnterprise;
+                } else if (array[counter]["consumer_type"] === "public_service") {
+                    selected_icon = markerPublicservice;
+                }
+            }
+        } else if (markers_only) {
+//          TODO it seems that when markers_only is true, all consumers show up as powerhouses. Not sure what this option is needed for in the first place, check and maybe delete
+            selected_icon = markerPowerHouse;
         } else {
-          const isConnected = (node.is_connected === true || node.is_connected === "true");
-          if (!isConnected) selectedIcon = markerShs;
-          else if (node.consumer_type === "household") selectedIcon = markerConsumer;
-          else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
-          else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
+            selected_icon = icons[array[counter]["node_type"]];
         }
-      } else {
-        if (!markers_only) {
-          selectedIcon = icons[node.node_type] || null;
-        }
-      }
 
-  // Only add if we actually chose an icon for this node
-  if (selectedIcon) {
-  L.marker([node.latitude, node.longitude], { icon: selectedIcon })
-    .on("click", markerOnClick)
-    .addTo(map);
+        // Add the marker to the map
+        L.marker([array[counter]["latitude"], array[counter]["longitude"]], {icon: selected_icon})
+            .on('click', markerOnClick)
+            .addTo(map);
     }
-}
 
     // Update the elements with the counts
     if (document.getElementById("n_consumers")) {
@@ -266,10 +289,8 @@ async function put_markers_on_map(array, markers_only) {
     }
 
     zoomAll(map);
-    if (!markers_only) {
-        if (typeof loadDrawingToolsJS === 'undefined' || loadDrawingToolsJS === null) {
-             db_links_to_js();
-        }
+    if (typeof loadDrawingToolsJS === 'undefined' || loadDrawingToolsJS === null) {
+         db_links_to_js();
     }
 }
 

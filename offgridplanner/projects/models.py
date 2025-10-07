@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 import pycountry
 from django.conf import settings
@@ -7,7 +8,6 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.forms.models import model_to_dict
 from django.utils.translation import gettext_lazy as _
-from uuid_extensions import uuid7
 
 from offgridplanner.users.models import User
 
@@ -37,7 +37,7 @@ class Project(models.Model):
     ]
 
     name = models.CharField(max_length=51, blank=True, default="")
-    uuid = models.UUIDField(default=uuid7(), editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=201, blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

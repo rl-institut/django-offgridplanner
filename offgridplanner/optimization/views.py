@@ -356,7 +356,7 @@ def load_demand_plot_data(request, proj_id=None):
 
     for tier in ["very_low", "low", "middle", "high", "very_high"]:
         tier_verbose = f"{tier.title().replace('_', ' ')} Consumption"
-        profile_col = f"Household_Distribution_Based_{tier_verbose}"
+        profile_col = f"Household_{custom_demand.settlement_type}_{tier}"
         timeseries[tier_verbose] = load_profiles[profile_col].to_numpy().tolist()
         timeseries["Average"] = np.add(
             getattr(custom_demand, tier)

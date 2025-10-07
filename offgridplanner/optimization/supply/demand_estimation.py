@@ -181,7 +181,9 @@ def compute_household_demand(consumer_type_counts, custom_demand_params, load_pr
 
     for demand_param, value in custom_demand_params.items():
         if demand_param in ["very_low", "low", "middle", "high", "very_high"]:
-            profile_col = f"Household_Distribution_Based_{demand_param.title().replace('_', ' ')} Consumption"
+            profile_col = (
+                f"Household_{custom_demand_params['settlement_type']}_{demand_param}"
+            )
             total_demand += load_profiles[profile_col] * value
 
     return total_demand * total_households

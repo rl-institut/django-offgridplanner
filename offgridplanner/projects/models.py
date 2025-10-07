@@ -49,7 +49,7 @@ class Project(models.Model):
     start_date = models.DateTimeField(default=default_start_date)
     temporal_resolution = models.PositiveSmallIntegerField(default=1)
     n_days = models.PositiveSmallIntegerField(default=365)
-    country = models.CharField(max_length=51, choices=COUNTRIES)
+    country = models.CharField(max_length=51, choices=COUNTRIES, default="MZ")
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

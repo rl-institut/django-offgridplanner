@@ -371,7 +371,8 @@ if (searchInput) {
             alert('No results found');
         }
     }
-});
+  });
+}
 
 function isLatLngInMapBounds(lat, lng) {
     const latLng = L.latLng(lat, lng);

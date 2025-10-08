@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
+from offgridplanner.projects.helpers import csv_to_dict
 from offgridplanner.projects.models import Project
 
 SETTLEMENT_TYPE = (
@@ -61,6 +62,13 @@ class CustomDemand(models.Model):
         return f"CustomDemand {self.id}: Project {self.project.name}"
 
     @property
+    def settlement_defaults(self):
+        settlement_defaults = csv_to_dict(
+            "data/settlement_defaults.csv", label_col="settlement_type"
+        )
+        return settlement_defaults
+
+    @property
     def calibration_option(self):
         if (
             self.annual_total_consumption is None
@@ -74,6 +82,21 @@ class CustomDemand(models.Model):
             else "annual_peak_consumption"
         )
         return calibration_option
+
+    def get_shares_dict(self, *, as_percentage=False, defaults=False):
+        multiplier = 100 if as_percentage else 1
+        shares_fields = ["very_low", "low", "middle", "high", "very_high"]
+        if defaults:
+            shares_dict = {
+                household: {k: float(v) * multiplier for k, v in demands.items()}
+                for household, demands in self.settlement_defaults.items()
+            }
+        else:
+            shares_dict = {
+                field: getattr(self, field) * multiplier for field in shares_fields
+            }
+
+        return shares_dict
 
 
 class GridDesign(NestedModel):

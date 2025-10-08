@@ -22,7 +22,6 @@ from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
-from offgridplanner.projects.helpers import SETTLEMENT_DEFAULTS
 from offgridplanner.projects.helpers import format_results_into_kpi_dict
 from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
@@ -171,13 +170,14 @@ def demand_estimation(request, proj_id=None):
             form = CustomDemandForm(instance=custom_demand)
             calibration_initial = custom_demand.calibration_option
             calibration_active = custom_demand.calibration_option is not None
-            household_default_shares = {
-                household: {k: float(v) * 100 for k, v in demands.items()}
-                for household, demands in SETTLEMENT_DEFAULTS.items()
-            }
+
+            # Pass the default values to be able to switch between settlement types
+            household_default_shares = custom_demand.get_shares_dict(
+                as_percentage=True, defaults=True
+            )
 
             # Pass the initial values for the customDemand shares to be able to use the dynamic reset button
-            household_initial_shares = custom_demand.shares_dict(as_percentage=True)
+            household_initial_shares = custom_demand.get_shares_dict(as_percentage=True)
             context = {
                 "calibration": {
                     "active": calibration_active,

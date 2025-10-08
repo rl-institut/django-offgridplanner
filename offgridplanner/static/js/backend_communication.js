@@ -287,6 +287,34 @@ async function consumer_to_db(href, file_type = "db") {
     }
 }
 
+async function roads_to_db(href, file_type = "db") {
+    const response = await fetch(roadsToDBUrl, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({ road_elements: road_elements, file_type: file_type })
+    });
+
+    if (response.ok) {
+        if (file_type === "db") {
+            if (href) {
+                window.location.href = href;
+            }
+        } else {
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = file_type === "xlsx" ? "roads.xlsx" : "roads.csv";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+        }
+    } else {
+        console.error('Request failed with status:', response.status);
+    }
+}
+
 // TODO move this to map related js, customer_selection
 function add_buildings_inside_boundary({boundariesCoordinates} = {}) {
     $("*").css("cursor", "wait");

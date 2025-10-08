@@ -27,6 +27,7 @@ urlpatterns = [
     ),
     path("consumer_to_db", consumer_to_db, name="consumer_to_db"),
     path("consumer_to_db/<int:proj_id>", consumer_to_db, name="consumer_to_db"),
+    path("roads_to_db/<int:proj_id>", roads_to_db, name="roads_to_db"),
     path("export_demand/<int:proj_id>", export_demand, name="export_demand"),
     path("import_demand/<int:proj_id>", import_demand, name="import_demand"),
     path("db_links_to_js/<int:proj_id>", db_links_to_js, name="db_links_to_js"),

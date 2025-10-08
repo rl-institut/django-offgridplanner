@@ -1,6 +1,5 @@
 import os
 
-import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -14,8 +13,8 @@ from django.views.decorators.http import require_http_methods
 
 from config.settings.base import DEFAULT_COUNTRY
 from config.settings.base import PENDING
-from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.helpers import get_country_bounds
+from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.supply.demand_estimation import ENTERPRISE_LIST
 from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_KW_MAPPING
@@ -23,6 +22,7 @@ from offgridplanner.optimization.supply.demand_estimation import LARGE_LOAD_LIST
 from offgridplanner.optimization.supply.demand_estimation import PUBLIC_SERVICE_LIST
 from offgridplanner.projects.forms import OptionForm
 from offgridplanner.projects.forms import ProjectForm
+from offgridplanner.projects.helpers import SETTLEMENT_DEFAULTS
 from offgridplanner.projects.helpers import format_results_into_kpi_dict
 from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
@@ -171,6 +171,13 @@ def demand_estimation(request, proj_id=None):
             form = CustomDemandForm(instance=custom_demand)
             calibration_initial = custom_demand.calibration_option
             calibration_active = custom_demand.calibration_option is not None
+            household_default_shares = {
+                household: {k: float(v) * 100 for k, v in demands.items()}
+                for household, demands in SETTLEMENT_DEFAULTS.items()
+            }
+
+            # Pass the initial values for the customDemand shares to be able to use the dynamic reset button
+            household_initial_shares = custom_demand.shares_dict(as_percentage=True)
             context = {
                 "calibration": {
                     "active": calibration_active,
@@ -183,6 +190,8 @@ def demand_estimation(request, proj_id=None):
                     "high",
                     "very_high",
                 ],
+                "household_default_shares": household_default_shares,
+                "household_initial_shares": household_initial_shares,
                 "form": form,
                 "proj_id": proj_id,
                 "step_id": step_id,

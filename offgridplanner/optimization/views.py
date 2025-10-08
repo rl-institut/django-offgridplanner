@@ -336,10 +336,14 @@ def file_nodes_to_js(request, proj_id):
 
 
 def load_demand_plot_data(request, proj_id=None):
-    # if is_ajax(request):
+    settlement_type = request.GET.get("settlement_type", None)
     time_range = range(24)
     nodes = Nodes.objects.get(project__id=proj_id)
     custom_demand = CustomDemand.objects.get(project__id=proj_id)
+    # Set the settlement type to what is selected in the drop-down for the plot, but don't save to the model yet
+    # (that should happen when the form is properly submitted)
+    if settlement_type is not None:
+        custom_demand.settlement_type = settlement_type
     # get demand and convert to kWh
     demand_df = (
         get_demand_timeseries(nodes, custom_demand, time_range=time_range) / 1000

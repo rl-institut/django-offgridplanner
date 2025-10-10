@@ -299,10 +299,7 @@ def calculating(request, proj_id=None):
             msg = "You will be forwarded after the model calculation is completed."
             email_opt = False
         else:
-            msg = (
-                "You will be forwarded after the model calculation is completed. You can also close the window and view"
-                " the results in your user account after the calculation is finished."
-            )
+            msg = "You will be forwarded after the model calculation is completed."
             email_opt = False
         # TODO there was also the condition len(project.task_id) > 20 but I'm not sure why it is needed
         for opt_type in ["grid", "supply"]:

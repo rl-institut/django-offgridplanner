@@ -15,16 +15,16 @@
                   <a class="title">Projects</a>
                   <span style="float:right;"><a>&nbsp;
                     <a href="{% url 'steps:project_setup' %}"
-                       class="btn btn--long text-right">New Project</a>
+                       class="btn btn--long text-right">{% translate "New Project" %}</a>
                   </a></span>
                 </div>
                 <span class="title"></span>
                 <table id="projectTable">
                   <tr style="border-bottom:1px solid black">
-                    <th>Project Name</th>
-                    <th>Creation Date</th>
-                    <th>Last Update</th>
-                    <th>Model Status</th>
+                    <th>{% translate "Project Name" %}</th>
+                    <th>{% translate "Creation Date" %}</th>
+                    <th>{% translate "Last Update" %}</th>
+                    <th>{% translate "Model Status" %}</th>
                     <th></th>
                     <!-- Added an empty header for the new column -->
                     <th></th>
@@ -47,7 +47,7 @@
                                              padding:4px"
                                       class="grey_button"
                                       type="submit"
-                                      value="Duplicate">Duplicate Project</button>
+                                      value="Duplicate">{% translate "Duplicate Project" %}</button>
                             </form>
                           </span>
                         </td>
@@ -58,21 +58,21 @@
                         <span style="float:right;">
                           <button class="grey_button">
                           <a onclick="document.getElementById('projectID{{ project.id }}').style.display='block'"
-                             style="color:white">Delete Project</a>
+                             style="color:white">{% translate "Delete Project" %}</a>
                           </button>
                         </span>
                       </td>
                       <td>
                         <span style="float:right;">
                           <button class="grey_button">
-                          <a href="{% url 'steps:project_setup' project.id %}">Edit Project</a>
+                          <a href="{% url 'steps:project_setup' project.id %}">{% translate "Edit Project" %}</a>
                           </button>
                         </span>
                       </td>
                       <td>
                         <span style="float:right;">
                           <button class="grey_button">
-                          <a href="{% url 'steps:simulation_results' project.id %}" >Show Results</a>
+                          <a href="{% url 'steps:simulation_results' project.id %}" >{% translate "Show Results" %}</a>
                           </button>
                         </span>
                       </td>
@@ -80,7 +80,7 @@
                   {% endfor %}
                 {% else %}
                   <tr>
-                    <td>You do not yet have any saved projects</td>
+                    <td>{% translate "You do not yet have any saved projects" %}</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -106,13 +106,13 @@
             method="POST">
         {% csrf_token %}
         <div class="container">
-          <h1>Delete Project</h1>
-          <p>Are you sure you want to delete the project?</p>
+          <h1>{% translate "Delete Project" %}</h1>
+          <p>{% translate "Are you sure you want to delete the project?" %}</p>
           <div class="clearfix">
-            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">Delete</button>
+            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">{% translate "Delete" %}</button>
             <button onclick="document.getElementById('projectID{{ project.id }}').style.display='none'"
                     type="button"
-                    class="cancelbtn">Cancel</button>
+                    class="cancelbtn">{% translate "Cancel" %}</button>
           </div>
         </div>
       </form>
@@ -126,12 +126,12 @@
             text-align: left">
   <form class="modal-content" style="max-width: 24rem">
     <div class="container">
-      <h1>Create Example Model</h1>
-      <p>You have not created any projects yet. Would you like a sample project to be set up for you?</p>
-      <button onclick="create_example_project()" type="button" class="deletebtn">Yes</button>
+      <h1>{% translate "Create Example Model" %}</h1>
+      <p>{% translate "You have not created any projects yet. Would you like a sample project to be set up for you?" %}</p>
+      <button onclick="create_example_project()" type="button" class="deletebtn">{% translate "Yes" %}</button>
       <button onclick="document.getElementById('projectExample').style.display='none'"
               type="button"
-              class="deletebtn">No</button>
+              class="deletebtn">{% translate "No" %}</button>
     </div>
   </form>
 </div>

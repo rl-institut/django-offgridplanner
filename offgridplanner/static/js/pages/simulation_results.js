@@ -439,13 +439,13 @@ function plot_bar_chart(data) {
 
     let optimalSizes = document.getElementById('optimalSizes');
     let xValue = [
-        'PV',
-        'Inverter',
-        'Rectifier',
-        'Diesel Genset',
-        'Peak Demand',
-        'Max. Surplus',
-        'Battery'
+      gettext('PV'),
+      gettext('Inverter'),
+      gettext('Rectifier'),
+      gettext('Diesel Genset'),
+      gettext('Peak Demand'),
+      gettext('Max. Surplus'),
+      gettext('Battery'),
     ];
 
     // Reverse the arrays
@@ -500,7 +500,7 @@ function plot_bar_chart(data) {
             automargin: true, // Enable automatic margin adjustment
         },
         xaxis: {
-            title: 'Capacity in kW',
+            title: gettext('Capacity in kW'),
             titlefont: {
                 color: 'rgb(8,48,107)',
                 size: 16,

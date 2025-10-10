@@ -33,7 +33,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Grid Layout</span>
+                      <span class="title">{% translate 'Grid Layout' %}</span>
                     </div>
                     <div class="dropdown">
                       <button class="btn dropdown-toggle btn--transparent"
@@ -45,10 +45,10 @@
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton0">
                         <li>
-                          <a class="dropdown-item" href="#">Export as .xls</a>
+                          <a class="dropdown-item" href="#">{% translate 'Export as .xls' %}</a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="#">Export as PDF</a>
+                          <a class="dropdown-item" href="#">{% translate 'Export as PDF' %}</a>
                         </li>
                       </ul>
                     </div>
@@ -61,7 +61,7 @@
               <div class="col col-md-6" style="display: flex; justify-content: center;">
                 <div class="chart" id="summaryResultsChart">
                   <div class="chart__header">
-                    <span class="title">Summary of Results</span>
+                    <span class="title">{% translate 'Summary of Results' %}</span>
                   </div>
                   <div class="chart__content">
                     <span class="subtitle"></span>
@@ -117,7 +117,7 @@
                         <div class="item__value">{{results.average_annual_demand_per_consumer.value|intcomma}} {{results.average_annual_demand_per_consumer.unit}}</div>
                       </div>
                       <div class="item item--worst">
-                        <div class="item__name">Calculation Time</div>
+                        <div class="item__name">{% translate 'Calculation Time' %}</div>
                         <div id="time" class="item__value"></div>
                       </div>
                     </div>
@@ -135,7 +135,7 @@
                           justify-content: center;
                           width: 50%;
                           margin-right: 10px"
-                   href="#">Download Results (xlsx-format)</a>
+                   href="#">{% translate 'Download Results (xlsx-format)' %}</a>
                 <a id="downloadPDF"
                    class="btn btn--medium"
                    style="height: 32px;
@@ -144,7 +144,7 @@
                           justify-content: center;
                           width: 50%;
                           margin-right: 10px"
-                   href="#">Download Results (PDF)</a>
+                   href="#">{% translate 'Download Results (PDF)' %}</a>
                 <a id="rerunCalculation"
                    class="btn btn--medium"
                    style="height: 32px;
@@ -155,25 +155,25 @@
                           margin-right: 10px;
                           margin-left: 10px"
                    href="javascript:void(0);"
-                   onclick="forward_if_no_task_is_pending({{ proj_id }});">Recalculate</a>
+                   onclick="forward_if_no_task_is_pending({{ proj_id }});">{% translate 'Recalculate' %}</a>
                 <a class="btn btn--medium"
                    style="height: 32px;
                           display: flex;
                           align-items: center;
                           justify-content: center;
                           width: 50%"
-                   href="/">My Projects</a>
+                   href="/">{% translate 'My Projects' %}</a>
               </div>
             </div>
             <div class="row" id="resultsChart">
               <div class="col" style="display: flex; justify-content: center;">
                 <div class="chart" style="height: auto;">
                   <div class="chart__header">
-                    <span class="title">Results</span>
+                    <span class="title">{% translate 'Results' %}</span>
                   </div>
                   <div class="chart__content" style="height: auto;">
                     {% if do_grid_optimization %}
-                    <span class="subtitle" id="gridTitle">GRID</span>
+                    <span class="subtitle" id="gridTitle">{% translate 'GRID' %}</span>
                     <div class="row" id="gridResultsRow">
                       <div class="item item--best">
                         <div class="item__name">{{results.n_consumers.verbose}}</div>
@@ -206,7 +206,7 @@
                     </div>
                     {% endif %}
                     {% if do_supply_optimization %}
-                    <span class="subtitle">ENERGY CONVERTERS</span>
+                    <span class="subtitle">{% translate 'ENERGY CONVERTERS' %}</span>
                     <div class="row">
                       <div class="item item--best">
                         <div class="item__name">{{results.res.verbose}}</div>
@@ -271,7 +271,7 @@
                       </div>
                     </div>
                     {% endif %}
-                    <span class="subtitle">DEMAND</span>
+                    <span class="subtitle">{% translate 'DEMAND' %}</span>
                     <div class="row">
                       <div class="item item--best">
                         <div class="item__name">{{results.total_annual_consumption.verbose}}</div>
@@ -305,7 +305,7 @@
                         <div class="item__name"></div>
                       </div>
                     </div>
-                    <span class="subtitle">ECONOMIC DATA</span>
+                    <span class="subtitle">{% translate 'ECONOMIC DATA' %}</span>
                     <div class="row">
                       <div class="item item--best">
                         <div class="item__name">{{results.upfront_invest_total.verbose}}</div>
@@ -383,7 +383,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Optimal Capacity of Components</span>
+                      <span class="title">{% translate 'Optimal Capacity of Components' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
@@ -395,7 +395,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Breakdown of the LCOE</span>
+                      <span class="title">{% translate 'Breakdown of the LCOE' %}</span>
                     </div>
                     <div class="dropdown">
                       <button class="btn dropdown-toggle btn--transparent"
@@ -407,10 +407,10 @@
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
                         <li>
-                          <a class="dropdown-item" href="#">Export as .xls</a>
+                          <a class="dropdown-item" href="#">{% translate 'Export as .xls' %}</a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="#">Export as PDF</a>
+                          <a class="dropdown-item" href="#">{% translate 'Export as PDF' %}</a>
                         </li>
                       </ul>
                     </div>
@@ -426,14 +426,13 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Sankey Diagram Representing the Energy Flow in the
-                      System</span>
+                      <span class="title">{% translate 'Sankey Diagram Representing the Energy Flow in the System' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
                     <div id="sankeyDiagram"></div>
                   </div>
-                  <p style="font-size: 12px">*electricity surplus is not shown</p>
+                  <p style="font-size: 12px">{% translate '*electricity surplus is not shown' %}</p>
                 </div>
               </div>
             </div>
@@ -442,7 +441,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Electricity Demand Profile Illustration: First Monday of Simulation Period</span>
+                      <span class="title">{% translate 'Electricity Demand Profile Illustration: First Monday of Simulation Period' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
@@ -456,8 +455,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Demand Coverage by Renewable and Non-Renewable
-                      Resources</span>
+                      <span class="title">{% translate 'Demand Coverage by Renewable and Non-Renewable Resources' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
@@ -471,7 +469,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Annual Energy Flows with 1-Hour Resolution</span>
+                      <span class="title">{% translate 'Annual Energy Flows with 1-Hour Resolution' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
@@ -485,7 +483,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Duration Curves for All Components</span>
+                      <span class="title">{% translate 'Duration Curves for All Components' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
@@ -497,7 +495,7 @@
                 <div class="chart">
                   <div class="chart__header">
                     <div>
-                      <span class="title">Cumulative CO<sub>2</sub> Emissions</span>
+                      <span class="title">{% translate 'Cumulative CO2 Emissions' %}</span>
                     </div>
                   </div>
                   <div class="chart__plot">
@@ -509,10 +507,10 @@
           </div>
         </section>
         <div id="noResults" class="modal" style="padding: 20px;">
-          <span class="close" title="Close Modal">&times;</span>
+          <span class="close" title="{% translate 'Close Modal' %}">&times;</span>
           <form class="modal-content" action="/action_page.php">
             <div class="container">
-              <h1>No results</h1>
+              <h1>{% translate 'No results' %}</h1>
               <p id="pendingTaskMSG"></p>
               <div style="text-align: center;">
                 <!-- Added text-align here -->
@@ -521,36 +519,37 @@
                    class="btn btn--long"
                    style="display: block;
                           margin: 10px auto;
-                          max-width: 300px">Yes, start
-                calculation</a>
+                          max-width: 300px">{% translate 'Yes, start calculation' %}</a>
                 <a href="project_setup?proj_id={{ proj_id }}"
                    class="btn btn--long"
                    style="display: block;
                           margin: 10px auto;
-                          max-width: 300px">No, go to project setup</a>
+                          max-width: 300px">{% translate 'No, go to project setup' %}</a>
                 <a href="/"
                    class="btn btn--long"
                    style="display: block;
                           margin: 10px auto;
-                          max-width: 300px">Cancel</a>
+                          max-width: 300px">{% translate 'Cancel' %}</a>
               </div>
             </div>
           </form>
         </div>
         <div id=pendingTask class="modal">
-          <span class="close" title="Close Modal">&times;</span>
+          <span class="close" title="{% translate 'Close Modal' %}">&times;</span>
           <form class="modal-content" action="/action_page.php">
             <div class="container">
-              <h1>Revoke pending calculation?</h1>
+              <h1>{% translate 'Revoke pending calculation?' %}</h1>
               <p>
+                {% blocktranslate trimmed %}
                 You have a calculation in progress that has not yet been completed. Therefore, you cannot start
                 another calculation. You can either revoke the pending calculation or wait for it to be finished
+                {% endblocktranslate %}
               </p>
               <div class="clearfix">
-                <button onclick="abort_calculation();" type="button" class="deletebtn">Revoke</button>
+                <button onclick="abort_calculation();" type="button" class="deletebtn">{% translate 'Revoke' %}</button>
                 <button onclick="document.getElementById('pendingTask').style.display='none';"
                         type="button"
-                        class="cancelbtn">Wait</button>
+                        class="cancelbtn">{% translate 'Wait' %}</button>
               </div>
             </div>
           </form>
@@ -569,6 +568,7 @@
   <script src="{% static 'js/integrate_map.js' %}"></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="{% static 'js/third_party/plotly.js' %}"></script>
+  <script src="{% url 'javascript-catalog' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
   <script src="{% static 'js/pages/simulation_results.js' %}"></script>
   <script src="{% static 'js/backend_communication.js' %}"></script>

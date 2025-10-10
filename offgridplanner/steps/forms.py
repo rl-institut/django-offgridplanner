@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
 from offgridplanner.projects.widgets import BatteryDesignWidget
@@ -9,11 +10,11 @@ from offgridplanner.steps.models import GridDesign
 
 def set_field_metadata(field, meta):
     label = (
-        field.label.title() if meta.get("verbose") == "" else meta.get("verbose")
+        _(field.label.title()) if meta.get("verbose") == "" else meta.get("verbose")
     )  # Set verbose name
-    question_icon = f'<span class="icon icon-question" data-bs-toggle="tooltip" title="{meta.get("help_text")}"></span>'
+    question_icon = f'<span class="icon icon-question" data-bs-toggle="tooltip" title="{_(meta.get("help_text"))}"></span>'
     field.label = label + question_icon if meta.get("help_text") != "" else label
-    field.help_text = meta.get("help_text", "")  # Set help text
+    field.help_text = _(meta.get("help_text", ""))  # Set help text
     # TODO change hard coded unit to customizable in the future
     field.widget.attrs["unit"] = meta.get("unit", "").replace(
         "currency", "USD"

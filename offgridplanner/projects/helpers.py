@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
@@ -117,6 +118,8 @@ def csv_to_dict(filepath, label_col="label"):
             for row in reader:
                 label = row.pop(label_col)  # Remove label from row data
                 result[label] = row  # Store remaining fields under this label
+                if "verbose" in row:  # Store verbose as translatable string
+                    row["verbose"] = _(row["verbose"])
 
     return result
 

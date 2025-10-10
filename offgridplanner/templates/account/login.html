@@ -14,7 +14,7 @@
             <div class="signup-frame__img">
                 <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="PeopleSun logo">
             </div>
-            <div class="signup-frame__heading">Login</div>
+            <div class="signup-frame__heading">{% translate "Login" %}</div>
             <form method="post" class="signup-frame__form">
                 {% csrf_token %}
                 {{ form|crispy }}

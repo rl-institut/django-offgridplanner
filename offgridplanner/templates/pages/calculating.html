@@ -20,19 +20,19 @@
                 <div class="col">
                     <div class="chart" style="border: 15px solid #FAFAFA; height: auto;">
                         <div class="chart__header">
-                            <a class="title">Model Calculation</a>
+                            <a class="title">{% translate 'Model Calculation' %}</a>
                         </div>
                         <hr>
                         <div id="loader" class="loader"></div>
-                        <a>Status: </a>
-                        <a id="statusMsg">Starting optimization...</a>
+                        <a>{% translate 'Status:' %} </a>
+                        <a id="statusMsg">{% translate 'Starting optimization...' %}</a>
                         <hr>
                         {% if email_opt == true %}
                             <label class="switch">
                                 <input type="checkbox" id="toggleswitch">
                                 <span class="slider round"></span>
                             </label>
-                            <a>&nbsp;&nbsp;Send email when calculation is finished.</a>
+                            <a>&nbsp;&nbsp;{% translate 'Send email when calculation is finished.' %}</a>
                             <p></p>
                         {% endif %}
                         <a>{{ msg }}</a>
@@ -40,7 +40,7 @@
                         <a href="{% url 'steps:energy_system_design' proj_id %}"
                            class="btn btn--long text-right"
                            onclick="abort_calculation();"
-                        >Abort Calculation</a>
+                        >{% translate 'Abort Calculation' %}</a>
                     </div>
                 </div>
             </div>
@@ -49,9 +49,9 @@
     <div id="msgBox" class="modal" style="background-color: rgba(0,0,0,0.5); z-index: 999; text-align: left">
         <form class="modal-content" style="max-width: 24rem">
             <div class="container">
-                <h1>Warning</h1>
+                <h1>{% translate 'Warning' %}</h1>
                 <p id="responseMsg"></p>
-                <a id="redirectLink" href="#" class="btn btn--long text-right">Go to Page with Missing Data</a>
+                <a id="redirectLink" href="#" class="btn btn--long text-right">{% translate 'Go to Page with Missing Data' %}</a>
             </div>
         </form>
     </div>

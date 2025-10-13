@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
@@ -27,6 +28,7 @@ from offgridplanner.projects.helpers import get_param_from_metadata
 from offgridplanner.projects.helpers import group_form_by_component
 from offgridplanner.projects.helpers import reorder_dict
 from offgridplanner.projects.models import Project
+from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.forms import CustomDemandForm
 from offgridplanner.steps.forms import EnergySystemDesignForm
 from offgridplanner.steps.forms import GridDesignForm
@@ -49,15 +51,11 @@ STEPS = {
 STEP_LIST_RIBBON = [step for step in STEPS.values() if step != _("Calculating")]
 
 
-# @login_required()
+@login_required
+@user_owns_project
 @require_http_methods(["GET", "POST"])
 def project_setup(request, proj_id=None):
-    if proj_id is not None:
-        project = get_object_or_404(Project, id=proj_id)
-        if project.user != request.user:
-            raise PermissionDenied
-    else:
-        project = None
+    project = get_object_or_404(Project, id=proj_id) if proj_id is not None else None
     if request.method == "GET":
         max_days = int(os.environ.get("MAX_DAYS", 365))
 
@@ -108,7 +106,8 @@ def project_setup(request, proj_id=None):
         )
 
 
-# @login_required()
+@login_required
+@user_owns_project
 @require_http_methods(["GET"])
 def consumer_selection(request, proj_id=None):
     if proj_id is None:
@@ -116,8 +115,6 @@ def consumer_selection(request, proj_id=None):
         raise ValueError(err)
     else:
         project = get_object_or_404(Project, id=proj_id)
-        if project.user.email != request.user.email:
-            raise PermissionDenied
 
         public_service_list = {
             f"group{ix}": service
@@ -158,15 +155,14 @@ def consumer_selection(request, proj_id=None):
         return render(request, "pages/consumer_selection.html", context)
 
 
-# @login_required()
+@login_required
+@user_owns_project
 @require_http_methods(["GET", "POST"])
 def demand_estimation(request, proj_id=None):
     # TODO demand import and export from this step still needs to be handled
     step_id = list(STEPS.keys()).index("demand_estimation") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-        if project.user != request.user:
-            raise PermissionDenied
 
         custom_demand, _ = CustomDemand.objects.get_or_create(
             project=project, defaults=get_param_from_metadata("default", "CustomDemand")
@@ -196,14 +192,13 @@ def demand_estimation(request, proj_id=None):
             return redirect("steps:ogp_steps", proj_id, step_id + 1)
 
 
-# @login_required()
+@login_required
+@user_owns_project
 @require_http_methods(["GET", "POST"])
 def grid_design(request, proj_id=None):
     step_id = list(STEPS.keys()).index("grid_design") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-        if project.user != request.user:
-            raise PermissionDenied
 
         grid_design, _ = GridDesign.objects.get_or_create(
             project=project, defaults=get_param_from_metadata("default", "GridDesign")
@@ -240,14 +235,13 @@ def grid_design(request, proj_id=None):
             return redirect("steps:ogp_steps", proj_id, step_id + 1)
 
 
-# @login_required()
+@login_required
+@user_owns_project
 @require_http_methods(["GET", "POST"])
 def energy_system_design(request, proj_id=None):
     step_id = list(STEPS.keys()).index("energy_system_design") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-        if project.user.email != request.user.email:
-            raise PermissionDenied
 
     energy_system_design, _ = EnergySystemDesign.objects.get_or_create(
         project=project,
@@ -287,12 +281,12 @@ def energy_system_design(request, proj_id=None):
         return redirect("steps:ogp_steps", proj_id, step_id + 1)
 
 
+@login_required
+@user_owns_project
 def calculating(request, proj_id=None):
     # TODO currently the optimization is always triggered through js, add option to reset simulation or skip page if is complete (like open-plan)
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-        if project.user.email != request.user.email:
-            raise PermissionDenied
 
         simulation, _ = Simulation.objects.get_or_create(project=project)
         if "anonymous" in project.user.email:
@@ -322,7 +316,7 @@ def calculating(request, proj_id=None):
         return render(request, "pages/calculating.html", context)
 
 
-# @login_required()
+@login_required
 @require_http_methods(["GET"])
 def simulation_results(request, proj_id=None):
     step_id = list(STEPS.keys()).index("calculating") + 1
@@ -355,7 +349,8 @@ def simulation_results(request, proj_id=None):
     )
 
 
-# @login_required
+@login_required
+@user_owns_project
 @require_http_methods(["GET", "POST"])
 def steps(request, proj_id, step_id=None):
     if step_id is None:

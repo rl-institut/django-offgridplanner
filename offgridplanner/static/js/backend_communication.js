@@ -221,6 +221,27 @@ async function file_nodes_to_js(formData) {
     }
 }
 
+// osm roads
+async function db_roads_to_js(proj_id) {
+    try {
+        const response = await fetch(dbRoadsToJsUrl);
+        const data = await response.json();
+
+        if (data !== null) {
+            road_elements = data.road_elements || [];
+            if (road_elements.length > 0) {
+                put_roads_on_map(road_elements);
+            }
+        } else {
+            road_elements = [];
+            put_roads_on_map([]);
+        }
+    } catch (err) {
+        console.error("Error loading roads from DB:", err);
+    }
+}
+
+
 async function file_demand_to_db(formData) {
     try {
         const response = await fetch(importDemandUrl, {

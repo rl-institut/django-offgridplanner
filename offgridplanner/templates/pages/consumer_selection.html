@@ -346,6 +346,7 @@
       const enterprise_list = {{ enterprise_list | safe }};
       const large_load_list = {{ large_load_list | safe }};
       const dbNodesToJsUrl = `{% url 'optimization:db_nodes_to_js' proj_id %}`;
+      const dbRoadsToJsUrl = `{% url 'optimization:db_roads_to_js' proj_id %}`;
       const dbLinksToJsUrl = `{% url 'optimization:db_links_to_js' proj_id %}`;
       const fileNodesToJsUrl = `{% url 'optimization:file_nodes_to_js' %}`;
       const consumerToDBUrl = `{% url 'optimization:consumer_to_db' proj_id %}`;
@@ -358,6 +359,7 @@
       window.onload = function () {
         //redirect_if_cookie_is_missing(true, true); //for anonymous user --> do it pythonside
         db_nodes_to_js({{proj_id}}, false);
+        db_roads_to_js({{ proj_id }});
         //show_email_and_project_in_navbar({{proj_id}});
         //TODO reenable video_tutorial
         //show_video_tutorial();

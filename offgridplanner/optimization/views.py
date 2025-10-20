@@ -357,6 +357,17 @@ def roads_to_db(request, proj_id=None):
         return response
 
 
+@require_http_methods(["GET"])
+def db_roads_to_js(request, proj_id=None):
+    project = get_object_or_404(Project, id=proj_id)
+    try:
+        roads = Roads.objects.get(project=project)
+        data = json.loads(roads.data) if isinstance(roads.data, str) else roads.data
+        return JsonResponse({"road_elements": data})
+    except Roads.DoesNotExist:
+        return JsonResponse({"road_elements": []})
+
+
 # not currently used
 @require_http_methods(["GET"])
 def osm_roads(request):

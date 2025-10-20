@@ -40,6 +40,7 @@ urlpatterns = [
         db_nodes_to_js,
         name="db_nodes_to_js",
     ),
+    path("db_roads_to_js/<int:proj_id>/", db_roads_to_js, name="db_roads_to_js"),
     path(
         "load-demand-plot-data/<int:proj_id>",
         load_demand_plot_data,

@@ -392,7 +392,7 @@ function add_roads_inside_boundary({boundariesCoordinates} = {}) {
 
             if (res.executed) {
                 responseMsg.innerHTML = "";
-                Array.prototype.push.apply(road_elements, res.new_roads);
+                road_elements = res.new_roads;
                 put_roads_on_map(res.new_roads);
             }
         })

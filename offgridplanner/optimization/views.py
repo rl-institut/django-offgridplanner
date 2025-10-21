@@ -306,9 +306,6 @@ def remove_roads_inside_boundary(request, proj_id):
 
 @require_http_methods(["POST"])
 def roads_to_db(request, proj_id=None):
-    """
-    Save road geometries (from OSM) to the Roads table.
-    """
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
@@ -323,38 +320,24 @@ def roads_to_db(request, proj_id=None):
             return JsonResponse({"message": "No data provided"}, status=200)
 
         df = pd.DataFrame.from_records(road_elements)
-
         if df.empty:
             Roads.objects.filter(project=project).delete()
             return JsonResponse({"message": "No valid data"}, status=200)
 
         df = df.drop_duplicates(subset=["road_id"], keep="first")
-
         required_columns = ["road_id", "coordinates", "how_added", "road_type"]
         df = df[required_columns]
-
-        df["road_type"] = df["road_type"].fillna("osm")
         df["how_added"] = df["how_added"].fillna("automatic")
+        df["road_type"] = df["road_type"].fillna("osm")
 
-        if file_type == "db":
-            roads, _ = Roads.objects.get_or_create(project=project)
-            roads.data = df.to_json(orient="records")
-            roads.save()
-            return JsonResponse({"message": "Roads saved to DB"}, status=200)
+        roads, _ = Roads.objects.get_or_create(project=project)
 
-        io_file = consumer_data_to_file(df, file_type)
-        response = StreamingHttpResponse(io_file)
+        roads.data = df.to_json(orient="records")
+        roads.save()
 
-        if file_type == "xlsx":
-            response.headers["Content-Disposition"] = (
-                "attachment; filename=offgridplanner_roads.xlsx"
-            )
-        elif file_type == "csv":
-            response.headers["Content-Disposition"] = (
-                "attachment; filename=offgridplanner_roads.csv"
-            )
+        return JsonResponse({"message": "Success"}, status=200)
 
-        return response
+    return JsonResponse({"error": "Project ID missing"}, status=400)
 
 
 @require_http_methods(["GET"])

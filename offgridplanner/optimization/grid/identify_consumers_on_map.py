@@ -9,57 +9,94 @@ from raw OpenStreetMap data.
 
 import datetime
 import json
+import logging
 import math
 import time
 import urllib.request
+from urllib.error import HTTPError
 
 import numpy as np
 from shapely import geometry
 
+from offgridplanner.optimization.requests import fetch_buildings_data
 
-def get_consumer_within_boundaries(df):
-    # min and max of latitudes and longitudes are sent to the overpass to get
-    # a large rectangle including (maybe) more buildings than selected
-    min_latitude, min_longitude, max_latitude, max_longitude = (
-        df["latitude"].min(),
-        df["longitude"].min(),
-        df["latitude"].max(),
-        df["longitude"].max(),
-    )
-    url = (
-        f"https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:2500]"
-        f"[bbox:{min_latitude},{min_longitude},{max_latitude},{max_longitude}];"
+logger = logging.getLogger(__name__)
+
+
+def _fetch_overpass(bbox, timeout=2500):
+    lat_min, lon_min, lat_max, lon_max = bbox
+    base = "https://www.overpass-api.de/api/interpreter"
+    query = (
+        f"[out:json][timeout:{timeout}][bbox:{lat_min},{lon_min},{lat_max},{lon_max}];"
         f'way["building"="yes"];(._;>;);out;'
     )
-    url_formatted = url.replace(" ", "+")
+    url_str = f"{base}?data={query}".replace(" ", "+")
+    if not url_str.startswith(("http:", "https:")):
+        err = "URL must start with 'http:' or 'https:'"
+        raise ValueError(err)
 
-    if not url_formatted.startswith(("http:", "https:")):
-        error = "URL must start with 'http:' or 'https:'"
-        raise ValueError(error)
+    with urllib.request.urlopen(url_str) as resp:  # noqa: S310 (validated above)
+        raw = resp.read().decode()
+    if not raw:
+        err = "Overpass did not return any data."
+        raise RuntimeError(err)
+    data = json.loads(raw)
+    if "elements" not in data or not data["elements"]:
+        err = "Overpass did not return any building data."
+        raise RuntimeError(err)
+    return data
 
-    with urllib.request.urlopen(url_formatted) as url:  # noqa: S310 (fixed with ValueError call above)
-        res = url.read().decode()
-        if len(res) > 0:
-            data = json.loads(res)
-        else:
+
+def get_consumer_within_boundaries(df, engine="overpass"):
+    min_latitude = df["latitude"].min()
+    min_longitude = df["longitude"].min()
+    max_latitude = df["latitude"].max()
+    max_longitude = df["longitude"].max()
+    bbox = [min_latitude, min_longitude, max_latitude, max_longitude]
+
+    data = None
+
+    if engine == "minigrid-explorer":
+        try:
+            mg_data = fetch_buildings_data(bbox)
+            if not mg_data:
+                err = "Minigrid returned no data."
+                raise RuntimeError(err)  # noqa: TRY301
+            data = mg_data
+        except RuntimeError as e:
+            logger.warning(
+                "Minigrid-Explorer failed (%s). Falling back to Overpass...",
+                e,
+                exc_info=True,
+            )
+            # Fall through to Overpass
+
+    if engine == "overpass" or data is None:
+        try:
+            data = _fetch_overpass(bbox)
+        except (HTTPError, RuntimeError) as e:
+            logger.warning("Overpass fetch failed: %s", e, exc_info=True)
             return None, None
-    # first converting the json file, which is delivered by overpass to geojson,
-    # then obtaining coordinates and surface areas of all buildings inside the
-    # 'big' rectangle.
-    geojson_data = convert_overpass_json_to_geojson(data)
 
-    building_coord, building_surface_areas = (
-        obtain_areas_and_mean_coordinates_from_geojson(geojson_data)
-    )
-    # excluding the buildings which are outside the drawn boundary
+    try:
+        geojson_data = convert_overpass_json_to_geojson(data)
+        building_coord, building_surface_areas = (
+            obtain_areas_and_mean_coordinates_from_geojson(geojson_data)
+        )
+    except (KeyError, TypeError) as e:
+        logger.warning("Failed to convert/process building data: %s", e, exc_info=True)
+        return None, None
+
+    # Filter to polygon drawn by user
+    boundary = df.to_numpy().tolist()
     mask_building_within_boundaries = {
-        key: is_point_in_boundaries(value, df.to_numpy().tolist())
+        key: is_point_in_boundaries(value, boundary)
         for key, value in building_coord.items()
     }
     building_coordinates_within_boundaries = {
         key: value
         for key, value in building_coord.items()
-        if mask_building_within_boundaries[key]
+        if mask_building_within_boundaries.get(key, False)
     }
     return data, building_coordinates_within_boundaries
 

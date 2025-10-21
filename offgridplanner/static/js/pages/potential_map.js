@@ -246,7 +246,7 @@ function attachEditListeners() {
       const data = await response.json();
 
       if (data.redirect_url) {
-        window.location.href = data.redirect_url;
+        window.open(data.redirect_url, "_blank");
       } else if (data.error) {
         console.error(data.error);
       }

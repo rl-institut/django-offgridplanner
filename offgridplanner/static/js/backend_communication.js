@@ -30,7 +30,6 @@
  * smooth data flow, user interaction, and application functionality.
  */
 
-
 async function plot_results(sequential = false) {
     const urlParams = new URLSearchParams(window.location.search);
     const project_id = urlParams.get('project_id');
@@ -1095,6 +1094,20 @@ document.addEventListener('DOMContentLoaded', function () {
             trigger: 'hover click'
         });
     });
+    const saveToProjectsBtn = document.getElementById("saveToProjectsBtn");
+    if (saveToProjectsBtn) {
+        saveToProjectsBtn.addEventListener("click", async (e) => {
+        const saveToProjectsUrl = saveToProjectsBtn.getAttribute("data-url");
+          try {
+            saveToProjectsBtn.disabled = true;
+            const res = await fetch(saveToProjectsUrl);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          } catch (err) {
+            console.error(err);
+            saveToProjectsBtn.disabled = false;
+          }
+        });
+    };
 });
 
 

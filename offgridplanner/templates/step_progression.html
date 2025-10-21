@@ -36,8 +36,13 @@
             </li>
           {% endfor %}
         </ul>
+
       </div>
     </div>
+    {% if project.status == "potential" %}
+          <p style="padding-top:1.5rem;padding-right:1.5rem"><button id="saveToProjectsBtn" class="btn btn--small" data-url="{% url 'projects:save_to_projects' proj_id %}">Save to projects</button></p>
+    {% endif %}
+
   </section>
   <div class="scenario-create__info-message">
     {% block step_explanation %}

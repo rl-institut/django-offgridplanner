@@ -102,6 +102,8 @@ async function sendRequest(body) {
   const data = await response.json();
   document.getElementById("exploration-btn").disabled = true;
   document.querySelector('#sites-table').innerHTML = "";
+  potentialSitesLayer.clearLayers();
+
   if (data.status === "FINISHED") {
     updateResults(data.table, data.geojson);
   } else if (data.status === "RUNNING") {

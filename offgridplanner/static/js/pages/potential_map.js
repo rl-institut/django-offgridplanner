@@ -60,12 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // load existing Minigrids on map
   existing_mgs.forEach(feature => {
   const [lng, lat] = feature.centroid.coordinates;
-
   const content = `
-    <h3>PREVIOUS SITE</h3>
-    <p>ID: ${feature.id}</p>
-          <p>PV capacity: ${feature.pv_capacity}</p>
-          <p>Grid distance: ${feature.status}</p>
+    <h4>${feature.name}</h4></br>
+      Status: ${feature.status}</br>
+      PV capacity: ${feature.pv_capacity}</br>
+      Grid distance: ${feature.distance_to_grid}
     `;
 
   const marker = L.marker([lat, lng], { icon: existingMarker }).bindPopup(content);
@@ -76,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
   stopBtn.addEventListener('click', () => {
      const response = fetch(stopExplorationUrl);
      $("#loading_spinner").hide();
+     document.getElementById('exploration-finished').innerHTML = "<b>The site exploration was stopped<b>";
+     document.getElementById('exploration-finished').style.display = "block";
+
      shouldStop = true;
      startExplorationBtn.disabled = false;
   });
@@ -92,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function sendRequest(body) {
   shouldStop = false;
+  document.getElementById('exploration-finished').style.display = "none";
   const response = await fetch(startExplorationUrl, {
     method: "POST",
     headers: { 'X-CSRFToken': csrfToken },
@@ -137,6 +140,8 @@ async function pollExplorationResults() {
     await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10s
   }
   $("#loading_spinner").hide();
+  document.getElementById('exploration-finished').innerHTML = "<b>The site exploration has finished<b>";
+  document.getElementById('exploration-finished').style.display = "block";
 }
 
 function updateResults(table_data, map_data) {
@@ -264,7 +269,7 @@ function load_minigrid_legend() {
       div.innerHTML +=
                 " <img src=" +
                 img +
-                " height='16' width='12'>" +
+                " height='18' width='12'>" +
                 "&nbsp" +
                 text +
                 "<br>";

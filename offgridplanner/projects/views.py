@@ -270,6 +270,12 @@ def start_exploration(request):
         site_exploration.save()
         data["status"] = "RUNNING"
 
+        # Delete all previously explored projects (potential) that were not saved to projects (analyzing)
+        unsaved_sites = Project.objects.filter(
+            user__id=request.user.id, status="potential"
+        )
+        unsaved_sites.delete()
+
     return JsonResponse(data)
 
 
@@ -379,6 +385,15 @@ def populate_site_data(request):
     return JsonResponse(
         {"redirect_url": reverse("steps:project_setup", args=[proj.id])}
     )
+
+
+@require_http_methods(["GET"])
+def save_to_projects(request, proj_id):
+    # Change the project status from potential to analyzing. If not done, project will be deleted when starting a new exploration
+    project = get_object_or_404(Project, id=proj_id)
+    project.status = "analyzing"
+    project.save()
+    return JsonResponse({"msg": "Updated project status"}, status=200)
 
 
 # TODO refactor function to pass ruff

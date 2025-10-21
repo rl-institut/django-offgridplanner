@@ -3,12 +3,32 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
 }).addTo(map);
 
-const existingSitesLayer = L.markerClusterGroup().addTo(map);
-const potentialSitesLayer = L.markerClusterGroup().addTo(map);
+// Make green clusters for Existing, blue clusters for Potential
+const existingSitesLayer = L.markerClusterGroup({
+  disableClusteringAtZoom: 15,
+  iconCreateFunction: (cluster) => {
+    return L.divIcon({
+      html: `<div class="cluster cluster-green"><span>${cluster.getChildCount()}</span></div>`,
+      className: 'cluster-wrapper',
+      iconSize: L.point(40, 40)
+    });
+  }
+}).addTo(map);
+
+const potentialSitesLayer = L.markerClusterGroup({
+  disableClusteringAtZoom: 15,
+  iconCreateFunction: (cluster) => {
+    return L.divIcon({
+      html: `<div class="cluster cluster-blue"><span>${cluster.getChildCount()}</span></div>`,
+      className: 'cluster-wrapper',
+      iconSize: L.point(40, 40)
+    });
+  }
+}).addTo(map);
 
 // Custom
 const existingMarker = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],

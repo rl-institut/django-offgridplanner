@@ -301,8 +301,14 @@ def populate_site_data(request):
         } | json.loads(res["project_input"])
         # TODO find out where the tax parameter might be needed
         project_input.pop("tax")
-        proj, _ = Project.objects.get_or_create(**project_input)
-        proj.options = Options.objects.create()
+        proj, created = Project.objects.get_or_create(**project_input)
+        if not created and proj.status == "analyzing":
+            messages.info(
+                request,
+                "Exploration site already exists in projects. Updating existing project data with data from Potential Minigrid Explorer.",
+            )
+        if proj.options is None:
+            proj.options = Options.objects.create()
         proj.save()
 
         # Save the nodes and links data

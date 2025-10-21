@@ -28,17 +28,17 @@ from offgridplanner.optimization.helpers import process_optimization_results
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.optimization.models import Simulation
-from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.processing import PreProcessor
-from offgridplanner.projects.exports import create_pdf_report
-from offgridplanner.projects.exports import prepare_data_for_export
-from offgridplanner.projects.exports import project_data_df_to_xlsx
-from offgridplanner.projects.helpers import collect_project_dataframes
+from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.requests import fetch_exploration_progress
 from offgridplanner.optimization.requests import fetch_potential_minigrid_data
 from offgridplanner.optimization.requests import start_site_exploration
 from offgridplanner.optimization.requests import stop_site_exploration
+from offgridplanner.projects.exports import create_pdf_report
+from offgridplanner.projects.exports import prepare_data_for_export
+from offgridplanner.projects.exports import project_data_df_to_xlsx
 from offgridplanner.projects.forms import SiteExplorationForm
+from offgridplanner.projects.helpers import collect_project_dataframes
 from offgridplanner.projects.helpers import format_exploration_sites_data
 from offgridplanner.projects.helpers import from_nested_dict
 from offgridplanner.projects.helpers import load_project_from_dict
@@ -209,7 +209,7 @@ def get_project_data(project):
 @require_http_methods(["GET", "POST"])
 def potential_map(request):
     user = request.user
-    site_exploration, _ = SiteExploration.objects.get_or_create(user=user)
+    site_exploration, _ = SiteExploration.objects.get_or_create(user__id=user.id)
     form = SiteExplorationForm(instance=site_exploration)
 
     # Save the existing MG data in the session storage to avoid sending an API request every time
@@ -333,11 +333,13 @@ def populate_site_data(request):
         grid_design, _ = GridDesign.objects.get_or_create(**grid_design_input)
         grid_design.save()
 
-        # Create a CustomDemand object to save the demand
-        # TODO if the consumers are changed the custom demand should be overwritten
-        # custom_demand, _ = CustomDemand.objects.get_or_create(project=proj)
-        # demand = json.loads(res["supply_input"])["sequences"]["demand"]
-        # custom_demand.uploaded_data = pd.DataFrame(demand, columns=["demand"]).to_json()
+        # Create a CustomDemand object
+        custom_demand, _ = CustomDemand.objects.get_or_create(project=proj)
+        settlement_type = custom_demand.settlement_type
+        defaults = custom_demand.get_shares_dict(defaults=True)[settlement_type]
+        for field, val in defaults.items():
+            setattr(custom_demand, field, val)
+        custom_demand.save()
 
         # Save the optimization results
         optimization_results = {

@@ -160,9 +160,10 @@ def from_nested_dict(model_cls, nested_data):
     params = {}
     for db_column, value in flat_items:
         field_name = db_to_field.get(db_column)
-        params[field_name] = value
         if not field_name:
             continue
+
+        params[field_name] = value
 
         # Reverse the efficiency scaling
         if "efficiency" in db_column.split("__")[-1]:

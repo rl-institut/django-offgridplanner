@@ -202,7 +202,7 @@ def fetch_existing_minigrids():
     Send a GET request to fetch the existing minigrids. When a new minigrid is planned, notify_existing_minigrids should
     be called to include the new minigrid in the existing minigrid list.
     """
-    request_url = MG_EXPLORER_API_HOST + "/explorations/existing"
+    request_url = MG_EXPLORER_API_HOST + "/features/minigrids"
 
     try:
         response = httpx.get(request_url, timeout=5)
@@ -220,7 +220,7 @@ def notify_existing_minigrids(new_mg_data):
     """
     Send a POST request to add the new minigrid to the existing minigrids data.
     """
-    request_url = MG_EXPLORER_API_HOST + "/explorations/existing"
+    request_url = MG_EXPLORER_API_HOST + "/features/minigrids"
     args = new_mg_data
 
     try:

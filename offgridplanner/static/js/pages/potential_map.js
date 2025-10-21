@@ -233,6 +233,8 @@ function attachEditListeners() {
     document.querySelectorAll('#edit-btn').forEach(button => {
     button.addEventListener('click', async event => {
       const siteId = event.currentTarget.getAttribute("data-site-id");
+      button.disabled = true;
+      button.innerHTML = "Loading..."
       try {
         const response = await fetch(populateSiteDataUrl, {
           method: 'POST',
@@ -247,11 +249,15 @@ function attachEditListeners() {
 
       if (data.redirect_url) {
         window.open(data.redirect_url, "_blank");
+        button.innerHTML = "Edit";
+        button.disabled = false;
       } else if (data.error) {
         console.error(data.error);
       }
     } catch (err) {
       console.error("Error in fetch:", err);
+      button.innerHTML = "Error";
+      button.disabled = false;
     }
   });
  });

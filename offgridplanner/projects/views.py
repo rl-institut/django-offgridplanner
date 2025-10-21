@@ -1,8 +1,11 @@
 import base64
 import io
 import json
+import logging
 import urllib
 from http.client import HTTPException
+
+import numpy as np
 
 # from jsonview.decorators import json_view
 import pandas as pd
@@ -33,6 +36,7 @@ from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.requests import fetch_exploration_progress
 from offgridplanner.optimization.requests import fetch_grid_network
 from offgridplanner.optimization.requests import fetch_potential_minigrid_data
+from offgridplanner.optimization.requests import notify_existing_minigrids
 from offgridplanner.optimization.requests import start_site_exploration
 from offgridplanner.optimization.requests import stop_site_exploration
 from offgridplanner.projects.exports import create_pdf_report
@@ -51,6 +55,8 @@ from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
 from offgridplanner.users.models import User
+
+logger = logging.getLogger(__name__)
 
 
 @require_http_methods(["GET"])
@@ -393,6 +399,33 @@ def save_to_projects(request, proj_id):
     project = get_object_or_404(Project, id=proj_id)
     project.status = "analyzing"
     project.save()
+
+    nodes_df = project.nodes.df
+    min_latitude, min_longitude, max_latitude, max_longitude = (
+        nodes_df["latitude"].min(),
+        nodes_df["longitude"].min(),
+        nodes_df["latitude"].max(),
+        nodes_df["longitude"].max(),
+    )
+
+    notify_mg_data = {
+        "id": str(project.uuid),
+        "status": "potential",
+        "centroid": {
+            "bbox": [min_latitude, min_longitude, max_latitude, max_longitude],
+            "type": "Point",
+            "coordinates": [
+                np.average([min_latitude, max_latitude]),
+                np.average([min_longitude, max_latitude]),
+            ],
+        },
+    }
+
+    try:
+        notify_existing_minigrids(notify_mg_data)
+    except RuntimeError:
+        logger.warning("Could not notify about potential minigrid project.")
+
     return JsonResponse({"msg": "Updated project status"}, status=200)
 
 

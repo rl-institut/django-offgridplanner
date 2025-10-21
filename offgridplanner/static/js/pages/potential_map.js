@@ -45,6 +45,8 @@ const newMarker = new L.Icon({
   shadowSize: [41, 41]
 });
 
+load_minigrid_legend();
+
 let shouldStop = false;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -235,4 +237,39 @@ function attachEditListeners() {
     }
   });
  });
+}
+
+function load_minigrid_legend() {
+  if (typeof legend === 'undefined' || !legend) {
+    window.legend = L.control({ position: 'bottomright' });
+  } else {
+    map.removeControl(legend);
+  }
+
+  const labels = [
+    {
+      img: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+      text: 'Existing minigrid'
+    },
+    {
+      img: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+      text: 'Potential site'
+    }
+  ];
+
+  legend.onAdd = function () {
+    var div = L.DomUtil.create('div', 'info legend');
+
+    labels.forEach(({ img, text }) => {
+      div.innerHTML +=
+                " <img src=" +
+                img +
+                " height='16' width='12'>" +
+                "&nbsp" +
+                text +
+                "<br>";
+        });
+      return div;
+    };
+  legend.addTo(map);
 }

@@ -4,10 +4,10 @@
 {% load i18n %}
 
 {% block content %}
-    <section id="section" class="dashboard" style="min-height: unset">
-        <div class="container" style="text-align: justify">
+    <section id="section" class="dashboard">
+        <div class="container">
             <div class="row">
-                <div class="col-12" style="padding-left: 6rem; padding-right: 6rem;">
+                <div class="col-12">
                     <h1>Training Tasks</h1>
                     <p>
                         Five tasks are presented that initially explain the basic functions of the tool. As the tasks progress, advanced options are introduced, such as identifying consumers with high connection costs, allowing a certain level of undersupply instead of sizing for peak demand to reduce system costs, and the scenario where specific components are already in place and need to be complemented with additional energy converters.
@@ -23,6 +23,7 @@
             </div>
         </div>
     </section>
+
     <section class="training_wizard wizard" id="training_wizard">
         <div>
             <div class="training_wizard__steps wizard__steps">
@@ -46,11 +47,10 @@
             </div>
         </div>
     </section>
+
     <section id="task1" class="task_dashboard active">
-        <!-- Accordion for Task One -->
-        <div class="accordion" id="accordionTask1" style="margin-top: 12px">
-            <!-- Accordion Item 1 -->
-            <div class="accordion-item" style="padding: 10px">
+        <div class="accordion" id="accordionTask1">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task1HeadingOne">
                     <button class="accordion-button no-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#task1CollapseOne" aria-expanded="true" aria-controls="task1CollapseOne">
                         Task Description
@@ -67,12 +67,11 @@
                         <p>
                             This entails conducting a <i>Demand Estimation</i> based on the national average of rural areas. In terms of <i>Grid Design</i>, it involves connecting all consumers and adopting the default cost parameters for all components. For <i>Energy System Design</i>, the available components include <i>PV systems</i>, <i>diesel generators</i>, <i>battery systems</i>, and <i>inverters</i>, with the optimization algorithm determining the optimal sizing of these components.
                         </p>
-                        <img src="{% static 'images/task_1.jpg' %}" class="img-fluid" alt="Grid Optimization" style="margin-top: 20px; margin-bottom: 20px;">
+                        <img src="{% static 'images/task_1.jpg' %}" class="img-fluid" alt="Grid Optimization">
                     </div>
                 </div>
             </div>
-            <!-- Accordion Item 2 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task1HeadingTwo">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task1CollapseTwo" aria-expanded="false" aria-controls="task1CollapseTwo">
                         Step-By-Step Guide
@@ -84,24 +83,11 @@
                         <p>
                             In the first step, a new project should be created (Note: To do this, open a new tab). Navigate to <i>Projects</i> and click on the <i>'New Project'</i> button in the upper right area. You will be taken to the first page of the project settings, <i>Project Setup</i>. Here, you should first change the project's default name to <i>"Training Task 1"</i>. Additionally, you can modify the project description. The parameters such as <i>Interest Rate</i>, <i>Simulation Period</i>, and <i>Project Lifetime</i> remain unchanged. If you have questions about individual parameters, you can hover the mouse pointer over the question mark to view the corresponding explanations. Proceed to the next planning step by clicking <i>'Next'</i> at the bottom of the page.
                         </p>
-                        <p><strong>Step Two: Consumer Selection</strong>
-                        </p>
-                        <p>
-                            On the <i>Consumer Selection</i> page, enter the coordinates "7.699508, 7.710631" into the search field labeled <i>"Search Location within Nigeria"</i> and press Enter. The map will then center on the specified geolocation. To zoom in closer to the location, you can use the mouse wheel or click the <i>'+'</i> symbol on the map interface. <strong>Note:</strong> While locations can typically be searched by name and country—such as <i>"Ikah Ichala, Nigeria"</i>—the mapping system in use, <i>OpenStreetMap</i>, does not recognize this particular village by name and will display an error message.
-                        </p>
-                        <p>
-                            Next, using the <i>drawing tool</i>, select all buildings in the area and designate them as <i>consumers</i>. By default, all consumers are designated as <i>households</i>. Reclassify some of these consumers as <i>enterprises</i> and <i>public services</i> according to the specifications outlined in the figure from the task instructions. Detailed instructions on how to use the drawing tools for consumer identification can be found in the tutorial video. Once the consumers have been selected and the settings have been configured, click on <i>'Next'</i> to proceed to the next planning step.
-                        </p>
-                        <p><strong>Step Three: Start Optimization</strong>
-                        </p>
-                        <p>
-                            As outlined in the task instructions, no modifications will be made on the subsequent three pages. Please click <i>'Next'</i> on each page, and on the final page, click <i>'Optimize'</i>. The optimization process will then begin. Upon completion of the optimization, you will be automatically redirected to the <i>results page</i>.
-                        </p>
+                        <!-- Weitere Schritte hier... -->
                     </div>
                 </div>
             </div>
-            <!-- Accordion Item 3 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task1HeadingThree">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task1CollapseThree" aria-expanded="false" aria-controls="task1CollapseThree">
                         Result Overview
@@ -109,10 +95,7 @@
                 </h2>
                 <div id="task1CollapseThree" class="accordion-collapse collapse" aria-labelledby="task1HeadingThree" data-bs-parent="#accordionTask1">
                     <div class="accordion-body">
-                        <img src="{% static 'images/task_1_result.jpg' %}"
-                                 class="img-fluid"
-                                 alt="Grid Optimization"
-                                 style="margin-top: 20px; margin-bottom: 20px;">
+                        <img src="{% static 'images/task_1_result.jpg' %}" class="img-fluid" alt="Grid Optimization">
                     </div>
                 </div>
             </div>
@@ -120,10 +103,10 @@
     </section>
     <section id="task2" class="task_dashboard">
         <!-- Accordion for Task Two -->
-        <div class="accordion" id="accordionTask2" style="margin-top: 12px">
+        <div class="accordion" id="accordionTask2">
             <!-- Similar accordion items with IDs adjusted for task2 -->
             <!-- Accordion Item 1 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task2HeadingOne">
                     <button class="accordion-button no-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#task2CollapseOne" aria-expanded="true" aria-controls="task2CollapseOne">
                         Task Description
@@ -134,13 +117,13 @@
                         <p>
                             The model created in <i>Task 1</i> should now be adjusted. To do this, first create a copy of your existing project on the <i>project overview page</i> and then edit it. Currently, all buildings in the area are connected to the grid. However, the <i>OffGridPlanner tool</i> allows for the identification of consumers with high connection costs. These consumers can optionally be equipped with <i>solar home systems</i> to reduce grid construction costs and, consequently, the Levelized Cost of Energy (LCOE) for off-grid systems. To implement this, activate the <i>'Solar Home System'</i> option under <i>Grid Design</i> and specify a value for the <i>'Max. Specific Grid Cost'</i> parameter. Initially, set this parameter to 0.70 cents/kWh and then adjust it to 50. On the results page, observe how these changes impact the upfront investment costs of the grid as well as the LCOE.
                         </p>
-                        <img src="{% static 'images/task_2.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization" style="max-width: 400px; height: auto;">
+                        <img src="{% static 'images/task_2.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization">
                     </div>
                 </div>
             </div>
             <!-- Accordion Item 2 and 3 similar to above -->
             <!-- Accordion Item 2 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task2HeadingTwo">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task2CollapseTwo" aria-expanded="false" aria-controls="task2CollapseTwo">
                         Step-By-Step Guide
@@ -166,7 +149,7 @@
                 </div>
             </div>
             <!-- Accordion Item 3 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task2HeadingThree">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task2CollapseThree" aria-expanded="false" aria-controls="task2CollapseThree">
                         Result Overview
@@ -179,16 +162,14 @@
                         </strong></p>
                         <img src="{% static 'images/task_2_results_1.jpg' %}"
                                  class="img-fluid"
-                                 alt="Grid Optimization"
-                                 style="margin-top: 20px; margin-bottom: 20px;">
+                                 alt="Grid Optimization">
                         <hr>
                         <p><strong>
                             Results for <i>50 &cent;<span class="currency-sub">USD</span>/kWh</i>:
                         </strong></p>
                         <img src="{% static 'images/task_2_results_2.jpg' %}"
                                  class="img-fluid"
-                                 alt="Grid Optimization"
-                                 style="margin-top: 20px; margin-bottom: 20px;">
+                                 alt="Grid Optimization">
                     </div>
                 </div>
             </div>
@@ -196,9 +177,9 @@
     </section>
     <section id="task3" class="task_dashboard">
         <!-- Accordion for Task Three -->
-        <div class="accordion" id="accordionTask3" style="margin-top: 12px">
+        <div class="accordion" id="accordionTask3">
             <!-- Accordion Item 1 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task3HeadingOne">
                     <button class="accordion-button no-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#task3CollapseOne" aria-expanded="true" aria-controls="task3CollapseOne">
                         Task Description
@@ -209,7 +190,7 @@
                         <p>
                         Next, we want to make changes to the <i>supply system</i>. So far, we have not selected the "<i>Shortage</i>" option on the <i>Energy System Design</i> page. This means that, up until now, the supply system had to cover the demand at every timestep. However, covering all peak loads can significantly increase the costs for an energy system. Therefore, we will now somewhat limit this requirement and allow an undercoverage of the demand of 5% over the year; at individual timesteps, an undercoverage of 10% is permitted. Observe the effects on the installed capacities and the LCOE.
                         </p>
-                        <img src="{% static 'images/task_3.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization" style="max-width: 400px; height: auto;">
+                        <img src="{% static 'images/task_3.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization">
                         <p>
                             The model from Task 2, with a maximum specific grid cost value of 50 &cent;<span class="currency-sub">USD</span>/kWh, is used as the starting point. A copy of the project is created, and its name is changed to "Training Task 3."
                         </p>
@@ -217,7 +198,7 @@
                 </div>
             </div>
             <!-- Accordion Item 2 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task3HeadingTwo">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task3CollapseTwo" aria-expanded="false" aria-controls="task3CollapseTwo">
                         Step-By-Step Guide
@@ -242,7 +223,7 @@
                 </div>
             </div>
             <!-- Accordion Item 3 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task3HeadingThree">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task3CollapseThree" aria-expanded="false" aria-controls="task3CollapseThree">
                         Result Overview
@@ -251,8 +232,7 @@
                 <div id="task3CollapseThree" class="accordion-collapse collapse" aria-labelledby="task3HeadingThree" data-bs-parent="#accordionTask3">
                     <div class="accordion-body">
                         <img src="{% static 'images/task_3_results.jpg' %}"
-                            class="img-fluid"
-                            style="margin-top: 20px; margin-bottom: 20px;">
+                            class="img-fluid">
                     </div>
                 </div>
             </div>
@@ -260,9 +240,9 @@
     </section>
     <section id="task4" class="task_dashboard">
         <!-- Accordion for Task Four -->
-        <div class="accordion" id="accordionTask4" style="margin-top: 12px">
+        <div class="accordion" id="accordionTask4">
             <!-- Accordion Item 1 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task4HeadingOne">
                     <button class="accordion-button no-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#task4CollapseOne" aria-expanded="true" aria-controls="task4CollapseOne">
                         Task Description
@@ -277,7 +257,7 @@
                 </div>
             </div>
             <!-- Accordion Item 2 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task4HeadingTwo">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task4CollapseTwo" aria-expanded="false" aria-controls="task4CollapseTwo">
                         Step-By-Step Guide
@@ -296,7 +276,7 @@
                             <li>Set the capacity to 25 kW.</li>
                             <li>Set the <i>CapEx</i> at 0 USD/kWh.</li>
                         </ul>
-                        <img src="{% static 'images/task_4.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization" style="max-width: 400px; height: auto;">
+                        <img src="{% static 'images/task_4.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization">
                         <p><strong>Step Three: Start Optimization</strong></p>
                         <p>
                         The <i>Optimize</i> button at the bottom of the page is clicked.
@@ -305,7 +285,7 @@
                 </div>
             </div>
             <!-- Accordion Item 3 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task4HeadingThree">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task4CollapseThree" aria-expanded="false" aria-controls="task4CollapseThree">
                         Result Overview
@@ -314,8 +294,7 @@
                 <div id="task4CollapseThree" class="accordion-collapse collapse" aria-labelledby="task4HeadingThree" data-bs-parent="#accordionTask4">
                     <div class="accordion-body">
                         <img src="{% static 'images/task_4_results.jpg' %}"
-                            class="img-fluid"
-                            style="margin-top: 20px; margin-bottom: 20px;">
+                            class="img-fluid">
                     </div>
                 </div>
             </div>
@@ -323,9 +302,9 @@
     </section>
     <section id="task5" class="task_dashboard">
         <!-- Accordion for Task Four -->
-        <div class="accordion" id="accordionTask5" style="margin-top: 12px">
+        <div class="accordion" id="accordionTask5">
             <!-- Accordion Item 1 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task5HeadingOne">
                     <button class="accordion-button no-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#task5CollapseOne" aria-expanded="true" aria-controls="task5CollapseOne">
                         Task Description
@@ -343,7 +322,7 @@
                 </div>
             </div>
             <!-- Accordion Item 2 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task5HeadingTwo">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task5CollapseTwo" aria-expanded="false" aria-controls="task5CollapseTwo">
                         Step-By-Step Guide
@@ -360,7 +339,7 @@
                         <li>Navigate to the <i>Energy System Design</i> page.</li>
                         <li>Deselect the <i>diesel genset</i>.</li>
                     </ul>
-                    <img src="{% static 'images/task_5.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization" style="max-width: 400px; height: auto;">
+                    <img src="{% static 'images/task_5.jpg' %}" class="img-fluid d-block mx-auto" alt="Grid Optimization">
                     <p><strong>Step Three: Start Optimization</strong></p>
                     <p>
                         Click the <i>Optimize</i> button at the bottom of the page to run the simulation.
@@ -377,7 +356,7 @@
                 </div>
             </div>
             <!-- Accordion Item 3 -->
-            <div class="accordion-item" style="padding: 10px">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="task5HeadingThree">
                     <button class="accordion-button no-arrow collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#task5CollapseThree" aria-expanded="false" aria-controls="task5CollapseThree">
                         Result Overview
@@ -390,16 +369,14 @@
                         </strong></p>
                         <img src="{% static 'images/task_5_results_1.jpg' %}"
                                 class="img-fluid"
-                                alt="Grid Optimization"
-                                style="margin-top: 20px; margin-bottom: 20px;">
+                                alt="Grid Optimization">
                         <hr>
                         <p><strong>
                             Results for <i>Max. Total Shortage = 10 %</i> and <i>Max. Shortage Each Timestep = 30 %</i>:
                         </strong></p>
                         <img src="{% static 'images/task_5_results_2.jpg' %}"
                                 class="img-fluid"
-                                alt="Grid Optimization"
-                                style="margin-top: 20px; margin-bottom: 20px;">
+                                alt="Grid Optimization">
                     </div>
                 </div>
             </div>
@@ -416,7 +393,7 @@
         </div>
         <div class="footer__buttons">
             <button class="btn btn--medium btn--hollow btn--previous" id="prevButton" onclick="prevTask();">Previous</button>
-            <button class="btn btn--medium" style="color: #fff" id="nextButton" onclick="nextTask();">Next</button>
+            <button class="btn btn--medium" id="nextButton" onclick="nextTask();">Next</button>
         </div>
         <div class="footer__links">
         <ul>

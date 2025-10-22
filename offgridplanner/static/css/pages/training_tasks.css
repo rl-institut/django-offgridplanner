@@ -1,0 +1,46 @@
+/* Section: Dashboard */
+section#section.dashboard {
+    min-height: unset;
+}
+section#section.dashboard .container {
+    text-align: justify;
+}
+section#section.dashboard .col-12 {
+    padding-left: 6rem;
+    padding-right: 6rem;
+}
+
+/* Training Wizard */
+.training_wizard .accordion {
+    margin-top: 12px;
+}
+.accordion-item {
+    padding: 10px;
+}
+.accordion-body img.img-fluid {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Task Specific */
+#task2 .accordion-body img.img-fluid.d-block.mx-auto {
+    max-width: 400px;
+    height: auto;
+}
+#task3 .accordion-body img.img-fluid.d-block.mx-auto {
+    max-width: 400px;
+    height: auto;
+}
+#task4 .accordion-body img.img-fluid.d-block.mx-auto {
+    max-width: 400px;
+    height: auto;
+}
+#task5 .accordion-body img.img-fluid.d-block.mx-auto {
+    max-width: 400px;
+    height: auto;
+}
+
+/* Footer Buttons */
+#nextButton {
+    color: #fff;
+}

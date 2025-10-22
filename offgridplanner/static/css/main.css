@@ -1771,56 +1771,6 @@ nav.navbar .dropdown-menu li {
     }
 }
 
-.task_dashboard {
-    display: none;
-    width: 100%; /* Adjust as needed */
-    padding: 20px;
-    padding-bottom: calc(20px + 4.5rem);
-    background-color: var(--bcc);
-}
-.task_dashboard.active {
-    display: block;
-}
-
-.accordion {
-    width: 80%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-.accordion-item {
-    width: 100%;
-}
-
-.training_wizard {
-    visibility: visible !important;
-    opacity: 1 !important;
-    transition: none !important;
-}
-
-/* Use data-step-number to display numbering */
-.training_wizard__steps li::before {
-    content: attr(data-step-number) ".";
-    margin-right: 5px;
-    font-weight: bold;
-    color: var(--bct);
-}
-
-/* Style for active step */
-.training_wizard__steps li.active::before {
-    color: var(--bct);
-}
-
-/* Ensure steps are displayed correctly */
-.training_wizard__steps li {
-    display: inline-block !important;
-}
-
-/* Optional: Adjust step text color */
-.training_wizard__steps li a {
-    color: inherit !important;
-    text-decoration: none;
-}
-
 
 /* .wizard {
     visibility: hidden;  /* Keeps the space in the layout

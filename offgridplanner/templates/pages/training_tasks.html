@@ -3,6 +3,12 @@
 {% load static %}
 {% load i18n %}
 
+{% block head_block %}
+<link rel="stylesheet"
+      href="{% static 'css/pages/training_tasks.css' %}"
+      type="text/css" />
+{% endblock head_block %}
+
 {% block content %}
     <section id="section" class="dashboard">
         <div class="container">

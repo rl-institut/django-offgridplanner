@@ -31,6 +31,7 @@ from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.processing import PreProcessor
 from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.requests import fetch_exploration_progress
+from offgridplanner.optimization.requests import fetch_grid_network
 from offgridplanner.optimization.requests import fetch_potential_minigrid_data
 from offgridplanner.optimization.requests import start_site_exploration
 from offgridplanner.optimization.requests import stop_site_exploration
@@ -222,15 +223,27 @@ def potential_map(request):
         except RuntimeError:
             existing_mgs = []
 
+    # Do the same thing for the grid network
+    if "grid_network" in request.session:
+        grid_network = request.session["grid_network"]
+    else:
+        try:
+            grid_network = fetch_grid_network()
+            request.session["grid_network"] = grid_network
+        except RuntimeError:
+            grid_network = []
+
     context = {
         "form": form,
         "existing_mgs": json.dumps(existing_mgs),
+        "grid_network": json.dumps(grid_network),
         "table_data": [],
         "map_data": [],
     }
 
     if existing_mgs:
         geojson_initial, _ = format_exploration_sites_data(existing_mgs)
+
     potential_sites = site_exploration.latest_exploration_results
     if potential_sites:
         geojson_potential, table_potential = format_exploration_sites_data(

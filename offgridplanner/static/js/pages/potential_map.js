@@ -45,6 +45,17 @@ const newMarker = new L.Icon({
   shadowSize: [41, 41]
 });
 
+const lineColors = {
+  Existing: '#cc99ff',       // fuchsia
+  Planned:  '#e67e22',       // orange
+};
+
+// Line layer groups
+const lineLayers = {
+  Existing: L.layerGroup().addTo(map),
+  Planned:  L.layerGroup().addTo(map),
+};
+
 load_minigrid_legend();
 
 let shouldStop = false;
@@ -70,6 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const marker = L.marker([lat, lng], { icon: existingMarker }).bindPopup(content);
   existingSitesLayer.addLayer(marker);
   });
+
+  // load grid network on map
+  addGridToMap(grid_network);
 
   //  Add event listeners for start and stop buttons
   stopBtn.addEventListener('click', () => {
@@ -165,13 +179,6 @@ function updateResults(table_data, map_data) {
     });
   }
   }
-
-
-function onEachFeature(feature, layer) {
-  const props = feature.properties;
-  layer.bindPopup(`ID: ${props.id}<br>Buildings: ${props.building_count}<br>Grid Distance: ${props.grid_dist}`);
-}
-
 
 let currentSortIndex = null;
 let sortAscending = true;
@@ -277,4 +284,38 @@ function load_minigrid_legend() {
       return div;
     };
   legend.addTo(map);
+}
+
+function lonLatToLatLng(coords) {
+  // coords is an array like [lon, lat]
+  return [coords[1], coords[0]];
+}
+
+function addGridToMap(gridNetwork) {
+    gridNetwork.forEach(item => {
+        const { geography, status, vltg_kv, classes, province, length_km } = item;
+        if (!geography || geography.type !== 'LineString' || !Array.isArray(geography.coordinates)) return;
+
+        const color = lineColors[status] || '#7f8c8d';
+        const latlngs = geography.coordinates.map(lonLatToLatLng);
+
+        const line = L.polyline(latlngs, {
+          color,
+          weight: 2,
+        });
+
+      line.bindPopup(
+      `<div style="min-width:180px">
+         <div><b>Status:</b> ${status ?? 'n/a'}</div>
+         <div><b>Voltage:</b> ${vltg_kv ?? 'n/a'} kV</div>
+         <div><b>Class:</b> ${classes ?? 'n/a'}</div>
+         <div><b>Province:</b> ${province ?? 'n/a'}</div>
+         <div><b>Length:</b> ${length_km?.toFixed ? length_km.toFixed(2) : length_km} km</div>
+       </div>`
+    );
+
+    const targetLayer = lineLayers[status];
+
+    line.addTo(targetLayer);
+});
 }

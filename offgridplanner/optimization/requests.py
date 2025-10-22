@@ -281,7 +281,7 @@ def fetch_grid_network():
     """
     Fetch the grid network for display on the map.
     """
-    request_url = MG_EXPLORER_API_HOST + "/explorations/grid"
+    request_url = MG_EXPLORER_API_HOST + "/features/grid"
 
     try:
         response = httpx.get(request_url, timeout=5)
@@ -299,7 +299,7 @@ def fetch_road_network():
     """
     Fetch the road network for display on the map.
     """
-    request_url = MG_EXPLORER_API_HOST + "/explorations/roads"
+    request_url = MG_EXPLORER_API_HOST + "/features/roads"
 
     try:
         response = httpx.get(request_url, timeout=5)

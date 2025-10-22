@@ -48,12 +48,14 @@ const newMarker = new L.Icon({
 const lineColors = {
   Existing:  '#e67e22',       // orange
   Planned: '#cc99ff',       // fuchsia
+  Unknown: '#f1c40f',       // fuchsia
 };
 
 // Line layer groups
 const lineLayers = {
   Existing: L.layerGroup().addTo(map),
   Planned:  L.layerGroup().addTo(map),
+  Unknown:  L.layerGroup().addTo(map),
 };
 
 loadLegend();
@@ -116,6 +118,10 @@ async function sendRequest(body) {
   });
   if (!response.ok) {
     console.error("Failed to start exploration");
+    document.getElementById('exploration-finished').style.display = "block";
+    document.getElementById('exploration-finished').innerHTML = "An error occurred. Please try again.";
+    // try stopping the exploration in case the issue is an already running exploration
+    stopBtn.click();
     return;
   }
   const data = await response.json();
@@ -299,7 +305,7 @@ function loadLegend() {
         swatch.style.borderTop = `3px solid ${lineColors[key]}`;
 
         const label = document.createElement('span');
-        label.textContent = key + " grid";
+        label.textContent = key + " line";
 
         row.appendChild(swatch);
         row.appendChild(label);

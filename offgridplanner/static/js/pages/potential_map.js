@@ -46,8 +46,8 @@ const newMarker = new L.Icon({
 });
 
 const lineColors = {
-  Existing: '#cc99ff',       // fuchsia
-  Planned:  '#e67e22',       // orange
+  Existing:  '#e67e22',       // orange
+  Planned: '#cc99ff',       // fuchsia
 };
 
 // Line layer groups
@@ -56,7 +56,7 @@ const lineLayers = {
   Planned:  L.layerGroup().addTo(map),
 };
 
-load_minigrid_legend();
+loadLegend();
 
 let shouldStop = false;
 
@@ -251,7 +251,7 @@ function attachEditListeners() {
  });
 }
 
-function load_minigrid_legend() {
+function loadLegend() {
   if (typeof legend === 'undefined' || !legend) {
     window.legend = L.control({ position: 'bottomright' });
   } else {
@@ -273,16 +273,40 @@ function load_minigrid_legend() {
     var div = L.DomUtil.create('div', 'info legend');
 
     labels.forEach(({ img, text }) => {
-      div.innerHTML +=
-                " <img src=" +
-                img +
-                " height='18' width='12'>" +
-                "&nbsp" +
-                text +
-                "<br>";
-        });
-      return div;
-    };
+      const row = document.createElement('div');
+      row.className = 'legend-row';
+
+      const icon = document.createElement('img');
+      icon.src = img;
+      icon.alt = text + ' marker';
+      icon.className = 'legend-icon';
+
+      const span = document.createElement('span');
+      span.textContent = text;
+
+      row.appendChild(icon);
+      row.appendChild(span);
+      div.appendChild(row);
+    });
+
+       // Grid lines
+      Object.keys(lineColors).forEach((key) => {
+        const row = document.createElement('div');
+        row.className = 'legend-row';
+
+        const swatch = document.createElement('span');
+        swatch.className = 'legend-line';
+        swatch.style.borderTop = `3px solid ${lineColors[key]}`;
+
+        const label = document.createElement('span');
+        label.textContent = key + " grid";
+
+        row.appendChild(swatch);
+        row.appendChild(label);
+        div.appendChild(row);
+      });
+  return div;
+  };
   legend.addTo(map);
 }
 

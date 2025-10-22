@@ -8,22 +8,39 @@
 }
 
 .info.legend {
-  background: white;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
   padding: 6px 8px;
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.3);
-  font-family: Arial, sans-serif;
-  font-size: 13px;
-  line-height: 18px;
+  font: 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color: #222;
+}
+
+.info.legend .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+.info.legend .legend-icon {
+  height: 14px;
+  width: auto;        /* preserve marker aspect ratio */
+  display: block;
+}
+
+.info.legend .legend-subtitle {
+  margin: 4px 0 2px;
+  font-size: 11px;
+  font-weight: 600;
   color: #333;
 }
 
-.info.legend i {
+.info.legend .legend-line {
   width: 18px;
-  height: 18px;
-  float: left;
-  margin-right: 8px;
-  opacity: 0.7;
+  height: 0;
+  border-top: 3px solid #888; /* real color set inline */
+  display: inline-block;
 }
 
 .table-container-scrollable {

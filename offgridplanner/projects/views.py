@@ -320,18 +320,25 @@ def populate_site_data(request):
     try:
         # Extract the project data and create a new project
         project_input = {
-            "user": request.user,
-            "name": res["id"],
             "uuid": res["id"],
         } | json.loads(res["project_input"])
         # TODO find out where the tax parameter might be needed
         project_input.pop("tax")
-        proj, created = Project.objects.get_or_create(**project_input)
-        if not created and proj.status == "analyzing":
-            messages.info(
-                request,
-                "Exploration site already exists in projects. Updating existing project data with data from Potential Minigrid Explorer.",
-            )
+        proj_qs = Project.objects.filter(user__id=request.user.id, uuid=res["id"])
+        if proj_qs.exists():
+            proj = proj_qs.get()
+            if proj.status == "analyzing":
+                messages.info(
+                    request,
+                    "Exploration site already exists in projects. Updating existing project data with data from Potential Minigrid Explorer.",
+                )
+            for field, value in project_input.items():
+                setattr(proj, field, value)
+
+        else:
+            project_input = project_input | {"user": request.user, "name": res["id"]}
+            proj = Project.objects.create(**project_input)
+
         if proj.options is None:
             proj.options = Options.objects.create()
         proj.save()

@@ -1,0 +1,60 @@
+/* Dashboard Section */
+.dashboard {
+    min-height: unset; /* ersetzt inline style */
+}
+
+/* Container inside Dashboard */
+.dashboard .container {
+    text-align: justify; /* ersetzt inline style */
+}
+
+/* Columns padding */
+.dashboard .col-12,
+.dashboard .col-md-6 {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+/* Headings */
+.dashboard h4 {
+    margin-bottom: 50px; /* default for specific headings */
+}
+
+/* UL inside dashboard */
+.dashboard ul {
+    margin-left: 0;
+    padding-left: 1.5em;
+}
+
+/* OL inside dashboard */
+.dashboard ol {
+    margin-left: 0;
+    padding-left: 1.5em;
+}
+
+/* List items inside OL/UL */
+.dashboard ol li,
+.dashboard ul li {
+    margin-left: 50px; /* bei Bedarf überschreiben */
+    margin-right: 50px;
+}
+
+/* Images inside dashboard */
+.dashboard img.img-fluid.full-width-img {
+    padding: 20px;
+    border: 2px solid #000;
+    width: 80%;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* First ES tool image has margin-top: -25px */
+.dashboard img.img-fluid.full-width-img:first-of-type {
+    margin-top: -25px;
+}
+
+/* Text center wrappers for images */
+.dashboard .text-center.my-4 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

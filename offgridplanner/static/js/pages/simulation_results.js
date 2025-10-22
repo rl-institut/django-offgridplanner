@@ -157,7 +157,6 @@ document.getElementById('downloadPDF').addEventListener('click', function (event
 
 
 function updateKpisInDom(kpis) {
-  console.log("dfsdhfhg");
   if (!kpis) return;
   for (const [key, meta] of Object.entries(kpis)) {
     const value = (meta && meta.value != null) ? meta.value : '—';

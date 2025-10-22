@@ -580,7 +580,6 @@
       const csrfToken = '{{ csrf_token }}';
       const proj_id = '{{ proj_id }}';
       const boundsDict = {{ bounds_dict | safe }};
-      const csrfToken = '{{ csrf_token }}';
       const dbNodesToJsUrl = `{% url 'optimization:db_nodes_to_js' proj_id %}`;
       const dbLinksToJsUrl = `{% url 'optimization:db_links_to_js' proj_id %}`;
       const loadPlotDataUrl = `{% url 'optimization:load_plot_data' proj_id %}`;

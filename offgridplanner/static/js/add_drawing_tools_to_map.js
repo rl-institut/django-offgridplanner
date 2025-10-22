@@ -184,6 +184,9 @@ const CustomMarkerControl = L.Control.extend({
 let isPoleEditMode = false;
 let hasUnsavedPoleMoves = false;
 
+let _poleUI = { btn: null, actions: null };
+let _poleTooltip = null;
+
 const PoleEditControl = L.Control.extend({
   options: { position: 'topleft' },
   onAdd: function () {
@@ -198,10 +201,31 @@ const PoleEditControl = L.Control.extend({
     image.style.width = '23px';
     image.style.height = '23px';
 
+    // add a "Finish" action (uses Leaflet.draw actions classes if present)
+    const actions = L.DomUtil.create('ul', 'leaflet-draw-actions leaflet-draw-actions-top', container);
+    const liFinish = L.DomUtil.create('li', '', actions);
+    const finishLink = L.DomUtil.create('a', 'leaflet-draw-actions-finish', liFinish);
+    finishLink.style.width = '55px';
+    finishLink.href = '#';
+    finishLink.textContent = 'Finish';
+    actions.style.display = 'none';
+
+    // Prevent map drag on clicks
+    _poleUI.btn = btn;
+    _poleUI.actions = actions;
+    L.DomEvent.disableClickPropagation(container);
+
     L.DomEvent.on(btn, 'click', (e) => {
       L.DomEvent.stop(e);
       togglePoleEditMode();
     });
+
+    // Finish exits
+    L.DomEvent.on(finishLink, 'click', (e) => {
+      L.DomEvent.stop(e);
+      if (isPoleEditMode) togglePoleEditMode(true);
+    });
+
     return container;
   }
 });
@@ -216,6 +240,14 @@ function togglePoleEditMode(saveOnExit = true) {
   // add/remove the dimming class on the map container
   map.getContainer().classList.toggle('pole-editing', isPoleEditMode);
 
+  // Reflect UI state (add active look if Leaflet.draw CSS is present)
+  if (_poleUI.btn) {
+    const cls = 'leaflet-draw-toolbar-button-enabled';
+    isPoleEditMode ? L.DomUtil.addClass(_poleUI.btn, cls) : L.DomUtil.removeClass(_poleUI.btn, cls);
+  }
+  if (_poleUI.actions) {
+    _poleUI.actions.style.display = isPoleEditMode ? 'block' : 'none';
+  }
   poleMarkersById.forEach((marker, id) => {
     marker.dragging && marker.dragging.disable();
     marker.off('dragstart');

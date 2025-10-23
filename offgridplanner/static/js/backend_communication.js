@@ -476,6 +476,7 @@ let hasRetried = false;
 async function load_results(project_id) {
     await db_nodes_to_js(markers_only=false);
     await plot_results();
+    await db_roads_to_js(proj_id);
 }
 
 

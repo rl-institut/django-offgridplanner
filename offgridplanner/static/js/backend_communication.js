@@ -541,6 +541,7 @@ async function load_results(project_id) {
             document.getElementById('epc_total').innerText = results['epc_total'];
             document.getElementById('LCOE2').innerHTML = results['lcoe'].toString() + " Cent<sub class='sub'>USD</sub>/kWh";
             await db_nodes_to_js(markers_only=false);
+            await db_roads_to_js(proj_id)
             if (results['do_grid_optimization'] === false) {
                 await hide_grid_results();
             }

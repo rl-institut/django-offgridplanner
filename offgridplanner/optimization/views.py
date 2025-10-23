@@ -330,10 +330,14 @@ def roads_to_db(request, proj_id=None):
         df["how_added"] = df["how_added"].fillna("automatic")
         df["road_type"] = df["road_type"].fillna("osm")
 
-        Roads.objects.filter(project=project).delete()
+        roads, _ = Roads.objects.get_or_create(project=project)
 
-        Roads.objects.create(project=project, data=df.to_json(orient="records"))
+        roads.data = df.to_json(orient="records")
+        roads.save()
+
         return JsonResponse({"message": "Success"}, status=200)
+
+    return JsonResponse({"error": "Project ID missing"}, status=400)
 
 
 @require_http_methods(["GET"])

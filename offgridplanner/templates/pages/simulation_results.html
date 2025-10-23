@@ -564,7 +564,7 @@
       const csrfToken = '{{ csrf_token }}';
       const dbNodesToJsUrl = `{% url 'optimization:db_nodes_to_js' proj_id %}`;
       const dbLinksToJsUrl = `{% url 'optimization:db_links_to_js' proj_id %}`;
-      const osmRoadsUrl = "{% url 'optimization:osm_roads' %}";
+      const dbRoadsToJsUrl = "{% url 'optimization:db_roads_to_js' proj_id %}";
       const loadPlotDataUrl = `{% url 'optimization:load_plot_data' proj_id %}`;
       const loadDemandPlotUrl = `{% url 'optimization:load_demand_plot_data' proj_id %}`;
       const downloadPDFReportUrl = `{% url 'projects:download_pdf_report' proj_id %}`;

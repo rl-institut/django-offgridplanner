@@ -1,8 +1,11 @@
 import base64
 import io
 import json
+import logging
 import urllib
 from http.client import HTTPException
+
+import numpy as np
 
 # from jsonview.decorators import json_view
 import pandas as pd
@@ -33,6 +36,7 @@ from offgridplanner.optimization.requests import fetch_existing_minigrids
 from offgridplanner.optimization.requests import fetch_exploration_progress
 from offgridplanner.optimization.requests import fetch_grid_network
 from offgridplanner.optimization.requests import fetch_potential_minigrid_data
+from offgridplanner.optimization.requests import notify_existing_minigrids
 from offgridplanner.optimization.requests import start_site_exploration
 from offgridplanner.optimization.requests import stop_site_exploration
 from offgridplanner.projects.exports import create_pdf_report
@@ -51,6 +55,8 @@ from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
 from offgridplanner.users.models import User
+
+logger = logging.getLogger(__name__)
 
 
 @require_http_methods(["GET"])
@@ -270,6 +276,12 @@ def start_exploration(request):
         site_exploration.save()
         data["status"] = "RUNNING"
 
+        # Delete all previously explored projects (potential) that were not saved to projects (analyzing)
+        unsaved_sites = Project.objects.filter(
+            user__id=request.user.id, status="potential"
+        )
+        unsaved_sites.delete()
+
     return JsonResponse(data)
 
 
@@ -308,18 +320,25 @@ def populate_site_data(request):
     try:
         # Extract the project data and create a new project
         project_input = {
-            "user": request.user,
-            "name": res["id"],
             "uuid": res["id"],
         } | json.loads(res["project_input"])
         # TODO find out where the tax parameter might be needed
         project_input.pop("tax")
-        proj, created = Project.objects.get_or_create(**project_input)
-        if not created and proj.status == "analyzing":
-            messages.info(
-                request,
-                "Exploration site already exists in projects. Updating existing project data with data from Potential Minigrid Explorer.",
-            )
+        proj_qs = Project.objects.filter(user__id=request.user.id, uuid=res["id"])
+        if proj_qs.exists():
+            proj = proj_qs.get()
+            if proj.status == "analyzing":
+                messages.info(
+                    request,
+                    "Exploration site already exists in projects. Updating existing project data with data from Potential Minigrid Explorer.",
+                )
+            for field, value in project_input.items():
+                setattr(proj, field, value)
+
+        else:
+            project_input = project_input | {"user": request.user, "name": res["id"]}
+            proj = Project.objects.create(**project_input)
+
         if proj.options is None:
             proj.options = Options.objects.create()
         proj.save()
@@ -379,6 +398,42 @@ def populate_site_data(request):
     return JsonResponse(
         {"redirect_url": reverse("steps:project_setup", args=[proj.id])}
     )
+
+
+@require_http_methods(["GET"])
+def save_to_projects(request, proj_id):
+    # Change the project status from potential to analyzing. If not done, project will be deleted when starting a new exploration
+    project = get_object_or_404(Project, id=proj_id)
+    project.status = "analyzing"
+    project.save()
+
+    nodes_df = project.nodes.df
+    min_latitude, min_longitude, max_latitude, max_longitude = (
+        nodes_df["latitude"].min(),
+        nodes_df["longitude"].min(),
+        nodes_df["latitude"].max(),
+        nodes_df["longitude"].max(),
+    )
+
+    notify_mg_data = {
+        "id": str(project.uuid),
+        "status": "potential",
+        "centroid": {
+            "bbox": [min_latitude, min_longitude, max_latitude, max_longitude],
+            "type": "Point",
+            "coordinates": [
+                np.average([min_latitude, max_latitude]),
+                np.average([min_longitude, max_latitude]),
+            ],
+        },
+    }
+
+    try:
+        notify_existing_minigrids(notify_mg_data)
+    except RuntimeError:
+        logger.warning("Could not notify about potential minigrid project.")
+
+    return JsonResponse({"msg": "Updated project status"}, status=200)
 
 
 # TODO refactor function to pass ruff

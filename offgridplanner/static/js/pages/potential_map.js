@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById("filter-form");
   const startExplorationBtn = document.getElementById("exploration-btn");
   const stopBtn = document.getElementById('stop-btn');
+  const sitesTable = document.getElementById("sites-table");
 
   // Load previous data on first load
   updateResults(table_data, map_data);
@@ -105,8 +106,52 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Add event listener to edit button for exploration sites
-  attachEditListeners();
+  initSitesTableClicks();
+
 });
+
+function initSitesTableClicks(){
+  const table = document.getElementById('sites-table');
+  table.addEventListener('click', async (event) => {
+    const button = event.target.closest('.edit-btn');   // use a CLASS, not duplicate ID
+    if (!button || !table.contains(button)) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    // guard against double clicks / duplicate triggers
+    if (button.dataset.busy === 'true') return;
+    button.dataset.busy = 'true';
+
+    const siteId = button.getAttribute('data-site-id');
+    const original = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = 'Loading...';
+
+    try {
+      const response = await fetch(populateSiteDataUrl, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ site_id: siteId }),
+      });
+      const data = await response.json();
+      if (data.redirect_url) window.open(data.redirect_url, '_blank');
+      if (data.error) console.error(data.error);
+    } catch (e) {
+      console.error('Error in fetch:', e);
+      button.innerHTML = 'Error';
+      return;
+    } finally {
+      button.disabled = false;
+      button.innerHTML = original;
+      button.dataset.busy = 'false';
+    }
+  });
+}
+
 
 async function sendRequest(body) {
   shouldStop = false;
@@ -168,7 +213,6 @@ function updateResults(table_data, map_data) {
   if (table_data !== undefined) {
       // Update table
       document.querySelector('#sites-table').innerHTML = table_data;
-      attachEditListeners();
       }
   if (map_data !== undefined) {
       // Update map
@@ -190,8 +234,7 @@ let currentSortIndex = null;
 let sortAscending = true;
 
 function sortTable(colIndex, th) {
-  const table = document.getElementById("sites-table");
-  const tbody = table.querySelector("tbody");
+  const tbody = sitesTable.querySelector("tbody");
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
   // Determine sort direction
@@ -227,34 +270,6 @@ function sortTable(colIndex, th) {
 
   // Set class on current header
   th.classList.add(sortAscending ? "asc" : "desc");
-}
-
-function attachEditListeners() {
-    document.querySelectorAll('#edit-btn').forEach(button => {
-    button.addEventListener('click', async event => {
-      const siteId = event.currentTarget.getAttribute("data-site-id");
-      try {
-        const response = await fetch(populateSiteDataUrl, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ site_id: siteId })  // Optional payload
-        });
-
-      const data = await response.json();
-
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
-      } else if (data.error) {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Error in fetch:", err);
-    }
-  });
- });
 }
 
 function loadLegend() {

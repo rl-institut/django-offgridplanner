@@ -36,4 +36,5 @@ urlpatterns = [
         name="load_exploration_sites",
     ),
     path("ajax/populate_site_data/", populate_site_data, name="populate_site_data"),
+    path("save_to_projects/<int:proj_id>", save_to_projects, name="save_to_projects"),
 ]

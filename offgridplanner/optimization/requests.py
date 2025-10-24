@@ -231,7 +231,7 @@ def notify_existing_minigrids(new_mg_data):
         msg = "An error occurred while notifying the minigrid."
         raise RuntimeError(msg) from e
     else:
-        logger.info("The existing minigrid list has been successfully updated.")
+        logger.info("The project has been successfully notified.")
         return response.json()
 
 

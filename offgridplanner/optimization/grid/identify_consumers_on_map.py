@@ -47,6 +47,33 @@ def _fetch_overpass(bbox, timeout=2500):
     return data
 
 
+def to_feature_collection_of_points(records):
+    ts = time.time()
+    timestamp = datetime.datetime.fromtimestamp(ts, tz=datetime.UTC).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+    geojson_data = {
+        "type": "FeatureCollection",
+        "timestamp": timestamp,
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {
+                    "@id": f"centroid/{i + 1}",
+                    "building_type": rec.get("building_type"),
+                },
+                "geometry": rec[
+                    "centroid_geography"
+                ],  # {"type":"Point","coordinates":[lon,lat]}
+            }
+            for i, rec in enumerate(records)
+            if "centroid_geography" in rec
+            and isinstance(rec["centroid_geography"].get("coordinates", []), list)
+        ],
+    }
+    return geojson_data
+
+
 def get_consumer_within_boundaries(df, engine="overpass"):
     min_latitude = df["latitude"].min()
     min_longitude = df["longitude"].min()
@@ -55,31 +82,32 @@ def get_consumer_within_boundaries(df, engine="overpass"):
     bbox = [min_latitude, min_longitude, max_latitude, max_longitude]
 
     data = None
+    geojson_data = None
 
     if engine == "minigrid-explorer":
         try:
             mg_data = fetch_buildings_data(bbox)
             if not mg_data:
-                err = "Minigrid returned no data."
+                err = "Minigrid-Explorer returned no data."
                 raise RuntimeError(err)  # noqa: TRY301
             data = mg_data
+            geojson_data = to_feature_collection_of_points(data)
         except RuntimeError as e:
             logger.warning(
                 "Minigrid-Explorer failed (%s). Falling back to Overpass...",
                 e,
-                exc_info=True,
             )
             # Fall through to Overpass
 
     if engine == "overpass" or data is None:
         try:
             data = _fetch_overpass(bbox)
+            geojson_data = convert_overpass_json_to_geojson(data)
         except (HTTPError, RuntimeError) as e:
             logger.warning("Overpass fetch failed: %s", e, exc_info=True)
             return None, None
 
     try:
-        geojson_data = convert_overpass_json_to_geojson(data)
         building_coord, building_surface_areas = (
             obtain_areas_and_mean_coordinates_from_geojson(geojson_data)
         )
@@ -148,41 +176,85 @@ def convert_overpass_json_to_geojson(json_dict):
 
 
 def obtain_areas_and_mean_coordinates_from_geojson(geojson: dict):
+    """
+    Works with:
+      - FeatureCollection of Polygons (OSM footprints)
+      - FeatureCollection of Points (centroids from Minigrid-explorer API)
+    Returns:
+      building_mean_coordinates: { feature_id: [lat, lon] }
+      building_surface_areas:    { feature_id: area_in_xy_units }
+    """
     building_mean_coordinates = {}
     building_surface_areas = {}
+    features = geojson.get("features", [])
+    if not features:
+        return building_mean_coordinates, building_surface_areas
 
-    if len(geojson["features"]) != 0:
-        reference_coordinate = geojson["features"][0]["geometry"]["coordinates"][0][0]
-        for building in geojson["features"]:
-            latitudes_longitudes = list(building["geometry"]["coordinates"][0])
-            latitudes = [x[0] for x in latitudes_longitudes]
-            longitudes = [x[1] for x in latitudes_longitudes]
-            mean_coord = [np.mean(latitudes), np.mean(longitudes)]
-            xy_coordinates = [
+    # Find a reference [lon, lat] to seed the local projection
+    ref_lon, ref_lat = None, None
+    for f in features:
+        g = f.get("geometry", {})
+        t = g.get("type")
+        if t == "Polygon":
+            ref_lat, ref_lon = g["coordinates"][0][
+                0
+            ]  # exterior ring, first vertex [lon, lat]
+        elif t == "Point" and ref_lon is None:
+            ref_lon, ref_lat = g["coordinates"]  # [lon, lat]
+    if ref_lon is None or ref_lat is None:
+        return building_mean_coordinates, building_surface_areas
+
+    for idx, f in enumerate(features):
+        props = f.get("properties", {})  # GeoJSON standard
+        fid = props.get("@id", f"feature/{idx + 1}")
+        geom = f.get("geometry", {})
+        gtype = geom.get("type")
+
+        # Handle Points
+        if gtype == "Point":
+            lon, lat = geom.get("coordinates", [None, None])
+            # Mean coordinate is just the point (returned as [lat, lon] to match the original functions output)
+            building_mean_coordinates[fid] = [lat, lon]
+            building_surface_areas[fid] = 0.0
+        # Handle Polygons
+        elif gtype == "Polygon":
+            rings = geom.get("coordinates", [])
+            exterior = rings[0]  # list of [lon, lat]
+
+            # Build arrays keeping in mind GeoJSON is [lon, lat]
+            lons = [pt[1] for pt in exterior]
+            lats = [pt[0] for pt in exterior]
+            mean_coord = [np.mean(lats), np.mean(lons)]  # return [lat, lon]
+
+            # Project each [lon, lat] -> XY
+            xy_coords = [
                 xy_coordinates_from_latitude_longitude(
-                    latitude=latitudes_longitudes[edge][0],
-                    longitude=latitudes_longitudes[edge][1],
-                    ref_latitude=reference_coordinate[0],
-                    ref_longitude=reference_coordinate[1],
+                    latitude=lat,
+                    longitude=lon,
+                    ref_latitude=ref_lat,
+                    ref_longitude=ref_lon,
                 )
-                for edge in range(len(latitudes))
+                for lon, lat in exterior
             ]
-            polygon = geometry.Polygon(xy_coordinates)
-            area = polygon.area
-            perimeter = polygon.length
-            # TODO check what these magic numbers mean
+
+            poly = geometry.Polygon(xy_coords)
+            area = float(poly.area)
+            perimeter = float(poly.length)
+            compactness = 4 * np.pi * area / (perimeter**2) if perimeter else 0.0
+
+            # Thresholds
             min_valid_area = 4
             compactness_lower_bound = 0.81
             compactness_upper_bound = 1.91
             max_compact_building_area = 8
 
-            compactness = 4 * np.pi * area / (perimeter**2) if perimeter else 0
             if area > min_valid_area and not (
                 compactness_lower_bound < compactness < compactness_upper_bound
                 and area < max_compact_building_area
             ):
-                building_mean_coordinates[building["property"]["@id"]] = mean_coord
-                building_surface_areas[building["property"]["@id"]] = area
+                building_mean_coordinates[fid] = mean_coord
+                building_surface_areas[fid] = area
+
     return building_mean_coordinates, building_surface_areas
 
 

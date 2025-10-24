@@ -1,31 +1,32 @@
-.dashboard {
+.mod_descrip_dashboard {
     min-height: unset; /* overwrites main.css */
+    margin-top: 5rem;
 }
-.dashboard .container {
+.mod_descrip_mod_descrip_dashboard .container {
     text-align: justify;
 }
-.dashboard .col-12,
-.dashboard .col-md-6 {
+.mod_descrip_dashboard .col-12,
+.mod_descrip_dashboard .col-md-6 {
     padding-left: 30px;
     padding-right: 30px;
 }
-.dashboard h4 {
+.mod_descrip_dashboard h4 {
     margin-bottom: 50px;
 }
-.dashboard ul {
+.mod_descrip_dashboard ul {
     margin-left: 0;
     padding-left: 1.5em;
 }
-.dashboard ol {
+.mod_descrip_dashboard ol {
     margin-left: 0;
     padding-left: 1.5em;
 }
-.dashboard ol li,
-.dashboard ul li {
+.mod_descrip_dashboard ol li,
+.mod_descrip_dashboard ul li {
     margin-left: 50px;
     margin-right: 50px;
 }
-.dashboard img.img-fluid.full-width-img {
+.mod_descrip_dashboard img.img-fluid.full-width-img {
     padding: 20px;
     border: 2px solid #000;
     width: 80%;
@@ -34,10 +35,10 @@
 }
 
 /* First ES tool image has margin-top: -25px */
-.dashboard img.img-fluid.full-width-img:first-of-type {
+.mod_descrip_dashboard img.img-fluid.full-width-img:first-of-type {
     margin-top: -25px;
 }
-.dashboard .text-center.my-4 {
+.mod_descrip_dashboard .text-center.my-4 {
     margin-top: 20px;
     margin-bottom: 20px;
 }

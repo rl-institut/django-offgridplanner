@@ -316,7 +316,7 @@ def create_pdf_report(  # noqa: PLR0915, PLR0912, C901
     elements = []
 
     # Add logo and titles
-    image_path = staticfiles_storage.path("assets/logos/PeopleSunLogo.png")
+    image_path = staticfiles_storage.path("assets/logos/LogoFUNAE.svg")
     image_reader = ImageReader(image_path)
     img_width, img_height = image_reader.getSize()
     desired_height = 1 * inch  # Adjust as needed

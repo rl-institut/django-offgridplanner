@@ -1,20 +1,19 @@
 /* Section: Dashboard */
-section#section.dashboard {
-    min-height: unset;
+.dashboard {
+    min-height: auto;
 }
-section#section.dashboard .container {
+.dashboard .container {
     text-align: justify;
 }
-section#section.dashboard .col-12 {
-    padding-left: 6rem;
-    padding-right: 6rem;
+.dashboard .col-12 {
+    padding-inline: 6rem;
 }
 
+/* Section: Tasks */
 .task_dashboard {
     display: none;
     width: 100%; /* Adjust as needed */
-    padding: 20px;
-    padding-bottom: calc(20px + 4.5rem);
+    padding: 20px 20px calc(20px + 4.5rem);
     background-color: var(--bcc);
 }
 .task_dashboard.active {
@@ -28,8 +27,17 @@ section#section.dashboard .col-12 {
 }
 .accordion-item {
     width: 100%;
+    padding: 10px;
+}
+.accordion-body img.img-fluid {
+    margin-block: 20px;
+}
+[id^="task"]:not(#task_dashboard) .accordion-body img.img-fluid.d-block.mx-auto {
+    max-width: 400px;
+    height: auto;
 }
 
+/* Section: Wizard */
 .training_wizard {
     visibility: visible !important;
     opacity: 1 !important;
@@ -63,31 +71,6 @@ section#section.dashboard .col-12 {
 /* Training Wizard */
 .training_wizard .accordion {
     margin-top: 12px;
-}
-.accordion-item {
-    padding: 10px;
-}
-.accordion-body img.img-fluid {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-/* Task Specific */
-#task2 .accordion-body img.img-fluid.d-block.mx-auto {
-    max-width: 400px;
-    height: auto;
-}
-#task3 .accordion-body img.img-fluid.d-block.mx-auto {
-    max-width: 400px;
-    height: auto;
-}
-#task4 .accordion-body img.img-fluid.d-block.mx-auto {
-    max-width: 400px;
-    height: auto;
-}
-#task5 .accordion-body img.img-fluid.d-block.mx-auto {
-    max-width: 400px;
-    height: auto;
 }
 
 /* Footer Buttons */

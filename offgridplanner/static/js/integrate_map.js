@@ -60,6 +60,15 @@ var markerPowerHouse = new L.Icon({
 var markerPole = new L.Icon({
     iconUrl: "/static/assets/icons/i_pole.svg",
     iconSize: [10, 10],
+    iconAnchor: [12, 12],
+    className: "pole-marker",
+});
+
+
+var markerPoleHighlight = new L.Icon({
+    iconUrl: "/static/assets/icons/i_pole_highlight.svg",
+    iconSize: [10, 10],
+    className: "pole-highlight",
 });
 
 
@@ -73,6 +82,7 @@ var icons = {
     'consumer': markerConsumer,
     'power-house': markerPowerHouse,
     'pole': markerPole,
+    'pole-highlight': markerPoleHighlight,
     'shs': markerShs,
 };
 var image = [
@@ -81,12 +91,16 @@ var image = [
     "/static/icons/i_enterprise.svg",
     "/static/icons/i_public_service.svg",
     "/static/icons/i_pole.svg",
+    "/static/icons/i_pole_highlight.svg",
     "/static/assets/icons/i_shs.svg",
     "/static/assets/icons/i_distribution.svg",
     "/static/assets/icons/i_connection.svg",
 ];
 
 const drawnItems = new L.FeatureGroup();
+let polesLayer = L.layerGroup();
+let poleMarkersById = new Map(); // id -> marker
+let poleOriginalLatLng = new Map(); // id -> {lat, lng}
 
 let is_active = false;
 let countryBounds = [
@@ -142,9 +156,8 @@ function initializeMap(center = null, zoom = null, bounds = null) {
         // Add the layer control to the map
         L.control.layers(baseMaps).addTo(map);
 
-
-
         map.addLayer(drawnItems);
+        map.addLayer(polesLayer);
 
         var zoomAllControl = L.Control.extend({
             options: {
@@ -154,7 +167,7 @@ function initializeMap(center = null, zoom = null, bounds = null) {
             onAdd: function (map) {
                 var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
                 let baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-                let address = "url(" + baseUrl + "//static/images/imgZoomToAll.png)"
+                let address = "url(" + baseUrl + "/static/images/imgZoomToAll.png)"
                 container.style.backgroundColor = 'white';
                 container.style.backgroundImage = address;
                 container.style.backgroundSize = "28px 28px";
@@ -248,11 +261,19 @@ async function put_markers_on_map(array, markers_only) {
 
   // Only add if we actually chose an icon for this node
   if (selectedIcon) {
-  L.marker([node.latitude, node.longitude], { icon: selectedIcon })
-    .on("click", markerOnClick)
-    .addTo(map);
+      const marker = L.marker([node.latitude, node.longitude], { icon: selectedIcon });
+      marker.on("click", markerOnClick);
+
+      if (node.node_type === "pole") {
+        marker.addTo(polesLayer);
+        poleMarkersById.set(node.label, marker);
+        // store original position
+        poleOriginalLatLng.set(node.label, { lat: node.latitude, lng: node.longitude });
+      } else {
+        marker.addTo(map);
+        }
+       }
     }
-}
 
     // Update the elements with the counts
     if (document.getElementById("n_consumers")) {
@@ -381,4 +402,73 @@ function load_legend() {
     legend.addTo(map);
 }
 
-// Function to load external script dynamically
+async function saveMovedPoles() {
+  const changes = collectPoleChanges();
+  if (changes.length === 0) {
+    hasUnsavedPoleMoves = false;
+    return;
+  }
+
+  try {
+    const resp = await fetch(updatePolePositionsUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify(changes),
+      credentials: 'same-origin',
+    });
+
+    if (!resp.ok) {
+      const msg = await resp.text();
+      throw new Error(msg || 'Save failed');
+    }
+
+    const result = await resp.json();
+    // Update "original" positions to the new ones (commit)
+    changes.forEach(({ id, latitude, longitude }) => {
+      poleOriginalLatLng.set(id, { lat: latitude, lng: longitude });
+    });
+    hasUnsavedPoleMoves = false;
+    // Refresh the links
+    db_links_to_js();
+    // Update KPIs
+    if (result.kpis) {
+        updateKpisInDom(result.kpis);
+    }
+
+    console.log(`Updated grid layout`);
+  } catch (err) {
+    console.error(err);
+    revertPolePositions();
+    alert('Failed to save pole positions. Reverted changes.');
+  }
+}
+
+function revertPolePositions() {
+  poleMarkersById.forEach((marker, id) => {
+    marker.setIcon(markerPole);
+    const orig = poleOriginalLatLng.get(id);
+    if (orig) {
+        marker.setLatLng([orig.lat, orig.lng]);
+    }
+  });
+  hasUnsavedPoleMoves = false;
+}
+
+function collectPoleChanges() {
+  const changes = [];
+  poleMarkersById.forEach((marker, id) => {
+    const { lat, lng } = marker.getLatLng();
+    const orig = poleOriginalLatLng.get(id);
+    if (!orig) return;
+
+    const moved = Math.abs(lat - orig.lat) > 1e-7 || Math.abs(lng - orig.lng) > 1e-7;
+    if (moved) {
+      changes.push({ id, latitude: lat, longitude: lng });
+    }
+  });
+  console.log(changes);
+  return changes;
+}

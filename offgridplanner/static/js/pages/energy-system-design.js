@@ -79,12 +79,16 @@ function check_optimization_strategy(id) {
 
     if (document.getElementById(optimizationCheckBox(id)).checked) {
         document.getElementById("id_" + id + "_parameters_nominal_capacity").readOnly = true;
-        document.getElementById(id + "_parameters_nominal_capacity_label").classList.add('readonly-disabled');
-        document.getElementById(id + "_parameters_nominal_capacity_unit").classList.add('readonly-disabled');
+        document.getElementById(id + "_parameters_nominal_capacity_label").classList.add('greyed');
+        document.getElementById(id + "_parameters_nominal_capacity_label").classList.add('disabled');
+        document.getElementById(id + "_parameters_nominal_capacity_unit").classList.add('greyed');
+        document.getElementById(id + "_parameters_nominal_capacity_unit").classList.add('disabled');
     } else {
         document.getElementById("id_" + id + "_parameters_nominal_capacity").readOnly = false;
-        document.getElementById(id + "_parameters_nominal_capacity_label").classList.remove('readonly-disabled');
-        document.getElementById(id + "_parameters_nominal_capacity_unit").classList.remove('readonly-disabled');
+        document.getElementById(id + "_parameters_nominal_capacity_label").classList.remove('greyed');
+        document.getElementById(id + "_parameters_nominal_capacity_label").classList.remove('disabled');
+        document.getElementById(id + "_parameters_nominal_capacity_unit").classList.remove('greyed');
+        document.getElementById(id + "_parameters_nominal_capacity_unit").classList.remove('disabled');
     }
 }
 

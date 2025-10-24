@@ -1,3 +1,37 @@
-.item__name {
-    text-align: left;
+/* Base dimming */
+.leaflet-container.pole-editing .leaflet-tile-pane,
+.leaflet-container.pole-editing .leaflet-overlay-pane,
+.leaflet-container.pole-editing .leaflet-shadow-pane,
+.leaflet-container.pole-editing .leaflet-tile-pane img,
+.leaflet-container.pole-editing .leaflet-overlay-pane * {
+  filter: grayscale(1) brightness(0.9);
+}
+
+/* Dim ONLY non-pole marker icons */
+.leaflet-container.pole-editing .leaflet-marker-pane .leaflet-marker-icon:not(.pole-marker):not(.pole-highlight) {
+  filter: grayscale(1) brightness(0.9);
+}
+
+/* Poles tinted blue in edit mode (but not when dragging, and not highlight class) */
+.leaflet-container.pole-editing .leaflet-marker-pane .leaflet-marker-icon.pole-marker:not(.pole-dragging) {
+  filter:
+    invert(1) brightness(0.65) sepia(1)
+    hue-rotate(195deg) saturate(111)
+    brightness(1.05) contrast(1.1) !important;
+}
+
+/* While dragging: show original black (no tint) */
+.leaflet-container.pole-editing .leaflet-marker-pane .leaflet-marker-icon.pole-marker.pole-dragging {
+  filter: none !important;
+}
+
+/* Never tint the committed highlight icon */
+.leaflet-container.pole-editing .leaflet-marker-pane .leaflet-marker-icon.pole-highlight {
+  filter: none !important;
+}
+
+/* Add slight padding around the marker so that they are easier to grab */
+.leaflet-marker-icon.pole-marker {
+  padding: 8px;
+  box-sizing: content-box;
 }

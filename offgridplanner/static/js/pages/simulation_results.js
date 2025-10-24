@@ -156,6 +156,17 @@ document.getElementById('downloadPDF').addEventListener('click', function (event
 });
 
 
+function updateKpisInDom(kpis) {
+  if (!kpis) return;
+  for (const [key, meta] of Object.entries(kpis)) {
+    const value = (meta && meta.value != null) ? meta.value : '—';
+    const unit  = (meta && meta.unit) ? ` ${meta.unit}` : '';
+    document.querySelectorAll(`[data-kpi="kpi-${key}"]`).forEach(el => {
+      el.textContent = `${value}${unit}`;
+    });
+  }
+}
+
 
 function generateImages(plotIds) {
     const imagePromises = plotIds.map(plotId => {
@@ -310,10 +321,6 @@ function generateImages(plotIds) {
 
     return Promise.all(imagePromises);
 }
-
-
-
-
 
 
 function generateMapImage(map) {

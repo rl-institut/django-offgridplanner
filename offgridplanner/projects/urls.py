@@ -7,9 +7,11 @@ app_name = "projects"
 urlpatterns = [
     path("", home, name="home"),
     path("projects", projects_list, name="projects_list"),
+    path("projects/<str:status>", projects_list, name="projects_list"),
     path("<int:proj_id>", projects_list, name="projects_list"),
     path("duplicate/<int:proj_id>", project_duplicate, name="project_duplicate"),
     path("delete/<int:proj_id>", project_delete, name="project_delete"),
+    path("update_project_status", update_project_status, name="update_project_status"),
     path(
         "export_results/<int:proj_id>",
         export_project_results,
@@ -25,4 +27,14 @@ urlpatterns = [
         download_excel_results,
         name="download_excel_results",
     ),
+    path("projects/potential/map/", potential_map, name="potential_map"),
+    path("ajax/start_exploration/", start_exploration, name="start_exploration"),
+    path("ajax/stop_exploration/", stop_exploration, name="stop_exploration"),
+    path(
+        "ajax/load_exploration_sites/",
+        load_exploration_sites,
+        name="load_exploration_sites",
+    ),
+    path("ajax/populate_site_data/", populate_site_data, name="populate_site_data"),
+    path("save_to_projects/<int:proj_id>", save_to_projects, name="save_to_projects"),
 ]

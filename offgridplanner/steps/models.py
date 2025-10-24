@@ -1,9 +1,16 @@
 from collections import defaultdict
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
+from offgridplanner.projects.helpers import csv_to_dict
 from offgridplanner.projects.models import Project
+
+SETTLEMENT_TYPE = (
+    ("periurban", _("Rural peri-urban")),
+    ("isolated", _("Rural isolated")),
+)
 
 
 class NestedModel(models.Model):
@@ -39,6 +46,9 @@ class CustomDemand(models.Model):
     # Corresponds to class Demand in tier_spatial planning, removed fields id (obsolete), use_custom_demand and use_custom_shares
     # (one or both of them should just be None in database if not used), and household_option (not sure what it is used for)
     project = models.OneToOneField(Project, on_delete=models.CASCADE, null=True)
+    settlement_type = models.CharField(
+        max_length=80, choices=SETTLEMENT_TYPE, default="isolated"
+    )
     very_low = models.FloatField(blank=True, null=True)
     low = models.FloatField(blank=True, null=True)
     middle = models.FloatField(blank=True, null=True)
@@ -50,6 +60,13 @@ class CustomDemand(models.Model):
 
     def __str__(self):
         return f"CustomDemand {self.id}: Project {self.project.name}"
+
+    @property
+    def settlement_defaults(self):
+        settlement_defaults = csv_to_dict(
+            "data/settlement_defaults.csv", label_col="settlement_type"
+        )
+        return settlement_defaults
 
     @property
     def calibration_option(self):
@@ -65,6 +82,21 @@ class CustomDemand(models.Model):
             else "annual_peak_consumption"
         )
         return calibration_option
+
+    def get_shares_dict(self, *, as_percentage=False, defaults=False):
+        multiplier = 100 if as_percentage else 1
+        shares_fields = ["very_low", "low", "middle", "high", "very_high"]
+        if defaults:
+            shares_dict = {
+                household: {k: float(v) * multiplier for k, v in demands.items()}
+                for household, demands in self.settlement_defaults.items()
+            }
+        else:
+            shares_dict = {
+                field: getattr(self, field) * multiplier for field in shares_fields
+            }
+
+        return shares_dict
 
 
 class GridDesign(NestedModel):

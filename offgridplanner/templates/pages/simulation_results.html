@@ -9,125 +9,133 @@
 <!DOCTYPE html>
 <html lang="en-us">
 {% block head_block %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        rel="stylesheet" />
+  <link href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"
+        rel="stylesheet" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw-src.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link href="{% static 'css/pages/simulation_results.css' %}"
           rel="stylesheet" />
-    <style>
-      .item__name {
-        height: 80px;
-        font-weight: bold;
-      }
+<link href="https://unpkg.com/leaflet-geosearch@3.0.6/dist/geosearch.css"
+      rel="stylesheet" />
+<script src="https://unpkg.com/leaflet-geosearch@3.0.6/dist/geosearch.umd.js"></script>
 
-      .chart {
-        max-height: 9999px;
-      }
-    </style>
+<style>
+  .item__name {
+    height: 80px;
+    font-weight: bold;
+  }
+
+  .chart {
+    max-height: 9999px;
+  }
+</style>
 {% endblock head_block %}
 {% block progression_content %}
-      <main>
+<main>
         <section id="dashboard" class="dashboard">
-          <div>
-            <div class="row" id="firstRow">
-              <div class="col col-md-6">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
+    <div>
+      <div class="row" id="firstRow">
+        <div class="col col-md-6">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
                       <span class="title">{% translate 'Grid Layout' %}</span>
-                    </div>
-                    <div class="dropdown">
+              </div>
+              <div class="dropdown">
                       <button class="btn dropdown-toggle btn--transparent"
                               type="button"
                               id="dropdownMenuButton0"
                               data-bs-toggle="dropdown"
                               aria-expanded="false">
-                        <span class="icon icon-more"></span>
-                      </button>
+                  <span class="icon icon-more"></span>
+                </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton0">
-                        <li>
+                  <li>
                           <a class="dropdown-item" href="#">{% translate 'Export as .xls' %}</a>
-                        </li>
-                        <li>
+                  </li>
+                  <li>
                           <a class="dropdown-item" href="#">{% translate 'Export as PDF' %}</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="map">
-                    <div id="map" style="width: 100%; height: 100%"></div>
-                  </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="map">
+              <div id="map" style="width: 100%; height: 100%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col col-md-6" style="display: flex; justify-content: center;">
+          <div class="chart" id="summaryResultsChart">
+            <div class="chart__header">
+                    <span class="title">{% translate 'Summary of Results' %}</span>
+            </div>
+            <div class="chart__content">
+              <span class="subtitle"></span>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.lcoe.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-lcoe">{{results.lcoe.value}} {{results.lcoe.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_total.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_total">{{results.upfront_invest_total.value|intcomma}} {{results.upfront_invest_total.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.lcoe_share_supply.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-lcoe_share_supply">{{results.lcoe_share_supply.value}} {{results.lcoe_share_supply.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.lcoe_share_grid.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-lcoe_share_grid">{{results.lcoe_share_grid.value}} {{results.lcoe_share_grid.unit}}</div>
                 </div>
               </div>
-              <div class="col col-md-6" style="display: flex; justify-content: center;">
-                <div class="chart" id="summaryResultsChart">
-                  <div class="chart__header">
-                    <span class="title">{% translate 'Summary of Results' %}</span>
-                  </div>
-                  <div class="chart__content">
-                    <span class="subtitle"></span>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.lcoe.verbose}}</div>
-                        <div class="item__value">{{results.lcoe.value}} {{results.lcoe.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_total.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_total.value|intcomma}} {{results.upfront_invest_total.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.lcoe_share_supply.verbose}}</div>
-                        <div class="item__value">{{results.lcoe_share_supply.value}} {{results.lcoe_share_supply.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.lcoe_share_grid.verbose}}</div>
-                        <div class="item__value">{{results.lcoe_share_grid.value}} {{results.lcoe_share_grid.unit}}</div>
-                      </div>
-                    </div>
-                    <span class="subtitle"></span>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.pv_capacity.verbose}}</div>
-                        <div class="item__value">{{results.pv_capacity.value|intcomma}} {{results.pv_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.battery_capacity.verbose}}</div>
-                        <div class="item__value">{{results.battery_capacity.value|intcomma}} {{results.battery_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.diesel_genset_capacity.verbose}}</div>
-                        <div class="item__value">{{results.diesel_genset_capacity.value|intcomma}} {{results.diesel_genset_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.res.verbose}}</div>
-                        <div class="item__value">{{results.res.value}} {{results.res.unit}}</div>
-                      </div>
-                    </div>
-                    <span class="subtitle"></span>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.n_consumers.verbose}}</div>
-                        <div class="item__value">{{results.n_consumers.value|intcomma}} {{results.n_consumers.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.total_annual_consumption.verbose}}</div>
-                        <div class="item__value">{{results.total_annual_consumption.value|intcomma}} {{results.total_annual_consumption.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.average_annual_demand_per_consumer.verbose}}</div>
-                        <div class="item__value">{{results.average_annual_demand_per_consumer.value|intcomma}} {{results.average_annual_demand_per_consumer.unit}}</div>
-                      </div>
-                      <div class="item item--worst">
-                        <div class="item__name">{% translate 'Calculation Time' %}</div>
-                        <div id="time" class="item__value"></div>
-                      </div>
-                    </div>
-                  </div>
+              <span class="subtitle"></span>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.pv_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-pv_capacity">{{results.pv_capacity.value|intcomma}} {{results.pv_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.battery_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-battery_capacity">{{results.battery_capacity.value|intcomma}} {{results.battery_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.diesel_genset_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-diesel_genset_capacity">{{results.diesel_genset_capacity.value|intcomma}} {{results.diesel_genset_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.res.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-res">{{results.res.value}} {{results.res.unit}}</div>
+                </div>
+              </div>
+              <span class="subtitle"></span>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.n_consumers.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-n_consumers">{{results.n_consumers.value|intcomma}} {{results.n_consumers.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.total_annual_consumption.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-total_annual_consumption">{{results.total_annual_consumption.value|intcomma}} {{results.total_annual_consumption.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.average_annual_demand_per_consumer.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-average_annual_demand_per_consumer">{{results.average_annual_demand_per_consumer.value|intcomma}} {{results.average_annual_demand_per_consumer.unit}}</div>
+                </div>
+                <div class="item item--worst">
+                  <div class="item__name">Calculation Time</div>
+                  <div class="item__value" data-kpi="time"></div>
                 </div>
               </div>
             </div>
-            <div class="row" id="actionButtonsRow" style="padding: 12px">
-              <div style="display: flex; width: 100%; padding: 0; margin: 0;">
+          </div>
+        </div>
+      </div>
+      <div class="row" id="actionButtonsRow" style="padding: 12px">
+        <div style="display: flex; width: 100%; padding: 0; margin: 0;">
                 <a id="downloadCSV"
                    class="btn btn--medium"
                    style="height: 32px;
@@ -155,8 +163,7 @@
                           width: 50%;
                           margin-right: 10px;
                           margin-left: 10px"
-                   href="javascript:void(0);"
-                   onclick="forward_if_no_task_is_pending({{ proj_id }});">{% translate 'Recalculate' %}</a>
+                   href="{% url 'steps:calculating' proj_id %}">Recalculate</a>
                 <a class="btn btn--medium"
                    style="height: 32px;
                           display: flex;
@@ -164,357 +171,368 @@
                           justify-content: center;
                           width: 50%"
                    href="/">{% translate 'My Projects' %}</a>
-              </div>
-            </div>
-            <div class="row" id="resultsChart">
-              <div class="col" style="display: flex; justify-content: center;">
-                <div class="chart" style="height: auto;">
-                  <div class="chart__header">
+        </div>
+      </div>
+      <div class="row" id="resultsChart">
+        <div class="col" style="display: flex; justify-content: center;">
+          <div class="chart" style="height: auto;">
+            <div class="chart__header">
                     <span class="title">{% translate 'Results' %}</span>
-                  </div>
-                  <div class="chart__content" style="height: auto;">
-                    {% if do_grid_optimization %}
+            </div>
+            <div class="chart__content" style="height: auto;">
+              {% if do_grid_optimization %}
                     <span class="subtitle" id="gridTitle">{% translate 'GRID' %}</span>
-                    <div class="row" id="gridResultsRow">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.n_consumers.verbose}}</div>
-                        <div class="item__value">{{results.n_consumers.value|intcomma}} {{results.n_consumers.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.n_shs_consumers.verbose}}</div>
-                        <div class="item__value">{{results.n_shs_consumers.value|intcomma}} {{results.n_shs_consumers.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.n_poles.verbose}}</div>
-                        <div class="item__value">{{results.n_poles.value|intcomma}} {{results.n_poles.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.length_distribution_cable.verbose}}</div>
-                        <div class="item__value">{{results.length_distribution_cable.value|intcomma}} {{results.length_distribution_cable.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.average_length_distribution_cable.verbose}}</div>
-                        <div class="item__value">{{results.average_length_distribution_cable.value|intcomma}} {{results.average_length_distribution_cable.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.length_connection_cable.verbose}}</div>
-                        <div class="item__value">{{results.length_connection_cable.value|intcomma}} {{results.length_connection_cable.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.average_length_connection_cable.verbose}}</div>
-                        <div class="item__value">{{results.average_length_connection_cable.value|intcomma}} {{results.average_length_connection_cable.unit}}</div>
-                      </div>
-                    </div>
-                    {% endif %}
-                    {% if do_supply_optimization %}
+              <div class="row" id="gridResultsRow">
+                <div class="item item--best">
+                  <div class="item__name">{{results.n_consumers.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-n_consumers">{{results.n_consumers.value|intcomma}} {{results.n_consumers.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.n_shs_consumers.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-n_shs_consumers">{{results.n_shs_consumers.value|intcomma}} {{results.n_shs_consumers.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.n_poles.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-n_poles">{{results.n_poles.value|intcomma}} {{results.n_poles.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.length_distribution_cable.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-length_distribution_cable">{{results.length_distribution_cable.value|intcomma}} {{results.length_distribution_cable.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.average_length_distribution_cable.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-average_length_distribution_cable">{{results.average_length_distribution_cable.value|intcomma}} {{results.average_length_distribution_cable.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.length_connection_cable.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-length_connection_cable">{{results.length_connection_cable.value|intcomma}} {{results.length_connection_cable.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.average_length_connection_cable.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-average_length_connection_cable">{{results.average_length_connection_cable.value|intcomma}} {{results.average_length_connection_cable.unit}}</div>
+                </div>
+              </div>
+              {% endif %}
+              {% if do_supply_optimization %}
                     <span class="subtitle">{% translate 'ENERGY CONVERTERS' %}</span>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.res.verbose}}</div>
-                        <div class="item__value">{{results.res.value}} {{results.res.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.surplus_rate.verbose}}</div>
-                        <div class="item__value">{{results.surplus_rate.value}} {{results.surplus_rate.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.shortage_total.verbose}}</div>
-                        <div class="item__value">{{results.shortage_total.value}} {{results.shortage_total.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.pv_capacity.verbose}}</div>
-                        <div class="item__value">{{results.pv_capacity.value|intcomma}} {{results.pv_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.battery_capacity.verbose}}</div>
-                        <div class="item__value">{{results.battery_capacity.value|intcomma}} {{results.battery_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.inverter_capacity.verbose}}</div>
-                        <div class="item__value">{{results.inverter_capacity.value|intcomma}} {{results.inverter_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.diesel_genset_capacity.verbose}}</div>
-                        <div class="item__value">{{results.diesel_genset_capacity.value|intcomma}} {{results.diesel_genset_capacity.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.rectifier_capacity.verbose}}</div>
-                        <div class="item__value">{{results.rectifier_capacity.value|intcomma}} {{results.rectifier_capacity.unit}}</div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.fuel_consumption.verbose}}</div>
-                        <div class="item__value">{{results.fuel_consumption.value|intcomma}} {{results.fuel_consumption.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.co2_emissions.verbose}}</div>
-                        <div class="item__value">{{results.co2_emissions.value|intcomma}} {{results.co2_emissions.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.co2_savings.verbose}}</div>
-                        <div class="item__value">{{results.co2_savings.value|intcomma}} {{results.co2_savings.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name"></div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name"></div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name"></div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name"></div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name"></div>
-                      </div>
-                    </div>
-                    {% endif %}
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.res.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-res">{{results.res.value}} {{results.res.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.surplus_rate.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-surplus_rate">{{results.surplus_rate.value}} {{results.surplus_rate.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.shortage_total.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-shortage_total">{{results.shortage_total.value}} {{results.shortage_total.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.pv_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-pv_capacity">{{results.pv_capacity.value|intcomma}} {{results.pv_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.battery_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-battery_capacity">{{results.battery_capacity.value|intcomma}} {{results.battery_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.inverter_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-inverter_capacity">{{results.inverter_capacity.value|intcomma}} {{results.inverter_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.diesel_genset_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-diesel_genset_capacity">{{results.diesel_genset_capacity.value|intcomma}} {{results.diesel_genset_capacity.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.rectifier_capacity.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-rectifier_capacity">{{results.rectifier_capacity.value|intcomma}} {{results.rectifier_capacity.unit}}</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.fuel_consumption.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-fuel_consumption">{{results.fuel_consumption.value|intcomma}} {{results.fuel_consumption.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.co2_emissions.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-co2_emissions">{{results.co2_emissions.value|intcomma}} {{results.co2_emissions.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.co2_savings.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-co2_savings">{{results.co2_savings.value|intcomma}} {{results.co2_savings.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name"></div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name"></div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name"></div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name"></div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name"></div>
+                </div>
+              </div>
+              {% endif %}
                     <span class="subtitle">{% translate 'DEMAND' %}</span>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.total_annual_consumption.verbose}}</div>
-                        <div class="item__value">{{results.total_annual_consumption.value|intcomma}} {{results.total_annual_consumption.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.peak_demand.verbose}}</div>
-                        <div class="item__value">{{results.peak_demand.value|intcomma}} {{results.peak_demand.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.base_load.verbose}}</div>
-                        <div class="item__value">{{results.base_load.value|intcomma}} {{results.base_load.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.average_annual_demand_per_consumer.verbose}}</div>
-                        <div class="item__value">{{results.average_annual_demand_per_consumer.value|intcomma}} {{results.average_annual_demand_per_consumer.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.shortage_total.verbose}}</div>
-                        <div class="item__value">{{results.shortage_total.value}} {{results.shortage_total.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.max_shortage.verbose}}</div>
-                        <div class="item__value">{{results.max_shortage.value}} {{results.max_shortage.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.total_surplus.verbose}}</div>
-                        <div class="item__value">{{results.total_surplus.value}} {{results.total_surplus.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name"></div>
-                      </div>
-                    </div>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.total_annual_consumption.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-total_annual_consumption">{{results.total_annual_consumption.value|intcomma}} {{results.total_annual_consumption.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.peak_demand.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-peak_demand">{{results.peak_demand.value|intcomma}} {{results.peak_demand.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.base_load.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-base_load">{{results.base_load.value|intcomma}} {{results.base_load.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.average_annual_demand_per_consumer.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-average_annual_demand_per_consumer">{{results.average_annual_demand_per_consumer.value|intcomma}} {{results.average_annual_demand_per_consumer.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.shortage_total.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-shortage_total">{{results.shortage_total.value}} {{results.shortage_total.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.max_shortage.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-max_shortage">{{results.max_shortage.value}} {{results.max_shortage.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.total_surplus.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-total_surplus">{{results.total_surplus.value}} {{results.total_surplus.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name"></div>
+                </div>
+              </div>
                     <span class="subtitle">{% translate 'ECONOMIC DATA' %}</span>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_total.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_total.value|intcomma}} {{results.upfront_invest_total.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_grid.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_grid.value|intcomma}} {{results.upfront_invest_grid.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_pv.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_pv.value|intcomma}} {{results.upfront_invest_pv.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_battery.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_battery.value|intcomma}} {{results.upfront_invest_battery.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_inverter.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_inverter.value|intcomma}} {{results.upfront_invest_inverter.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_diesel_genset.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_diesel_genset.value|intcomma}} {{results.upfront_invest_diesel_genset.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.upfront_invest_rectifier.verbose}}</div>
-                        <div class="item__value">{{results.upfront_invest_rectifier.value|intcomma}} {{results.upfront_invest_rectifier.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.cost_fuel.verbose}}</div>
-                        <div class="item__value">{{results.cost_fuel.value|intcomma}} {{results.cost_fuel.unit}}</div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="item item--best">
-                        <div class="item__name">{{results.epc_total.verbose}}</div>
-                        <div class="item__value">{{results.epc_total.value|intcomma}} {{results.epc_total.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.cost_grid.verbose}}</div>
-                        <div class="item__value">{{results.cost_grid.value|intcomma}} {{results.cost_grid.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.epc_pv.verbose}}</div>
-                        <div class="item__value">{{results.epc_pv.value|intcomma}} {{results.epc_pv.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.epc_battery.verbose}}</div>
-                        <div class="item__value">{{results.epc_battery.value|intcomma}} {{results.epc_battery.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.epc_inverter.verbose}}</div>
-                        <div class="item__value">{{results.epc_inverter.value|intcomma}} {{results.epc_inverter.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.epc_diesel_genset.verbose}}</div>
-                        <div class="item__value">{{results.epc_diesel_genset.value|intcomma}} {{results.epc_diesel_genset.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.epc_rectifier.verbose}}</div>
-                        <div class="item__value">{{results.epc_rectifier.value|intcomma}} {{results.epc_rectifier.unit}}</div>
-                      </div>
-                      <div class="item item--best">
-                        <div class="item__name">{{results.lcoe.verbose}}</div>
-                        <div class="item__value">{{results.lcoe.value}} {{results.lcoe.unit}}</div>
-                      </div>
-                    </div>
-                  </div>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_total.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_total">{{results.upfront_invest_total.value|intcomma}} {{results.upfront_invest_total.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_grid.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_grid">{{results.upfront_invest_grid.value|intcomma}} {{results.upfront_invest_grid.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_pv.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_pv">{{results.upfront_invest_pv.value|intcomma}} {{results.upfront_invest_pv.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_battery.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_battery">{{results.upfront_invest_battery.value|intcomma}} {{results.upfront_invest_battery.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_inverter.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_inverter">{{results.upfront_invest_inverter.value|intcomma}} {{results.upfront_invest_inverter.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_diesel_genset.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_diesel_genset">{{results.upfront_invest_diesel_genset.value|intcomma}} {{results.upfront_invest_diesel_genset.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.upfront_invest_rectifier.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-upfront_invest_rectifier">{{results.upfront_invest_rectifier.value|intcomma}} {{results.upfront_invest_rectifier.unit}}</div>
+                </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.cost_fuel.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-cost_fuel">{{results.cost_fuel.value|intcomma}} {{results.cost_fuel.unit}}</div>
                 </div>
               </div>
-            </div>
-            <div class="row" id="capacityChart">
-              <div class="col col-md-6">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Optimal Capacity of Components' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="optimalSizes"></div>
-                  </div>
+              <div class="row">
+                <div class="item item--best">
+                  <div class="item__name">{{results.epc_total.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-epc_total">{{results.epc_total.value|intcomma}} {{results.epc_total.unit}}</div>
                 </div>
-              </div>
-              <div class="col col-md-6">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Breakdown of the LCOE' %}</span>
-                    </div>
-                    <div class="dropdown">
-                      <button class="btn dropdown-toggle btn--transparent"
-                              type="button"
-                              id="dropdownMenuButton4"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                        <span class="icon icon-more"></span>
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
-                        <li>
-                          <a class="dropdown-item" href="#">{% translate 'Export as .xls' %}</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" href="#">{% translate 'Export as PDF' %}</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="lcoeBreakdown"></div>
-                  </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.cost_grid.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-cost_grid">{{results.cost_grid.value|intcomma}} {{results.cost_grid.unit}}</div>
                 </div>
-              </div>
-            </div>
-            <div class="row" id="sankeyChart">
-              <div class="col">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Sankey Diagram Representing the Energy Flow in the System' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="sankeyDiagram"></div>
-                  </div>
-                  <p style="font-size: 12px">{% translate '*electricity surplus is not shown' %}</p>
+                <div class="item item--best">
+                  <div class="item__name">{{results.epc_pv.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-epc_pv">{{results.epc_pv.value|intcomma}} {{results.epc_pv.unit}}</div>
                 </div>
-              </div>
-            </div>
-            <div class="row" id="demandtsChart">
-              <div class="col">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Electricity Demand Profile Illustration: First Monday of Simulation Period' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="demandTs"></div>
-                  </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.epc_battery.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-epc_battery">{{results.epc_battery.value|intcomma}} {{results.epc_battery.unit}}</div>
                 </div>
-              </div>
-            </div>
-            <div class="row" id="demandcoverageChart">
-              <div class="col">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Demand Coverage by Renewable and Non-Renewable Resources' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="demandCoverage"></div>
-                  </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.epc_inverter.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-epc_inverter">{{results.epc_inverter.value|intcomma}} {{results.epc_inverter.unit}}</div>
                 </div>
-              </div>
-            </div>
-            <div class="row" id="energyflowsChart">
-              <div class="col">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Annual Energy Flows with 1-Hour Resolution' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="energyFlows"></div>
-                  </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.epc_diesel_genset.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-epc_diesel_genset">{{results.epc_diesel_genset.value|intcomma}} {{results.epc_diesel_genset.unit}}</div>
                 </div>
-              </div>
-            </div>
-            <div class="row" id="durationcurveChart">
-              <div class="col col-md-6">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Duration Curves for All Components' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="durationCurves"></div>
-                  </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.epc_rectifier.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-epc_rectifier">{{results.epc_rectifier.value|intcomma}} {{results.epc_rectifier.unit}}</div>
                 </div>
-              </div>
-              <div class="col col-md-6">
-                <div class="chart">
-                  <div class="chart__header">
-                    <div>
-                      <span class="title">{% translate 'Cumulative CO2 Emissions' %}</span>
-                    </div>
-                  </div>
-                  <div class="chart__plot">
-                    <div id="co2Emissions"></div>
-                  </div>
+                <div class="item item--best">
+                  <div class="item__name">{{results.lcoe.verbose}}</div>
+                  <div class="item__value" data-kpi="kpi-lcoe">{{results.lcoe.value}} {{results.lcoe.unit}}</div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </div>
+      <div class="row" id="capacityChart">
+        <div class="col col-md-6">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Optimal Capacity of Components' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="optimalSizes"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col col-md-6">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Breakdown of the LCOE' %}</span>
+              </div>
+              <div class="dropdown">
+                <button aria-expanded="false" class="btn dropdown-toggle btn--transparent" data-bs-toggle="dropdown" id="dropdownMenuButton4" type="button">
+                  <span class="icon icon-more"></span>
+                </button>
+                <ul aria-labelledby="dropdownMenuButton4" class="dropdown-menu">
+                  <li>
+                          <a class="dropdown-item" href="#">{% translate 'Export as .xls' %}</a>
+                  </li>
+                  <li>
+                          <a class="dropdown-item" href="#">{% translate 'Export as PDF' %}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="lcoeBreakdown"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="sankeyChart">
+        <div class="col">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Sankey Diagram Representing the Energy Flow in the System' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="sankeyDiagram"></div>
+            </div>
+                  <p style="font-size: 12px">{% translate '*electricity surplus is not shown' %}</p>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="demandtsChart">
+        <div class="col">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Electricity Demand Profile Illustration: First Monday of Simulation Period' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="demandTs"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="demandcoverageChart">
+        <div class="col">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Demand Coverage by Renewable and Non-Renewable Resources' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="demandCoverage"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="energyflowsChart">
+        <div class="col">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Annual Energy Flows with 1-Hour Resolution' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="energyFlows"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="durationcurveChart">
+        <div class="col col-md-6">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Duration Curves for All Components' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="durationCurves"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col col-md-6">
+          <div class="chart">
+            <div class="chart__header">
+              <div>
+                      <span class="title">{% translate 'Cumulative CO2 Emissions' %}</span>
+              </div>
+            </div>
+            <div class="chart__plot">
+              <div id="co2Emissions"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+        <div id="msgBox"
+           class="modal"
+           style="background-color: rgba(0,0,0,0.5);
+                  z-index: 999;
+                  text-align: left">
+        <form class="modal-content" style="max-width: 24rem">
+          <div class="container">
+            <h1>Warning</h1>
+            <p id="responseMsg"></p>
+            <button onclick="document.getElementById('msgBox').style.display='none'"
+                    type="button"
+                    class="deletebtn">OK</button>
+          </div>
+        </form>
+      </div>
         <div id="noResults" class="modal" style="padding: 20px;">
           <span class="close" title="{% translate 'Close Modal' %}">&times;</span>
           <form class="modal-content" action="/action_page.php">
-            <div class="container">
+      <div class="container">
               <h1>{% translate 'No results' %}</h1>
-              <p id="pendingTaskMSG"></p>
-              <div style="text-align: center;">
-                <!-- Added text-align here -->
+        <p id="pendingTaskMSG"></p>
+        <div style="text-align: center;">
+          <!-- Added text-align here -->
                 <a href="javascript:void(0);"
                    onclick="forward_if_no_task_is_pending({{ proj_id }});"
                    class="btn btn--long"
@@ -531,50 +549,57 @@
                    style="display: block;
                           margin: 10px auto;
                           max-width: 300px">{% translate 'Cancel' %}</a>
-              </div>
-            </div>
-          </form>
         </div>
+      </div>
+    </form>
+  </div>
         <div id=pendingTask class="modal">
           <span class="close" title="{% translate 'Close Modal' %}">&times;</span>
           <form class="modal-content" action="/action_page.php">
-            <div class="container">
+      <div class="container">
               <h1>{% translate 'Revoke pending calculation?' %}</h1>
-              <p>
+        <p>
                 {% blocktranslate trimmed %}
-                You have a calculation in progress that has not yet been completed. Therefore, you cannot start
-                another calculation. You can either revoke the pending calculation or wait for it to be finished
+          You have a calculation in progress that has not yet been completed. Therefore, you cannot start
+          another calculation. You can either revoke the pending calculation or wait for it to be finished
                 {% endblocktranslate %}
-              </p>
-              <div class="clearfix">
+        </p>
+        <div class="clearfix">
                 <button onclick="abort_calculation();" type="button" class="deletebtn">{% translate 'Revoke' %}</button>
                 <button onclick="document.getElementById('pendingTask').style.display='none';"
                         type="button"
                         class="cancelbtn">{% translate 'Wait' %}</button>
-              </div>
-            </div>
-          </form>
         </div>
-      </main>
+      </div>
+    </form>
+  </div>
+</main>
 {% endblock progression_content %}
 {% block end_body_scripts %}
     <script>
+      const csrfToken = '{{ csrf_token }}';
       const proj_id = '{{ proj_id }}';
       const boundsDict = {{ bounds_dict | safe }};
-      const csrfToken = '{{ csrf_token }}';
       const dbNodesToJsUrl = `{% url 'optimization:db_nodes_to_js' proj_id %}`;
       const dbLinksToJsUrl = `{% url 'optimization:db_links_to_js' proj_id %}`;
       const loadPlotDataUrl = `{% url 'optimization:load_plot_data' proj_id %}`;
       const loadDemandPlotUrl = `{% url 'optimization:load_demand_plot_data' proj_id %}`;
       const downloadPDFReportUrl = `{% url 'projects:download_pdf_report' proj_id %}`;
       const downloadExcelResultsUrl = `{% url 'projects:download_excel_results' proj_id %}`;
+      const downloadResultsUrl = `{% url 'projects:export_project_results' proj_id %}`;
+      const updatePolePositionsUrl = `{% url 'optimization:update_pole_positions' proj_id %}`;
     </script>
   <script src="{% static 'js/integrate_map.js' %}"></script>
+  <script src="{% static 'js/add_drawing_tools_to_map.js' %}"></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="{% static 'js/third_party/plotly.js' %}"></script>
   <script src="{% statici18n LANGUAGE_CODE %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
   <script src="{% static 'js/pages/simulation_results.js' %}"></script>
   <script src="{% static 'js/backend_communication.js' %}"></script>
+  <script>
+    // Add pole editing mode to map (defined in add_drawing_tools_to_map.js)
+    map.addControl(new PoleEditControl());
+  </script>
 {% endblock end_body_scripts %}
 </html>

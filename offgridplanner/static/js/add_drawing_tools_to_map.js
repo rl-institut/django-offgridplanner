@@ -181,7 +181,116 @@ const CustomMarkerControl = L.Control.extend({
     }
 });
 
+let isPoleEditMode = false;
+let hasUnsavedPoleMoves = false;
 
+let _poleUI = { btn: null, actions: null };
+let _poleTooltip = null;
+
+const PoleEditControl = L.Control.extend({
+  options: { position: 'topleft' },
+  onAdd: function () {
+    const container = L.DomUtil.create('div', 'leaflet-bar');
+    const btn = L.DomUtil.create('a', '', container);
+    btn.href = '#';
+    btn.title = 'Toggle Pole Edit Mode';
+    // add an image inside the btn
+    const image = L.DomUtil.create('img', 'my-pole-icon', btn);
+    image.src = '/static/icons/i_electric_pole_high.svg';
+    image.alt = 'Marker';
+    image.style.width = '23px';
+    image.style.height = '23px';
+
+    // add a "Finish" action (uses Leaflet.draw actions classes if present)
+    const actions = L.DomUtil.create('ul', 'leaflet-draw-actions leaflet-draw-actions-top', container);
+    const liFinish = L.DomUtil.create('li', '', actions);
+    const finishLink = L.DomUtil.create('a', 'leaflet-draw-actions-finish', liFinish);
+    finishLink.style.width = '55px';
+    finishLink.href = '#';
+    finishLink.textContent = 'Finish';
+    actions.style.display = 'none';
+
+    // Prevent map drag on clicks
+    _poleUI.btn = btn;
+    _poleUI.actions = actions;
+    L.DomEvent.disableClickPropagation(container);
+
+    L.DomEvent.on(btn, 'click', (e) => {
+      L.DomEvent.stop(e);
+      togglePoleEditMode();
+    });
+
+    // Finish exits
+    L.DomEvent.on(finishLink, 'click', (e) => {
+      L.DomEvent.stop(e);
+      if (isPoleEditMode) togglePoleEditMode(true);
+    });
+
+    return container;
+  }
+});
+
+function togglePoleEditMode(saveOnExit = true) {
+  isPoleEditMode = !isPoleEditMode;
+  if (isPoleEditMode) {
+    console.log("Entering pole editing mode")
+  } else {
+    console.log("Exiting pole editing mode");
+  }
+  // add/remove the dimming class on the map container
+  map.getContainer().classList.toggle('pole-editing', isPoleEditMode);
+
+  // Reflect UI state (add active look if Leaflet.draw CSS is present)
+  if (_poleUI.btn) {
+    const cls = 'leaflet-draw-toolbar-button-enabled';
+    isPoleEditMode ? L.DomUtil.addClass(_poleUI.btn, cls) : L.DomUtil.removeClass(_poleUI.btn, cls);
+  }
+  if (_poleUI.actions) {
+    _poleUI.actions.style.display = isPoleEditMode ? 'block' : 'none';
+  }
+  poleMarkersById.forEach((marker, id) => {
+    marker.dragging && marker.dragging.disable();
+    marker.off('dragstart');
+    marker.off('dragend');
+
+    if (isPoleEditMode) {
+      if (!marker.dragging) {
+        marker.dragging = new L.Handler.MarkerDrag(marker);
+      }
+      marker.dragging.enable();
+      marker.setOpacity(0.9);
+
+      marker.on('dragstart', () => {
+        marker._icon?.classList.add('pole-dragging');
+        marker._icon && (marker._icon.style.cursor = 'grabbing');
+      });
+
+      marker.on('dragend', () => {
+        hasUnsavedPoleMoves = true;
+        // stop the drag visual
+        marker._icon?.classList.remove('pole-dragging');
+        marker._icon && (marker._icon.style.cursor = 'grab');
+        // switch to the highlight icon
+        marker.setIcon(markerPoleHighlight);
+
+        if (marker._icon) {
+          marker._icon.classList.remove('pole-marker');
+          marker._icon.classList.add('pole-highlight');
+        }
+      });
+    } else {
+      // exit mode
+      marker.dragging && marker.dragging.disable();
+      marker.setOpacity(1);
+      marker._icon?.classList.remove('pole-dragging');
+      marker._icon && (marker._icon.style.cursor = '');
+    }
+  });
+
+  if (!isPoleEditMode && saveOnExit && hasUnsavedPoleMoves) {
+    saveMovedPoles();
+  }
+}
 
 function add_single_consumer_to_array(latitude, longitude, how_added, node_type) {
     let consumer_type = 'household';
@@ -274,10 +383,11 @@ const searchControl = new GeoSearch.GeoSearchControl({
 
 const searchInput = document.getElementById('search-input');
 
-searchInput.addEventListener('keypress', async (event) => {
-    if (event.key === 'Enter') {
-        let query = searchInput.value;
-        if (!query) return;
+if (searchInput) {
+    searchInput.addEventListener('keypress', async (event) => {
+        if (event.key === 'Enter') {
+            let query = searchInput.value;
+            if (!query) return;
 
         let results = await searchProvider.search({query});
         if (results && results.length > 0) {
@@ -293,7 +403,8 @@ searchInput.addEventListener('keypress', async (event) => {
             alert('No results found');
         }
     }
-});
+  });
+}
 
 function isLatLngInMapBounds(lat, lng) {
     const latLng = L.latLng(lat, lng);
@@ -333,7 +444,6 @@ var customControl = L.Control.extend({
         return container;
     }
 });
-
 
 
 function unique_map_elements() {
@@ -392,12 +502,3 @@ function count_consumers(first_update = true) {
         document.getElementById("n_public_services").innerText = num_public_services;
     }
 }
-
-function addDrawingToolsToMap() {
-    map.addControl(new CustomMarkerControl());
-    map.addControl(trashbinControl);
-    map.addControl(searchControl);
-    map.addControl(new customControl());
-    map.addControl(drawControl);
-}
-addDrawingToolsToMap();

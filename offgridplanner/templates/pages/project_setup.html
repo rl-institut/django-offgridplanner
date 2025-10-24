@@ -49,13 +49,14 @@
             </div>
             {% endif %}
             {% endfor %}
-            <label class="form-label">
-              {% translate "Planning Steps" %}
-              <span class="icon icon-question"
-                    data-bs-toggle="tooltip"
-                    title="{% translate 'Offgridplanner was developed to guide users through the entire planning process of an off-grid system, from demand estimation and spatial grid optimization to design optimization and unit commitment of energy converters. However, individual planning steps can be skipped if needed; simply deselect the relevant options accordingly.' %}"></span>
-            </label>
-            <div class="form-control" style="background-color: var(--bcc)">
+<!--            Hide steps options for now as the implementation is still buggy -> user should just go through the steps -->
+<!--            <label class="form-label">-->
+<!--              Planning Steps-->
+<!--              <span class="icon icon-question"-->
+<!--                    data-bs-toggle="tooltip"-->
+<!--                    title="Offgridplanner was developed to guide users through the entire planning process of an off-grid system, from demand estimation and spatial grid optimization to design optimization and unit commitment of energy converters. However, individual planning steps can be skipped if needed; simply deselect the relevant options accordingly."></span>-->
+<!--            </label>-->
+            <div class="form-control" style="background-color: var(--bcc);display:none">
               {% for field in opts_form %}
               <div class="toggle-container">
                 <span class="toggle-label">{{ field.label | safe }}</span>

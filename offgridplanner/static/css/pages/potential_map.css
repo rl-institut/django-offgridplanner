@@ -1,0 +1,149 @@
+.filter-control {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.info.legend {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  padding: 6px 8px;
+  font: 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color: #222;
+}
+
+.info.legend .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+.info.legend .legend-icon {
+  height: 14px;
+  width: auto;        /* preserve marker aspect ratio */
+  display: block;
+}
+
+.info.legend .legend-subtitle {
+  margin: 4px 0 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+}
+
+.info.legend .legend-line {
+  width: 18px;
+  height: 0;
+  border-top: 3px solid #888; /* real color set inline */
+  display: inline-block;
+}
+
+.table-container-scrollable {
+  max-height: 300px; /* limit height */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.minimal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+}
+
+.minimal-table th,
+.minimal-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.minimal-table th {
+  background-color: #f9f9f9;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.minimal-table tbody tr:hover {
+  background-color: #f0f8ff; /* light blue */
+}
+
+  .sort-arrow {
+    margin-left: 5px;
+    font-size: 0.8em;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  .asc .sort-arrow {
+    transform: rotate(180deg); /* Points up */
+  }
+
+  .desc .sort-arrow {
+    transform: rotate(0deg);   /* Points down */
+  }
+
+  th.asc, th.desc {
+    background-color: #f0f0f0;
+  }
+
+
+/* From Uiverse.io by barisdogansutcu */
+.spinner svg {
+  width: 2em;
+  transform-origin: center;
+  animation: rotate4 2s linear infinite; }
+
+.spinner circle {
+  fill: none;
+  stroke: #3189fc;
+  stroke-width: 2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 1.5s ease-in-out infinite; }
+
+@keyframes rotate4 {
+  100% {
+    transform: rotate(360deg); } }
+
+@keyframes dash4 {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0; }
+  50% {
+    stroke-dasharray: 90, 200;
+    stroke-dashoffset: -35px; }
+  100% {
+    stroke-dashoffset: -125px; } }
+
+
+/* Base wrapper (keeps Leaflet from adding default sprite styles) */
+.cluster-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.cluster {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  line-height: 40px;
+  text-align: center;
+  font: 600 13px/40px system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.35);
+  border: 2px solid rgba(255,255,255,.8);
+}
+
+.cluster-green  { background-color: #27ae60; !important} /* existing */
+.cluster-blue { background-color: #3498db; !important} /* potential */
+
+.cluster > span { display: inline-block; transform: translateY(-1px); }

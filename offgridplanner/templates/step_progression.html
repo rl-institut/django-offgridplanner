@@ -11,7 +11,15 @@
 <!-- WRITE HTML CODE WITHIN THESE block content TAGS -->
 {% block content %}
   <section class="wizard">
+
     <div>
+                <div class="wizard__back">
+        <div>
+            <a href="{% url 'projects:projects_list' %}">{% translate "< My projects" %}</a></br>
+            <a href="{% url 'projects:potential_map' %}">{% translate "< Map view" %}</a>
+        </div>
+      </div>
+
       <h1 class="wizard__name">
         <span class="project">{{ proj_name }}</span>
         <!--span class="scenario">{% translate "Scenario" %} {{ scenario.name }}</span -->
@@ -28,8 +36,13 @@
             </li>
           {% endfor %}
         </ul>
+
       </div>
     </div>
+    {% if project.status == "potential" %}
+          <p style="padding-top:1.5rem;padding-right:1.5rem"><button id="saveToProjectsBtn" class="btn btn--small" data-url="{% url 'projects:save_to_projects' proj_id %}">Save to projects</button></p>
+    {% endif %}
+
   </section>
   <div class="scenario-create__info-message">
     {% block step_explanation %}

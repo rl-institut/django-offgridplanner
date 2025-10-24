@@ -1,16 +1,51 @@
 import csv
 import io
+import math
 from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.forms import model_to_dict
+from django.template.loader import render_to_string
+from django.forms import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
+
+
+def format_exploration_sites_data(sites):
+    """
+    Takes the JSON from the site exploration API and fits the data into the corresponding geojson/table format to be
+    displayed on the exploration site.
+    Parameters:
+        sites: JSON data from fetch_exploration_progress["minigrids"]
+    Returns:
+        geojson_data: Data to construct the map markers
+        table_data: Data formatted into table_template.html
+    """
+    # generate geoJSON for map
+
+    features = [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": site["centroid"]["coordinates"],
+            },
+            "properties": {
+                "name": site["id"],
+            },
+        }
+        for site in sites
+    ]
+
+    # generate table HTML
+    context = {"sites": sites}
+    table = render_to_string("widgets/table_template.html", context)
+    return features, table
 
 
 def collect_project_dataframes(proj_id):
@@ -97,6 +132,45 @@ def format_column_names(df):
     df.columns = [str(col).replace("_", " ").capitalize() for col in df.columns]
     return df
 
+
+def from_nested_dict(model_cls, nested_data):
+    """
+    Convert a nested dict back to {field_name: value} for a Django model.
+    """
+
+    def flatten_dict(d, parent_key=""):
+        items = []
+        for k, v in d.items():
+            new_key = f"{parent_key}__{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.extend(flatten_dict(v, new_key))
+            else:
+                items.append((new_key, v))
+        return items
+
+    flat_items = flatten_dict(nested_data)
+
+    # Map db_column -> field_name
+    db_to_field = {
+        field.db_column: field.name
+        for field in model_cls._meta.fields  # noqa: SLF001
+        if field.db_column
+    }
+
+    params = {}
+    for db_column, value in flat_items:
+        field_name = db_to_field.get(db_column)
+        if not field_name:
+            continue
+
+        params[field_name] = value
+
+        # Reverse the efficiency scaling
+        if "efficiency" in db_column.split("__")[-1]:
+            percentage_value = value * 100
+            params[field_name] = percentage_value
+
+    return params
 
 def csv_to_dict(filepath, label_col="label"):
     """
@@ -193,6 +267,32 @@ def reorder_dict(d, old_index, new_index):
     item = items.pop(old_index)  # Remove the item at the old index
     items.insert(new_index, item)  # Insert it at the new index
     return dict(items)
+
+
+def format_results_into_kpi_dict(res):
+    df = pd.Series(model_to_dict(res))
+
+    df = df.astype(float)
+    output_kpis = OUTPUT_KPIS.copy()
+
+    for kpi in output_kpis:
+        output_kpis[kpi]["value"] = df[kpi].round(1)
+
+    return output_kpis
+
+
+def sanitize_output_kpis(output_kpis):
+    # Necessary for the case that they need to be returned as JSON (when the results page is updated via JS and not through the view context)
+    cleaned = {}
+    for key, meta in output_kpis.items():
+        cleaned[key] = {
+            "verbose": meta.get("verbose", ""),
+            "unit": meta.get("unit", ""),
+            "value": round(float(meta.get("value")), 2)
+            if not math.isnan(meta.get("value"))
+            else None,
+        }
+    return cleaned
 
 
 FORM_FIELD_METADATA = csv_to_dict("data/form_parameters.csv")

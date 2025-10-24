@@ -272,7 +272,7 @@ class PreProcessor(OptimizationDataHandler):
 class GridProcessor(OptimizationDataHandler):
     def __init__(self, results_json, proj_id):
         super().__init__(proj_id)
-        self.validate_json_with_server_schema(results_json, "grid", "output")
+        # self.validate_json_with_server_schema(results_json, "grid", "output")
         self.results_obj, _ = Results.objects.get_or_create(
             simulation=self.project.simulation
         )
@@ -358,7 +358,7 @@ class GridProcessor(OptimizationDataHandler):
 class SupplyProcessor(OptimizationDataHandler):
     def __init__(self, results_json, proj_id):
         super().__init__(proj_id)
-        self.validate_json_with_server_schema(results_json, "supply", "output")
+        # self.validate_json_with_server_schema(results_json, "supply", "output")
         self.results_obj, _ = Results.objects.get_or_create(
             simulation=self.project.simulation
         )
@@ -480,13 +480,17 @@ class SupplyProcessor(OptimizationDataHandler):
             comp = self.energy_system_dict[comp_name]
             if not comp["settings"]["is_selected"]:
                 return 0
-            return (
-                self.to_kwh(
-                    json.loads(self.supply_results[result_key]["scalars"])["invest"]
-                )
+            try:
+                res = json.loads(self.supply_results[result_key]["scalars"])["invest"]
+            except TypeError:
+                res = self.supply_results[result_key]["scalars"]["invest"]
+
+            invest = (
+                self.to_kwh(res)
                 if comp["settings"].get("design", False)
                 else comp["parameters"]["nominal_capacity"]
             )
+            return invest
 
         self.capacities = {
             "pv": get_capacity("pv", "pv__electricity_dc"),
@@ -600,22 +604,6 @@ class SupplyProcessor(OptimizationDataHandler):
     def supply_results_to_db(self):
         self._parsed_dataframes_to_db()
         self._scalar_results_to_db()
-        self._update_project_status_in_db()
-
-    def _update_project_status_in_db(self):
-        # TODO fixup later
-        project_setup = self.project
-        project_setup.status = "finished"
-        # if project_setup.email_notification is True:
-        #     user = sync_queries.get_user_by_id(self.user_id)
-        #     subject = "PeopleSun: Model Calculation finished"
-        #     msg = (
-        #         "The calculation of your optimization model is finished. You can view the results at: "
-        #         f"\n\n{config.DOMAIN}/simulation_results?project_id={self.project_id}\n"
-        #     )
-        #     send_mail(user.email, msg, subject=subject)
-        project_setup.email_notification = False
-        project_setup.save()
 
     def _scalar_results_to_db(self):
         # Annualized cost calculations

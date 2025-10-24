@@ -5,6 +5,7 @@ import httpx
 import pandas as pd
 import requests
 
+from config.settings.base import MG_EXPLORER_API_HOST
 from config.settings.base import RN_API_HOST
 from config.settings.base import RN_API_TOKEN
 from config.settings.base import SIM_GET_URL
@@ -122,3 +123,191 @@ def request_weather_data(latitude, longitude, *, timeinfo=False):
         return df
     else:
         return df, timeindex
+
+
+def start_site_exploration(filter_data):
+    """
+    Send a request to the potential minigrid explorer with the given criteria. The exploration results must then be
+    polled using the fetch_potential_sites function.
+    Returns:
+        exploration_id: ID to be used for results polling
+    """
+    request_url = MG_EXPLORER_API_HOST + "/explorations/"
+    args = filter_data
+
+    try:
+        response = httpx.post(request_url, data=args, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the site exploration request."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info(
+            "The exploration request was successfully sent to the potential minigrid explorer"
+        )
+        exploration_id = response.json()
+        return exploration_id
+
+
+def stop_site_exploration(exploration_id):
+    """
+    Send a request to the potential minigrid explorer to stop the exploration for the given id.
+    """
+    request_url = MG_EXPLORER_API_HOST + f"/explorations/{exploration_id}/stop"
+    args = {
+        "exploration_id": exploration_id,
+    }
+
+    try:
+        response = httpx.post(request_url, data=args, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the site exploration stop request."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info(
+            "The exploration stop request was successfully sent to the potential minigrid explorer"
+        )
+        return response.json()
+
+
+def fetch_exploration_progress(exploration_id):
+    """
+    Send a GET request to fetch the progress of the potential minigrid exploration. While "status" is "RUNNING", the
+    endpoint will keep returning more results as it is polled.
+    """
+    request_url = MG_EXPLORER_API_HOST + f"/explorations/{exploration_id}"
+
+    try:
+        response = httpx.get(request_url, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        # Retry exploration instead of raising an error
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the site exploration results fetching. Retrying in 10 seconds."
+        logger.info(msg)
+        return {"status": "RUNNING", "minigrids": []}
+    else:
+        logger.info(
+            "The exploration progress for ID %s was successfully fetched.",
+            exploration_id,
+        )
+        return response.json()
+
+
+def fetch_existing_minigrids():
+    """
+    Send a GET request to fetch the existing minigrids. When a new minigrid is planned, notify_existing_minigrids should
+    be called to include the new minigrid in the existing minigrid list.
+    """
+    request_url = MG_EXPLORER_API_HOST + "/features/minigrids"
+
+    try:
+        response = httpx.get(request_url, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred while fetching existing minigrids."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info("Successfully fetched existing minigrid information.")
+        return response.json()
+
+
+def notify_existing_minigrids(new_mg_data):
+    """
+    Send a POST request to add the new minigrid to the existing minigrids data.
+    """
+    request_url = MG_EXPLORER_API_HOST + "/features/minigrids"
+    args = new_mg_data
+
+    try:
+        response = httpx.post(request_url, data=args, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred while notifying the minigrid."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info("The project has been successfully notified.")
+        return response.json()
+
+
+def fetch_potential_minigrid_data(exploration_id, potential_minigrid_id):
+    """
+    Fetch the data for a potential minigrid site returned in the simulation. This information is then used to populate
+    the steps for the site analysis.
+    """
+    request_url = (
+        MG_EXPLORER_API_HOST
+        + f"/explorations/{exploration_id}/minigrids/{potential_minigrid_id}"
+    )
+
+    try:
+        response = httpx.get(request_url, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the minigrid data fetching."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info("Obtained data to populate project steps.")
+        return response.json()
+
+
+def fetch_buildings_data(bbox):
+    """
+    Fetch the building data for display on the map.
+    """
+    request_url = MG_EXPLORER_API_HOST + "/features/buildings"
+
+    try:
+        response = httpx.get(
+            request_url, params={"bbox": ",".join(map(str, bbox))}, timeout=5
+        )
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the building data fetching."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info("Obtained building data data.")
+        return response.json()
+
+
+def fetch_grid_network():
+    """
+    Fetch the grid network for display on the map.
+    """
+    request_url = MG_EXPLORER_API_HOST + "/features/grid"
+
+    try:
+        response = httpx.get(request_url, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the grid data fetching."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info("Obtained grid network data.")
+        return response.json()
+
+
+def fetch_road_network():
+    """
+    Fetch the road network for display on the map.
+    """
+    request_url = MG_EXPLORER_API_HOST + "/features/roads"
+
+    try:
+        response = httpx.get(request_url, timeout=5)
+        response.raise_for_status()
+    except httpx.HTTPError as e:
+        logger.exception("HTTP error occurred")
+        msg = "An error occurred during the road data fetching."
+        raise RuntimeError(msg) from e
+    else:
+        logger.info("Obtained road network data.")
+        return response.json()

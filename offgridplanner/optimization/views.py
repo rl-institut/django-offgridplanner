@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
-from django.http import HttpResponseBadRequest
 from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
@@ -349,24 +348,6 @@ def db_roads_to_js(request, proj_id=None):
         return JsonResponse({"road_elements": data})
     except Roads.DoesNotExist:
         return JsonResponse({"road_elements": []})
-
-
-# not currently used
-@require_http_methods(["GET"])
-def osm_roads(request):
-    bbox_str = request.GET.get("bbox")
-    if not bbox_str:
-        return HttpResponseBadRequest(
-            "Error: please enter bbox as south,west,north,east"
-        )
-
-    try:
-        south, west, north, east = [float(x) for x in bbox_str.split(",")]
-    except ValueError:
-        return HttpResponseBadRequest("Error: bbox has to contain four numbers")
-
-    geojson = osm_utils.fetch_roads_from_overpass((south, west, north, east))
-    return JsonResponse(geojson)
 
 
 @require_http_methods(["POST"])

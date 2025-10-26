@@ -170,70 +170,6 @@ def remove_buildings_inside_boundary(
         return JsonResponse({"map_elements": df.to_dict("records")})
 
 
-# TODO this seems like an old unused view
-@require_http_methods(["GET"])
-def db_links_to_js(request, proj_id):
-    if proj_id is not None:
-        project = get_object_or_404(Project, id=proj_id)
-        if project.user != request.user:
-            raise PermissionDenied
-        links_qs = Links.objects.filter(project=project)
-        links = links_qs.get() if links_qs.exists() else None
-        links_json = json.loads(links.data) if links is not None else json.loads("{}")
-        return JsonResponse(links_json, status=200)
-
-
-# @json_view
-@require_http_methods(["GET"])
-def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
-    if isinstance(markers_only, str):
-        markers_only = True if markers_only == "true" else False  # noqa:SIM210
-    if proj_id is not None:
-        project = get_object_or_404(Project, id=proj_id)
-        if project.user != request.user:
-            raise PermissionDenied
-        nodes_qs = Nodes.objects.filter(project=project)
-        df = nodes_qs.get().df if nodes_qs.exists() else pd.DataFrame()
-        is_load_center = True
-        if not df.empty:
-            df = df[
-                [
-                    "latitude",
-                    "longitude",
-                    "how_added",
-                    "node_type",
-                    "consumer_type",
-                    "consumer_detail",
-                    "custom_specification",
-                    "is_connected",
-                    "shs_options",
-                ]
-            ]
-            power_house = df[df["node_type"] == "power-house"]
-            if markers_only is True:
-                if (
-                    len(power_house) > 0
-                    and power_house["how_added"].iloc[0] == "manual"
-                ):
-                    df = df[df["node_type"].isin(["power-house", "consumer"])]
-                else:
-                    df = df[df["node_type"] == "consumer"]
-            df = df.fillna("null")
-            if (
-                len(power_house.index) > 0
-                and power_house["how_added"].iloc[0] == "manual"
-            ):
-                is_load_center = False
-
-        nodes_list = df.to_dict("records")
-        return JsonResponse(
-            {"is_load_center": is_load_center, "map_elements": nodes_list},
-            status=200,
-        )
-    return JsonResponse({"msg": "Missing project ID"}, status=400)
-
-
-# osm_roads
 @require_http_methods(["POST"])
 def add_roads_inside_boundary(request, proj_id):
     if proj_id is not None:
@@ -303,40 +239,67 @@ def remove_roads_inside_boundary(request, proj_id):
     return JsonResponse({"executed": True, "msg": "Roads removed"})
 
 
-@require_http_methods(["POST"])
-def roads_to_db(request, proj_id=None):
+# TODO this seems like an old unused view
+@require_http_methods(["GET"])
+def db_links_to_js(request, proj_id):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
         if project.user != request.user:
             raise PermissionDenied
+        links_qs = Links.objects.filter(project=project)
+        links = links_qs.get() if links_qs.exists() else None
+        links_json = json.loads(links.data) if links is not None else json.loads("{}")
+        return JsonResponse(links_json, status=200)
 
-        data = json.loads(request.body)
-        road_elements = data.get("road_elements", [])
-        file_type = data.get("file_type", "")
 
-        if not road_elements:
-            Roads.objects.filter(project=project).delete()
-            return JsonResponse({"message": "No data provided"}, status=200)
+# @json_view
+@require_http_methods(["GET"])
+def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
+    if isinstance(markers_only, str):
+        markers_only = True if markers_only == "true" else False  # noqa:SIM210
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+        nodes_qs = Nodes.objects.filter(project=project)
+        df = nodes_qs.get().df if nodes_qs.exists() else pd.DataFrame()
+        is_load_center = True
+        if not df.empty:
+            df = df[
+                [
+                    "latitude",
+                    "longitude",
+                    "how_added",
+                    "node_type",
+                    "consumer_type",
+                    "consumer_detail",
+                    "custom_specification",
+                    "is_connected",
+                    "shs_options",
+                ]
+            ]
+            power_house = df[df["node_type"] == "power-house"]
+            if markers_only is True:
+                if (
+                    len(power_house) > 0
+                    and power_house["how_added"].iloc[0] == "manual"
+                ):
+                    df = df[df["node_type"].isin(["power-house", "consumer"])]
+                else:
+                    df = df[df["node_type"] == "consumer"]
+            df = df.fillna("null")
+            if (
+                len(power_house.index) > 0
+                and power_house["how_added"].iloc[0] == "manual"
+            ):
+                is_load_center = False
 
-        df = pd.DataFrame.from_records(road_elements)
-        if df.empty:
-            Roads.objects.filter(project=project).delete()
-            return JsonResponse({"message": "No valid data"}, status=200)
-
-        df = df.drop_duplicates(subset=["road_id"], keep="first")
-        required_columns = ["road_id", "coordinates", "how_added", "road_type"]
-        df = df[required_columns]
-        df["how_added"] = df["how_added"].fillna("automatic")
-        df["road_type"] = df["road_type"].fillna("osm")
-
-        roads, _ = Roads.objects.get_or_create(project=project)
-
-        roads.data = df.to_json(orient="records")
-        roads.save()
-
-        return JsonResponse({"message": "Success"}, status=200)
-
-    return JsonResponse({"error": "Project ID missing"}, status=400)
+        nodes_list = df.to_dict("records")
+        return JsonResponse(
+            {"is_load_center": is_load_center, "map_elements": nodes_list},
+            status=200,
+        )
+    return JsonResponse({"msg": "Missing project ID"}, status=400)
 
 
 @require_http_methods(["GET"])
@@ -426,6 +389,41 @@ def consumer_to_db(request, proj_id=None):
             )
 
         return response
+
+
+@require_http_methods(["POST"])
+def roads_to_db(request, proj_id=None):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+        data = json.loads(request.body)
+        road_elements = data.get("road_elements", [])
+
+        if not road_elements:
+            Roads.objects.filter(project=project).delete()
+            return JsonResponse({"message": "No data provided"}, status=200)
+
+        df = pd.DataFrame.from_records(road_elements)
+        if df.empty:
+            Roads.objects.filter(project=project).delete()
+            return JsonResponse({"message": "No valid data"}, status=200)
+
+        df = df.drop_duplicates(subset=["road_id"], keep="first")
+        required_columns = ["road_id", "coordinates", "how_added", "road_type"]
+        df = df[required_columns]
+        df["how_added"] = df["how_added"].fillna("automatic")
+        df["road_type"] = df["road_type"].fillna("osm")
+
+        roads, _ = Roads.objects.get_or_create(project=project)
+
+        roads.data = df.to_json(orient="records")
+        roads.save()
+
+        return JsonResponse({"message": "Success"}, status=200)
+
+    return JsonResponse({"error": "Project ID missing"}, status=400)
 
 
 @require_http_methods(["POST"])

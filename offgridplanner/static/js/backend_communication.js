@@ -241,7 +241,6 @@ async function db_roads_to_js(proj_id) {
     }
 }
 
-
 async function file_demand_to_db(formData) {
     try {
         const response = await fetch(importDemandUrl, {
@@ -409,35 +408,6 @@ function put_roads_on_map(roads) {
     });
 }
 
-async function remove_roads_inside_boundary({boundariesCoordinates} = {}) {
-    $("*").css("cursor", "wait");
-
-    try {
-        const response = await fetch(removeRoadsUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify({ boundary_coordinates: boundariesCoordinates, road_elements }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const res = await response.json();
-
-        road_elements = res.road_elements;
-        drawnItems.clearLayers();
-        put_roads_on_map(road_elements);
-    } catch (error) {
-        console.error("Error removing roads:", error.message);
-    } finally {
-        $("*").css("cursor", "auto");
-    }
-}
-
 // TODO move this to map related js, customer_selection
 async function remove_buildings_inside_boundary({boundariesCoordinates} = {}) {
     $("*").css("cursor", "wait");
@@ -468,6 +438,35 @@ async function remove_buildings_inside_boundary({boundariesCoordinates} = {}) {
         console.error("There was a problem with the fetch operation:", error.message);
     } finally {
         $("*").css('cursor', 'auto');
+    }
+}
+
+async function remove_roads_inside_boundary({boundariesCoordinates} = {}) {
+    $("*").css("cursor", "wait");
+
+    try {
+        const response = await fetch(removeRoadsUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({ boundary_coordinates: boundariesCoordinates, road_elements }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const res = await response.json();
+
+        road_elements = res.road_elements;
+        drawnItems.clearLayers();
+        put_roads_on_map(road_elements);
+    } catch (error) {
+        console.error("Error removing roads:", error.message);
+    } finally {
+        $("*").css("cursor", "auto");
     }
 }
 

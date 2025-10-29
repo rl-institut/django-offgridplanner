@@ -63,7 +63,7 @@ pv_parameters_capex,CapEx,float,441,currency/kWp,EnergySystemDesign,Capital Expe
 pv_parameters_opex,OpEx,float,8.8,currency/kWp/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
 rectifier_settings_is_selected,Rectifier,bool,True,,EnergySystemDesign,
 rectifier_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
-rectifier_parameters_nominal_capacity,Capacity,float,5,kW,EnergySystemDesign,
+rectifier_parameters_nominal_capacity,Capacity,float,,kW,EnergySystemDesign,
 rectifier_parameters_lifetime,Lifetime,int,25,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
 rectifier_parameters_capex,CapEx,float,415,currency/kW,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
 rectifier_parameters_opex,OpEx,float,0,currency/kW/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component

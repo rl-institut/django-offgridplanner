@@ -32,17 +32,17 @@
         Offgridplanner
       {% endblock title %}
     </title>
-    {% block head_block %}
-    {% endblock head_block %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+          crossorigin="anonymous" />
     {% if DEBUG == True %}
       {#% include "scss.html" %#}
     {% else %}
       <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
     {% endif %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
-          crossorigin="anonymous" />
+    {% block head_block %}
+    {% endblock head_block %}
     <!--<meta http-equiv="X-UA-Compatible" content="IE=edge" />-->
   </head>
   <body>

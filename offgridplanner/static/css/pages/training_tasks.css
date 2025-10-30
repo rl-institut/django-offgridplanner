@@ -1,0 +1,79 @@
+/* Section: Dashboard */
+.dashboard {
+    min-height: auto;
+}
+.dashboard .container {
+    text-align: justify;
+}
+.dashboard .col-12 {
+    padding-inline: 6rem;
+}
+
+/* Section: Tasks */
+.training_dashboard {
+    display: none;
+    width: 100%; /* Adjust as needed */
+    padding: 20px 20px calc(20px + 4.5rem);
+    background-color: var(--bcc);
+}
+.training_dashboard.active {
+    display: block;
+}
+
+.accordion {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.accordion-item {
+    width: 100%;
+    padding: 10px;
+}
+.accordion-body img.img-fluid {
+    margin-block: 20px;
+}
+[id^="task"]:not(#task_dashboard) .accordion-body img.img-fluid.d-block.mx-auto {
+    max-width: 400px;
+    height: auto;
+}
+
+/* Section: Wizard */
+.training_wizard {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+/* Use data-step-number to display numbering */
+.training_wizard__steps li::before {
+    content: attr(data-step-number) ".";
+    margin-right: 5px;
+    font-weight: bold;
+    color: var(--bct);
+}
+
+/* Style for active step */
+.training_wizard__steps li.active::before {
+    color: var(--bct);
+}
+
+/* Ensure steps are displayed correctly */
+.training_wizard__steps li {
+    display: inline-block !important;
+}
+
+/* Optional: Adjust step text color */
+.training_wizard__steps li a {
+    color: inherit !important;
+    text-decoration: none;
+}
+
+/* Training Wizard */
+.training_wizard .accordion {
+    margin-top: 12px;
+}
+
+/* Footer Buttons */
+#nextButton {
+    color: #fff;
+}

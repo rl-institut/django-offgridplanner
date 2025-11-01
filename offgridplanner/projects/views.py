@@ -396,7 +396,7 @@ def populate_site_data(request):
         )
 
     return JsonResponse(
-        {"redirect_url": reverse("steps:project_setup", args=[proj.id])}
+        {"redirect_url": reverse("steps:simulation_results", args=[proj.id])}
     )
 
 

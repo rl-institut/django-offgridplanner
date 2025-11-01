@@ -280,6 +280,16 @@ class GridProcessor(OptimizationDataHandler):
         self.links_obj, _ = Links.objects.get_or_create(project=self.project)
         self.grid_results = results_json
         self.nodes_df = pd.DataFrame(self.grid_results["nodes"])
+        if "label" not in self.nodes_df:
+            self.nodes_df["label"] = ""
+            for ix, node in enumerate(
+                self.nodes_df[self.nodes_df["node_type"] == "consumer"].index
+            ):
+                self.nodes_df.loc[node, "label"] = str(ix)
+            for ix, node in enumerate(
+                self.nodes_df[self.nodes_df["node_type"] != "consumer"].index
+            ):
+                self.nodes_df.loc[node, "label"] = f"p-{ix}"
         self.links_df = pd.DataFrame(self.grid_results["links"])
 
     def grid_results_to_db(self):

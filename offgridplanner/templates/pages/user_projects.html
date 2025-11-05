@@ -3,6 +3,11 @@
 {% load static %}
 {% load i18n %}
 
+{% block head_block %}
+<link href="{% static 'css/main.css' %}" rel="stylesheet">
+<link href="{% static 'css/pages/user_projects.css' %}" rel="stylesheet">
+{% endblock head_block %}
+
 {% block content %}
   <body>
     <main>
@@ -19,18 +24,21 @@
                   </a></span>
                 </div>
                 <span class="title"></span>
-                <table id="projectTable">
+                <table id="projectTable" class="sortable">
+                  <thead>
                   <tr style="border-bottom:1px solid black">
-                    <th>{% translate "Project Name" %}</th>
-                    <th>{% translate "Creation Date" %}</th>
-                    <th>{% translate "Last Update" %}</th>
-                    <th>{% translate "Model Status" %}</th>
+                    <th><button class="btn btn--action">{% translate "Project Name" %}<span aria-hidden="true"></span></button></th>
+                    <th><button class="btn btn--action">{% translate "Creation Date" %}<span aria-hidden="true"></span></button></th>
+                    <th><button class="btn btn--action">{% translate "Last Update" %}<span aria-hidden="true"></span></button></th>
+                    <th><button class="btn btn--action">{% translate "Model Status" %}<span aria-hidden="true"></span></button></th>
                     <th></th>
                     <!-- Added an empty header for the new column -->
                     <th></th>
                     <th></th>
                     <th></th>
                   </tr>
+                  </thead>
+                  <tbody>
                   {% if projects|length > 0 %}
                     {% for project in projects %}
                       <tr>
@@ -88,6 +96,7 @@
                     <!-- Added an empty cell for the new column -->
                   </tr>
                 {% endif %}
+                </tbody>
               </table>
               <span class="subtitle"></span>
             </div>
@@ -139,6 +148,7 @@
 </body>
 {% endblock content %}
 {% block end_body_scripts %}
+  <script src="{% static 'js/third_party/sortable-table.js' %}"></script>
   <script src="{% static 'js/pages/user_projects.js' %}"></script>
   <script src="{% static 'js/backend_communication.js' %}"></script>
 {% endblock end_body_scripts %}

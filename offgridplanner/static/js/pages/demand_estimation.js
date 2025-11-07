@@ -532,3 +532,15 @@ async function export_demand(file_type) {
         console.error('Error details:', errorDetails);
     }
 }
+
+// update UI element to show users that they need to enter input of total 100%
+function updateDemandCheck() {
+    const inputs = document.querySelectorAll(".shares-container input[type='number']");
+    let sum = 0;
+    inputs.forEach(input => {
+        sum += parseFloat(input.value) || 0;
+    });
+    document.getElementById("demand-check").innerText = sum.toFixed(2) + "%";
+}
+document.addEventListener("DOMContentLoaded", updateDemandCheck);
+document.addEventListener("input", updateDemandCheck);

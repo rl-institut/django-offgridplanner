@@ -540,7 +540,21 @@ function updateDemandCheck() {
     inputs.forEach(input => {
         sum += parseFloat(input.value) || 0;
     });
-    document.getElementById("demand-check").innerText = sum.toFixed(2) + "%";
+    // fix floating point precision with 2 decimals precision
+    sum = Math.round(sum * 100) / 100;
+
+    const display = document.getElementById("demand-check");
+    display.innerText = sum.toFixed(2) + "%";
+
+    display.classList.remove("shares_correct", "shares_incorrect");
+    console.log(sum)
+
+    // Apply color
+    if (sum === 100) {
+        display.classList.add("shares_correct");
+    } else {
+        display.classList.add("shares_incorrect");
+    }
 }
 document.addEventListener("DOMContentLoaded", updateDemandCheck);
 document.addEventListener("input", updateDemandCheck);

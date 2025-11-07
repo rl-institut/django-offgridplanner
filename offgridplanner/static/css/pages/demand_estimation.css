@@ -34,3 +34,11 @@
     grid-row-gap: 10px;
     align-items: center;
 }
+
+.shares_correct {
+    color: #1F567D;
+}
+
+.shares_incorrect {
+    color: #9A031E;
+}

@@ -547,7 +547,6 @@ function updateDemandCheck() {
     display.innerText = sum.toFixed(2) + "%";
 
     display.classList.remove("shares_correct", "shares_incorrect");
-    console.log(sum)
 
     // Apply color
     if (sum === 100) {
@@ -556,6 +555,7 @@ function updateDemandCheck() {
         display.classList.add("shares_incorrect");
     }
 }
+// household demand shares should be checked on first load and every input change
 document.addEventListener("DOMContentLoaded", updateDemandCheck);
 document.addEventListener("input", updateDemandCheck);
 

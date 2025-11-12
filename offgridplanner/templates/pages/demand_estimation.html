@@ -80,6 +80,9 @@
                       <p>
                         <em>{% translate 'The default values correspond to the national average of rural areas' %}</em>
                       </p>
+                      <p>{% translate "You have entered" %}
+                        <strong id="demand-check">0%</strong>
+                      {% translate "out of 100%." %}</p>
                       <!-- Input Fields Container -->
                       <div class="shares-container">
                         {% for field in form %}
@@ -93,7 +96,7 @@
                         {% endfor %}
                       </div>
                       <!-- Reset Button -->
-                      <a id="resetDefault"
+                      <a id="resetShares"
                          class="btn btn--medium btn--hollow btn--previous"
                          style="margin-top: 15px;
                                 white-space: nowrap;

@@ -11,7 +11,13 @@ REDIS_URL=redis://redis:6379/0
 
 # Flower
 CELERY_FLOWER_USER=debug
-CELERY_FLOWER_PASSWORD=debug
+CELERY_FLOWER_PASSWORD=debugç
 
 # Email
 EMAIL_HOST=offgridplanner_local_mailpit
+
+DJANGO_DEBUG=True
+SIM_API_HOST=http://optimizer-offgridplanner-app.apps2.rl-institut.de
+WEATHER_DATA_API_HOST=https://weather-data-rli-db.apps2.rl-institut.de/data/
+RN_API_HOST=https://www.renewables.ninja/api/
+RN_API_TOKEN=437cef8310dc4fdd19db2cb207cd7ddabe82cfc4

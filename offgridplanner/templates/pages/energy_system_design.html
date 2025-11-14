@@ -12,46 +12,319 @@
 
 {% block progression_content %}
 <main>
-  <section class="dashboard">
+  <section class="esd">
     <div>
       <form method="post">
         {% csrf_token %}
       <div class="row">
         <div class="col-md-4">
-          <div class="box" id="selectDiesel_gensetBox">
-            {% for field_name, field in grouped_fields|getkey:"Diesel Genset" %}
-            {% if field_name == "diesel_genset_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectDiesel_genset">{{ field.label }}</span>
+          <section class="esd-sidebar">
+            <div class="esd-sidebar__header">
+              <h2>Components</h2>
+            </div>
+            <div class="esd-sidebar__content">
+              <div class="esd-sidebar__category">
+                <h3 class="esd-sidebar__category-title">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#F4F6F9"/><path d="M11.7442 17.0667H15.4667C15.5467 17.0667 15.623 17.103 15.6736 17.1655C15.7242 17.228 15.7442 17.3105 15.7274 17.3892L14.4399 23.3998C14.4361 23.4117 14.4367 23.4248 14.443 23.436C14.4486 23.4479 14.4586 23.456 14.4711 23.4598C14.4817 23.4667 14.4949 23.4685 14.5074 23.4654C14.5199 23.4623 14.5305 23.4542 14.5361 23.4429L20.478 15.3748C20.5405 15.2904 20.5499 15.1785 20.503 15.0854C20.4555 14.9916 20.3599 14.9329 20.2555 14.9329H16.533C16.4523 14.9329 16.3761 14.8966 16.3255 14.8341C16.2748 14.7716 16.2555 14.6891 16.2723 14.6104L17.5598 8.59983C17.5636 8.58796 17.563 8.57421 17.5567 8.56296C17.5511 8.55171 17.5411 8.54296 17.5286 8.53921C17.5205 8.53546 17.5111 8.53296 17.5017 8.53296C17.4861 8.53358 17.4711 8.54233 17.463 8.55608L11.5217 16.6255C11.4598 16.7093 11.4498 16.8212 11.4973 16.9143C11.5442 17.008 11.6398 17.0667 11.7442 17.0667Z" fill="#212529"/></svg>
+                  <span>Energy Supply</span>
+                </h3>
+                <div class="accordion" id="supplyComponentsAccordion">
+                  <!-- Diesel Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Diesel Genset" %}
+                    {% if field_name == "diesel_genset_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingDiesel">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiesel" aria-expanded="false" aria-controls="collapseDiesel">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectDiesel_genset">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseDiesel" class="accordion-collapse collapse" aria-labelledby="headingDiesel" data-bs-parent="#supplyComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "diesel_genset_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- PV Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Pv" %}
+                    {% if field_name == "pv_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingPv">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePv" aria-expanded="false" aria-controls="collapsePv">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectPv">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapsePv" class="accordion-collapse collapse" aria-labelledby="headingPv" data-bs-parent="#supplyComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "pv_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-            </div>
-            {% elif field_name == "diesel_genset_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+              </div>
+              <div class="esd-sidebar__category">
+                <h3 class="esd-sidebar__category-title">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#F4F6F9"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 19.9187V21C10.2499 21.1606 10.3381 21.3106 10.4831 21.455C10.6637 21.6362 10.9299 21.8025 11.2618 21.9531C12.3306 22.4387 14.0562 22.75 15.9999 22.75C17.9436 22.75 19.6693 22.4387 20.738 21.9531C21.0698 21.8025 21.3361 21.6362 21.5167 21.455C21.6617 21.3106 21.7498 21.1606 21.7498 21V19.9187C21.6655 19.9912 21.5705 20.0612 21.4649 20.1287C20.4399 20.7875 18.3773 21.25 15.9999 21.25C13.6225 21.25 11.5599 20.7875 10.5349 20.1287C10.4293 20.0612 10.3343 19.9912 10.2499 19.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 17.9187V18.9999C10.2499 19.1606 10.3381 19.3106 10.4831 19.455C10.6637 19.6362 10.9299 19.8025 11.2618 19.9531C12.3306 20.4387 14.0562 20.75 15.9999 20.75C17.9436 20.75 19.6693 20.4387 20.738 19.9531C21.0698 19.8025 21.3361 19.6362 21.5167 19.455C21.6617 19.3106 21.7498 19.1606 21.7498 18.9999V17.9187C21.6655 17.9912 21.5705 18.0612 21.4649 18.1287C20.4399 18.7875 18.3773 19.2499 15.9999 19.2499C13.6225 19.2499 11.5599 18.7875 10.5349 18.1287C10.4293 18.0612 10.3343 17.9912 10.2499 17.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21.7501 15.9187C21.6657 15.9912 21.5707 16.0612 21.4651 16.1287C20.4401 16.7875 18.3776 17.2499 16.0001 17.2499C13.6227 17.2499 11.5601 16.7875 10.5352 16.1287C10.4295 16.0612 10.3346 15.9912 10.2502 15.9187V16.9999C10.2502 17.1606 10.3383 17.3106 10.4833 17.455C10.6639 17.6362 10.9302 17.8025 11.2621 17.9531C12.3308 18.4387 14.0565 18.75 16.0001 18.75C17.9438 18.75 19.6696 18.4387 20.7382 17.9531C21.0701 17.8025 21.3363 17.6362 21.517 17.455C21.662 17.3106 21.7501 17.1606 21.7501 16.9999V15.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 13.9187V14.9999C10.2499 15.1606 10.3381 15.3106 10.4831 15.455C10.6637 15.6362 10.9299 15.8025 11.2618 15.9531C12.3306 16.4387 14.0562 16.75 15.9999 16.75C17.9436 16.75 19.6693 16.4387 20.738 15.9531C21.0698 15.8025 21.3361 15.6362 21.5167 15.455C21.6617 15.3106 21.7498 15.1606 21.7498 14.9999V13.9187C21.6655 13.9912 21.5705 14.0612 21.4649 14.1287C20.4399 14.7875 18.3773 15.2499 15.9999 15.2499C13.6225 15.2499 11.5599 14.7875 10.5349 14.1287C10.4293 14.0612 10.3343 13.9912 10.2499 13.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21.7501 11.9187C21.6657 11.9912 21.5707 12.0612 21.4651 12.1287C20.4401 12.7875 18.3776 13.2499 16.0001 13.2499C13.6227 13.2499 11.5601 12.7875 10.5352 12.1287C10.4295 12.0612 10.3346 11.9912 10.2502 11.9187V12.9999C10.2502 13.1606 10.3383 13.3106 10.4833 13.455C10.6639 13.6362 10.9302 13.8025 11.2621 13.9531C12.3308 14.4387 14.0565 14.75 16.0001 14.75C17.9438 14.75 19.6696 14.4387 20.7382 13.9531C21.0701 13.8025 21.3363 13.6362 21.517 13.455C21.662 13.3106 21.7501 13.1606 21.7501 12.9999V11.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M16 9.25C17.9437 9.25 19.6695 9.56125 20.7381 10.0469C21.07 10.1975 21.3362 10.3638 21.5168 10.545C21.6618 10.6894 21.75 10.8394 21.75 11C21.75 11.1607 21.6618 11.3106 21.5168 11.455C21.3362 11.6363 21.07 11.8025 20.7381 11.9532C19.6693 12.4388 17.9437 12.75 16 12.75C14.0563 12.75 12.3306 12.4388 11.2619 11.9532C10.9301 11.8025 10.6638 11.6363 10.4832 11.455C10.3382 11.3106 10.2501 11.1607 10.2501 11C10.2501 10.8394 10.3382 10.6894 10.4832 10.545C10.6638 10.3638 10.9301 10.1975 11.2619 10.0469C12.3307 9.56125 14.0563 9.25 16 9.25Z" fill="#212529"/></svg>
+                  <span>Energy Backup</span>
+                </h3>
+                <div class="accordion" id="storageComponentsAccordion">
+                  <!-- Battery Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Battery" %}
+                    {% if field_name == "battery_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingBattery">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBattery" aria-expanded="false" aria-controls="collapseBattery">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectBattery">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseBattery" class="accordion-collapse collapse" aria-labelledby="headingBattery" data-bs-parent="#storageComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "battery_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <!-- H2 Storage Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"H2 Storage" %}
+                    {% if field_name == "h2_storage_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingH2Storage">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseH2Storage" aria-expanded="false" aria-controls="collapseH2Storage">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectH2Storage">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseH2Storage" class="accordion-collapse collapse" aria-labelledby="headingH2Storage" data-bs-parent="#storageComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "h2_storage_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <!-- Nested Accordion for Electrolyzer and Fuel Cell -->
+                        <div class="accordion accordion-flush mt-3" id="h2SubComponentsAccordion">
+                          <!-- Electrolyzer Component -->
+                          <div class="accordion-item">
+                            {% for field_name, field in grouped_fields|getkey:"Electrolyzer" %}
+                            {% if field_name == "electrolyzer_settings_is_selected" %}
+                            <h2 class="accordion-header" id="headingElectrolyzer">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseElectrolyzer" aria-expanded="false" aria-controls="collapseElectrolyzer">
+                                {{ field|add_class:"form-check-input me-2" }}
+                                <span class="grid-title" id="selectElectrolyzer">{{ field.label }}</span>
+                              </button>
+                            </h2>
+                            <div id="collapseElectrolyzer" class="accordion-collapse collapse" aria-labelledby="headingElectrolyzer" data-bs-parent="#h2SubComponentsAccordion">
+                              <div class="accordion-body">
+                              {% elif field_name == "electrolyzer_settings_design" %}
+                                <div class="row">
+                                  {{ field }}
+                                </div>
+                                {% else %}
+                                <div class="esd-component__input-row mb-3">
+                                  <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                                  <div class="input-group">
+                                    {{ field|add_class:"form-control" }}
+                                    <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                                  </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Fuel Cell Component -->
+                          <div class="accordion-item">
+                            {% for field_name, field in grouped_fields|getkey:"Fuel Cell" %}
+                            {% if field_name == "fuel_cell_settings_is_selected" %}
+                            <h2 class="accordion-header" id="headingFuelCell">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFuelCell" aria-expanded="false" aria-controls="collapseFuelCell">
+                                {{ field|add_class:"form-check-input me-2" }}
+                                <span class="grid-title" id="selectFuelCell">{{ field.label }}</span>
+                              </button>
+                            </h2>
+                            <div id="collapseFuelCell" class="accordion-collapse collapse" aria-labelledby="headingFuelCell" data-bs-parent="#h2SubComponentsAccordion">
+                              <div class="accordion-body">
+                              {% elif field_name == "fuel_cell_settings_design" %}
+                                <div class="row">
+                                  {{ field }}
+                                </div>
+                                {% else %}
+                                <div class="esd-component__input-row mb-3">
+                                  <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                                  <div class="input-group">
+                                    {{ field|add_class:"form-control" }}
+                                    <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                                  </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="esd-sidebar__category">
+                <h3 class="esd-sidebar__category-title">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#F4F6F9"/><path d="M14.7531 17.6406C14.6688 17.5 14.5094 17.4062 14.3406 17.4062H11.0969C10.9282 17.4062 10.7688 17.5 10.6844 17.6406L9.06253 20.4531C8.97818 20.5937 8.97818 20.7812 9.06253 20.9219L10.6844 23.7656C10.7688 23.9062 10.9282 24 11.0969 24H14.3407C14.5094 24 14.6688 23.9062 14.7532 23.7656L16.3751 20.9219C16.4594 20.7812 16.4594 20.5937 16.3751 20.4531L14.7531 17.6406ZM12.7188 22.125C11.9406 22.125 11.3125 21.4656 11.3125 20.6875C11.3125 19.9093 11.9406 19.2812 12.7188 19.2812C13.4969 19.2812 14.125 19.9093 14.125 20.6875C14.125 21.4656 13.4969 22.125 12.7188 22.125Z" fill="#212529"/><path d="M12.7188 21.1562C12.9776 21.1562 13.1875 20.9464 13.1875 20.6875C13.1875 20.4286 12.9776 20.2188 12.7188 20.2188C12.4599 20.2188 12.25 20.4286 12.25 20.6875C12.25 20.9464 12.4599 21.1562 12.7188 21.1562Z" fill="#212529"/><path d="M21.3156 12.9531C21.2313 12.8125 21.0719 12.7188 20.9031 12.7188H17.6594C17.4907 12.7188 17.3313 12.8125 17.2469 12.9531L15.625 15.7656C15.5407 15.9062 15.5407 16.0937 15.625 16.2344L17.2469 19.0469C17.3313 19.1875 17.4907 19.2812 17.6594 19.2812H20.9032C21.0719 19.2812 21.2313 19.1875 21.3157 19.0469L22.9376 16.2344C23.0219 16.0937 23.0219 15.9062 22.9376 15.7656L21.3156 12.9531ZM19.2813 17.4062C18.5031 17.4062 17.875 16.7781 17.875 16C17.875 15.2218 18.5031 14.5938 19.2813 14.5938C20.0594 14.5938 20.6875 15.2218 20.6875 16C20.6875 16.7781 20.0594 17.4062 19.2813 17.4062Z" fill="#212529"/><path d="M19.2812 16.4688C19.5401 16.4688 19.75 16.2589 19.75 16C19.75 15.7411 19.5401 15.5312 19.2812 15.5312C19.0224 15.5312 18.8125 15.7411 18.8125 16C18.8125 16.2589 19.0224 16.4688 19.2812 16.4688Z" fill="#212529"/><path d="M12.7188 11.7812C12.9776 11.7812 13.1875 11.5714 13.1875 11.3125C13.1875 11.0536 12.9776 10.8438 12.7188 10.8438C12.4599 10.8438 12.25 11.0536 12.25 11.3125C12.25 11.5714 12.4599 11.7812 12.7188 11.7812Z" fill="#212529"/><path d="M14.3406 8H11.0969C10.9282 8 10.7688 8.09372 10.6844 8.23438L9.06253 11.0781C8.97818 11.2187 8.97818 11.4062 9.06253 11.5469L10.6844 14.3594C10.7688 14.5 10.9282 14.5938 11.0969 14.5938H14.3407C14.5094 14.5938 14.6688 14.5 14.7532 14.3594L16.3751 11.5469C16.4594 11.4062 16.4594 11.2187 16.3751 11.0781L14.7532 8.23438C14.6688 8.09372 14.5094 8 14.3406 8ZM12.7188 12.7188C11.9406 12.7188 11.3125 12.0906 11.3125 11.3125C11.3125 10.5343 11.9406 9.90625 12.7188 9.90625C13.4969 9.90625 14.125 10.5343 14.125 11.3125C14.125 12.0906 13.4969 12.7188 12.7188 12.7188Z" fill="#212529"/></svg>
+                  <span>Other Equipment</span>
+                </h3>
+                <div class="accordion" id="otherComponentsAccordion">
+                  <!-- Inverter Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Inverter" %}
+                    {% if field_name == "inverter_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingInverter">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInverter" aria-expanded="false" aria-controls="collapseInverter">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectInverter">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseInverter" class="accordion-collapse collapse" aria-labelledby="headingInverter" data-bs-parent="#otherComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "inverter_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Rectifier Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Rectifier" %}
+                    {% if field_name == "rectifier_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingRectifier">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRectifier" aria-expanded="false" aria-controls="collapseRectifier">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectRectifier">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseRectifier" class="accordion-collapse collapse" aria-labelledby="headingRectifier" data-bs-parent="#otherComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "rectifier_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Shortage Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Shortage" %}
+                    {% if field_name == "shortage_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingShortage">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShortage" aria-expanded="false" aria-controls="collapseShortage">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectShortage">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseShortage" class="accordion-collapse collapse" aria-labelledby="headingShortage" data-bs-parent="#otherComponentsAccordion">
+                      <div class="accordion-body">
+                      {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            {% endif %}
-            {% endfor %}
-            </div>
+          </section>
         </div>
         <div class="col-md-8">
-          <div class="chart">
-            <div class="chart__header">
-              <div>
-                <span class="title">Schematic of the Selected Off-Grid System</span>
-              </div>
+          <div class="esd-diagram">
+            <div class="esd-diagram__header">
+              <h2>Schematic of the Selected Off-Grid System</h2>
             </div>
-            <svg id="blockDiagram" width="850" height="450">
-              <!-- DEMAND -->
+            
+            <div id="diagram">
+              <div id="loading">Loading D3.js...</div>
+            </div>
+
+            <!-- Other diagram version -->
+            <!-- <svg id="blockDiagram" width="850" height="450">
               <g id="groupDemand" visibility="hidden">
                 <g>
                   <line id="lineDemand"></line>
@@ -66,7 +339,6 @@
                   100% covered
                 </text>
               </g>
-              <!-- SHORTAGE -->
               <g id="groupShortage" visibility="hidden">
                 <g>
                   <line id="lineShortage"></line>
@@ -80,7 +352,6 @@
                 <text id="informationShortage" dominant-baseline="bottom"></text>
                 <text id="informationShortageSecondLine" dominant-baseline="bottom"></text>
               </g>
-              <!-- SURPLUS -->
               <g id="groupSurplus" visibility="hidden">
                 <g>
                   <line id="lineSurplus"></line>
@@ -93,7 +364,6 @@
                 </text>
                 <text id="informationSurplus" dominant-baseline="bottom"></text>
               </g>
-              <!-- PV -->
               <g id="groupPv" visibility="hidden">
                 <g>
                   <line id="linePv"></line>
@@ -108,7 +378,6 @@
                   design
                 </text>
               </g>
-              <!-- BATTERY -->
               <g id="groupBattery" visibility="hidden">
                 <g>
                   <line id="lineBattery"></line>
@@ -123,7 +392,6 @@
                   design
                 </text>
               </g>
-              <!-- DIESEL GENSET -->
               <g id="groupDiesel_genset" visibility="hidden">
                 <g>
                   <line id="lineDiesel_genset"></line>
@@ -138,7 +406,6 @@
                   design
                 </text>
               </g>
-              <!-- INVERTER -->
               <g id="groupInverter" visibility="hidden">
                 <g>
                   <line id="lineInverter"></line>
@@ -156,7 +423,6 @@
                   design
                 </text>
               </g>
-              <!-- RECTIFIER -->
               <g id="groupRectifier" visibility="hidden">
                 <g>
                   <line id="lineRectifier"></line>
@@ -174,146 +440,19 @@
                   design
                 </text>
               </g>
-              <!-- AC BUS -->
               <g id="groupAcBus" visibility="hidden">
                 <rect id="blockAcBus" />
                 <text id="textAcBus" class="components-text--design" dominant-baseline="middle" text-anchor="middle">
                   AC Bus
                 </text>
               </g>
-              <!-- DC BUS -->
               <g id="groupDcBus" visibility="hidden">
                 <rect id="blockDcBus" />
                 <text id="textDcBus" class="components-text--design" dominant-baseline="middle" text-anchor="middle">
                   DC Bus
                 </text>
               </g>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="box" id="selectBatteryBox">
-            {% for field_name, field in grouped_fields|getkey:"Battery" %}
-            {% if field_name == "battery_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-              <div class="form-check">
-                <span class="grid-title" id="selectBattery">{{ field.label }}</span>
-              </div>
-            </div>
-            {% elif field_name == "battery_settings_design" %}
-            <div class="row">
-              {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box box--small" id="selectPvBox">
-            {% for field_name, field in grouped_fields|getkey:"Pv" %}
-            {% if field_name == "pv_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectPv">{{ field.label }}</span>
-                </div>
-            </div>
-            {% elif field_name == "pv_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-          </div>
-          <div class="box box--medium" id="selectInverterBox">
-            {% for field_name, field in grouped_fields|getkey:"Inverter" %}
-            {% if field_name == "inverter_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectInverter">{{ field.label }}</span>
-                </div>
-            </div>
-            {% elif field_name == "inverter_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box box--small" id="selectShortageBox">
-            {% for field_name, field in grouped_fields|getkey:"Shortage" %}
-            {% if field_name == "shortage_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectShortage">{{ field.label }}</span>
-                </div>
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-          </div>
-          <div class="box box--medium" id="selectRectifierBox">
-            {% for field_name, field in grouped_fields|getkey:"Rectifier" %}
-            {% if field_name == "rectifier_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectRectifier">{{ field.label }}</span>
-                </div>
-            </div>
-            {% elif field_name == "rectifier_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
+            </svg> -->
 
           </div>
         </div>
@@ -387,5 +526,258 @@
 </script>
 <script src="{% static 'js/pages/energy-system-design.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>
-<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+<script>
+  // Icons
+  const iconSVG = {
+    solar: 
+      `<path d="M36.4595 10.5002L36.6016 10.5109C36.93 10.563 37.2086 10.7928 37.3189 11.1146L43.3185 28.6625C43.4135 28.9402 43.3685 29.2477 43.1978 29.4864C43.0272 29.7246 42.7522 29.8662 42.4592 29.8664H6.90875C6.61532 29.8664 6.33901 29.7251 6.16833 29.4864C5.99767 29.2477 5.95443 28.9402 6.04937 28.6625L12.049 11.1146L12.1058 10.9832C12.2615 10.6896 12.5684 10.5004 12.9084 10.5002H36.4595ZM8.18005 28.0482H41.1879L35.8079 12.3184H13.56L8.18005 28.0482Z" fill="#90A4B1"/>
+<path d="M38.3074 16.5002L38.4903 16.518C38.905 16.6024 39.2165 16.9697 39.2165 17.4093C39.2165 17.849 38.905 18.2163 38.4903 18.3007L38.3074 18.3184H11.0595C10.5575 18.3184 10.1505 17.9114 10.1505 17.4093C10.1505 16.9073 10.5575 16.5002 11.0595 16.5002H38.3074Z" fill="#90A4B1"/>
+<path d="M40.5998 22.5026C41.1019 22.5026 41.5089 22.9096 41.5089 23.4117C41.5089 23.9137 41.1019 24.3207 40.5998 24.3207H8.76743C8.26535 24.3207 7.85834 23.9137 7.85834 23.4117C7.85834 22.9096 8.26535 22.5026 8.76743 22.5026H40.5998Z" fill="#90A4B1"/>
+<path d="M31.6583 28.0477C32.1603 28.0477 32.5674 28.4547 32.5674 28.9568V33.4561C32.5674 33.9582 32.1603 34.3652 31.6583 34.3652H18.7588C18.2567 34.3652 17.8497 33.9582 17.8497 33.4561V28.9568C17.8497 28.4547 18.2567 28.0477 18.7588 28.0477H31.6583ZM19.6679 32.547H30.7492V29.8659H19.6679V32.547Z" fill="#90A4B1"/>
+<path d="M33.5724 32.55L33.7553 32.5678C34.1694 32.6527 34.4815 33.0199 34.4815 33.4591V36.7599C34.4811 37.2614 34.0739 37.6686 33.5724 37.669H16.8466C16.3448 37.669 15.9379 37.2616 15.9375 36.7599V33.4591C15.9375 32.9571 16.3445 32.55 16.8466 32.55H33.5724ZM17.7557 35.8508H32.6634V34.3682H17.7557V35.8508Z" fill="#90A4B1"/>
+<path d="M19.2202 10.5144C19.7137 10.6034 20.0417 11.0755 19.9535 11.5691L16.8037 29.1171C16.715 29.6109 16.2428 29.9403 15.749 29.8521C15.2548 29.7634 14.9252 29.2899 15.0139 28.7957L18.1637 11.2495C18.2524 10.7553 18.726 10.4257 19.2202 10.5144Z" fill="#90A4B1"/>
+<path d="M30.8611 10.5143C31.3549 10.4261 31.8271 10.7555 31.9158 11.2494L35.0656 28.7955C35.1543 29.2895 34.8261 29.763 34.3323 29.852C33.8381 29.9407 33.3645 29.6111 33.2758 29.1169L30.126 11.569C30.0378 11.0751 30.3672 10.6029 30.8611 10.5143Z" fill="#90A4B1"/>
+<path d="M23.7746 28.9573V11.4093C23.7746 10.9073 24.1816 10.5002 24.6837 10.5002C25.1858 10.5002 25.5928 10.9073 25.5928 11.4093V28.9573C25.5926 29.4592 25.1857 29.8664 24.6837 29.8664C24.1817 29.8664 23.7748 29.4592 23.7746 28.9573Z" fill="#90A4B1"/>`,
+    generator: 
+      `<path d="M45.36 11.552C45.36 11.1547 45.6826 10.832 46.08 10.832C46.4773 10.832 46.8 11.1547 46.8 11.552V33.0284C46.8 35.1476 45.932 37.0756 44.5362 38.4716C43.2244 39.7835 41.4414 40.6288 39.4718 40.7257C39.5631 41.0199 39.6118 41.3329 39.6118 41.6566C39.6118 42.5263 39.2587 43.3155 38.6889 43.8852C38.119 44.4551 37.3304 44.8082 36.4608 44.8082C35.5911 44.8082 34.8018 44.4551 34.2322 43.8852C33.6623 43.3154 33.3092 42.5268 33.3092 41.6566C33.3092 41.3363 33.3573 41.0268 33.4464 40.7354H14.5528C14.6418 41.0268 14.69 41.3363 14.69 41.6566C14.69 42.5269 14.3368 43.3155 13.767 43.8852C13.1972 44.4551 12.4081 44.8082 11.5384 44.8082C10.6687 44.8082 9.88013 44.4551 9.31029 43.8852C8.74045 43.3154 8.38733 42.5263 8.38733 41.6566C8.38733 41.3329 8.43608 41.0199 8.52733 40.7257C6.55781 40.6288 4.77529 39.7835 3.46333 38.4716C2.06753 37.0758 1.19957 35.1482 1.19957 33.0284V11.552C1.19957 11.1547 1.52223 10.832 1.91957 10.832C2.31691 10.832 2.63957 11.1547 2.63957 11.552V33.0284C2.63957 34.7508 3.34597 36.3178 4.48161 37.4532C5.61725 38.5889 7.18473 39.2953 8.90641 39.2953H9.45125C10.0069 38.8037 10.7381 38.5049 11.5381 38.5049C12.3381 38.5049 13.0694 38.8037 13.625 39.2953H34.3734C34.929 38.8037 35.6603 38.5049 36.4603 38.5049C37.2603 38.5049 37.9915 38.8037 38.5472 39.2953H39.0925C40.8142 39.2953 42.3818 38.5889 43.5173 37.4532C44.6529 36.3176 45.3593 34.7501 45.3593 33.0284V11.552H45.36ZM32.8572 25.4096C33.0045 25.0417 33.423 24.8626 33.791 25.0099C34.1589 25.1573 34.338 25.5757 34.1906 25.9437L32.7914 29.4111L34.8806 29.105C35.2735 29.0478 35.6392 29.3193 35.6964 29.7122C35.7174 29.8545 35.6947 29.9939 35.6386 30.1158L33.9905 34.3774C33.8482 34.7471 33.4321 34.9306 33.0624 34.7884C32.6927 34.6461 32.5091 34.23 32.6513 33.8603L33.8713 30.7064L31.7607 31.0153C31.6394 31.0323 31.5113 31.0192 31.3893 30.9705C31.0213 30.8231 30.8422 30.4047 30.9896 30.0367L32.8571 25.4095L32.8572 25.4096ZM9.82679 9.58602V7.71682H6.81179C6.53679 7.71682 6.29819 7.5626 6.17679 7.33636L4.32975 4.2834C4.12507 3.94386 4.23444 3.50104 4.57413 3.29636C4.69038 3.22604 4.81851 3.19323 4.94554 3.19323L10.9075 3.19214C11.8782 3.19214 12.7603 3.58839 13.398 4.22622C14.0358 4.86402 14.4321 5.74622 14.4321 6.7173V9.58606H39.0933C40.3178 9.58606 41.4353 10.0878 42.2444 10.8969C43.05 11.7025 43.5528 12.817 43.5528 14.0462V15.5833C43.5528 15.6201 43.5494 15.6558 43.5444 15.6909L43.6663 15.8065C44.248 16.3883 44.6097 17.1922 44.6097 18.0765V20.6397C44.6097 21.524 44.2486 22.3279 43.6669 22.9097L43.545 23.0253C43.5502 23.0604 43.553 23.0962 43.553 23.1329V33.0293C43.553 34.2567 43.0513 35.3725 42.2439 36.1798C41.4365 36.9872 40.3209 37.4889 39.0934 37.4889H8.90703C7.68187 37.4889 6.56735 36.9872 5.75939 36.1798C4.94923 35.369 4.44751 34.2545 4.44751 33.0293V23.1329C4.44751 23.0961 4.45032 23.0604 4.45548 23.0253L4.3336 22.9097C3.75188 22.3279 3.3908 21.524 3.3908 20.6397V18.0765C3.3908 17.1922 3.75252 16.3883 4.33424 15.8065L4.45612 15.6909C4.45096 15.6558 4.44768 15.62 4.44768 15.5833V14.0462C4.44768 12.8211 4.9494 11.7059 5.75676 10.8981C6.56412 10.0879 7.67972 9.58622 8.90724 9.58622H9.8274L9.82679 9.58602ZM12.992 9.58602V6.71726C12.992 6.1435 12.7573 5.62194 12.3796 5.2443C12.0021 4.8668 11.4804 4.63194 10.9072 4.63194H6.22163L7.21663 6.27662H10.5468C10.9441 6.27662 11.2668 6.59928 11.2668 6.99662V9.58583H12.992V9.58602ZM31.0864 8.93398C30.689 8.93398 30.3664 8.61133 30.3664 8.21398C30.3664 7.81664 30.689 7.49398 31.0864 7.49398H37.012C37.4093 7.49398 37.732 7.81664 37.732 8.21398C37.732 8.61133 37.4093 8.93398 37.012 8.93398H31.0864ZM8.65915 34.3576C8.26181 34.3576 7.93915 34.0349 7.93915 33.6376C7.93915 33.2402 8.26181 32.9176 8.65915 32.9176H22.4596C22.8569 32.9176 23.1796 33.2402 23.1796 33.6376C23.1796 34.0349 22.8569 34.3576 22.4596 34.3576H8.65915ZM8.65915 29.3708C8.26181 29.3708 7.93915 29.0481 7.93915 28.6508C7.93915 28.2534 8.26181 27.9308 8.65915 27.9308H22.4596C22.8569 27.9308 23.1796 28.2534 23.1796 28.6508C23.1796 29.0481 22.8569 29.3708 22.4596 29.3708H8.65915ZM8.65915 26.8773C8.26181 26.8773 7.93915 26.5547 7.93915 26.1573C7.93915 25.76 8.26181 25.4373 8.65915 25.4373H22.4596C22.8569 25.4373 23.1796 25.76 23.1796 26.1573C23.1796 26.5547 22.8569 26.8773 22.4596 26.8773H8.65915ZM8.65915 31.8641C8.26181 31.8641 7.93915 31.5415 7.93915 31.1441C7.93915 30.7468 8.26181 30.4241 8.65915 30.4241H22.4596C22.8569 30.4241 23.1796 30.7468 23.1796 31.1441C23.1796 31.5415 22.8569 31.8641 22.4596 31.8641H8.65915ZM6.60399 14.8629H41.396C41.6421 14.8629 41.8819 14.8908 42.1126 14.944V14.0461C42.1126 13.2154 41.7718 12.4609 41.2258 11.915C40.6771 11.3662 39.9202 11.0261 39.093 11.0261H8.90663C8.07663 11.0261 7.32147 11.3662 6.77443 11.9133C6.22679 12.4592 5.88723 13.2155 5.88723 14.0461V14.944C6.11801 14.8908 6.35787 14.8629 6.60379 14.8629H6.60399ZM42.1128 23.7717C41.882 23.825 41.6422 23.8528 41.3962 23.8528H6.60423C6.35814 23.8528 6.11831 23.825 5.88767 23.7717V33.0293C5.88767 33.86 6.22721 34.6156 6.77375 35.1628C7.32079 35.7093 8.07655 36.0489 8.90719 36.0489H39.0936C39.9236 36.0489 40.6788 35.7087 41.2258 35.1617C41.7728 34.6146 42.113 33.8595 42.113 33.0295L42.1128 23.7717ZM41.3962 16.3029H6.60423C6.11719 16.3029 5.67391 16.5031 5.35251 16.8245C5.03111 17.1459 4.83095 17.5893 4.83095 18.0762V20.6393C4.83095 21.1264 5.03049 21.5697 5.35187 21.8911C5.67328 22.2125 6.11719 22.4126 6.60423 22.4126H41.3962C41.8833 22.4126 42.3272 22.2125 42.6486 21.8911C42.97 21.5697 43.1695 21.1262 43.1695 20.6393V18.0762C43.1695 17.5892 42.9694 17.1459 42.648 16.8245C42.3265 16.5031 41.8831 16.3029 41.3962 16.3029ZM37.6709 40.4465C37.362 40.1376 36.9333 39.9455 36.4611 39.9455C35.9889 39.9455 35.5597 40.1377 35.2506 40.4465C34.9417 40.7555 34.7495 41.1847 34.7495 41.657C34.7495 42.1298 34.9417 42.5584 35.2506 42.8675C35.5595 43.1764 35.9887 43.3686 36.4611 43.3686C36.9333 43.3686 37.3619 43.1764 37.6709 42.8675C37.9798 42.5586 38.172 42.1294 38.172 41.657C38.172 41.1848 37.9798 40.7556 37.6709 40.4465ZM12.7489 40.4465C12.44 40.1376 12.0108 39.9455 11.5384 39.9455C11.0662 39.9455 10.6376 40.1377 10.3286 40.4465C10.0197 40.7555 9.82751 41.1847 9.82751 41.657C9.82751 42.1292 10.0197 42.5584 10.3286 42.8675C10.6375 43.1764 11.0662 43.3686 11.5384 43.3686C12.0106 43.3686 12.4398 43.1764 12.7489 42.8675C13.0578 42.5586 13.25 42.1299 13.25 41.657C13.25 41.1848 13.0578 40.7556 12.7489 40.4465Z" fill="#90A4B1"/>`,
+    hydrogen: 
+      `<path fill-rule="evenodd" clip-rule="evenodd" d="M10.0013 10.4175H14.9774V8.64187C14.9774 8.38875 15.1837 8.1825 15.4368 8.1825H32.5632C32.8163 8.1825 33.0226 8.38875 33.0226 8.64187V10.4175H37.9988C40.3369 10.4175 42.4631 11.3737 44.0026 12.9131C45.5438 14.4543 46.5001 16.5787 46.5001 18.9169V25.1699C46.5001 27.508 45.5438 29.6343 44.0026 31.1737C42.4614 32.7131 40.337 33.6694 37.9988 33.6694H34.9406V36.1763H42.5419C43.0069 36.1763 43.4288 36.3656 43.7344 36.6712C44.04 36.9769 44.2294 37.3987 44.2294 37.8637V39.3525C44.2294 39.6056 44.0231 39.8119 43.77 39.8119L4.23002 39.8175C3.97689 39.8175 3.77064 39.6113 3.77064 39.3581V37.8694C3.77064 37.4044 3.96002 36.9825 4.26562 36.6769C4.57124 36.3712 4.99311 36.1819 5.45813 36.1819H13.0594V33.675H10.0013C7.66315 33.675 5.5369 32.7187 3.99744 31.1794C2.45621 29.6381 1.49995 27.5138 1.49995 25.1755L1.50183 18.9187C1.50183 16.5806 2.45809 14.4543 3.99932 12.9149C5.53868 11.3737 7.66311 10.4175 10.0013 10.4175ZM15.8963 10.4174H32.1039V9.10113H15.8963V10.4174ZM34.4795 37.0987H5.45818C5.2463 37.0987 5.05506 37.1849 4.91443 37.3256C4.77569 37.4643 4.68756 37.6574 4.68756 37.8693V38.9005L43.3108 38.8986V37.8674C43.3108 37.6555 43.2245 37.4643 43.0839 37.3237C42.9451 37.1849 42.752 37.0968 42.5401 37.0968L34.4795 37.0987ZM31.0801 36.1799V33.673H16.9201V36.1799H31.0801ZM34.022 33.673H31.9989V36.1799H34.022V33.673ZM16.0013 33.673H13.9782V36.1799H16.0013V33.673ZM37.9988 11.3362H10.0013C7.91631 11.3362 6.02069 12.1893 4.64645 13.5637C3.27207 14.9381 2.41896 16.8337 2.41896 18.9186V25.1715C2.41896 27.2566 3.27207 29.1522 4.64645 30.5264C6.02083 31.9008 7.91645 32.7539 10.0013 32.7539H37.9988C40.0838 32.7539 41.9794 31.9008 43.3537 30.5264C44.728 29.152 45.5811 27.2564 45.5811 25.1715V18.9186C45.5811 16.8336 44.728 14.9379 43.3537 13.5637C41.9793 12.1893 40.0818 11.3362 37.9988 11.3362Z" fill="#90A4B1"/>`,
+    battery: 
+      `<path d="M42.9994 12H38.0006V9.00001C38.0006 8.73563 37.8956 8.48065 37.7081 8.29311C37.5206 8.10558 37.2656 8.00061 36.9994 8.00061H30.9994C30.735 8.00061 30.48 8.10561 30.2925 8.29311C30.1049 8.48062 30 8.73562 30 9.00001V12H18V9.00001C18 8.73563 17.895 8.48065 17.7075 8.29311C17.52 8.10558 17.265 8.00061 17.0006 8.00061H11.0006C10.7343 8.00061 10.4793 8.10561 10.2918 8.29311C10.1043 8.48062 9.9993 8.73562 9.9993 9.00001V12H5.00058C4.73433 12 4.47935 12.105 4.29181 12.2925C4.10428 12.48 3.99931 12.735 3.99931 12.9994V39C3.99931 39.2644 4.10431 39.5194 4.29181 39.7069C4.47932 39.8945 4.73432 39.9995 5.00058 39.9995H42.9993C43.2656 39.9995 43.5205 39.8944 43.7081 39.7069C43.8956 39.5194 44.0006 39.2644 44.0006 39V12.9994C44.0006 12.735 43.8956 12.48 43.7081 12.2925C43.5206 12.105 43.2656 12 42.9994 12ZM32.0006 9.99937H36V12H32.0006V9.99937ZM12 9.99937H15.9994V12H12V9.99937ZM42 13.9987V17.9981L6 18V14.0006L42 13.9987ZM6 38.0007V20.0007H42V38.0007H6Z" fill="#90A4B1"/>
+<path d="M17.0006 27H15V24.9994C15 24.4481 14.5519 24 14.0006 24C13.4475 24 12.9994 24.4481 12.9994 24.9994V27H11.0006C10.4475 27 9.99941 27.4481 9.99941 27.9994C9.99941 28.5525 10.4475 29.0006 11.0006 29.0006H13.0013V31.0012L12.9994 30.9994C12.9994 31.5525 13.4475 32.0006 14.0006 32.0006C14.5519 32.0006 15 31.5525 15 30.9994V29.0006H17.0006C17.5519 29.0006 18 28.5525 18 27.9994C18 27.4481 17.5519 27 17.0006 27Z" fill="#90A4B1"/>
+<path d="M36.9994 27H30.9994C30.4481 27 30 27.4481 30 27.9994C30 28.5525 30.4481 29.0006 30.9994 29.0006H36.9994C37.5525 29.0006 38.0006 28.5525 38.0006 27.9994C38.0006 27.4481 37.5525 27 36.9994 27Z" fill="#90A4B1"/>`,
+    energySupply: 
+      `<rect width="32" height="32" rx="16" fill="#F4F6F9"/>
+      <path d="M11.7442 17.0669H15.4667C15.5467 17.0669 15.623 17.1031 15.6736 17.1656C15.7242 17.2281 15.7442 17.3106 15.7274 17.3894L14.4399 23.3999C14.4361 23.4118 14.4367 23.4249 14.443 23.4362C14.4486 23.448 14.4586 23.4562 14.4711 23.4599C14.4817 23.4668 14.4949 23.4687 14.5074 23.4655C14.5199 23.4624 14.5305 23.4543 14.5361 23.443L20.478 15.3749C20.5405 15.2905 20.5499 15.1786 20.503 15.0855C20.4555 14.9918 20.3599 14.933 20.2555 14.933H16.533C16.4523 14.933 16.3761 14.8968 16.3255 14.8343C16.2748 14.7718 16.2555 14.6893 16.2723 14.6105L17.5598 8.59996C17.5636 8.58808 17.563 8.57433 17.5567 8.56308C17.5511 8.55183 17.5411 8.54308 17.5286 8.53933C17.5205 8.53558 17.5111 8.53308 17.5017 8.53308C17.4861 8.53371 17.4711 8.54246 17.463 8.55621L11.5217 16.6256C11.4598 16.7094 11.4498 16.8213 11.4973 16.9144C11.5442 17.0081 11.6398 17.0669 11.7442 17.0669Z" fill="#212529"/>`,
+    energyBackup: 
+      `<rect width="32" height="32" rx="16" fill="#F4F6F9"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 19.9187V21C10.2499 21.1606 10.338 21.3106 10.483 21.455C10.6637 21.6362 10.9299 21.8025 11.2618 21.9531C12.3305 22.4387 14.0562 22.75 15.9999 22.75C17.9436 22.75 19.6693 22.4387 20.738 21.9531C21.0698 21.8025 21.3361 21.6362 21.5167 21.455C21.6617 21.3106 21.7498 21.1606 21.7498 21V19.9187C21.6655 19.9912 21.5705 20.0612 21.4648 20.1287C20.4398 20.7875 18.3773 21.25 15.9999 21.25C13.6224 21.25 11.5599 20.7875 10.5349 20.1287C10.4293 20.0612 10.3343 19.9912 10.2499 19.9187Z" fill="#212529"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 17.9187V18.9999C10.2499 19.1606 10.338 19.3106 10.483 19.455C10.6637 19.6362 10.9299 19.8025 11.2618 19.9531C12.3305 20.4387 14.0562 20.75 15.9999 20.75C17.9436 20.75 19.6693 20.4387 20.738 19.9531C21.0698 19.8025 21.3361 19.6362 21.5167 19.455C21.6617 19.3106 21.7498 19.1606 21.7498 18.9999V17.9187C21.6655 17.9912 21.5705 18.0612 21.4648 18.1287C20.4398 18.7875 18.3773 19.2499 15.9999 19.2499C13.6224 19.2499 11.5599 18.7875 10.5349 18.1287C10.4293 18.0612 10.3343 17.9912 10.2499 17.9187Z" fill="#212529"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M21.7501 15.9187C21.6657 15.9912 21.5707 16.0612 21.4651 16.1287C20.4401 16.7875 18.3776 17.2499 16.0001 17.2499C13.6227 17.2499 11.5601 16.7875 10.5352 16.1287C10.4295 16.0612 10.3346 15.9912 10.2502 15.9187V16.9999C10.2502 17.1606 10.3383 17.3106 10.4833 17.455C10.6639 17.6362 10.9302 17.8025 11.2621 17.9531C12.3308 18.4387 14.0565 18.75 16.0001 18.75C17.9438 18.75 19.6696 18.4387 20.7382 17.9531C21.0701 17.8025 21.3363 17.6362 21.517 17.455C21.662 17.3106 21.7501 17.1606 21.7501 16.9999V15.9187Z" fill="#212529"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 13.9187V14.9999C10.2499 15.1606 10.338 15.3106 10.483 15.455C10.6637 15.6362 10.9299 15.8025 11.2618 15.9531C12.3305 16.4387 14.0562 16.75 15.9999 16.75C17.9436 16.75 19.6693 16.4387 20.738 15.9531C21.0698 15.8025 21.3361 15.6362 21.5167 15.455C21.6617 15.3106 21.7498 15.1606 21.7498 14.9999V13.9187C21.6655 13.9912 21.5705 14.0612 21.4648 14.1287C20.4398 14.7875 18.3773 15.2499 15.9999 15.2499C13.6224 15.2499 11.5599 14.7875 10.5349 14.1287C10.4293 14.0612 10.3343 13.9912 10.2499 13.9187Z" fill="#212529"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M21.7501 11.9187C21.6657 11.9912 21.5707 12.0612 21.4651 12.1287C20.4401 12.7875 18.3776 13.2499 16.0001 13.2499C13.6227 13.2499 11.5601 12.7875 10.5352 12.1287C10.4295 12.0612 10.3346 11.9912 10.2502 11.9187V12.9999C10.2502 13.1606 10.3383 13.3106 10.4833 13.455C10.6639 13.6362 10.9302 13.8025 11.2621 13.9531C12.3308 14.4387 14.0565 14.75 16.0001 14.75C17.9438 14.75 19.6696 14.4387 20.7382 13.9531C21.0701 13.8025 21.3363 13.6362 21.517 13.455C21.662 13.3106 21.7501 13.1606 21.7501 12.9999V11.9187Z" fill="#212529"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M16 9.25C17.9437 9.25 19.6694 9.56125 20.7381 10.0469C21.07 10.1975 21.3362 10.3638 21.5168 10.545C21.6618 10.6894 21.75 10.8394 21.75 11C21.75 11.1607 21.6618 11.3106 21.5168 11.455C21.3362 11.6363 21.07 11.8025 20.7381 11.9532C19.6693 12.4388 17.9437 12.75 16 12.75C14.0563 12.75 12.3306 12.4388 11.2619 11.9532C10.93 11.8025 10.6638 11.6363 10.4832 11.455C10.3382 11.3106 10.25 11.1607 10.25 11C10.25 10.8394 10.3382 10.6894 10.4832 10.545C10.6638 10.3638 10.93 10.1975 11.2619 10.0469C12.3307 9.56125 14.0563 9.25 16 9.25Z" fill="#212529"/>`,
+    home: 
+      `<g clip-path="url(#clip0_181_29)">
+        <path d="M22.5625 5.84277V1.9375H28.1875V11.0928L32 15.0625H28.1875V32H3.8125V15.0625H0L16 0L22.5625 5.84277ZM12 19.1299H17L14.9775 22.333L16.0771 23.0264L19.3594 17.8301H14.3594L16.7607 14.0264L15.6611 13.333L12 19.1299Z" fill="#157754"/>
+      </g>
+      <defs>
+        <clipPath id="clip0_181_29">
+          <rect width="32" height="32" fill="white"/>
+        </clipPath>
+      </defs>`
+  };
+
+  // Wait for D3 to load
+  function initDiagram() {
+    if (typeof d3 === 'undefined') {
+      document.getElementById('loading').textContent = 'Error loading D3.js';
+      return;
+    }
+
+    document.getElementById('loading').remove();
+
+    // Configuration
+    const config = {
+      width: 843,
+      componentWidth: 240,
+      componentHeight: 120,
+      componentSpacing: 20,
+      sectionPadding: 30,
+      sectionSpacing: 100,
+      arrowLength: 60,
+      homeWidth: 180,
+      homeHeight: 120
+    };
+
+    const offsetX = 1;
+    const offsetY = 0;
+    const headerSpace = 40;
+
+    // Data - Add/remove components
+    const energySupply = [
+      { name: 'Solar Panels', icon: 'solar', status: 'Optimized' },
+      { name: 'Diesel Generator', icon: 'generator', status: 'Optimized' }
+    ];
+
+    const energyBackup = [
+      { name: 'Hydrogen Storage', icon: 'hydrogen', status: 'Optimized' },
+      { name: 'Battery', icon: 'battery', status: 'Fixed' }
+    ];
+
+    // Calculate heights
+    const supplyHeight = energySupply.length * config.componentHeight + (energySupply.length - 1) * config.componentSpacing + config.sectionPadding * 2;
+    const backupHeight = energyBackup.length * config.componentHeight + (energyBackup.length - 1) * config.componentSpacing + config.sectionPadding * 2;
+    const maxHeight = Math.max(supplyHeight, backupHeight, config.homeHeight);
+
+    const sectionMaxHeight = Math.max(supplyHeight, backupHeight);
+    const totalWidth = config.componentWidth * 2 + config.sectionSpacing * 2 + config.arrowLength * 2 + config.homeWidth;
+    const totalHeight = Math.max(sectionMaxHeight + headerSpace, config.homeHeight);
+
+    // Create SVG
+    const svg = d3.select('#diagram')
+      .append('svg')
+      .attr('width', totalWidth)
+      .attr('height', totalHeight + 4);
+
+    // Define arrowhead marker
+    svg.append('defs')
+      .append('marker')
+      .attr('id', 'arrowhead')
+      .attr('markerWidth', 10)
+      .attr('markerHeight', 10)
+      .attr('refX', 9)
+      .attr('refY', 3)
+      .attr('orient', 'auto')
+      .append('polygon')
+      .attr('points', '0 0, 10 3, 0 6')
+      .attr('fill', '#999');
+
+    let xPos = offsetX;
+
+    function drawSection(data, x, title, icon) {
+      const sectionHeight = data.length * config.componentHeight + (data.length - 1) * config.componentSpacing + config.sectionPadding * 2;
+      const y = offsetY + headerSpace;
+      const section = svg.append('g').attr('class', 'section');
+
+      // Section box
+      section.append('rect')
+        .attr('class', 'section-box')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', config.componentWidth)
+        .attr('height', sectionHeight);
+
+      // Section header icon and text
+      const headerY = y - 20;
+      const headerGroup = section.append('g')
+        .attr('transform', `translate(${x + 0}, ${headerY - 20})`);
+      headerGroup.html(iconSVG[icon]);
+
+      section.append('text')
+        .attr('class', 'section-header')
+        .attr('x', x + 45)
+        .attr('y', headerY + 5)
+        .text(title);
+
+      // Components
+      data.forEach((component, i) => {
+        const compY = y + config.sectionPadding + i * (config.componentHeight + config.componentSpacing);
+        drawComponent(section, x + 20, compY, component);
+      });
+
+      return { x: x + config.componentWidth, y: y + sectionHeight / 2 };
+    }
+
+    function drawComponent(parent, x, y, data) {
+      const comp = parent.append('g');
+
+      // Component box
+      comp.append('rect')
+        .attr('class', 'component-box')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', config.componentWidth - 40)
+        .attr('height', config.componentHeight);
+
+      // Icon
+      const iconGroup = comp.append('g')
+        .attr('transform', `translate(${x + 20}, ${y + 20})`);
+      iconGroup.html(iconSVG[data.icon]);
+
+      // Title
+      comp.append('text')
+        .attr('class', 'component-title')
+        .attr('x', x + 20)
+        .attr('y', y + config.componentHeight - 20)
+        .text(data.name);
+
+      // Status
+      const statusColor = data.status === 'Optimized' ? 'status-optimized' : 'status-fixed';
+      const boxWidth = config.componentWidth - 40;
+      const pad = 20;                 // right/top padding inside the component box
+      const statusY = y + 25;         // vertical baseline you liked
+      const statusTextX = x + boxWidth - pad; // right-aligned anchor
+
+      // 1) Add the right-aligned text first
+      const statusText = comp.append('text')
+        .attr('class', 'status-text')
+        .attr('x', statusTextX)
+        .attr('y', statusY)
+        .attr('text-anchor', 'end')
+        .text(data.status);
+
+      // 2) Measure its width to find the left edge
+      const bbox = statusText.node().getBBox();
+      const textLeftX = statusTextX - bbox.width;
+
+      // 3) Place the dot to the left of the text (with a small gap)
+      const gap = 6;  // space between dot and first letter
+      const r = 4;    // explicit radius so we can position reliably
+
+      comp.append('circle')
+        .attr('class', `status-dot ${statusColor}`)
+        .attr('r', r)
+        .attr('cx', textLeftX - gap - r)
+        .attr('cy', statusY - 4); // keep your good vertical alignment
+    }
+
+    // Draw sections
+    const supplyEnd = drawSection(energySupply, xPos, 'ENERGY SUPPLY', 'energySupply');
+    xPos = supplyEnd.x + config.arrowLength;
+
+    // Arrow 1
+    svg.append('path')
+      .attr('class', 'arrow')
+      .attr('d', `M ${supplyEnd.x} ${supplyEnd.y} L ${xPos} ${supplyEnd.y}`);
+
+    const backupEnd = drawSection(energyBackup, xPos, 'ENERGY BACKUP', 'energyBackup');
+    xPos = backupEnd.x + config.arrowLength;
+
+    // Arrow 2
+    svg.append('path')
+      .attr('class', 'arrow')
+      .attr('d', `M ${backupEnd.x} ${backupEnd.y} L ${xPos} ${backupEnd.y}`);
+
+    // Draw Home/Buildings
+    const homeCenterY = backupEnd.y;
+    const homeY = homeCenterY - config.homeHeight / 2;
+
+    const homeGroup = svg.append('g');
+
+    homeGroup.append('rect')
+      .attr('class', 'home-box')
+      .attr('x', xPos)
+      .attr('y', homeY)
+      .attr('width', config.homeWidth)
+      .attr('height', config.homeHeight);
+
+    // Icon centered inside the home box
+    const iconX = xPos + config.homeWidth / 2;
+    const iconY = homeY + config.homeHeight / 2 - 30;
+
+    const homeIconGroup = homeGroup.append('g')
+      .html(iconSVG.home)
+      .attr('transform', `translate(${iconX}, ${iconY})`)
+      .attr('text-anchor', 'middle');
+
+    // Title centered inside the home box
+    homeGroup.append('text')
+      .attr('class', 'home-title')
+      .attr('x', iconX)
+      .attr('y', homeY + config.homeHeight - 40)
+      .attr('text-anchor', 'middle')
+      .text('Homes / Buildings');
+  }
+
+  // Initialize when DOM and D3 are ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDiagram);
+  } else {
+    initDiagram();
+  }
+</script>
+
 {% endblock end_body_scripts %}

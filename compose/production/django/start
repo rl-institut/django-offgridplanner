@@ -6,6 +6,7 @@ set -o nounset
 
 
 python /app/manage.py collectstatic --noinput
+python manage.py compilejsi18n -d django
 
 compress_enabled() {
 python << END

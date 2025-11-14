@@ -285,6 +285,115 @@ class EnergySystemDesign(NestedModel):
         blank=True,
         null=True,
     )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_settings_is_selected = models.BooleanField(
+        db_column="h2_storage__settings__is_selected",
+        default=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_settings_design = models.BooleanField(
+        db_column="h2_storage__settings__design",
+        default=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_nominal_capacity = models.FloatField(
+        db_column="h2_storage__parameters__nominal_capacity",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_lifetime = models.PositiveIntegerField(
+        db_column="h2_storage__parameters__lifetime",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_capex = models.FloatField(
+        db_column="h2_storage__parameters__capex",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_opex = models.FloatField(
+        db_column="h2_storage__parameters__opex",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_soc_min = models.FloatField(
+        db_column="h2_storage__parameters__soc_min",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_soc_max = models.FloatField(
+        db_column="h2_storage__parameters__soc_max",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    h2_storage_parameters_efficiency = models.FloatField(
+        db_column="h2_storage__parameters__efficiency",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_settings_is_selected = models.BooleanField(
+        db_column="electrolyzer__settings__is_selected",
+        default=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_settings_design = models.BooleanField(
+        db_column="electrolyzer__settings__design",
+        default=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_parameters_nominal_capacity = models.FloatField(
+        db_column="electrolyzer__parameters__nominal_capacity",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_parameters_lifetime = models.PositiveIntegerField(
+        db_column="electrolyzer__parameters__lifetime",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_parameters_capex = models.FloatField(
+        db_column="electrolyzer__parameters__capex",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_parameters_opex = models.FloatField(
+        db_column="electrolyzer__parameters__opex",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    electrolyzer_parameters_efficiency = models.FloatField(
+        db_column="electrolyzer__parameters__efficiency",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_settings_is_selected = models.BooleanField(
+        db_column="fuel_cell__settings__is_selected",
+        default=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_settings_design = models.BooleanField(
+        db_column="fuel_cell__settings__design",
+        default=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_parameters_nominal_capacity = models.FloatField(
+        db_column="fuel_cell__parameters__nominal_capacity",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_parameters_lifetime = models.PositiveIntegerField(
+        db_column="fuel_cell__parameters__lifetime",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_parameters_capex = models.FloatField(
+        db_column="fuel_cell__parameters__capex",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_parameters_opex = models.FloatField(
+        db_column="fuel_cell__parameters__opex",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
+    fuel_cell_parameters_efficiency = models.FloatField(
+        db_column="fuel_cell__parameters__efficiency",
+        blank=True,
+        null=True,
+    )  # Field renamed because it contained more than one '_' in a row.
     rectifier_settings_is_selected = models.BooleanField(
         db_column="rectifier__settings__is_selected",
         default=True,

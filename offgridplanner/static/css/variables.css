@@ -1,0 +1,32 @@
+:root {
+  /* Typography */
+  --font-color--main: #212529;
+  --font-color--secondary: #5E798D;
+  --font-color--selected: #1775A7;
+  --font-color--link: #1F567D;
+  --font-color--highlight: #1F567D;
+  --font-color--success: #1F7D5C;
+  --font-color--success-muted: #5F8B7C;
+  --font-weight--normal: 400;
+  --font-weight--bold: 700;
+  --font-size--xl: 1.5rem;
+  --font-size--lg: 1.25rem;
+  --font-size--md: 1rem;
+  --font-size--sm: 0.875rem;
+
+  /* Colors */
+  --background-color--main: #FFFFFF;
+  --background-color--secondary: #FAFAFA;
+  --button-background--primary: #1F567D;
+  --button-color--primary: #FFFFFF;
+
+  /* Borders */
+  --border-color: #CEDBE3;
+  --border-accent-color: #1F567D;
+  --border-accent-color-2: #1F7D5C;
+  --border-radius: 0.5rem;
+  --box-shadow: 0 1px 4px 0 rgba(31, 86, 125, 0.25);
+
+  /* Spacing */
+  --padding-normal: 1rem;
+}

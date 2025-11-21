@@ -1,0 +1,1168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-31 15:29+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "English"
+msgstr "English"
+
+msgid "Thai"
+msgstr "ไทย"
+
+msgid "Unsupported file type. Please upload a CSV or Excel file."
+msgstr "ประเภทไฟล์ไม่รองรับ กรุณาอัพโหลดไฟล์สกุล CSV sinv Excel"
+
+msgid "Failed to process the file: {str(e)}"
+msgstr "การดำเนินการไฟล์ล้มเหลว: {str(e)}"
+
+msgid "Plot type undefined"
+msgstr "ยังไม่ได้กำหนดประเภทกราฟ"
+
+msgid "Calculation aborted"
+msgstr "การคำนวณถูกยกเลิก"
+
+msgid ""
+"There are no results of the energy system optimization. There were no "
+"feasible solution."
+msgstr "ไม่มีผลลัพธ์จากการเพิ่มประสิทธิภาพของระบบพลังงาน เนื่องจากไม่พบวิธีแก้ปัญหาที่เป็นไปได้"
+
+msgid ""
+"Due to high grid costs, all consumers have been equipped with solar home "
+"systems. A grid was not built, therefore no optimization of the energy "
+"system was carried out."
+msgstr "เนื่องจากต้นทุนโครงข่ายไฟฟ้าที่สูง ผู้ใช้ไฟฟ้าทั้งหมดจึงถูกติดตั้งด้วยระบบโซลาร์เซลล์สำหรับครัวเรือน"
+"การหาค่าที่เหมาะสมของระบบพลังงานไม่ถูกคำนวณเพราะไม่มีการสร้างโครงข่ายไฟฟ้า"
+
+msgid "Demand estimation"
+msgstr "การประมาณความต้องการใช้ไฟฟ้า"
+
+msgid "Spatial Grid Optimization"
+msgstr "โครงข่ายไฟฟ้าเชิงพื้นที่"
+
+msgid "Energy Converter Design Optimization"
+msgstr "การหาค่าที่เหมาะสมของการออกแบบตัวแปลงพลังงาน"
+
+msgid "Project Setup"
+msgstr "ตั้งค่าโปรเจค"
+
+msgid "Consumer Selection"
+msgstr "ตัวเลือกผู้ใช้ไฟฟ้า"
+
+msgid "Demand Estimation"
+msgstr "การประมาณความต้องการใช้ไฟฟ้า"
+
+msgid "Grid Design"
+msgstr "รูปแบบกริด"
+
+msgid "Energy System Design"
+msgstr "รูปแบบระบบพลังงาน"
+
+msgid "Calculating"
+msgstr "กำลังคำนวณ"
+
+msgid "Simulation Results"
+msgstr "ผลลัพธ์แบบจำลอง"
+
+msgid "Hi"
+msgstr "สวัสดี"
+
+msgid "Please click on the link to confirm your registration"
+msgstr "กรุณาคลิกที่ลิ้งค์เพื่อยืนยันการลงทะเบียน"
+
+msgid "If you think, it's not you, then just ignore this email."
+msgstr "หากนี่ไม่ใช่คุณ โปรดเพิกเฉยอีเมลล์ฉบับนี้"
+
+msgid "Log In"
+msgstr "ล็อกอิน"
+
+msgid "Do you not have an account yet?"
+msgstr "คุณยังไม่มีบัญชีผู้ใช้งาน?"
+
+msgid "Sign up"
+msgstr "สมัครบัญชีผู้ใช้งาน"
+
+msgid "Forgot your password?"
+msgstr "ลืมรหัสผ่าน?"
+
+msgid "Login"
+msgstr "ล็อกอิน"
+
+msgid "Welcome to the Offgridplanner"
+msgstr "ยินดีต้อนรับสู่  Offgridplanner"
+
+msgid "Do you already have an account?"
+msgstr "คุณมีบัญชีผู้ใช้งานหรือยัง?"
+
+msgid "Log in"
+msgstr "ล็อกอิน"
+
+msgid "Sign In"
+msgstr "ลงชื่อเข้าใช้"
+
+msgid "My Profile"
+msgstr "โปรไฟล์ของฉัน"
+
+msgid "Sign Out"
+msgstr "ออกจากระบบ"
+
+msgid "Sign Up"
+msgstr "สมัครบัญชีผู้ใช้งาน"
+
+msgid "Contact"
+msgstr "ติดต่อ"
+
+msgid "License"
+msgstr "ใบอนุญาต"
+
+msgid "Imprint"
+msgstr "ประทับ"
+
+msgid "Privacy"
+msgstr "นโยบายความเป็นส่วนตัว"
+
+msgid "Documentation"
+msgstr "เอกสาร"
+
+msgid "Account"
+msgstr "บัญชี"
+
+msgid "Log out"
+msgstr "ล็อกเอาท์"
+
+msgid "Model Calculation"
+msgstr "การคำนวณโมเดล"
+
+msgid "Calculation status is retrieved..."
+msgstr "กำลังตรวจสอบสถานะการคำนวณ..."
+
+msgid "Send email when calculation is finished."
+msgstr "ส่งอีเมลล์เมื่อการคำนวณเสร็จสมบูรณ์"
+
+msgid "Go to Page with missing data"
+msgstr "ไปหน้าที่ข้อมูลขาดหาย"
+
+msgid "Set Consumer Properties"
+msgstr "กำหนดคุณสมบัติผู้ใช้ไฟฟ้า"
+
+msgid "Consumer Type"
+msgstr "ประเภทผู้ใช้ไฟฟ้า"
+
+msgid "Consumer Category"
+msgstr "หมวดหมู่ผู้ใช้ไฟฟ้า"
+
+msgid "Latitude"
+msgstr "ละติจูด"
+
+msgid "Longitude"
+msgstr "ลองจิจูด"
+
+msgid "Grid-/SHS-Options"
+msgstr "ตัวเลือก Grid-/SHS-"
+
+msgid ""
+"The off-grid planning process identifies consumers for whom connection costs "
+"surpass a specified threshold during grid optimization. Economically, it may "
+"not be feasible to connect these consumers to the grid. Instead, equipping "
+"them with a solar home system is a more viable solution. Further details "
+"about this option are available on the Grid-Design page. Additionally, this "
+"page offers an option to adjust the threshold, ensuring all consumers can "
+"connect to the grid. On this very page, you also have the discretion to "
+"manually determine the connection status of specific consumers, such as "
+"schools and health centers. You can decide whether these entities should be "
+"mandatorily connected to the grid, or if the decision should be left to the "
+"optimizer based on the set threshold."
+msgstr ""
+"กระบวนการวางแผนระบบออฟกริดจะระบุผู้ใช้ไฟฟ้าที่มีค่าใช้จ่ายในการเชื่อมต่อโครงข่ายไฟฟ้า "
+"เกินกว่าค่ากำหนดระหว่างการปรับโครงข่ายไฟฟ้าให้เหมาะสม "
+"ซึ่งในเชิงเศรษฐศาสตร์อาจไม่คุ้มค่าที่จะรวมผู้ใช้กลุ่มนี้เข้ากับโครงข่ายไฟฟ้า "
+"ดังนั้น การติดตั้งระบบโซลาร์โฮมจึงเป็นทางเลือกที่เหมาะสมกว่าสำหรับผู้ใช้งานกลุ่มนี้ "
+"รายละเอียดเพิ่มเติมเกี่ยวกับตัวเลือกนี้สามารถดูได้ที่หน้าเพจ Grid-Design "
+"นอกจากนี้ ในหน้าดังกล่าวยังมีตัวเลือกในการปรับค่ากำหนด "
+"เพื่อให้มั่นใจว่าผู้ใช้ไฟฟ้าทุกคนสามารถเชื่อมต่อกับโครงข่ายได้ "
+"ในหน้านี้เอง ผู้ใช้ยังสามารถกำหนดสถานะการเชื่อมต่อของผู้ใช้ไฟฟ้าเฉพาะรายได้ด้วยตนเอง "
+"เช่น โรงเรียนและศูนย์สุขภาพ โดยสามารถตัดสินใจได้ว่า "
+"หน่วยงานเหล่านี้ควรเชื่อมต่อกับโครงข่ายโดยบังคับ "
+"หรือปล่อยให้เป็นการตัดสินใจของตัวโปรแกรมปรับโครงข่ายตามเกณฑ์ที่กำหนดไว้"
+
+msgid "Delete Consumer"
+msgstr "ลบผู้ใช้ไฟฟ้า"
+
+msgid "Household"
+msgstr "ครัวเรือน"
+
+msgid "Enterprise"
+msgstr "ผู้ประกอบการ"
+
+msgid "Degree"
+msgstr "ระดับ"
+
+msgid "Optimize"
+msgstr "หาต่าที่เหมาะสม"
+
+msgid "Grid"
+msgstr "กริด"
+
+msgid "Delete"
+msgstr "ลบ"
+
+msgid "Number of Selected Households:"
+msgstr "จำนวนครัวเรือนที่ถูกเลือก"
+
+msgid "Number of Selected Enterprises:"
+msgstr "จำนวนผู้ประกอบการที่ถูกเลือก"
+
+msgid "Number of Selected Public Services:"
+msgstr "จำนวนบริการสาธารณะที่ถูกเลือก"
+
+msgid "Import Consumers"
+msgstr "นำเข้าผู้ใช้ไฟฟ้า"
+
+msgid "Export Consumers"
+msgstr "ส่งออกผู้ใช้ไฟฟ้า"
+
+msgid "File type: CSV"
+msgstr "ประเภทไฟล์: CSV"
+
+msgid "File type: XLSX"
+msgstr "ประเภทไฟล์: XLSX"
+
+msgid ""
+"The first row of the CSV or Excel file should contain the column headers, "
+"with subsequent rows containing the respective values. The file must include "
+"a \\"
+msgstr "แถวแรกของไฟล์ CSV หรือ Excel ควรประกอบด้วยหัวคอลัมน์ และแถวถัดไปควรเป็นค่าที่สอดคล้องกัน"
+"ไฟล์จะต้องมี \\"
+
+msgid "Show Advanced Options"
+msgstr "แสดงตัวเลือกขั้นสูง"
+
+msgid "Select Individual Large Enterprise Loads"
+msgstr "เลือกโหลดของผู้ประกอบการขาดใหญ่แบบรายแห่ง"
+
+msgid ""
+"Note: Productive use enterprises selected above will not by default have "
+"added any 'large loads' (such as milling machines or electric welders etc.) "
+"and will only have typical low power appliances included. The functionality "
+"below allows the user to add, remove, and view specific types and quantities "
+"of large loads for each individual enterprise consumer."
+msgstr ""
+"หมายเหตุ: ค่าเริ่มต้นของกิจการเพื่อการผลิตที่เลือกไว้ด้านบน ไม่ได้มีการเพิ่ม "
+"'โหลดขนาดใหญ่' (เช่น เครื่องโม่ หรือ เครื่องเชื่อมไฟฟ้า เป็นต้น) และจะมีเพียงอุปกรณ์ไฟฟ้ากำลังต่ำทั่วไปเท่านั้น "
+"ฟังก์ชันด้านล่างนี้อนุญาตให้ผู้ใช้สามารถเพิ่ม ลบ และดูประเภทและจำนวนของโหลดขนาดใหญ่สำหรับผู้ใช้ไฟฟ้าในแต่ละกิจการได้"
+
+msgid "Large loads to add"
+msgstr "โหลดขนาดใหญ่สำหรับเพิ่ม"
+
+msgid "Motor"
+msgstr "มอเตอร์"
+
+msgid "Number"
+msgstr "จำนวน"
+
+msgid "Search location within Nigeria"
+msgstr "ค้นหาตำแหน่งภายในไนจีเรีย"
+
+msgid "Warning"
+msgstr "คำเตือน"
+
+msgid "OK"
+msgstr "โอเค"
+
+msgid "Video Tutorial"
+msgstr "วิดีโอตัวอย่าง"
+
+msgid "Your browser does not support the video tag."
+msgstr "เบราเซอร์ของคุณไม่สนับสนุนคำอธิบายบนวิดีโอ"
+
+msgid "Don't show again"
+msgstr "ไม่ต้องแสดงอีก"
+
+msgid "Next"
+msgstr "ต่อไป"
+
+msgid "Use Custom Demand Time Series:"
+msgstr "ใช้ข้อมูลความต้องการใช้ไฟฟ้าตามลำดับเวลาแบบกำหนดเอง"
+
+msgid ""
+"Electricity Demand Profile Illustration: First Monday of Simulation Period"
+msgstr "ภาพแสดงรูปแบบความต้องการใช้ไฟฟ้า: วันจันทร์แรกของช่วงการจำลอง"
+
+msgid "Show Total Demand"
+msgstr "แสดงความต้องการทั้งหมด"
+
+msgid "Show Single Household Profile"
+msgstr "แสดงข้อมูลครัวเรือนแบบเดี่ยว"
+
+msgid "Set Own Custom Shares of Households Allocated per Consumption Category"
+msgstr "ตั้งค่าสัดส่วนครัวเรือนแบบกำหนดเองสำหรับแต่ละหมวดหมู่การใช้ไฟฟ้า"
+
+msgid "The default values correspond to the national average of rural areas"
+msgstr "ค่าเริ่มต้นอ้างอิงจากค่าเฉลี่ยระดับประเทศของพื้นที่ชนบท"
+
+msgid "Reset"
+msgstr "รีเซ็ต"
+
+msgid ""
+"Several typical standardized household demand profiles have been developed "
+"from roughly 3600 energy appliance ownership and usage "
+"surveys that were conducted "
+"across Nigeria in 2020 in 3 prioritized geopolitical "
+"zones. Survey details can "
+"be found in the publication here:"
+msgstr ""
+"ข้อมูลมาตรฐานความต้องการใช้ไฟฟ้ารายครัวเรือนหลายรูปแบบ ถูกพัฒนามาจาก "
+"การสำรวจความเป็นเจ้าของและการใช้งานอุปกรณ์ไฟฟ้าประมาณ 3,600 ชุด "
+"ซึ่งได้ดำเนินการในปี 2020 "
+"ทั่วประเทศไนจีเรียใน 3 เขตที่มีความสำคัญทางภูมิรัฐศาสตร์ "
+"รายละเอียดการสำรวจสามารถดูได้ในเอกสารนี้:"
+
+msgid ""
+"The open-source Remote Area Multi-Energy Profiles simulation software (RAMP) "
+"has\n"
+"                      been used to develop 5 typical non-urban Nigerian "
+"household energy consumption\n"
+"                      categories (from Very Low to Very High). The pre-"
+"created default options below\n"
+"                      represent weighted combinations of each of these "
+"consumption categories that\n"
+"                      match the observed data in each of the geographic "
+"zones. "
+msgstr ""
+"ซอฟต์แวร์โอเพ่นซอร์ส Remote Area Multi-Energy Profiles (RAMP) "
+"\n"
+"                      ถูกใช้ในการพัฒนาหมวดหมู่การใช้ไฟฟ้าในครัวเรือนนอกเขตเมืองในไนจีเรีย "
+"5 ระดับ (ตั้งแต่ต่ำมากถึงสูงมาก)\n"
+"                      ตัวเลือกเริ่มต้นที่สร้างไว้ด้านล่างนี้ "
+"แสดงถึงการจัดกลุ่มความสำคัญของแต่ละหมวดหมู่การใช้พลังงานเหล่านี้\n"
+"                      เพื่อให้สอดคล้องกับข้อมูลที่เก็บได้ในแต่ละเขตภูมิรัฐศาสตร์"
+
+msgid "Schematic of the Selected Off-Grid System"
+msgstr "แผนภาพเชิงโครงสร้างของระบบออฟกริดที่เลือก"
+
+msgid "Demand"
+msgstr "ความต้องการใช้ไฟฟ้า"
+
+msgid "Shortage"
+msgstr "การขาดแคลน"
+
+msgid "Surplus"
+msgstr "ไฟฟ้าส่วนเกิน"
+
+msgid "PV"
+msgstr "PV"
+
+msgid "design"
+msgstr "แบบ"
+
+msgid "Battery"
+msgstr "แบตเตอรี่"
+
+msgid "Diesel Genset"
+msgstr "เครื่องกำเนิดไฟฟ้าดีเซล"
+
+msgid "Inverter"
+msgstr "อินเวอร์เตอร์"
+
+msgid "Rectifier"
+msgstr "เรคติไฟเออร์"
+
+msgid "AC Bus"
+msgstr "บัสไฟฟ้ากระแสสลับ"
+
+msgid "DC Bus"
+msgstr "บัสไฟฟ้ากระแสตรง"
+
+msgid "September 2022"
+msgstr "กันยายน 2565"
+
+msgid "The PV modules are simulated via"
+msgstr "จำลองโมดูลโซลาร์เซลล์โดยใช้"
+
+msgid "incorporating the"
+msgstr "โดยผนวก"
+
+msgid "radiation data"
+msgstr "ข้อมูลการแผ่รังสี"
+
+msgid "Revoke pending calculation?"
+msgstr "ยกเลิกการคำนวณที่ค้างอยู่หรือไม่?"
+
+msgid "Revoke"
+msgstr "ยกเลิก"
+
+msgid "Wait"
+msgstr "รอ"
+
+msgid "Watch video tutorial for further explanation of this parameter"
+msgstr "ดูวิดีโอแนะนำเพื่อคำอธิบายเพิ่มเติมของพารามิเตอร์นี้"
+
+msgid "Off Grid Planning Tool"
+msgstr "เครื่องมือวางแผนระบบออฟกริด"
+
+msgid ""
+"The open source tool originated from the PeopleSuN project and serves the "
+"planning of off-grid systems in Nigeria. The tool aims to perform a spatial "
+"optimization of the distribution grid as well as the design of the energy "
+"converters and energy storage."
+msgstr ""
+"เครื่องมือโอเพ่นซอร์สนี้มีที่มาจากโครงการ PeopleSuN ซึ่งถูกใช้สำหรับการวางแผนระบบโครงข่ายออฟกริดในไนจีเรีย "
+"เครื่องมือนี้มีเป้าหมายเพื่อทำการหาค่าที่เหมาะสมเชิงพื้นที่ของโครงข่ายจำหน่ายไฟฟ้า "
+"รวมถึงการออกแบบตัวแปลงพลังงานและระบบกักเก็บพลังงาน"
+
+msgid "The features of the tool are listed below:"
+msgstr "รายการคุณสมบัติของเครื่องมือมีดังนี้:"
+
+msgid "Automatic identification of buildings from OpenStreetMap"
+msgstr "ระบุอาคารอัตโนมัติจาก OpenStreetMap"
+
+msgid "Spatial optimization of the distribution grid"
+msgstr "ปรับโครงข่ายจำหน่ายไฟฟ้าให้เหมาะสมตามพื้นที่"
+
+msgid ""
+"Design optimization of the generation systems (PV systems, battery systems, "
+"inverters and diesel-engines)"
+msgstr "ออกแบบระบบผลิตไฟฟ้าให้เหมาะสม (PV, แบตเตอรี่, อินเวอร์เตอร์ และเครื่องยนต์ดีเซล)"
+
+msgid ""
+"Automatic identification of buildings that are better to be served by "
+"individual solar home systems."
+msgstr "ระบุอาคารที่เหมาะสมสำหรับระบบโซลาร์รายครัวเรือนโดยอัตโนมัติ"
+
+msgid ""
+"The tool can be tested without registration. However, users are recommended "
+"to create an account to get access to larger computing capacity and to be "
+"able to store models."
+msgstr "สามารถทดสอบเครื่องมือได้โดยไม่ต้องลงทะเบียน อย่างไรก็ตาม"
+"แนะนำให้ผู้ใช้งานสร้างบัญชีเพื่อเข้าถึงการคำนวณขั้นสูง และการจัดเก็บโมเดล"
+
+msgid "Test it (without an account)"
+msgstr "ทดสอบเครื่องมือ (ไม่ใช้บัญชี)"
+
+msgid "Map-based Consumer Selection"
+msgstr "เลือกผู้ใช้ไฟฟ้าจากแผนที่"
+
+msgid ""
+"For the spatial optimization of the electric grid, the geolocation of the "
+"consumers must be provided. For this, a map from OpenStreetMap is integrated "
+"into the tool. The determination of the geocoordinates of the consumers can "
+"be done in three ways:"
+msgstr ""
+"การหาค่าที่เหมาะสมเชิงพื้นที่ของโครงข่ายไฟฟ้าจำเป็นต้องระบุตำแหน่งเชิงภูมิศาสตร์ของผู้ใช้ไฟฟ้า "
+"โดยในเครื่องมือนี้ได้มีการนำแผนที่จาก OpenStreetMap เข้ามาช่วยเสริม "
+"การกำหนดพิกัดภูมิศาสตร์ของผู้ใช้ไฟฟ้าสามารถทำได้ 3 วิธี:"
+
+msgid ""
+"Automatic detection of buildings within areas marked using drawing tools."
+msgstr "ตรวจจับอาคารอัตโนมัติในพื้นที่ที่กำหนดด้วยเครื่องมือวาด"
+
+msgid "Manual selection of consumer locations by placing markers on the map."
+msgstr "เลือกตำแหน่งผู้ใช้ไฟฟ้าด้วยตนเองโดยการวางหมุดบนแผนที่"
+
+msgid "Manual input of the geocoordinates using input fields."
+msgstr "ให้ข้อมูลพิกัดภูมิศาสตร์ด้วยตนเองผ่านช่องกรอกข้อมูล"
+
+msgid ""
+"PeopleSuN's project includes a demand modeling tool which utilizes both "
+"quantitative and qualitative survey data collected from various non-urban "
+"Nigerian villages. With an extensive dataset that includes responses from "
+"thousands of households and enterprises, it models appliance ownership, "
+"electricity consumption trends, and available expenditures for electricity "
+"services, and determines affordable monthly costs. The tool uses statistical "
+"models in conjunction with stochastic algorithms to generate likely "
+"distributions of electricity demand and expenditures. Initially, this is "
+"applied to the surveyed areas and then extrapolated to cover all non-urban "
+"regions in Nigeria. The model generates different consumer categories/"
+"profiles based on geographical zones and wealth categories, aiding in a "
+"nuanced and accurate prediction of electricity demand."
+msgstr ""
+"โครงการ PeopleSuN ประกอบไปด้วยเครื่องมือสร้างแบบจำลองความต้องการการใช้ไฟฟ้า ซึ่งได้มาจาก "
+"ข้อมูลการสำรวจทั้งเชิงปริมาณและเชิงคุณภาพที่เก็บจากหมู่บ้านนอกเขตเมืองหลายแห่ง"
+"ในไนจีเรีย ด้วยชุดข้อมูลขนาดใหญ่ที่รวมคำตอบจากครัวเรือนและสถานประกอบการหลายพันแห่ง "
+"เครื่องมือนี้จึงสามารถสร้างแบบจำลองการครอบครองเครื่องใช้ไฟฟ้า แนวโน้มการใช้ไฟฟ้า "
+"และค่าใช้จ่ายที่มีสำหรับการใช้ไฟฟ้า รวมถึงสามารถกำหนดค่าใช้จ่ายรายเดือนที่ประชาชนสามารถจ่ายได้ "
+"เครื่องมือนี้ใช้แบบจำลองทางสถิติร่วมกับอัลกอริทึมแบบสุ่มเพื่อหาความน่าจะเป็นของการกระจาย "
+"ของความต้องการใช้ไฟฟ้าและค่าใช้จ่าย เริ่มแรกจะประยุกต์ใช้กับพื้นที่ที่มีการสำรวจข้อมูล "
+"จากนั้นจึงขยายผลครอบคลุมพื้นที่นอกเขตเมืองทั้งหมดในไนจีเรีย "
+"แบบจำลองนี้สร้างกลุ่ม/โปรไฟล์ผู้ใช้ไฟฟ้าต่าง ๆ โดยที่อยู่ตามเขตภูมิศาสตร์และระดับความมั่งคั่งของผู้ใช้ไฟฟ้า "
+"เพื่อช่วยในการคาดการณ์ความต้องการไฟฟ้าอย่างละเอียดและแม่นยำ"
+
+msgid "Spatial Optimization of the Distribution Grid"
+msgstr "ปรับโครงข่ายจำหน่ายไฟฟ้าให้เหมาะสมตามพื้นที่"
+
+msgid ""
+"The spatial grid optimization tool operates through a sequence of steps that "
+"ensure efficient energy system design. The tool identifies consumers, sorts "
+"them based on proximity to the load center, and meticulously calculates the "
+"optimal setup required to connect all consumers within the grid, adhering to "
+"constraints on maximum connections per consumer and maximum distance between "
+"consumers. The tool employs a clustering algorithm to determine optimal pole "
+"locations, constructs a minimum spanning tree (MST) for efficient pole "
+"interconnectivity, and connects each consumer to their nearest pole. If "
+"needed, the number of poles is increased, ensuring all constraints are met. "
+"Furthermore, long links exceeding the maximum allowed distance are segmented "
+"into smaller ones with additional poles. Thus, the tool offers a "
+"comprehensive solution for optimal grid design."
+msgstr ""
+"เครื่องมือหาค่าที่เหมาะสมเชิงพื้นที่ของโครงข่ายไฟฟ้าทำงานผ่านลำดับขั้นตอน "
+"เพื่อให้มั่นใจได้ว่าการออกแบบระบบพลังงานนั้นมีประสิทธิภาพ "
+"เครื่องมือนี้จะระบุผู้ใช้ไฟฟ้า จัดเรียงตามความใกล้กับศูนย์กลางโหลด "
+"และคำนวณการตั้งค่าที่เหมาะสมที่สุดเพื่อเชื่อมต่อผู้ใช้ไฟฟ้าทั้งหมดภายในโครงข่าย "
+"โดยยึดตามข้อจำกัดของจำนวนการเชื่อมต่อสูงสุดต่อผู้ใช้ไฟฟ้า "
+"และระยะห่างสูงสุดระหว่างผู้ใช้ไฟฟ้า เครื่องมือนี้ใช้ขั้นตอนวิธีการจัดกลุ่ม "
+"เพื่อหาตำแหน่งเสาไฟที่เหมาะสม สร้างกราฟต้นไม้ครอบคลุมขอบเขตต่ำสุด (MST) "
+"เพื่อให้การเชื่อมต่อระหว่างเสาไฟมีประสิทธิภาพ และเชื่อมต่อผู้ใช้ไฟฟ้าแต่ละรายเข้ากับเสาไฟที่ใกล้ที่สุด "
+"ในกรณีที่จำเป็นจะเพิ่มจำนวนเสาไฟเพื่อให้เป็นไปตามข้อจำกัดทั้งหมด "
+"นอกจากนี้ การเชื่อมต่อที่มีความยาวเกินกว่าระยะสูงสุดที่กำหนด "
+"จะถูกแบ่งออกเป็นช่วงที่สั้นลงพร้อมเสาไฟเพิ่มเติม "
+"ดังนั้น เครื่องมือนี้จึงเป็นโซลูชันแบบครบวงจรสำหรับการออกแบบโครงข่ายไฟฟ้าที่เหมาะสม"
+
+
+msgid "Design Optimization of the Generation System"
+msgstr "ออกแบบระบบผลิตไฟฟ้าให้เหมาะสม"
+
+msgid ""
+"This tool excels in the design and optimization of off-grid energy systems, "
+"integrating different types of energy converters including photovoltaic (PV) "
+"systems and diesel generators, along with components like battery systems, "
+"inverters, and rectifiers. The tool uses ERA5 satellite data and PVLIB for "
+"the modeling of solar potentials in PV systems. The design optimization of "
+"the tool revolves around minimizing the Levelized Cost of Energy (LCOE), a "
+"method that considers both capital and operational costs. This results in an "
+"optimal configuration that satisfies consumer demands, modeled as a mixed-"
+"integer linear model. Leveraging the open-source modeling framework OEMOF "
+"and a high-efficiency MILP solver, the tool offers an effective solution for "
+"complex optimization challenges. The insights generated by the tool - "
+"including installed capacities, time series of system operations, investment "
+"costs, CO<sub>2</sub> emissions, and fuel requirements - provide "
+"stakeholders with invaluable information for strategic decision-making."
+msgstr ""
+"**เครื่องมือนี้มีความโดดเด่นในการออกแบบและเพิ่มประสิทธิภาพของระบบพลังงานนอกโครงข่าย "
+"โดยบูรณาการตัวแปลงพลังงานหลายประเภท เช่น ระบบเซลล์แสงอาทิตย์ (PV) "
+"และเครื่องกำเนิดไฟฟ้าดีเซล พร้อมทั้งส่วนประกอบอื่น ๆ "
+"เช่น ระบบแบตเตอรี่ อินเวอร์เตอร์ และเรกติไฟเออร์ "
+"เครื่องมือนี้ใช้ข้อมูลดาวเทียม ERA5 และ PVLIB "
+"สำหรับการจำลองศักยภาพพลังงานแสงอาทิตย์ในระบบ PV "
+"การเพิ่มประสิทธิภาพการออกแบบของเครื่องมือมุ่งเน้นที่การลดต้นทุนพลังงานตลอดอายุการใช้งาน (LCOE) "
+"ซึ่งเป็นวิธีที่พิจารณาทั้งต้นทุนการลงทุนและต้นทุนการดำเนินงาน "
+"ผลลัพธ์คือการกำหนดค่าที่เหมาะสมที่สุดที่ตอบสนองความต้องการของผู้ใช้ไฟฟ้า "
+"โดยจำลองในรูปแบบสมการเชิงเส้นจำนวนเต็มผสม "
+"ด้วยการใช้กรอบการจำลองแบบโอเพ่นซอร์ส OEMOF "
+"และตัวแก้ปัญหา MILP ที่มีประสิทธิภาพสูง "
+"เครื่องมือนี้จึงมอบโซลูชันที่มีประสิทธิภาพสำหรับความท้าทายด้านการเพิ่มประสิทธิภาพที่ซับซ้อน "
+"ข้อมูลเชิงลึกที่ได้จากเครื่องมือ "
+"เช่น กำลังการผลิตที่ติดตั้ง ลำดับเวลาในการทำงานของระบบ "
+"ต้นทุนการลงทุน การปล่อยก๊าซ CO<sub>2</sub> "
+"และความต้องการเชื้อเพลิง "
+"ช่วยมอบข้อมูลอันทรงคุณค่าแก่ผู้มีส่วนได้ส่วนเสียเพื่อใช้ในการตัดสินใจเชิงกลยุทธ์"
+
+msgid "About"
+msgstr "เกี่ยวกับ"
+
+msgid ""
+"PeopleSuN is a project funded by the German Federal Ministry of Education "
+"and Research (BMBF) within the funding initiative 'Client II - International "
+"Partnerships for Sustainable Innovations'. The off-grid tool was developed "
+"by the Department of Energy Engineering and Environmental Protection at the "
+"Technische Universität Berlin in cooperation with the Reiner-Lemoine-Institute."
+msgstr ""
+"PeopleSuN เป็นโครงการที่ได้รับทุนสนับสนุนจากกระทรวงศึกษาธิการและการวิจัยแห่งสหพันธ์สาธารณรัฐเยอรมนี (BMBF) "
+"ภายใต้โครงการสนับสนุน 'Client II - International Partnerships for Sustainable Innovations' "
+"เครื่องมือออกแบบเครือข่ายออฟกริดนี้ได้รับการพัฒนาโดยภาควิชาวิศวกรรมพลังงานและการคุ้มครองสิ่งแวดล้อม "
+"มหาวิทยาลัยเทคนิคแห่งเบอร์ลิน (Technische Universität Berlin) "
+"ร่วมกับสถาบัน Reiner-Lemoine-Institute"
+
+msgid "Using the planing tool without registration"
+msgstr "การใช้งานเครื่องมือวางแผนโดยไม่ลงทะเบียน"
+
+msgid ""
+"To test the planning tool, you do not need to register an account, a "
+"temporary account will be created automatically. However, if you use the "
+"planning tool without registering, please note:"
+msgstr ""
+"คุณไม่จำเป็นต้องลงทะเบียนบัญชีสำหรับการทดสอบการใช้เครื่องมือวางแผน  "
+"ระบบจะสร้างบัญชีชั่วคราวให้อัตโนมัติ อย่างไรก็ตาม "
+"หากคุณใช้เครื่องมือวางแผนโดยไม่ลงทะเบียน โปรดทราบว่า:"
+
+msgid "Your data will be automatically deleted after three hours"
+msgstr "ข้อมูลของคุณจะถูกลบโดยอัตโนมัติหลังจากสามชั่วโมง"
+
+msgid "If you log out, you lose access to your data"
+msgstr "หากคุณออกจากระบบ คุณจะไม่สามารถเข้าถึงข้อมูลของคุณได้อีก"
+
+msgid "The modeling time is limited to"
+msgstr "เวลาสำหรับการสร้างแบบจำลองจำกัดไว้ที่"
+
+msgid "days"
+msgstr "วัน"
+
+msgid "The number of allowed consumers is limited to"
+msgstr "จำนวนผู้ใช้ไฟฟ้าถูกจำกัดไว้ที่"
+
+msgid "The calculation time of your optimization model is limited to 5 minutes"
+msgstr "**เวลาในการคำนวณของแบบจำลองการเพิ่มประสิทธิภาพถูกจำกัดไว้ที่ 5 นาที"
+
+msgid "Please enter the letters shown below"
+msgstr "โปรดพิมพ์ตัวอักษรที่ปรากฎด้านล่าง"
+
+msgid "Captcha"
+msgstr "แคปชา"
+
+msgid "(Hint: capital letters only)"
+msgstr "(คำใบ้: เฉพาะตัวพิมพ์ใหญ่)"
+
+msgid "Enter the capital letters shown above"
+msgstr "พิมพ์ตัวอักษรพิมพ์ใหญ่ที่ปรากฎด้านบน"
+
+msgid "Continue"
+msgstr "ดำเนินการต่อ"
+
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgid "Cookies"
+msgstr "คุกกี้"
+
+msgid ""
+"This website uses cookies. These are strictly necessary to allow core "
+"website functionality such as user login and account management. The website "
+"cannot be used without them."
+msgstr ""
+"เว็บไซต์นี้ใช้คุกกี้ ซึ่งจำเป็นอย่างยิ่งเพื่อให้การทำงานหลักของเว็บไซต์เป็นไปได้ "
+"เช่น การเข้าสู่ระบบผู้ใช้และการจัดการบัญชี "
+"เว็บไซต์ไม่สามารถใช้งานได้หากไม่มีคุกกี้เหล่านี้ "
+
+msgid "Accept"
+msgstr "ยอมรับ"
+
+msgid "Decline"
+msgstr "ปฏิเสธ"
+
+msgid "Planning Steps"
+msgstr "ขั้นตอนการวางแผน"
+
+msgid ""
+"Offgridplanner was developed to guide users through the entire planning "
+"process of an off-grid system, from demand estimation and spatial grid "
+"optimization to design optimization and unit commitment of energy "
+"converters. However, individual planning steps can be skipped if needed; "
+"simply deselect the relevant options accordingly."
+msgstr ""
+"Offgridplanner ถูกพัฒนาขึ้นเพื่อแนะนำผู้ใช้ตลอดกระบวนการวางแผนของระบบออฟกริด "
+"ตั้งแต่การประมาณความต้องการใช้ไฟฟ้า การหาค่าที่เหมาะสมเชิงพื้นที่ของโครงข่ายไฟฟ้า "
+"ไปจนถึงการปรับการออกแบบและการจัดการการทำงานของตัวแปลงพลังงานให้เหมาะสม "
+"อย่างไรก็ตาม แต่ละขั้นตอนของการวางแผนสามารถข้ามได้หากจำเป็น "
+"เพียงยกเลิกการเลือกตัวเลือกที่เกี่ยวข้องตามต้องการ"
+
+msgid "Grid Layout"
+msgstr "ผังโครงข่ายไฟฟ้า"
+
+msgid "Export as .xls"
+msgstr "ส่งออกในรูปแบบ .xls"
+
+msgid "Export as PDF"
+msgstr "ส่งออกในรูปแบบ PDF"
+
+msgid "Summary of Results"
+msgstr "สรุปผลลัพธ์"
+
+msgid "Levelized Cost of Electricity (w/o SHS)"
+msgstr "ต้นทุนไฟฟ้าปรับระดับ (LCOE) (ไม่รวม SHS)"
+
+msgid "Total upfront Investment Cost"
+msgstr "ต้นทุนการลงทุนเริ่มต้นทั้งหมด"
+
+msgid "Share of Generation-Related Costs in LCOE"
+msgstr "สัดส่วนค่าใช้จ่ายที่เกี่ยวข้องกับการผลิตไฟฟ้าใน LCOE"
+
+msgid "Share of Grid-Related Costs in the LCOE"
+msgstr "สัดส่วนค่าใช้จ่ายที่เกี่ยวข้องกับโครงข่ายไฟฟ้าใน LCOE"
+
+msgid "Capacity PV"
+msgstr "กำลังการผลิต PV"
+
+msgid "Capacity Battery"
+msgstr "ความจุแบตเตอรี่"
+
+msgid "Capacity Diesel Generator"
+msgstr "กำลังการผลิตเครื่องกำเนิดไฟฟ้าดีเซล"
+
+msgid "Renewable Energy Share"
+msgstr "สัดส่วนของพลังงานหมุนเวียน"
+
+msgid "Number of grid-connected Consumers"
+msgstr "จำนวนผู้ใช้ไฟฟ้าที่เชื่อมต่อกับโครงข่าย"
+
+msgid "Total annual Consumption (w/o SHS)"
+msgstr "การใช้ไฟฟ้ารวมต่อปี (ไม่รวม SHS)"
+
+msgid "Annual average Demand per Consumer"
+msgstr "ความต้องการไฟฟ้าเฉลี่ยต่อปีต่อผู้ใช้"
+
+msgid "Calculation Time"
+msgstr "เวลาในการคำนวณ"
+
+msgid "Download Results (xlsx-Format)"
+msgstr "ดาวน์โหลดผลลัพธ์ (ในรูปแบบ xlsx)"
+
+msgid "Download Results (PDF)"
+msgstr "ดาวน์โหลดผลลัพธ์ (PDF)"
+
+msgid "Recalculate"
+msgstr "คำนวณใหม่"
+
+msgid "My Projects"
+msgstr "โปรเจคของฉัน"
+
+msgid "Results"
+msgstr "ผลลัพธ์"
+
+msgid "GRID"
+msgstr "โครงข่ายไฟฟ้า"
+
+msgid "Number of SHS Consumers"
+msgstr "จำนวนผู้ใช้ไฟฟ้า SHS"
+
+msgid "Number of Poles"
+msgstr "จำนวนเสาไฟฟ้า"
+
+msgid "Distribution Cable Length"
+msgstr "ความยาวของสายจำหน่าย"
+
+msgid "Average Length Distribution"
+msgstr "ความยาวเฉลี่ยของสายจำหน่าย"
+
+msgid "Connection Cable Length"
+msgstr "ความยาวของสายเชื่อมต่อ"
+
+msgid "Average Length Connection"
+msgstr "ความยาวเฉลี่ยของสายเชื่อมต่อ"
+
+msgid "ENERGY CONVERTERS"
+msgstr "เครื่องแปลงพลังงาน"
+
+msgid "Surplus Electricity"
+msgstr "ไฟฟ้าส่วนเกิน"
+
+msgid "Total Amount of Shortage"
+msgstr "ปริมาณไฟฟ้าขาดแคลนรวม"
+
+msgid "Capacity Inverter"
+msgstr "กำลังการแปลงของอินเวอร์เตอร์"
+
+msgid "Capacity Rectifier"
+msgstr "กำลังการแปลงของเรคติไฟเออร์"
+
+msgid "Annual Fuel Consumption"
+msgstr "การใช้เชื้อเพลิงต่อปี"
+
+msgid "Annual CO2 Emissions"
+msgstr "การปล่อย CO2 ต่อปี"
+
+msgid "Annual CO2 Savings due to PV"
+msgstr "การลดการปล่อย CO2 ต่อปีจาก PV"
+
+msgid "DEMAND"
+msgstr "ความต้องการใช้ไฟฟ้า"
+
+msgid "Total annual Consumption"
+msgstr "การใช้ไฟฟ้ารวมต่อปี"
+
+msgid "Peak Demand"
+msgstr "ความต้องการไฟฟ้าสูงสุด"
+
+msgid "Base Load"
+msgstr "โหลดพื้นฐาน"
+
+msgid "Total annual Shortage"
+msgstr "การขาดแคลนไฟฟ้ารวมต่อปี"
+
+msgid "Max. Shortage per Time Step"
+msgstr "การขาดแคลนไฟฟ้าสูงสุดต่อหนึ่งช่วงเวลา"
+
+msgid "Total annual Surplus"
+msgstr "ไฟฟ้าส่วนเกินรวมต่อปี"
+
+msgid "ECONOMIC DATA"
+msgstr "ข้อมูลทางเศรษฐศาสตร์"
+
+msgid "Grid upfront Investment Cost"
+msgstr "ต้นทุนการลงทุนเริ่มต้นของโครงข่ายไฟฟ้า"
+
+msgid "PV upfront Investment Cost"
+msgstr "ต้นทุนการลงทุนเริ่มต้นของ PV"
+
+msgid "Battery upfront Investment Cost"
+msgstr "ต้นทุนการลงทุนเริ่มต้นของแบตเตอรี่"
+
+msgid "Inverter upfront Investment Cost"
+msgstr "ต้นทุนการลงทุนเริ่มต้นของอินเวอร์เตอร์"
+
+msgid "Diesel Generator upfront Investment Cost"
+msgstr "ต้นทุนการลงทุนเริ่มต้นของเครื่องกำเนิดไฟฟ้าดีเซล"
+
+msgid "Rectifier Investment Cost"
+msgstr "ต้นทุนการลงทุนของเรคติไฟเออร์"
+
+msgid "Annual Fuel Cost"
+msgstr "ค่าเชื้อเพลิงต่อปี"
+
+msgid "Total annualized Cost"
+msgstr "ต้นทุนรวมต่อปี"
+
+msgid ""
+"Annualized costs provide a comprehensive view of the expenses related to an "
+"investment over its duration. These costs include the initial investment "
+"expenses, the costs for replacing assets with a lifespan shorter than the "
+"project, variable costs, fuel expenses, and the residual value at the end of "
+"the project lifetime. By incorporating the time value of money using a "
+"specified interest rate, annualized costs translate these multifaceted "
+"expenditures into a standardized yearly figure. The Capital Recovery Factor "
+"(CRF) is utilized in the calculation to ensure a consistent and accurate "
+"understanding of the total costs over time."
+msgstr ""
+"ต้นทุนรายปีให้ภาพรวมที่ครอบคลุมของค่าใช้จ่ายที่เกี่ยวข้องกับการลงทุนตลอดระยะเวลาโปรเจค "
+"ต้นทุนเหล่านี้รวมถึงค่าใช้จ่ายในการลงทุนเริ่มต้น "
+"ค่าใช้จ่ายในการทดแทนอุปกรณ์ที่มีอายุการใช้งานสั้นกว่าอายุโปรเจค "
+"ต้นทุนผันแปร ค่าใช้จ่ายเชื้อเพลิง "
+"และมูลค่าคงเหลือเมื่อสิ้นสุดอายุโปรเจคโดยการคำนึงถึงมูลค่าเงินตามเวลาโดยใช้อัตราดอกเบี้ยที่กำหนด "
+"ต้นทุนรายปีจะแปลงค่าใช้จ่ายหลายมิติให้เป็นตัวเลขมาตรฐานต่อปี "
+"โดยใช้อัตราส่วนการคืนทุน (Capital Recovery Factor: CRF) "
+"ในการคำนวณเพื่อให้มั่นใจว่ามีความเข้าใจที่สอดคล้องและถูกต้องเกี่ยวกับต้นทุนรวมในระยะยาว"
+
+msgid "Grid's annualized Cost"
+msgstr "ค่าใช้จ่ายรายปีของโครงข่ายไฟฟ้า"
+
+msgid "PV's annualized Cost"
+msgstr "ค่าใช้จ่ายรายปีของ PV"
+
+msgid "Battery's annualized Cost"
+msgstr "ค่าใช้จ่ายรายปีของแบตเตอรี่"
+
+msgid "Inverter's annualized Cost"
+msgstr "ค่าใช้จ่ายรายปีของอินเวอร์เตอร์"
+
+msgid "Diesel Generator's annualized Cost"
+msgstr "ค่าใช้จ่ายรายปีของเครื่องกำเนิดไฟฟ้าดีเซล"
+
+msgid "Rectifier's annualized Cost"
+msgstr "ค่าใช้จ่ายรายปีของเรคติไฟเออร์"
+
+msgid "Optimal Capacity of Components"
+msgstr "กำลังที่เหมาะสมที่สุดของอุปกรณ์"
+
+msgid "Breakdown of the LCOE"
+msgstr "การแจกแจงต้นทุนไฟฟ้าปรับระดับ (LCOE)"
+
+msgid "Sankey Diagram Representing the Energy Flow in the System"
+msgstr "แผนภาพแซนคีย์แสดงการไหลของพลังงานในระบบ"
+
+msgid "*electricity surplus is not shown"
+msgstr "*ไม่ได้แสดงไฟฟ้าส่วนเกิน"
+
+msgid "Demand Coverage by Renewable and Non-Renewable Resources"
+msgstr "การตอบสนองความต้องการไฟฟ้าโดยแหล่งพลังงานหมุนเวียนและไม่หมุนเวียน"
+
+msgid "Annual Energy Flows with 1-Hour Resolution"
+msgstr "การไหลเวียนของพลังงานรายปีแบบละเอียดในระดับ 1 ชั่วโมง"
+
+msgid "Duration Curves for All Components"
+msgstr "กราฟแสดงระยะเวลาการทำงานของอุปกรณ์ทั้งหมด"
+
+msgid "Cumulative CO2 Emissions"
+msgstr "การปล่อย CO2 สะสม"
+
+msgid "No results"
+msgstr "ไม่มีผลลัพธ์"
+
+msgid "Yes, start calculation"
+msgstr "ใช่ เริ่มการคำนวณ"
+
+msgid "No, go to project setup"
+msgstr "ไม่ ไปที่การตั้งค่าโปรเจค"
+
+msgid ""
+"You have a calculation in progress that has not yet been completed. "
+"Therefore, you cannot start another calculation. You can either revoke the "
+"pending calculation or wait for it to be finished."
+msgstr "คุณไม่สามารถเริ่มการคำนวณใหม่ได้เนื่องจาก"
+"คุณมีการคำนวณที่กำลังดำเนินอยู่และยังไม่เสร็จสมบูรณ์"
+"คุณสามารถยกเลิกการคำนวณที่ค้างอยู่หรือรอให้เสร็จสิ้นก่อน"
+
+msgid "Projects"
+msgstr "โปรเจค"
+
+msgid "New Project"
+msgstr "โปรเจคใหม่"
+
+msgid "ID"
+msgstr "รหัส"
+
+msgid "Project Name"
+msgstr "ชื่อโปรเจค"
+
+msgid "Creation Date"
+msgstr "วันที่สร้าง"
+
+msgid "Last Update"
+msgstr "การปรับปรุงล่าสุด"
+
+msgid "Model Status"
+msgstr "สถานะแบบจำลอง"
+
+msgid "Duplicate Project"
+msgstr "ทำซ้ำโปรเจค"
+
+msgid "Delete Project"
+msgstr "ลบโปรเจค"
+
+msgid "Edit Project"
+msgstr "แก้ไขโปรเจค"
+
+msgid "Show Results"
+msgstr "แสดงผลลัพธ์"
+
+msgid "You do not yet have any saved projects"
+msgstr "คุณยังไม่มีโปรเจคที่บันทึกไว้"
+
+msgid "Are you sure you want to delete the project?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบโปรเจคนี้?"
+
+msgid "Create Example Model"
+msgstr "สร้างแบบจำลองตัวอย่าง"
+
+msgid ""
+"You have not created any projects yet. Would you like a sample project to be "
+"set up for you?"
+msgstr "คุณยังไม่ได้สร้างโปรเจคใด ๆ ต้องการให้ระบบตั้งค่าโปรเจคตัวอย่างให้หรือไม่?"
+
+msgid "Yes"
+msgstr "ใช่"
+
+msgid "No"
+msgstr "ไม่"
+
+msgid "Scenario step"
+msgstr "ขั้นตอนสถานการณ์"
+
+msgid "Scenario"
+msgstr "สถานการณ์"
+
+msgid "My projects"
+msgstr "โปรเจคของฉัน"
+
+msgid "Previous"
+msgstr "ก่อนหน้า"
+
+msgid "Personal info"
+msgstr "ข้อมูลส่วนตัว"
+
+msgid "Permissions"
+msgstr "สิทธิ์การใช้งาน"
+
+msgid "Important dates"
+msgstr "วันสำคัญ"
+
+msgid "Users"
+msgstr "ผู้ใช้"
+
+msgid "This email has already been taken."
+msgstr "อีเมลนี้ถูกใช้งานแล้ว"
+
+#, python-format
+msgid ""
+"I have read and accept the <a target='_blank' href='%(privacy_url)s'>privacy "
+"statement</a> from open_plan"
+msgstr "ฉันได้อ่านและยอมรับ<a target='_blank' href='%(privacy_url)s'>นโยบาย "
+"ความเป็นส่วนตัว</a>จาก open_plan"
+
+msgid "The given email must be set"
+msgstr "ต้องระบุอีเมล"
+
+msgid "Name of User"
+msgstr "ชื่อผู้ใช้"
+
+msgid "email address"
+msgstr "ที่อยู่อีเมล"
+
+msgid "Information successfully updated"
+msgstr "อัปเดตข้อมูลเรียบร้อยแล้ว"
+
+msgid "Project Description"
+msgstr "คำอธิบายของโปรเจค"
+
+msgid "The interest rate in investment calculations signifies the cost of capital and the potential return from an alternative investment of similar risk. It helps express the time value of money, crucial for determining the present value of future cash flows. This assists in evaluating and comparing investment opportunities. Default value of 12.3% is taken from World Bank reported average lending interest rate data of 2022. Please make sure to check this value for your project."
+msgstr ""
+"อัตราดอกเบี้ยในการคำนวณการลงทุนแสดงถึงต้นทุนของเงินทุนและผลตอบแทนที่เป็นไปได้จากการลงทุนในทางอื่นที่มีความเสี่ยงใกล้เคียงกัน "
+"อัตราดอกเบี้ยช่วยสะท้อนมูลค่าเงินตามเวลา ซึ่งมีความสำคัญต่อการหามูลค่าปัจจุบันของกระแสเงินสดในอนาคต "
+"อัตราดอกเบี้ยจึงช่วยในการประเมินและเปรียบเทียบโอกาสการลงทุน "
+"อัตราเริ่มต้น 12.3% มาจากข้อมูลอัตราดอกเบี้ยเงินกู้เฉลี่ยที่รายงานโดยธนาคารโลกในปี 2022 "
+"กรุณาตรวจสอบค่าอัตรานี้ให้เหมาะสมกับโปรเจคของคุณ"
+
+msgid "Project Lifetime"
+msgstr "ระยะเวลาของโปรเจค"
+
+msgid "The period during which the system will be in operation. Components whose lifetime is below that of the project lifetime must be replaced during operation, which will be taken into account in the cost calculation. In addition, the residual value of the components is determined at the end of the project lifetime."
+msgstr ""
+"ระยะเวลาการดำเนินงารของระบบ "
+"อุปกรณ์ที่มีอายุการใช้งานสั้นกว่าระยะเวลาของโปรเจคจะต้องถูกเปลี่ยนทดแทนระหว่างการดำเนินงาน "
+"ซึ่งจะถูกนำมาพิจารณาในการคำนวณต้นทุน "
+"นอกจากนี้ มูลค่าคงเหลือของอุปกรณ์จะถูกกำหนดเมื่อสิ้นสุดระยะเวลาของโปรเจค"
+
+msgid "Simulation Period"
+msgstr "ช่วงเวลาการจำลอง"
+
+msgid "Number of days used for the modelling period. For economic calculations, the project lifetime will be used."
+msgstr "จำนวนวันที่ใช้สำหรับช่วงเวลาการสร้างแบบจำลอง ระยะเวลาของโปรเจคจะถูกใช้สำหรับการคำนวณทางเศรษฐศาสตร์ "
+
+msgid "Percentage of households with very low demand (0.6kWh/hh/day)"
+msgstr "ร้อยละของครัวเรือนที่มีความต้องการใช้ไฟฟ้าต่ำมาก (0.6 kWh/ครัวเรือน/วัน)"
+
+msgid "Percentage of households with low demand (1.5kWh/hh/day)"
+msgstr "ร้อยละของครัวเรือนที่มีความต้องการใช้ไฟฟ้าต่ำ (1.5 kWh/ครัวเรือน/วัน)"
+
+msgid "Percentage of households with middle demand  (2.2kWh/hh/day)"
+msgstr "ร้อยละของครัวเรือนที่มีความต้องการใช้ไฟฟ้าปานกลาง (2.2 kWh/ครัวเรือน/วัน)"
+
+msgid "Percentage of households with high demand (2.9kWh/hh/day)"
+msgstr "ร้อยละของครัวเรือนที่มีความต้องการใช้ไฟฟ้าสูง (2.9 kWh/ครัวเรือน/วัน)"
+
+msgid "Percentage of households with very high demand  (3.4kWh/hh/day)"
+msgstr "ร้อยละของครัวเรือนที่มีความต้องการใช้ไฟฟ้าสูงมาก (3.4 kWh/ครัวเรือน/วัน)"
+
+msgid "Set Total Annual Consumption"
+msgstr "ตั้งค่าการใช้ไฟฟ้ารวมต่อปี"
+
+msgid "The demand curve will be scaled to meet the given total demand"
+msgstr "เส้นโค้งความต้องการการใช้ไฟฟ้าจะถูกปรับขนาดให้สอดคล้องกับความต้องการรวมที่กำหนด"
+
+msgid "Set Peak Demand"
+msgstr "ตั้งค่าความต้องการไฟฟ้าสูงสุด"
+
+msgid "The demand curve will be scaled to meet the given peak demand"
+msgstr "เส้นโค้งความต้องการการใช้ไฟฟ้าจะถูกปรับขนาดให้สอดคล้องกับความต้องการสูงสุดที่กำหนด"
+
+msgid "Lifetime"
+msgstr "อายุการใช้งาน"
+
+msgid "Lifespan of the component, after expiration a replacement investment must be made"
+msgstr "อายุการใช้งานของอุปกรณ์ เมื่อหมดอายุจะต้องลงทุนเปลี่ยนใหม่"
+
+msgid "Max. Length"
+msgstr "ความยาวสูงสุด"
+
+msgid "Maximum allowed length of the distribution cable"
+msgstr "ความยาวสูงสุดที่อนุญาตของสายจำหน่าย"
+
+msgid "Maximum allowed length of the connection cable"
+msgstr "ความยาวสูงสุดที่อนุญาตของสายเชื่อมต่อ"
+
+msgid "Max. Number of Connections"
+msgstr "จำนวนการเชื่อมต่อสูงสุด"
+
+msgid "Maximum number of consumers that can be connected to one pole"
+msgstr "จำนวนผู้ใช้ไฟฟ้าสูงสุดที่สามารถเชื่อมต่อกับเสาไฟฟ้าหนึ่งต้น"
+
+msgid "Connection Cost"
+msgstr "ต้นทุนการเชื่อมต่อ"
+
+msgid "Costs that arise when connecting a consumer in addition to the material costs of the cable."
+msgstr "ค่าใช้จ่ายที่เกิดขึ้นเมื่อเชื่อมต่อผู้ใช้ไฟฟ้า นอกเหนือจากต้นทุนวัสดุของสายไฟ"
+
+msgid "Solar Home Systems"
+msgstr "ระบบโซลาร์โฮม"
+
+msgid "Max. Specific Grid Cost"
+msgstr "ต้นทุนโครงข่ายเฉพาะสูงสุด"
+
+msgid "For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended"
+msgstr "จะมีการคำนวณต้นทุนเฉพาะของการเชื่อมต่อโครงข่ายสัมพันธ์กับการใช้ไฟฟ้าสำหรับผู้ใช้ไฟฟ้าแต่ละราย หากเกินค่ากำหนดที่ตั้งไว้ ผู้ใช้ไฟฟ้าจะไม่ถูกเชื่อมต่อเข้ากับโครงข่าย และแนะนำให้ใช้ระบบโซลาร์โฮมแทน"
+
+msgid "Optimize Capacity"
+msgstr "หาความจุที่เหมาะสม"
+
+msgid "Capacity"
+msgstr "ความจุ"
+
+msgid "Operating Expense (OpEx) is the cost associated with the operation of the component"
+msgstr "ค่าใช้จ่ายดำเนินงาน (OpEx) คือ ค่าใช้จ่ายที่เกี่ยวข้องกับการทำงานของส่วนประกอบ"
+
+msgid "Min. SOC"
+msgstr "สถานะประจุไฟฟ้าต่ำสุด (SOC)"
+
+msgid "Minimum State of Charge (SOC) of a battery refers to the lowest level at which the battery is allowed to discharge in order to prevent damage and prolong its lifespan"
+msgstr "สถานะประจุไฟฟ้าต่ำสุด (SOC) ของแบตเตอรี่ หมายถึง ระดับต่ำสุดที่อนุญาตให้แบตเตอรี่คายประจุ เพื่อป้องกันความเสียหายและยืดอายุการใช้งาน"
+
+msgid "Max. SOC"
+msgstr "สถานะประจุไฟฟ้าสูงสุด (SOC)"
+
+msgid "Maximum State of Charge (SOC) of a battery refers to the highest level at which the battery can be safely charged to prevent overcharging and ensure longevity"
+msgstr "สถานะประจุไฟฟ้าสูงสุด (SOC) ของแบตเตอรี่ หมายถึง ระดับสูงสุดที่สามารถชาร์จได้อย่างปลอดภัย เพื่อป้องกันการชาร์จเกินและยืดอายุการใช้งาน"
+
+msgid "C-Rate in"
+msgstr "อัตราการชาร์จเข้า (C-Rate in)"
+
+msgid "C-Rate out"
+msgstr "อัตราการจ่ายออก (C-Rate out)"
+
+msgid "Roundtrip Efficiency"
+msgstr "ประสิทธิภาพการใช้พลังงานแบบรอบเที่ยว"
+
+msgid "OpEx"
+msgstr "ค่าใช้จ่ายดำเนินงาน (OpEx)"
+
+msgid "Operating Expense (OpEx) refers to the fixed annual costs incurred in the operation of a component, specifically excluding fuel and other variable expenses"
+msgstr "ค่าใช้จ่ายดำเนินงาน (OpEx) หมายถึง ค่าใช้จ่ายประจำปีที่คงที่ในการใช้งานของส่วนประกอบ โดยไม่รวมถึงค่าเชื้อเพลิงและค่าใช้จ่ายผันแปรอื่น ๆ"
+
+msgid "Variable Cost"
+msgstr "ต้นทุนผันแปร"
+
+msgid "Fuel Cost"
+msgstr "ค่าใช้จ่ายเชื้อเพลิง"
+
+msgid "Fuel LHV"
+msgstr "ค่าความร้อนเชื้อเพลิง (LHV)"
+
+msgid "Min. Efficiency"
+msgstr "ประสิทธิภาพต่ำสุด"
+
+msgid "Max. Efficiency"
+msgstr "ประสิทธิภาพสูงสุด"
+
+msgid "Min. Load"
+msgstr "โหลดต่ำสุด"
+
+msgid "Max. Load"
+msgstr "โหลดสูงสุด"
+
+msgid "CapEx"
+msgstr "ค่าใช้จ่ายลงทุน (CapEx)"
+
+msgid "Capital Expenditure (CapEx) is the money that has to be spent to purchase the component"
+msgstr "ค่าใช้จ่ายลงทุน (CapEx) คือ เงินที่ต้องใช้ในการซื้อส่วนประกอบ"
+
+msgid "Efficiency"
+msgstr "ประสิทธิภาพ"
+
+msgid "Max. Total Shortage"
+msgstr "การขาดแคลนไฟฟ้ารวมสูงสุด"
+
+msgid "Max. Shortage Each Timestep"
+msgstr "การขาดแคลนสูงสุดในแต่ละช่วงเวลา"
+
+msgid "Shortage Penalty Cost"
+msgstr "ค่าปรับจากการขาดแคลน"

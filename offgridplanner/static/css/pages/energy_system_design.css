@@ -1,6 +1,193 @@
-.readonly-disabled {
-    background-color: #e9ecef; /* Matches Bootstrap disabled look */
-    color: #6c757d;
-    cursor: not-allowed;
-    border: 1px solid #ced4da;
+@import "../variables.css";
+
+.esd {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    background-color: var(--background-color--secondary);
+    color: var(--font-color--main);
+    min-height: calc(100vh - 7rem - 4rem - 1rem - 4.5rem);
+    padding: 3rem 0 4rem;
+}
+
+.esd > div {
+    width: 100%;
+    max-width: 82rem;
+    padding-left: var(--padding-normal);
+    padding-right: var(--padding-normal);
+}
+
+.esd-sidebar, 
+.esd-diagram {
+    background-color: var(--background-color--main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.esd-sidebar__header, .esd-diagram__header {
+    padding: var(--padding-normal);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.esd-sidebar__header h2, .esd-diagram__header h2 {
+    color: var(--font-color--secondary);
+    font-size: var(--font-size--md);
+    font-weight: var(--font-weight--bold);
+    margin-bottom: 0;
+}
+
+.esd-sidebar__content, 
+.esd-diagram__content {
+    padding: var(--padding-normal);
+}
+
+.esd-sidebar__category:not(:last-of-type) {
+    margin-bottom: 1.5rem;
+}
+
+.esd-sidebar__category-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.esd-sidebar__category-title span {
+    font-size: var(--font-size--md);
+    text-transform: uppercase;
+}
+
+.esd-sidebar__category .accordion {
+    box-shadow: var(--box-shadow);
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.esd-sidebar__category .accordion-button:not(.collapsed) {
+    background-color: #eff6ff;
+    color: var(--font-color--selected);
+}
+
+.esd-component:last-of-type {
+    margin-bottom: 0;
+}
+
+.esd-component__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: var(--padding-normal);
+    font-size: var(--font-size--md);
+}
+
+.esd-component__header .form-check {
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.esd-component__header input[type="checkbox"] {
+    margin: 0;
+}
+
+.esd-component__input-row:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
+
+.esd-component__input-row label {
+    font-weight: var(--font-weight--bold);
+    font-size: var(--font-size--sm);
+    margin-bottom: 0.25rem;
+}
+
+.esd-component__input-row input,
+.esd-component__input-row input:valid {
+    font-size: var(--font-size--sm);
+    background-color: var(--background-color--main) !important;
+}
+
+.esd-component__input-row .input-group-text {
+    font-size: var(--font-size--sm);
+}
+
+.esd-component__input-row:has(.readonly-disabled) {
+    display: none;
+}
+
+.esd-sources {
+    font-size: 12px;
+    color: var(--font-color--secondary);
+    margin-top: 2rem !important;
+}
+
+main:has(.esd) + .step-footer {
+    background-color: var(--background-color--secondary);
+}
+
+/* Energy System Diagram */
+#diagram {
+    background: #fff;
+    padding: 32px;
+    border-radius: 8px;
+}
+.component-box {
+    fill: #F4F6F9;
+    stroke: #E1EBF1;
+    stroke-width: 1;
+    rx: 8;
+}
+.section-box {
+    fill: none;
+    stroke: #E1EBF1;
+    stroke-width: 1;
+    rx: 8;
+}
+.home-box {
+    fill: #e8f5f3;
+    stroke: #4db6ac;
+    stroke-width: 2;
+    rx: 8;
+}
+.component-title {
+    font-size: 14px;
+    font-weight: 600;
+    fill: #2c3e50;
+}
+.status-dot {
+    r: 4;
+}
+.status-optimized {
+    fill: #4caf50;
+}
+.status-fixed {
+    fill: #2196f3;
+}
+.status-text {
+    font-size: 13px;
+    fill: #5E798D;
+}
+.section-header {
+    font-size: 15px;
+    font-weight: 600;
+    fill: #212529;
+    letter-spacing: 1px;
+}
+.arrow {
+    fill: none;
+    stroke: #72879A;
+    stroke-width: 2;
+    marker-end: url(#arrowhead);
+}
+.home-title {
+    font-size: 14px;
+    font-weight: 600;
+    fill: #157754;
 }

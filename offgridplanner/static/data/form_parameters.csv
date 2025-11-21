@@ -72,3 +72,26 @@ shortage_settings_is_selected,Shortage,bool,False,,EnergySystemDesign,
 shortage_parameters_max_shortage_total,Max. Total Shortage,float,10,%,EnergySystemDesign,
 shortage_parameters_max_shortage_timestep,Max. Shortage Each Timestep,float,20,%,EnergySystemDesign,
 shortage_parameters_shortage_penalty_cost,Shortage Penalty Cost,float,0.8,currency/kWh,EnergySystemDesign,
+h2_storage_settings_is_selected,H2 Storage,bool,True,,EnergySystemDesign,
+h2_storage_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+h2_storage_parameters_nominal_capacity,Capacity,float,,kWh,EnergySystemDesign,
+h2_storage_parameters_lifetime,Lifetime,int,20,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+h2_storage_parameters_capex,CapEx,float,350,currency/kg,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+h2_storage_parameters_opex,OpEx,float,7,currency/kg/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+h2_storage_parameters_soc_min,Min. SOC,float,5,%,EnergySystemDesign,Minimum State of Charge (SOC) of a storage refers to the lowest level at which the storage is allowed to discharge in order to prevent damage and prolong its lifespan
+h2_storage_parameters_soc_max,Max. SOC,float,100,%,EnergySystemDesign,Maximum State of Charge (SOC) of a storage refers to the highest level at which the storage can be safely charged to prevent overcharging and ensure longevity
+h2_storage_parameters_efficiency,Efficiency,float,100,%,EnergySystemDesign,
+electrolyzer_settings_is_selected,Electrolyzer,bool,True,,EnergySystemDesign,
+electrolyzer_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+electrolyzer_parameters_nominal_capacity,Capacity,float,,kW,EnergySystemDesign,
+electrolyzer_parameters_lifetime,Lifetime,int,20000,hours,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+electrolyzer_parameters_capex,CapEx,float,610,currency/kW,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+electrolyzer_parameters_opex,OpEx,float,18.3,currency/kg/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+electrolyzer_parameters_efficiency,Efficiency,float,60,%,EnergySystemDesign,
+fuel_cell_settings_is_selected,Fuel Cell,bool,True,,EnergySystemDesign,
+fuel_cell_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
+fuel_cell_parameters_nominal_capacity,Capacity,float,,kW,EnergySystemDesign,
+fuel_cell_parameters_lifetime,Lifetime,int,40000,hours,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
+fuel_cell_parameters_capex,CapEx,float,870,currency/kW,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+fuel_cell_parameters_opex,OpEx,float,22.2,currency/kg/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+fuel_cell_parameters_efficiency,Efficiency,float,50,%,EnergySystemDesign,

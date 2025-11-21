@@ -12,44 +12,313 @@
 
 {% block progression_content %}
 <main>
-  <section class="dashboard">
+  <section class="esd">
     <div>
       <form method="post">
         {% csrf_token %}
       <div class="row">
         <div class="col-md-4">
-          <div class="box" id="selectDiesel_gensetBox">
-            {% for field_name, field in grouped_fields|getkey:"Diesel Genset" %}
-            {% if field_name == "diesel_genset_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectDiesel_genset">{{ field.label }}</span>
+          <section class="esd-sidebar">
+            <div class="esd-sidebar__header">
+              <h2>Components</h2>
+            </div>
+            <div class="esd-sidebar__content">
+              <div class="esd-sidebar__category">
+                <h3 class="esd-sidebar__category-title">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#F4F6F9"/><path d="M11.7442 17.0667H15.4667C15.5467 17.0667 15.623 17.103 15.6736 17.1655C15.7242 17.228 15.7442 17.3105 15.7274 17.3892L14.4399 23.3998C14.4361 23.4117 14.4367 23.4248 14.443 23.436C14.4486 23.4479 14.4586 23.456 14.4711 23.4598C14.4817 23.4667 14.4949 23.4685 14.5074 23.4654C14.5199 23.4623 14.5305 23.4542 14.5361 23.4429L20.478 15.3748C20.5405 15.2904 20.5499 15.1785 20.503 15.0854C20.4555 14.9916 20.3599 14.9329 20.2555 14.9329H16.533C16.4523 14.9329 16.3761 14.8966 16.3255 14.8341C16.2748 14.7716 16.2555 14.6891 16.2723 14.6104L17.5598 8.59983C17.5636 8.58796 17.563 8.57421 17.5567 8.56296C17.5511 8.55171 17.5411 8.54296 17.5286 8.53921C17.5205 8.53546 17.5111 8.53296 17.5017 8.53296C17.4861 8.53358 17.4711 8.54233 17.463 8.55608L11.5217 16.6255C11.4598 16.7093 11.4498 16.8212 11.4973 16.9143C11.5442 17.008 11.6398 17.0667 11.7442 17.0667Z" fill="#212529"/></svg>
+                  <span>Energy Supply</span>
+                </h3>
+                <div class="accordion" id="supplyComponentsAccordion">
+                  <!-- Diesel Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Diesel Genset" %}
+                    {% if field_name == "diesel_genset_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingDiesel">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiesel" aria-expanded="false" aria-controls="collapseDiesel">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectDiesel_genset">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseDiesel" class="accordion-collapse collapse" aria-labelledby="headingDiesel" data-bs-parent="#supplyComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "diesel_genset_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- PV Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Pv" %}
+                    {% if field_name == "pv_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingPv">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePv" aria-expanded="false" aria-controls="collapsePv">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectPv">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapsePv" class="accordion-collapse collapse" aria-labelledby="headingPv" data-bs-parent="#supplyComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "pv_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-            </div>
-            {% elif field_name == "diesel_genset_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+              </div>
+              <div class="esd-sidebar__category">
+                <h3 class="esd-sidebar__category-title">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#F4F6F9"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 19.9187V21C10.2499 21.1606 10.3381 21.3106 10.4831 21.455C10.6637 21.6362 10.9299 21.8025 11.2618 21.9531C12.3306 22.4387 14.0562 22.75 15.9999 22.75C17.9436 22.75 19.6693 22.4387 20.738 21.9531C21.0698 21.8025 21.3361 21.6362 21.5167 21.455C21.6617 21.3106 21.7498 21.1606 21.7498 21V19.9187C21.6655 19.9912 21.5705 20.0612 21.4649 20.1287C20.4399 20.7875 18.3773 21.25 15.9999 21.25C13.6225 21.25 11.5599 20.7875 10.5349 20.1287C10.4293 20.0612 10.3343 19.9912 10.2499 19.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 17.9187V18.9999C10.2499 19.1606 10.3381 19.3106 10.4831 19.455C10.6637 19.6362 10.9299 19.8025 11.2618 19.9531C12.3306 20.4387 14.0562 20.75 15.9999 20.75C17.9436 20.75 19.6693 20.4387 20.738 19.9531C21.0698 19.8025 21.3361 19.6362 21.5167 19.455C21.6617 19.3106 21.7498 19.1606 21.7498 18.9999V17.9187C21.6655 17.9912 21.5705 18.0612 21.4649 18.1287C20.4399 18.7875 18.3773 19.2499 15.9999 19.2499C13.6225 19.2499 11.5599 18.7875 10.5349 18.1287C10.4293 18.0612 10.3343 17.9912 10.2499 17.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21.7501 15.9187C21.6657 15.9912 21.5707 16.0612 21.4651 16.1287C20.4401 16.7875 18.3776 17.2499 16.0001 17.2499C13.6227 17.2499 11.5601 16.7875 10.5352 16.1287C10.4295 16.0612 10.3346 15.9912 10.2502 15.9187V16.9999C10.2502 17.1606 10.3383 17.3106 10.4833 17.455C10.6639 17.6362 10.9302 17.8025 11.2621 17.9531C12.3308 18.4387 14.0565 18.75 16.0001 18.75C17.9438 18.75 19.6696 18.4387 20.7382 17.9531C21.0701 17.8025 21.3363 17.6362 21.517 17.455C21.662 17.3106 21.7501 17.1606 21.7501 16.9999V15.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2499 13.9187V14.9999C10.2499 15.1606 10.3381 15.3106 10.4831 15.455C10.6637 15.6362 10.9299 15.8025 11.2618 15.9531C12.3306 16.4387 14.0562 16.75 15.9999 16.75C17.9436 16.75 19.6693 16.4387 20.738 15.9531C21.0698 15.8025 21.3361 15.6362 21.5167 15.455C21.6617 15.3106 21.7498 15.1606 21.7498 14.9999V13.9187C21.6655 13.9912 21.5705 14.0612 21.4649 14.1287C20.4399 14.7875 18.3773 15.2499 15.9999 15.2499C13.6225 15.2499 11.5599 14.7875 10.5349 14.1287C10.4293 14.0612 10.3343 13.9912 10.2499 13.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21.7501 11.9187C21.6657 11.9912 21.5707 12.0612 21.4651 12.1287C20.4401 12.7875 18.3776 13.2499 16.0001 13.2499C13.6227 13.2499 11.5601 12.7875 10.5352 12.1287C10.4295 12.0612 10.3346 11.9912 10.2502 11.9187V12.9999C10.2502 13.1606 10.3383 13.3106 10.4833 13.455C10.6639 13.6362 10.9302 13.8025 11.2621 13.9531C12.3308 14.4387 14.0565 14.75 16.0001 14.75C17.9438 14.75 19.6696 14.4387 20.7382 13.9531C21.0701 13.8025 21.3363 13.6362 21.517 13.455C21.662 13.3106 21.7501 13.1606 21.7501 12.9999V11.9187Z" fill="#212529"/><path fill-rule="evenodd" clip-rule="evenodd" d="M16 9.25C17.9437 9.25 19.6695 9.56125 20.7381 10.0469C21.07 10.1975 21.3362 10.3638 21.5168 10.545C21.6618 10.6894 21.75 10.8394 21.75 11C21.75 11.1607 21.6618 11.3106 21.5168 11.455C21.3362 11.6363 21.07 11.8025 20.7381 11.9532C19.6693 12.4388 17.9437 12.75 16 12.75C14.0563 12.75 12.3306 12.4388 11.2619 11.9532C10.9301 11.8025 10.6638 11.6363 10.4832 11.455C10.3382 11.3106 10.2501 11.1607 10.2501 11C10.2501 10.8394 10.3382 10.6894 10.4832 10.545C10.6638 10.3638 10.9301 10.1975 11.2619 10.0469C12.3307 9.56125 14.0563 9.25 16 9.25Z" fill="#212529"/></svg>
+                  <span>Energy Backup</span>
+                </h3>
+                <div class="accordion" id="storageComponentsAccordion">
+                  <!-- Battery Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Battery" %}
+                    {% if field_name == "battery_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingBattery">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBattery" aria-expanded="false" aria-controls="collapseBattery">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectBattery">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseBattery" class="accordion-collapse collapse" aria-labelledby="headingBattery" data-bs-parent="#storageComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "battery_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <!-- H2 Storage Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"H2 Storage" %}
+                    {% if field_name == "h2_storage_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingH2Storage">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseH2Storage" aria-expanded="false" aria-controls="collapseH2Storage">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectH2Storage">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseH2Storage" class="accordion-collapse collapse" aria-labelledby="headingH2Storage" data-bs-parent="#storageComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "h2_storage_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <!-- Nested Accordion for Electrolyzer and Fuel Cell -->
+                        <div class="accordion accordion-flush mt-3" id="h2SubComponentsAccordion">
+                          <!-- Electrolyzer Component -->
+                          <div class="accordion-item">
+                            {% for field_name, field in grouped_fields|getkey:"Electrolyzer" %}
+                            {% if field_name == "electrolyzer_settings_is_selected" %}
+                            <h2 class="accordion-header" id="headingElectrolyzer">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseElectrolyzer" aria-expanded="false" aria-controls="collapseElectrolyzer">
+                                {{ field|add_class:"form-check-input me-2" }}
+                                <span class="grid-title" id="selectElectrolyzer">{{ field.label }}</span>
+                              </button>
+                            </h2>
+                            <div id="collapseElectrolyzer" class="accordion-collapse collapse" aria-labelledby="headingElectrolyzer" data-bs-parent="#h2SubComponentsAccordion">
+                              <div class="accordion-body">
+                              {% elif field_name == "electrolyzer_settings_design" %}
+                                <div class="row">
+                                  {{ field }}
+                                </div>
+                                {% else %}
+                                <div class="esd-component__input-row mb-3">
+                                  <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                                  <div class="input-group">
+                                    {{ field|add_class:"form-control" }}
+                                    <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                                  </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Fuel Cell Component -->
+                          <div class="accordion-item">
+                            {% for field_name, field in grouped_fields|getkey:"Fuel Cell" %}
+                            {% if field_name == "fuel_cell_settings_is_selected" %}
+                            <h2 class="accordion-header" id="headingFuelCell">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFuelCell" aria-expanded="false" aria-controls="collapseFuelCell">
+                                {{ field|add_class:"form-check-input me-2" }}
+                                <span class="grid-title" id="selectFuelCell">{{ field.label }}</span>
+                              </button>
+                            </h2>
+                            <div id="collapseFuelCell" class="accordion-collapse collapse" aria-labelledby="headingFuelCell" data-bs-parent="#h2SubComponentsAccordion">
+                              <div class="accordion-body">
+                              {% elif field_name == "fuel_cell_settings_design" %}
+                                <div class="row">
+                                  {{ field }}
+                                </div>
+                                {% else %}
+                                <div class="esd-component__input-row mb-3">
+                                  <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                                  <div class="input-group">
+                                    {{ field|add_class:"form-control" }}
+                                    <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                                  </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="esd-sidebar__category">
+                <h3 class="esd-sidebar__category-title">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#F4F6F9"/><path d="M14.7531 17.6406C14.6688 17.5 14.5094 17.4062 14.3406 17.4062H11.0969C10.9282 17.4062 10.7688 17.5 10.6844 17.6406L9.06253 20.4531C8.97818 20.5937 8.97818 20.7812 9.06253 20.9219L10.6844 23.7656C10.7688 23.9062 10.9282 24 11.0969 24H14.3407C14.5094 24 14.6688 23.9062 14.7532 23.7656L16.3751 20.9219C16.4594 20.7812 16.4594 20.5937 16.3751 20.4531L14.7531 17.6406ZM12.7188 22.125C11.9406 22.125 11.3125 21.4656 11.3125 20.6875C11.3125 19.9093 11.9406 19.2812 12.7188 19.2812C13.4969 19.2812 14.125 19.9093 14.125 20.6875C14.125 21.4656 13.4969 22.125 12.7188 22.125Z" fill="#212529"/><path d="M12.7188 21.1562C12.9776 21.1562 13.1875 20.9464 13.1875 20.6875C13.1875 20.4286 12.9776 20.2188 12.7188 20.2188C12.4599 20.2188 12.25 20.4286 12.25 20.6875C12.25 20.9464 12.4599 21.1562 12.7188 21.1562Z" fill="#212529"/><path d="M21.3156 12.9531C21.2313 12.8125 21.0719 12.7188 20.9031 12.7188H17.6594C17.4907 12.7188 17.3313 12.8125 17.2469 12.9531L15.625 15.7656C15.5407 15.9062 15.5407 16.0937 15.625 16.2344L17.2469 19.0469C17.3313 19.1875 17.4907 19.2812 17.6594 19.2812H20.9032C21.0719 19.2812 21.2313 19.1875 21.3157 19.0469L22.9376 16.2344C23.0219 16.0937 23.0219 15.9062 22.9376 15.7656L21.3156 12.9531ZM19.2813 17.4062C18.5031 17.4062 17.875 16.7781 17.875 16C17.875 15.2218 18.5031 14.5938 19.2813 14.5938C20.0594 14.5938 20.6875 15.2218 20.6875 16C20.6875 16.7781 20.0594 17.4062 19.2813 17.4062Z" fill="#212529"/><path d="M19.2812 16.4688C19.5401 16.4688 19.75 16.2589 19.75 16C19.75 15.7411 19.5401 15.5312 19.2812 15.5312C19.0224 15.5312 18.8125 15.7411 18.8125 16C18.8125 16.2589 19.0224 16.4688 19.2812 16.4688Z" fill="#212529"/><path d="M12.7188 11.7812C12.9776 11.7812 13.1875 11.5714 13.1875 11.3125C13.1875 11.0536 12.9776 10.8438 12.7188 10.8438C12.4599 10.8438 12.25 11.0536 12.25 11.3125C12.25 11.5714 12.4599 11.7812 12.7188 11.7812Z" fill="#212529"/><path d="M14.3406 8H11.0969C10.9282 8 10.7688 8.09372 10.6844 8.23438L9.06253 11.0781C8.97818 11.2187 8.97818 11.4062 9.06253 11.5469L10.6844 14.3594C10.7688 14.5 10.9282 14.5938 11.0969 14.5938H14.3407C14.5094 14.5938 14.6688 14.5 14.7532 14.3594L16.3751 11.5469C16.4594 11.4062 16.4594 11.2187 16.3751 11.0781L14.7532 8.23438C14.6688 8.09372 14.5094 8 14.3406 8ZM12.7188 12.7188C11.9406 12.7188 11.3125 12.0906 11.3125 11.3125C11.3125 10.5343 11.9406 9.90625 12.7188 9.90625C13.4969 9.90625 14.125 10.5343 14.125 11.3125C14.125 12.0906 13.4969 12.7188 12.7188 12.7188Z" fill="#212529"/></svg>
+                  <span>Other Equipment</span>
+                </h3>
+                <div class="accordion" id="otherComponentsAccordion">
+                  <!-- Inverter Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Inverter" %}
+                    {% if field_name == "inverter_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingInverter">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInverter" aria-expanded="false" aria-controls="collapseInverter">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectInverter">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseInverter" class="accordion-collapse collapse" aria-labelledby="headingInverter" data-bs-parent="#otherComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "inverter_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Rectifier Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Rectifier" %}
+                    {% if field_name == "rectifier_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingRectifier">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRectifier" aria-expanded="false" aria-controls="collapseRectifier">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectRectifier">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseRectifier" class="accordion-collapse collapse" aria-labelledby="headingRectifier" data-bs-parent="#otherComponentsAccordion">
+                      <div class="accordion-body">
+                      {% elif field_name == "rectifier_settings_design" %}
+                        <div class="row">
+                          {{ field }}
+                        </div>
+                        {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Shortage Component -->
+                  <div class="accordion-item">
+                    {% for field_name, field in grouped_fields|getkey:"Shortage" %}
+                    {% if field_name == "shortage_settings_is_selected" %}
+                    <h2 class="accordion-header" id="headingShortage">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShortage" aria-expanded="false" aria-controls="collapseShortage">
+                        {{ field|add_class:"form-check-input me-2" }}
+                        <span class="grid-title" id="selectShortage">{{ field.label }}</span>
+                      </button>
+                    </h2>
+                    <div id="collapseShortage" class="accordion-collapse collapse" aria-labelledby="headingShortage" data-bs-parent="#otherComponentsAccordion">
+                      <div class="accordion-body">
+                      {% else %}
+                        <div class="esd-component__input-row mb-3">
+                          <label for="id_{{field.name}}" id="{{field.name}}_label">{{ field.label | safe }}</label>
+                          <div class="input-group">
+                            {{ field|add_class:"form-control" }}
+                            <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            {% endif %}
-            {% endfor %}
-            </div>
+          </section>
         </div>
         <div class="col-md-8">
-          <div class="chart">
-            <div class="chart__header">
-              <div>
-                <span class="title">Schematic of the Selected Off-Grid System</span>
-              </div>
+          <div class="esd-diagram">
+            <div class="esd-diagram__header">
+              <h2>Schematic of the Selected Off-Grid System</h2>
             </div>
+
             <svg id="blockDiagram" width="850" height="450">
               <!-- DEMAND -->
               <g id="groupDemand" visibility="hidden">
@@ -189,137 +458,12 @@
                 </text>
               </g>
             </svg>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="box" id="selectBatteryBox">
-            {% for field_name, field in grouped_fields|getkey:"Battery" %}
-            {% if field_name == "battery_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-              <div class="form-check">
-                <span class="grid-title" id="selectBattery">{{ field.label }}</span>
-              </div>
-            </div>
-            {% elif field_name == "battery_settings_design" %}
-            <div class="row">
-              {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box box--small" id="selectPvBox">
-            {% for field_name, field in grouped_fields|getkey:"Pv" %}
-            {% if field_name == "pv_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectPv">{{ field.label }}</span>
-                </div>
-            </div>
-            {% elif field_name == "pv_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-          </div>
-          <div class="box box--medium" id="selectInverterBox">
-            {% for field_name, field in grouped_fields|getkey:"Inverter" %}
-            {% if field_name == "inverter_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectInverter">{{ field.label }}</span>
-                </div>
-            </div>
-            {% elif field_name == "inverter_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box box--small" id="selectShortageBox">
-            {% for field_name, field in grouped_fields|getkey:"Shortage" %}
-            {% if field_name == "shortage_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectShortage">{{ field.label }}</span>
-                </div>
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-          </div>
-          <div class="box box--medium" id="selectRectifierBox">
-            {% for field_name, field in grouped_fields|getkey:"Rectifier" %}
-            {% if field_name == "rectifier_settings_is_selected" %}
-            <div class="box__header">
-              {{ field|add_class:"form-check-input" }}
-                <div class="form-check">
-                  <span class="grid-title" id="selectRectifier">{{ field.label }}</span>
-                </div>
-            </div>
-            {% elif field_name == "rectifier_settings_design" %}
-            <div class="row">
-            {{ field }}
-            </div>
-            {% else %}
-            <div class="row">
-              <div class="input-group">
-                <span class="input-group-text" id="{{field.name}}_label">{{ field.label | safe }}</span>
-                {{ field|add_class:"form-control" }}
-                <span class="input-group-text" id="{{field.name}}_unit">{{ field.field.widget.attrs.unit }}</span>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
 
           </div>
         </div>
       </div>
-      <div class="row">
-        <p style="font-size: 12px;">
+      <div class="row esd-sources">
+        <p>
           Sources:
           <br />
           <a href="https://openknowledge.worldbank.org/server/api/core/bitstreams/32287154-1ccb-46ce-83af-08facf7a3b49/content">Mini

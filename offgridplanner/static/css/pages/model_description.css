@@ -1,0 +1,35 @@
+.mod_descrip_dashboard {
+    min-height: auto; /* overwrites main.css */
+    margin-top: 5rem;
+}
+.mod_descrip_dashboard .container {
+    text-align: justify;
+}
+.mod_descrip_dashboard .col-12,
+.mod_descrip_dashboard .col-md-6 {
+    padding-inline: 30px;
+}
+.mod_descrip_dashboard h4 {
+    margin-bottom: 50px;
+}
+.mod_descrip_dashboard ol li,
+.mod_descrip_dashboard ul li {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+.mod_descrip_dashboard img.img-fluid.full-width-img {
+    padding: 20px;
+    border: 2px solid #000;
+    width: 80%;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* First ES tool image has margin-top: -25px */
+.mod_descrip_dashboard img.img-fluid.full-width-img:first-of-type {
+    margin-top: -25px;
+}
+.mod_descrip_dashboard .text-center.my-4 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

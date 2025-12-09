@@ -57,14 +57,16 @@ class SortableTable {
           this.sortColumn(
             columnIndex,
             'ascending',
-            ch.classList.contains('num')
+            ch.classList.contains('num'),
+            ch.classList.contains('date')
           );
         } else {
           ch.setAttribute('aria-sort', 'descending');
           this.sortColumn(
             columnIndex,
             'descending',
-            ch.classList.contains('num')
+            ch.classList.contains('num'),
+            ch.classList.contains('date')
           );
         }
       } else {
@@ -75,7 +77,7 @@ class SortableTable {
     }
   }
 
-  sortColumn(columnIndex, sortValue, isNumber) {
+  sortColumn(columnIndex, sortValue, isNumber, isDate) {
     function compareValues(a, b) {
       if (sortValue === 'ascending') {
         if (a.value === b.value) {
@@ -118,9 +120,16 @@ class SortableTable {
 
       var data = {};
       data.index = index;
-      data.value = dataCell.textContent.toLowerCase().trim();
-      if (isNumber) {
-        data.value = parseFloat(data.value);
+      let text = dataCell.textContent.trim();
+      if (isDate) {
+        data.value = parsePrettyDate(text);
+      }
+      else if (isNumber) {
+        data.value = parseFloat(text);
+      }
+      // normal text
+      else {
+        data.value = text.toLowerCase();
       }
       dataCells.push(data);
       rowNode = rowNode.nextElementSibling;
@@ -165,3 +174,34 @@ window.addEventListener('load', function () {
     new SortableTable(sortableTables[i]);
   }
 });
+
+/* DATE PARSING */
+const MONTH_MAP = {
+  "jan.": 0, "feb.": 1, "mar.": 2, "apr.": 3, "may.": 4, "jun.": 5,
+  "jul.": 6, "aug.": 7, "sep.": 8, "oct.": 9, "nov.": 10, "dec.": 11
+};
+
+function parsePrettyDate(text) {
+  text = text.trim().toLowerCase();
+
+  // Example input: "dec. 9, 2025, 12:53 p.m."
+  const regex = /^(\w+\.) (\d{1,2}), (\d{4}), (\d{1,2}):(\d{2}) (a\.m\.|p\.m\.)$/;
+
+  const match = text.match(regex);
+  if (!match) return NaN;
+
+  const [, monthStr, dayStr, yearStr, hourStr, minuteStr, ampm] = match;
+
+  const month = MONTH_MAP[monthStr];
+  const day = parseInt(dayStr, 10);
+  const year = parseInt(yearStr, 10);
+  let hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+
+  // Convert AM/PM into 24h clock
+  if (ampm === "p.m." && hour < 12) {
+    hour += 12;
+  }
+
+  return new Date(year, month, day, hour, minute).getTime();
+}

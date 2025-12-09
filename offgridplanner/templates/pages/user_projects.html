@@ -47,7 +47,7 @@
                         <td>{{ project.date_updated }}</td>
                         <td>{{ project.status }}</td>
                         <td>
-                          <span style="float:right;">
+                          <span style="float:none;">
                             <form action="{% url 'projects:project_duplicate' project.id %}"
                                   method="POST">
                               {% csrf_token %}
@@ -63,7 +63,7 @@
                         </span>
                       </td>
                       <td>
-                        <span style="float:right;">
+                        <span style="float:none;">
                           <button class="grey_button">
                           <a onclick="document.getElementById('projectID{{ project.id }}').style.display='block'"
                              style="color:white">{% translate "Delete" %}</a>
@@ -71,14 +71,14 @@
                         </span>
                       </td>
                       <td>
-                        <span style="float:right;">
+                        <span style="float:none;">
                           <button class="grey_button">
                           <a href="{% url 'steps:project_setup' project.id %}">{% translate "Edit" %}</a>
                           </button>
                         </span>
                       </td>
                       <td>
-                        <span style="float:right;">
+                        <span style="float:none;">
                           <button class="grey_button">
                           <a href="{% url 'steps:simulation_results' project.id %}" >{% translate "Results" %}</a>
                           </button>

@@ -2850,6 +2850,7 @@ td, th {
     letter-spacing: 0.03rem;
     font-weight: 700;
     padding: 0.25rem;
+    width: 100px;
 }
 
 * {
@@ -2991,6 +2992,7 @@ td, th {
     letter-spacing: 0.03rem;
     font-weight: 700;
     padding: 0.25rem;
+    width: 100px;
 }
 
 * {

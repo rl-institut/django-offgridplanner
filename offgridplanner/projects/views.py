@@ -1,7 +1,6 @@
 import base64
 import io
 import json
-import os
 import urllib
 from http.client import HTTPException
 
@@ -56,24 +55,6 @@ def projects_list(request, proj_id=None):
         .order_by("date_created")
         .reverse()
     )
-    for project in projects:
-        # TODO this should not be useful
-        # project.created_at = project.created_at.date()
-        # project.updated_at = project.updated_at.date()
-        status = "pending" if bool(os.environ.get("DOCKERIZED")) else "success"
-        if status in ["success", "failure", "revoked"]:
-            # TODO this is not useful
-            # user.task_id = ''
-            # user.project_id = None
-            if status == "success":
-                # TODO Here I am not sure we should use the status of the project rather the one of the simulation
-                project.status = "finished"
-            else:
-                project.status = status
-            project.save()
-            # TODO this is not useful
-            # user.task_id = ''
-            # user.project_id = None
 
     return render(request, "pages/user_projects.html", {"projects": projects})
 

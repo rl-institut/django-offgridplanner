@@ -8,6 +8,10 @@
     position: relative;
   }
 
+  table.sortable th.date {
+    width: 15%;
+  }
+
   table.sortable th button {
     padding: 4px;
     font-weight: bold;

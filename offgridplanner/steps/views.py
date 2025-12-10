@@ -173,11 +173,12 @@ def demand_estimation(request, proj_id=None):
         if request.method == "POST":
             form = CustomDemandForm(request.POST, instance=custom_demand)
             if form.is_valid():
-                print("inside is valid")
                 form.save()
                 return redirect("steps:ogp_steps", proj_id, step_id + 1)
             else:
-                messages.add_message(request, messages.WARNING, form.errors)
+                errors = form.non_field_errors()
+                display_error = errors[0] if len(errors) == 1 else errors
+                messages.add_message(request, messages.WARNING, display_error)
         else:
             form = CustomDemandForm(instance=custom_demand)
 

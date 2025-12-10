@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
@@ -76,10 +77,9 @@ class CustomDemandForm(CustomModelForm):
             field: cleaned_data[field] for field in self.percentage_fields
         }
         total = round(sum(percentage_values.values(), 0))
-        if total != 1:
-            # TODO tbd how we want to handle this
-            # raise ValidationError("The sum of all shares must equal 100%.")
-            print("The sum of all shares does not equal 100%.")
+        if total != 100:  # noqa: PLR2004
+            error_message = "The sum of all shares must equal 100%."
+            raise ValidationError(error_message)
 
         for field, value in self.cleaned_data.items():
             if field in self.percentage_fields:

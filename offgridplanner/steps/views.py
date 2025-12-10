@@ -167,29 +167,33 @@ def demand_estimation(request, proj_id=None):
         custom_demand, _ = CustomDemand.objects.get_or_create(
             project=project, defaults=get_param_from_metadata("default", "CustomDemand")
         )
-        if request.method == "GET":
-            form = CustomDemandForm(instance=custom_demand)
-            calibration_initial = custom_demand.calibration_option
-            calibration_active = custom_demand.calibration_option is not None
-            context = {
-                "calibration": {
-                    "active": calibration_active,
-                    "initial": calibration_initial,
-                },
-                "form": form,
-                "proj_id": proj_id,
-                "step_id": step_id,
-                "step_list": STEP_LIST_RIBBON,
-            }
-
-            return render(request, "pages/demand_estimation.html", context)
+        calibration_initial = custom_demand.calibration_option
+        calibration_active = calibration_initial is not None
 
         if request.method == "POST":
             form = CustomDemandForm(request.POST, instance=custom_demand)
             if form.is_valid():
                 form.save()
+                return redirect("steps:ogp_steps", proj_id, step_id + 1)
+            else:
+                errors = form.non_field_errors()
+                display_error = errors[0] if len(errors) == 1 else errors
+                messages.add_message(request, messages.WARNING, display_error)
+        else:
+            form = CustomDemandForm(instance=custom_demand)
 
-            return redirect("steps:ogp_steps", proj_id, step_id + 1)
+        context = {
+            "calibration": {
+                "active": calibration_active,
+                "initial": calibration_initial,
+            },
+            "form": form,
+            "proj_id": proj_id,
+            "step_id": step_id,
+            "step_list": STEP_LIST_RIBBON,
+        }
+
+        return render(request, "pages/demand_estimation.html", context)
 
 
 @login_required

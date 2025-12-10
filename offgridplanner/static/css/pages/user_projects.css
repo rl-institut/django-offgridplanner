@@ -1,3 +1,9 @@
+  table.sortable {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+
   table.sortable td,
   table.sortable th {
     padding: 0.6em 0.25em;

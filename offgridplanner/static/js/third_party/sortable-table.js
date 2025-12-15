@@ -122,7 +122,14 @@ class SortableTable {
       data.index = index;
       let text = dataCell.textContent.trim();
       if (isDate) {
-        data.value = parsePrettyDate(text);
+        // use locale-independent timestamp if present
+        const ts = dataCell.getAttribute('data-timestamp');
+        if (ts !== null && ts !== "") {
+          data.value = Number(ts);
+        } else {
+          // fallback to old parser
+          data.value = parsePrettyDate(text);
+        }
       }
       else if (isNumber) {
         data.value = parseFloat(text);

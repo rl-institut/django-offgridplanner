@@ -43,8 +43,12 @@
                     {% for project in projects %}
                       <tr>
                         <td>{{ project.name }}</td>
-                        <td>{{ project.date_created }}</td>
-                        <td>{{ project.date_updated }}</td>
+                        <td class="date" data-timestamp="{{ project.date_created|date:'U' }}">
+                          {{ project.date_created }}
+                        </td>
+                        <td class="date" data-timestamp="{{ project.date_updated|date:'U' }}">
+                          {{ project.date_updated }}
+                        </td>
                         <td>{{ project.status }}</td>
                         <td>
                           <span style="float:none;">

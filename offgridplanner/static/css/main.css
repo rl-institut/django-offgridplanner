@@ -2373,6 +2373,10 @@ content: "7"; }
     min-width: 1000px;
 }
 
+.modal .modal-dialog {
+    max-width: none;
+}
+
 .modal.modal--gui .modal-body .container {
     padding: 0;
 }

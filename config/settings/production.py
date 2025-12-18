@@ -168,6 +168,9 @@ LOGGING = {
     },
 }
 
+# Set to True to see full traceback in prod logs
+DEBUG_PROPAGATE_EXCEPTIONS = False
+
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain

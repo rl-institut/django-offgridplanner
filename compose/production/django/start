@@ -6,6 +6,9 @@ set -o nounset
 
 echo COLLECTSTATIC
 python /app/manage.py collectstatic --noinput
+echo COMPILETRANSLATIONS
+python manage.py compilemessages
+python manage.py compilejsi18n
 
 compress_enabled() {
 python << END

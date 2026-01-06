@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.0.1] – 2026-01-06
 ### Added
 - Display version in footer
 - Add CHANGELOG

@@ -71,6 +71,12 @@ RUN chmod +x /entrypoint
 COPY --chown=django:django ./compose/production/django/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
+
+COPY --chown=django:django ./compose/production/django/start_migrate /start_migrate
+RUN sed -i 's/\r$//g' /start_migrate
+RUN chmod +x /start_migrate
+
+
 COPY --chown=django:django ./compose/production/django/celery/worker/start /start-celeryworker
 RUN sed -i 's/\r$//g' /start-celeryworker
 RUN chmod +x /start-celeryworker
@@ -94,8 +100,12 @@ RUN chown -R django:django ${APP_HOME}
 
 USER django
 
-RUN DATABASE_URL="" \
-  DJANGO_SETTINGS_MODULE="config.settings.test" \
-  python manage.py compilemessages
+RUN export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
 
-ENTRYPOINT ["/entrypoint"]
+
+# RUN DATABASE_URL="" \
+#   DJANGO_SETTINGS_MODULE="config.settings.test" \
+#   python manage.py compilemessages
+
+#ENTRYPOINT ["/entrypoint"]
+CMD ${STARTUP_COMMAND}

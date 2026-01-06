@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+echo COLLECTSTATIC
+python /app/manage.py collectstatic --noinput
+
+echo MIGRATE
+python /app/manage.py showmigrations --settings config.settings.production
+python /app/manage.py migrate --settings config.settings.production
+
+echo RUNNING
+exec /usr/local/bin/gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn_worker.UvicornWorker

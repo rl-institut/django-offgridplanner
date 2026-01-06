@@ -4,6 +4,10 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+echo COMPILETRANSLATIONS
+python manage.py compilemessages
+python manage.py compilejsi18n
+
 echo COLLECTSTATIC
 python /app/manage.py collectstatic --noinput
 

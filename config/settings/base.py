@@ -33,8 +33,6 @@ LANGUAGE_CODE = "en-us"
 
 LANGUAGES = [
     ("en", _("English")),
-    ("fr-fr", _("French")),
-    ("pt-br", _("Portuguese")),
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -44,6 +42,9 @@ USE_I18N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(BASE_DIR / "locale")]
+# https://django-statici18n.readthedocs.io/en/v2.6.0/settings.html#django.conf.settings.STATICI18N_ROOT
+# Default root saves translations to staticfiles, which causes missing staticfiles manifest entry error since not being collected by collectstatic
+STATICI18N_ROOT = APPS_DIR / "static"
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -207,7 +208,6 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.i18n",
                 "offgridplanner.users.context_processors.allauth_settings",
                 "offgridplanner.steps.context_processors.current_project",
             ],

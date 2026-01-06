@@ -209,6 +209,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "offgridplanner.users.context_processors.allauth_settings",
+                "offgridplanner.users.context_processors.app_version",
                 "offgridplanner.steps.context_processors.current_project",
             ],
         },
@@ -379,6 +380,8 @@ SPECTACULAR_SETTINGS = {
 }
 
 # OFFGRIDPLANNER SETTINGS
+APP_VERSION_NUMBER = "1.0.0"
+
 # Assumed country based on timeseries data (used for map settings and user warning if a different country is selected)
 DEFAULT_COUNTRY = ("NG", "Nigeria")
 

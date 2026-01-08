@@ -139,6 +139,25 @@ async function plot_results(sequential = false) {
     }
 }
 
+// osm-roads
+function fetchOSMRoads(bbox) {
+  const bboxStr = Array.isArray(bbox) ? bbox.join(",") : bbox;
+  const url = `${osmRoadsUrl}?bbox=${encodeURIComponent(bboxStr)}`;
+
+  return fetch(url, { headers: { "Accept": "application/json" } })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`fetchOSMRoads: HTTP ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch(err => {
+      console.error("fetchOSMRoads error:", err);
+      throw err;
+    });
+}
+
+window.fetchOSMRoads = fetchOSMRoads;
 
 // customer_selection
 function db_links_to_js() {
@@ -199,6 +218,26 @@ async function file_nodes_to_js(formData) {
         }
     } catch (error) {
         console.error('Error occurred during file upload:', error);
+    }
+}
+
+// osm roads
+async function db_roads_to_js(proj_id) {
+    try {
+        const response = await fetch(dbRoadsToJsUrl);
+        const data = await response.json();
+
+        if (data !== null) {
+            road_elements = data.road_elements || [];
+            if (road_elements.length > 0) {
+                put_roads_on_map(road_elements);
+            }
+        } else {
+            road_elements = [];
+            put_roads_on_map([]);
+        }
+    } catch (err) {
+        console.error("Error loading roads from DB:", err);
     }
 }
 
@@ -268,6 +307,34 @@ async function consumer_to_db(href, file_type = "db") {
     }
 }
 
+async function roads_to_db(href, file_type = "db") {
+    const response = await fetch(roadsToDBUrl, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({ road_elements: road_elements, file_type: file_type })
+    });
+
+    if (response.ok) {
+        if (file_type === "db") {
+            if (href) {
+                window.location.href = href;
+            }
+        } else {
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = file_type === "xlsx" ? "roads.xlsx" : "roads.csv";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+        }
+    } else {
+        console.error('Request failed with status:', response.status);
+    }
+}
+
 // TODO move this to map related js, customer_selection
 function add_buildings_inside_boundary({boundariesCoordinates} = {}) {
     $("*").css("cursor", "wait");
@@ -298,6 +365,47 @@ function add_buildings_inside_boundary({boundariesCoordinates} = {}) {
         .catch((error) => {
             console.error("Error fetching data:", error);
         });
+}
+
+function add_roads_inside_boundary({boundariesCoordinates} = {}) {
+    $("*").css("cursor", "wait");
+    fetch(addRoadsUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({ boundary_coordinates: boundariesCoordinates, road_elements }),
+    })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to fetch road data");
+            }
+        })
+        .then((res) => {
+            $("*").css("cursor", "auto");
+            const responseMsg = document.getElementById("responseMsg");
+            responseMsg.innerHTML = res.msg;
+
+            if (res.executed) {
+                responseMsg.innerHTML = "";
+                road_elements = res.new_roads;
+                put_roads_on_map(res.new_roads);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching roads:", error);
+        });
+}
+
+function put_roads_on_map(roads) {
+    roads.forEach((road) => {
+        const latlngs = road.coordinates.map(c => [c[0], c[1]]);
+        const polyline = L.polyline(latlngs, { color: "#cc99ff", weight: 2 });
+        drawnItems.addLayer(polyline);
+    });
 }
 
 // TODO move this to map related js, customer_selection
@@ -333,11 +441,41 @@ async function remove_buildings_inside_boundary({boundariesCoordinates} = {}) {
     }
 }
 
+async function remove_roads_inside_boundary({boundariesCoordinates} = {}) {
+    $("*").css("cursor", "wait");
+
+    try {
+        const response = await fetch(removeRoadsUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({ boundary_coordinates: boundariesCoordinates, road_elements }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const res = await response.json();
+
+        road_elements = res.road_elements;
+        drawnItems.clearLayers();
+        put_roads_on_map(road_elements);
+    } catch (error) {
+        console.error("Error removing roads:", error.message);
+    } finally {
+        $("*").css("cursor", "auto");
+    }
+}
+
 let hasRetried = false;
 
 async function load_results(project_id) {
     await db_nodes_to_js(markers_only=false);
     await plot_results();
+    await db_roads_to_js(proj_id);
 }
 
 

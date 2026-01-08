@@ -55,6 +55,10 @@ class Links(BaseJsonData):
     pass
 
 
+class Roads(BaseJsonData):
+    pass
+
+
 class WeatherData(models.Model):
     dt = models.DateTimeField()
     lat = models.FloatField()

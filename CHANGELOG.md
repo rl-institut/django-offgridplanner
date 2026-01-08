@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Display roads on map ([#138](https://github.com/rl-institut/django-offgridplanner/pull/138)).
 
 ## [v1.0.1] – 2026-01-06
 ### Added

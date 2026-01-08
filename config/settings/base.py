@@ -383,6 +383,9 @@ SPECTACULAR_SETTINGS = {
 # OFFGRIDPLANNER SETTINGS
 APP_VERSION_NUMBER = "1.0.1"
 
+# Demo user expiry time
+DEMO_EXPIRY_SECONDS = 2 * 60 * 60  # 2 hours
+
 # Assumed country based on timeseries data (used for map settings and user warning if a different country is selected)
 DEFAULT_COUNTRY = ("NG", "Nigeria")
 

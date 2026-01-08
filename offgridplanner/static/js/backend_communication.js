@@ -479,38 +479,6 @@ async function load_results(project_id) {
 }
 
 
-
-
-async function anonymous_login() {
-    try {
-        const response = await fetch("anonymous_login/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({
-                'captcha_input': captcha_input3.value,
-                'hashed_captcha': hashedCaptcha
-            })
-        });
-
-        const data = await response.json();
-
-        document.getElementById("responseMsg3").innerHTML = data.msg;
-        if (data.validation === true) {
-            window.location.href = window.location.origin;
-        } else {
-            document.getElementById("responseMsg3").style.color = 'red';
-        }
-
-    } catch (error) {
-        console.error("There was a problem with the fetch operation:", error.message);
-    }
-}
-
-
-
 async function save_project_setup(href) {
     event.preventDefault(); // prevent the link from navigating immediately
 

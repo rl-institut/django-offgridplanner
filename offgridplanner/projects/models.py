@@ -66,7 +66,9 @@ class Project(models.Model):
         A dict with the parameters describing a scenario model
         """
         # TODO an export option with an explicit button could now be added (currently only used for duplication)
-        proj_dict = model_to_dict(self, exclude=["id", "user", "options", "start_date"])
+        proj_dict = {
+            "proj": model_to_dict(self, exclude=["id", "user", "options", "start_date"])
+        }
         for attr in [
             "nodes",
             "links",
@@ -84,7 +86,7 @@ class Project(models.Model):
                 elif attr in ["energy_system_design", "grid_design"]:
                     proj_dict[attr] = json.dumps(model.to_nested_dict())
                 else:
-                    proj_dict[attr] = model_to_dict(model)
+                    proj_dict[attr] = model_to_dict(model, exclude=["id", "project"])
             # Move on if the model instance doesn't exist yet
             except AttributeError:
                 pass

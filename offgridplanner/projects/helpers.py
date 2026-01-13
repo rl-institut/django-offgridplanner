@@ -3,11 +3,11 @@ from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.forms import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
+from config.settings.base import DATA_DIR
 from offgridplanner.projects.models import Project
 
 
@@ -113,9 +113,8 @@ def csv_to_dict(filepath, label_col="label"):
     """
     result = {}
 
-    file_path = staticfiles_storage.path(filepath)
-    if Path(file_path).exists():
-        with Path(file_path).open(encoding="utf-8-sig") as csvfile:
+    if Path(filepath).exists():
+        with Path(filepath).open(encoding="utf-8-sig") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 label = row.pop(label_col)  # Remove label from row data
@@ -197,5 +196,5 @@ def reorder_dict(d, old_index, new_index):
     return dict(items)
 
 
-FORM_FIELD_METADATA = csv_to_dict("data/form_parameters.csv")
-OUTPUT_KPIS = csv_to_dict("data/output_kpis.csv")
+FORM_FIELD_METADATA = csv_to_dict(DATA_DIR / "form_parameters.csv")
+OUTPUT_KPIS = csv_to_dict(DATA_DIR / "output_kpis.csv")

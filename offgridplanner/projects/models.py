@@ -1,4 +1,5 @@
 import datetime
+import json
 
 import pycountry
 from django.conf import settings
@@ -64,9 +65,30 @@ class Project(models.Model):
         -------
         A dict with the parameters describing a scenario model
         """
-        dm = model_to_dict(self, exclude=["id", "user", "options"])
-        if self.options:
-            dm["options_data"] = model_to_dict(self.options, exclude=["id"])
-        # add nodes
-        # add customdemand
-        return dm
+        # TODO an export option with an explicit button could now be added (currently only used for duplication)
+        proj_dict = {
+            "proj": model_to_dict(self, exclude=["id", "user", "options", "start_date"])
+        }
+        for attr in [
+            "nodes",
+            "links",
+            "energy_system_design",
+            "grid_design",
+            "custom_demand",
+        ]:
+            try:
+                # Check if the attribute already exists in the project (form has been saved)
+                model = getattr(self, attr.replace("_", ""))
+
+                # Format data appropriately depending on the model
+                if attr in ["nodes", "links"]:
+                    proj_dict[attr] = model.data
+                elif attr in ["energy_system_design", "grid_design"]:
+                    proj_dict[attr] = json.dumps(model.to_nested_dict())
+                else:
+                    proj_dict[attr] = model_to_dict(model, exclude=["id", "project"])
+            # Move on if the model instance doesn't exist yet
+            except AttributeError:
+                pass
+
+        return proj_dict

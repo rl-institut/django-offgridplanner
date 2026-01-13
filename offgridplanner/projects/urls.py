@@ -11,6 +11,9 @@ urlpatterns = [
     path("duplicate/<int:proj_id>", project_duplicate, name="project_duplicate"),
     path("delete/<int:proj_id>", project_delete, name="project_delete"),
     path(
+        "create_example_project", create_example_project, name="create_example_project"
+    ),
+    path(
         "export_results/<int:proj_id>",
         export_project_results,
         name="export_project_results",

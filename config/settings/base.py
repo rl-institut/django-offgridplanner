@@ -59,8 +59,9 @@ DATABASES["default"]["ATOMIC_REQUESTS"] = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # External data files
-DATA_DIR = Path(APPS_DIR) / "static" / "data"
+DATA_DIR = Path(APPS_DIR) / "data"
 FULL_PATH_PROFILES = Path(DATA_DIR) / "1-hour_mean_365_days_all_users.parquet"
+EXAMPLE_PROJECT_PATH = Path(DATA_DIR) / "example_project.json"
 
 # URLS
 # ------------------------------------------------------------------------------

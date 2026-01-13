@@ -3,6 +3,7 @@ import io
 import json
 import urllib
 from http.client import HTTPException
+from pathlib import Path
 
 # from jsonview.decorators import json_view
 import pandas as pd
@@ -24,6 +25,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Image
 from svglib.svglib import svg2rlg
 
+from config.settings.base import EXAMPLE_PROJECT_PATH
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.optimization.processing import PreProcessor
@@ -100,6 +102,18 @@ def populate_project_from_export(export_dict, user):
             custom_demand.save()
 
     return proj.id
+
+
+@login_required
+@require_http_methods(["GET"])
+def create_example_project(request):
+    # Use example project json template from staticfiles
+    with Path(EXAMPLE_PROJECT_PATH).open() as json_data:
+        demo_dict = json.load(json_data)
+    user = request.user
+    new_proj_id = populate_project_from_export(demo_dict, user=user)
+
+    return HttpResponseRedirect(reverse("projects:projects_list"))
 
 
 @login_required

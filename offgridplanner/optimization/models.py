@@ -19,7 +19,12 @@ class BaseJsonData(models.Model):
 
     @property
     def df(self):
-        return pd.read_json(StringIO(self.data)) if self.data else None
+        if self.data:
+            df = pd.read_json(StringIO(self.data))
+            if "label" in df:
+                df = df.set_index("label")
+            return df
+        return None
 
 
 class Nodes(BaseJsonData):

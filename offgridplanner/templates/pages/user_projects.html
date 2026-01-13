@@ -83,7 +83,7 @@
                       </td>
                       <td>
                         <span style="float:none;">
-                          <button class="grey_button" >
+                          <button class="grey_button {% if not project.has_simulation %} disabled {% endif %}" >
                             {% if project.has_simulation %}
                               <a href="{% url 'steps:simulation_results' project.id %}" >{% endif %}
                               {% translate "Results" %}</a>

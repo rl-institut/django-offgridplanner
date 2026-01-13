@@ -83,8 +83,10 @@
                       </td>
                       <td>
                         <span style="float:none;">
-                          <button class="grey_button">
-                          <a href="{% url 'steps:simulation_results' project.id %}" >{% translate "Results" %}</a>
+                          <button class="grey_button" >
+                            {% if project.has_simulation %}
+                              <a href="{% url 'steps:simulation_results' project.id %}" >{% endif %}
+                              {% translate "Results" %}</a>
                           </button>
                         </span>
                       </td>

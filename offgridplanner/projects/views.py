@@ -65,9 +65,6 @@ def projects_list(request, proj_id=None):
         .order_by("date_created")
         .reverse()
     )
-    for project in projects:
-        print(project.id, project.has_simulation)
-    print(Simulation.objects.values("id", "project_id", "status_grid", "status_supply"))
 
     return render(request, "pages/user_projects.html", {"projects": projects})
 

@@ -5,6 +5,7 @@
 - Display roads on map ([#138](https://github.com/rl-institut/django-offgridplanner/pull/138)).
 - Allow user to duplicate projects ([#191](https://github.com/rl-institut/django-offgridplanner/pull/191))
 - Offer example project to users with no projects ([#191](https://github.com/rl-institut/django-offgridplanner/pull/191))
+- Enable anonymous login with demo account ([#192](https://github.com/rl-institut/django-offgridplanner/pull/192))
 
 ### Fixed
 - Fix grid error on recalculation due to label column in nodes

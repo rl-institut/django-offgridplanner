@@ -26,6 +26,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django_ratelimit.decorators import ratelimit
 from openpyxl.drawing.image import PILImage
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch
@@ -55,6 +56,7 @@ from offgridplanner.users.models import DemoAccount
 from offgridplanner.users.models import User
 
 
+@ratelimit(key="ip", rate="20/h")
 @require_http_methods(["GET"])
 def demo_start(request):
     with transaction.atomic():

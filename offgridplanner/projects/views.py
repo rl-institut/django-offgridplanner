@@ -50,6 +50,7 @@ from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
+from offgridplanner.users.forms import UserSignupForm
 from offgridplanner.users.models import DemoAccount
 from offgridplanner.users.models import User
 
@@ -103,10 +104,13 @@ def projects_list(request, proj_id=None):
         .reverse()
     )
 
+    # Empty signup form for the case of a demo account where the user wants to sign up from the projects page
+    signup_form = UserSignupForm()
+
     return render(
         request,
         "pages/user_projects.html",
-        {"projects": projects, "user": request.user},
+        {"projects": projects, "user": request.user, "signup_form": signup_form},
     )
 
 

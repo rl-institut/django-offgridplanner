@@ -2928,7 +2928,15 @@ button:hover {
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 0px solid #fff;
     width: 40%; /* Could be more or less, depending on screen size */
+    padding: 20px;
 }
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem; /* spacing between buttons */
+}}
 
 /* Style the horizontal ruler */
 hr {

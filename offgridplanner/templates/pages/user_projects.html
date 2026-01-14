@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load crispy_forms_tags %}
 {% load static %}
 {% load i18n %}
 
@@ -10,65 +11,57 @@
 
 {% block content %}
 <body>
-<main>
-<section class="dashboard">
-<section class="dashboard">
-          <div class="chart" style="height: auto; padding-bottom: 10px">
-            <div class="chart__header">
-              <a class="title">Projects</a>
-              {% if request.user.demo %}
-              <!-- Save Account Button -->
-              <span><button id="save-account-btn" class="btn btn--long text-right">
-              {% translate "Save my account" %}
-              </button></span>
+            {% if request.user.demo %}
               <!-- Modal -->
-              <div id="save-account-modal" class="modal" style="display:none" aria-modal="true">
+              <div id="save-account-modal" class="modal" {% if signup_form.errors %}style="display:block"{% else %}style="display:none"{% endif %} aria-modal="true">
                 <div class="modal-content">
-                  <div class="container">
-                      <h2>Save your account</h2>
+                  <div class="signup-frame__heading">
+                    <h2>Save your account</h2>
+                    <div class="signup-frame__subheading">
+
                       <p>
                         Create a permanent account by setting an email and password.
                         Your existing projects will be kept.
                       </p>
-                      <form method="post" action="{% url 'users:convert_demo_account' %}">
-                        {% csrf_token %}
-                      <div class="row" style="ali">
-                        <label>
-                          Email
-                          <input
-                            type="email"
-                            name="email"
-                            required
-                          />
-                        </label>
-
-                        <label>
-                          Password
-                          <input
-                            type="password"
-                            name="password"
-                            required
-                            minlength="8"
-                          />
-                        </label>
-                      </div>
-                        <div class="row" style="padding-top:1rem">
-                        <div class="modal-actions">
-                          <a type="button" class="btn btn--small btn--hollow" id="cancel-save-account">
-                            Cancel
-                          </a>
-                          <button type="submit" class="btn btn--small">
-                            Confirm & Save
-                          </button>
-                        </div>
-                          </div>
-                      </form>
                     </div>
+                    <form method="post"
+                          class="signup-frame__form"
+                          action="{% url 'users:demo_convert_account' %}">
+                      {% csrf_token %}
+                      <div class="row">
+                      {{signup_form|crispy}}
+                        </div>
+                      <div class="row" style="padding-top:1rem;align-content:center">
+                        <div class="modal-actions">
+                          <button type="submit" class="btn btn--small"> Confirm & Save </button>
+                          <a type="button" class="btn btn--small btn--hollow" id="cancel-save-account"> Cancel </a>
+                        </div>
+                      </div>
+                    </form>
+
+                  </div>
                   </div>
                 </div>
               {% endif %}
+
+<main>
+  <section class="dashboard">
+    <section class="dashboard">
+
+          <div class="chart" style="height: auto; padding-bottom: 10px">
+
+
+            <div class="chart__header">
+
+              <a class="title">Projects</a>
+              {% if request.user.demo %}
+                            <!-- Save Account Button -->
+              <span><button id="save-account-btn" class="btn btn--small" style="align:center">
+              {% translate "Save my account" %}
+              </button></span>
+              {% endif %}
               <span><a href="{% url 'steps:project_setup' %}"
-                       class="btn btn--long text-right">{% translate "New Project" %}
+                       class="btn btn--small">{% translate "New Project" %}
               </a></span>
             </div>
             <span class="title"></span>
@@ -197,20 +190,22 @@
 <script src="{% static 'js/pages/user_projects.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>
 <script>
-  const openBtn = document.getElementById("save-account-btn");
-  const modal = document.getElementById("save-account-modal");
-  const cancelBtn = document.getElementById("cancel-save-account");
+  document.addEventListener("DOMContentLoaded", function () {
+    const openBtn = document.getElementById("save-account-btn");
+    const modal = document.getElementById("save-account-modal");
+    const cancelBtn = document.getElementById("cancel-save-account");
 
-  function openModal() {
-    modal.style.display = "block";
-  }
+    function openModal() {
+      modal.style.display = "block";
+    }
 
-  function closeModal() {
-    modal.style.display = "none";
-  }
+    function closeModal() {
+      modal.style.display = "none";
+    }
 
-  openBtn.addEventListener("click", openModal);
-  cancelBtn.addEventListener("click", closeModal);
+    openBtn.addEventListener("click", openModal);
+    cancelBtn.addEventListener("click", closeModal);
+  });
 </script>
 {% if not projects %}
 <script>
@@ -218,7 +213,4 @@
   modal.style.display = 'block';
 </script>
 {% endif %}
-<script src="{% static 'js/third_party/sortable-table.js' %}"></script>
-<script src="{% static 'js/pages/user_projects.js' %}"></script>
-<script src="{% static 'js/backend_communication.js' %}"></script>
 {% endblock end_body_scripts %}

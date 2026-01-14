@@ -24,21 +24,19 @@ from offgridplanner.optimization.helpers import check_imported_consumer_data
 from offgridplanner.optimization.helpers import check_imported_demand_data
 from offgridplanner.optimization.helpers import consumer_data_to_file
 from offgridplanner.optimization.helpers import convert_file_to_df
+from offgridplanner.optimization.helpers import df_to_file
+from offgridplanner.optimization.helpers import process_optimization_results
 from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
-from offgridplanner.optimization.models import Results
 from offgridplanner.optimization.models import Roads
 from offgridplanner.optimization.models import Simulation
-from offgridplanner.optimization.processing import GridProcessor
 from offgridplanner.optimization.processing import PreProcessor
-from offgridplanner.optimization.processing import SupplyProcessor
 from offgridplanner.optimization.requests import optimization_check_status
 from offgridplanner.optimization.requests import optimization_server_request
 from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
 from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
 from offgridplanner.optimization.tasks import revoke_task
-from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
 
@@ -729,28 +727,11 @@ def waiting_for_results(request, proj_id):
     )
 
 
-def process_optimization_results(request, proj_id):
+def handle_optimization_results_request(request, proj_id):
     # Processes the results (contains both optimization result objects)
     data = json.loads(request.body)
     sim_res = data.get("results", {})
-    grid_processor = GridProcessor(proj_id=proj_id, results_json=sim_res.get("grid"))
-    grid_processor.grid_results_to_db()
-    supply_processor = SupplyProcessor(
-        proj_id=proj_id, results_json=sim_res.get("supply")
-    )
-    supply_processor.process_supply_optimization_results()
-    supply_processor.supply_results_to_db()
-    # Process shared results (after both grid and supply have been processed)
-    results = Results.objects.get(simulation__project__id=proj_id)
-    results.lcoe_share_supply = (
-        (results.epc_total - results.cost_grid) / results.epc_total * 100
-    )
-    results.lcoe_share_grid = 100 - results.lcoe_share_supply
-    assets = ["grid", "diesel_genset", "inverter", "rectifier", "battery", "pv"]
-    results.upfront_invest_total = sum(
-        [getattr(results, f"upfront_invest_{key}") for key in assets]
-    )
-    results.save()
+    process_optimization_results(proj_id, sim_res)
     return JsonResponse({"msg": "Optimization results saved to database"})
 
 

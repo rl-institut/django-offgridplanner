@@ -1,15 +1,13 @@
 import csv
-import io
 from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.forms import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
-from offgridplanner.projects.models import Options
+from config.settings.base import DATA_DIR
 from offgridplanner.projects.models import Project
 
 
@@ -52,40 +50,44 @@ def collect_project_dataframes(proj_id):
     return dataframes
 
 
-def load_project_from_dict(model_data, user=None):
-    """Create a new project for a user
-
-    Parameters
-    ----------
-    model_data: dict
-        output produced by the export() method of the Project model
-    user: users.models.CustomUser
-        the user which loads the scenario
+def from_nested_dict(model_cls, nested_data):
     """
-    options_data_dm = model_data.pop("options_data", None)
+    Convert a nested dict back to {field_name: value} for a Django model.
+    """
 
-    model_data["user"] = user
-    if options_data_dm is not None:
-        options_data = Options(**options_data_dm)
-        options_data.save()
-        model_data["options"] = options_data
-    project = Project(**model_data)
-    project.save()
+    def flatten_dict(d, parent_key=""):
+        items = []
+        for k, v in d.items():
+            new_key = f"{parent_key}__{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.extend(flatten_dict(v, new_key))
+            else:
+                items.append((new_key, v))
+        return items
 
-    return project.id
+    flat_items = flatten_dict(nested_data)
 
+    # Map db_column -> field_name
+    db_to_field = {
+        field.db_column: field.name
+        for field in model_cls._meta.fields  # noqa: SLF001
+        if field.db_column
+    }
 
-def df_to_file(df, file_type):
-    if file_type == "xlsx":
-        output = io.BytesIO()
-        df.to_excel(output, index=False, engine="xlsxwriter")
-        output.seek(0)
-        return io.BytesIO(output.getvalue())
-    if file_type == "csv":
-        output = io.StringIO()
-        df.to_csv(output, index=False)
-        output.seek(0)
-        return io.StringIO(output.getvalue())
+    params = {}
+    for db_column, value in flat_items:
+        field_name = db_to_field.get(db_column)
+        if not field_name:
+            continue
+
+        params[field_name] = value
+
+        # Reverse the efficiency scaling
+        if "efficiency" in db_column.split("__")[-1]:
+            percentage_value = value * 100
+            params[field_name] = percentage_value
+
+    return params
 
 
 def is_ajax(request):
@@ -111,9 +113,8 @@ def csv_to_dict(filepath, label_col="label"):
     """
     result = {}
 
-    file_path = staticfiles_storage.path(filepath)
-    if Path(file_path).exists():
-        with Path(file_path).open(encoding="utf-8-sig") as csvfile:
+    if Path(filepath).exists():
+        with Path(filepath).open(encoding="utf-8-sig") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 label = row.pop(label_col)  # Remove label from row data
@@ -195,5 +196,5 @@ def reorder_dict(d, old_index, new_index):
     return dict(items)
 
 
-FORM_FIELD_METADATA = csv_to_dict("data/form_parameters.csv")
-OUTPUT_KPIS = csv_to_dict("data/output_kpis.csv")
+FORM_FIELD_METADATA = csv_to_dict(DATA_DIR / "form_parameters.csv")
+OUTPUT_KPIS = csv_to_dict(DATA_DIR / "output_kpis.csv")

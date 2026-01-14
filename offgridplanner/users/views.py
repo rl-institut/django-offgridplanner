@@ -1,9 +1,14 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import QuerySet
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
@@ -47,3 +52,33 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+@login_required
+@require_http_methods(["POST"])
+def convert_demo_account(request):
+    user = request.user
+
+    email = request.POST["email"].strip().lower()
+    password = request.POST["password"]
+
+    user_qs = User.objects.filter(email=email)
+    if not hasattr(user, "demo") or user_qs.exists():
+        # Account is already a real user account
+        msg = "User account already exists"
+        messages.add_message(request, messages.INFO, msg)
+        return redirect("projects:projects_list")
+
+    user.email = email
+    user.set_password(password)
+    user.save()
+
+    # Remove demo marker
+    user.demo.delete()
+
+    # Update hash to keep user logged in
+    update_session_auth_hash(request, user)
+    msg = "User account successfully created"
+    messages.add_message(request, messages.INFO, msg)
+
+    return redirect("projects:projects_list")

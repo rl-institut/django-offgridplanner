@@ -11,17 +11,65 @@
 {% block content %}
 <body>
 <main>
-  <section class="dashboard">
-    <div>
-      <div class="row">
-        <div class="col">
+<section class="dashboard">
+<section class="dashboard">
           <div class="chart" style="height: auto; padding-bottom: 10px">
             <div class="chart__header">
               <a class="title">Projects</a>
-              <span style="float:right;"><a>&nbsp;
-                    <a href="{% url 'steps:project_setup' %}"
-                       class="btn btn--long text-right">{% translate "New Project" %}</a>
-                  </a></span>
+              {% if request.user.demo %}
+              <!-- Save Account Button -->
+              <span><button id="save-account-btn" class="btn btn--long text-right">
+              {% translate "Save my account" %}
+              </button></span>
+              <!-- Modal -->
+              <div id="save-account-modal" class="modal" style="display:none" aria-modal="true">
+                <div class="modal-content">
+                  <div class="container">
+                      <h2>Save your account</h2>
+                      <p>
+                        Create a permanent account by setting an email and password.
+                        Your existing projects will be kept.
+                      </p>
+                      <form method="post" action="{% url 'users:convert_demo_account' %}">
+                        {% csrf_token %}
+                      <div class="row" style="ali">
+                        <label>
+                          Email
+                          <input
+                            type="email"
+                            name="email"
+                            required
+                          />
+                        </label>
+
+                        <label>
+                          Password
+                          <input
+                            type="password"
+                            name="password"
+                            required
+                            minlength="8"
+                          />
+                        </label>
+                      </div>
+                        <div class="row" style="padding-top:1rem">
+                        <div class="modal-actions">
+                          <a type="button" class="btn btn--small btn--hollow" id="cancel-save-account">
+                            Cancel
+                          </a>
+                          <button type="submit" class="btn btn--small">
+                            Confirm & Save
+                          </button>
+                        </div>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              <span><a href="{% url 'steps:project_setup' %}"
+                       class="btn btn--long text-right">{% translate "New Project" %}
+              </a></span>
             </div>
             <span class="title"></span>
             <table id="projectTable" class="sortable">
@@ -106,11 +154,8 @@
             </table>
             <span class="subtitle"></span>
           </div>
-        </div>
-      </div>
-    </div>
   </section>
-  {% if projects %}
+  {% if projects|length > 0 %}
   {% for project in projects %}
   <div id=projectID{{ project.id }} class="modal">
     <form class="modal-content"
@@ -143,10 +188,30 @@
     </form>
   </div>
   {% endif %}
+</section>
 </main>
 </body>
 {% endblock content %}
 {% block end_body_scripts %}
+<script src="{% static 'js/third_party/sortable-table.js' %}"></script>
+<script src="{% static 'js/pages/user_projects.js' %}"></script>
+<script src="{% static 'js/backend_communication.js' %}"></script>
+<script>
+  const openBtn = document.getElementById("save-account-btn");
+  const modal = document.getElementById("save-account-modal");
+  const cancelBtn = document.getElementById("cancel-save-account");
+
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  openBtn.addEventListener("click", openModal);
+  cancelBtn.addEventListener("click", closeModal);
+</script>
 {% if not projects %}
 <script>
   const modal = document.getElementById('projectExample');

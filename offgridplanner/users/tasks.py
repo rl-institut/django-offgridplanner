@@ -7,6 +7,12 @@ from .models import DemoAccount
 User = get_user_model()
 
 
+@shared_task()
+def get_users_count():
+    """A pointless Celery task to demonstrate usage."""
+    return User.objects.count()
+
+
 @shared_task
 def cleanup_expired_demo_accounts(batch_size: int = 500) -> int:
     """

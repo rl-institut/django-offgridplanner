@@ -92,7 +92,11 @@ def projects_list(request, proj_id=None):
         .reverse()
     )
 
-    return render(request, "pages/user_projects.html", {"projects": projects})
+    return render(
+        request,
+        "pages/user_projects.html",
+        {"projects": projects, "user": request.user},
+    )
 
 
 def populate_project_from_export(export_dict, user):

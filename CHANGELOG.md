@@ -4,6 +4,9 @@
 ### Added
 - Display roads on map ([#138](https://github.com/rl-institut/django-offgridplanner/pull/138)).
 
+### Changed
+- Disable results button if no simulation has been conducted ([#193](https://github.com/rl-institut/django-offgridplanner/pull/193)).
+
 ## [v1.0.1] – 2026-01-06
 ### Added
 - Display version in footer

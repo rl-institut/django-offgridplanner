@@ -334,8 +334,9 @@
 {% url 'steps:demand_estimation' proj_id as demand_estimation_url %}
 <button id="next-button"
         class="btn btn--medium"
-        onclick="javascript:consumer_to_db(href='{{ demand_estimation_url }}', file_type='db');">{% translate "Next" %}</button>
-
+        onclick="roads_to_db(null, 'db'); consumer_to_db(href='{{ demand_estimation_url }}', file_type='db');">
+    {% translate "Next" %}
+</button>
 {% endblock next_btn %}
 
   {% block end_body_scripts %}
@@ -348,14 +349,19 @@
       const large_load_list = {{ large_load_list | safe }};
       const boundsDict = {{ bounds_dict | safe }};
       const dbNodesToJsUrl = `{% url 'optimization:db_nodes_to_js' proj_id %}`;
+      const dbRoadsToJsUrl = `{% url 'optimization:db_roads_to_js' proj_id %}`;
       const dbLinksToJsUrl = `{% url 'optimization:db_links_to_js' proj_id %}`;
       const fileNodesToJsUrl = `{% url 'optimization:file_nodes_to_js' proj_id %}`;
       const consumerToDBUrl = `{% url 'optimization:consumer_to_db' proj_id %}`;
+      const roadsToDBUrl = `{% url 'optimization:roads_to_db' proj_id %}`;
       const addBuildingsUrl = `{% url 'optimization:add_buildings_inside_boundary' proj_id  %}`;
       const removeBuildingsUrl = `{% url 'optimization:remove_buildings_inside_boundary' proj_id  %}`;
+      const addRoadsUrl = `{% url 'optimization:add_roads_inside_boundary' proj_id %}`;
+      const removeRoadsUrl = `{% url 'optimization:remove_roads_inside_boundary' proj_id %}`;
       window.onload = function () {
         //redirect_if_cookie_is_missing(true, true); //for anonymous user --> do it pythonside
         db_nodes_to_js({{proj_id}}, true);
+        db_roads_to_js({{ proj_id }});
         //show_email_and_project_in_navbar({{proj_id}});
         //TODO reenable video_tutorial
         //show_video_tutorial();

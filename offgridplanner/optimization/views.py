@@ -32,9 +32,11 @@ from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
 from offgridplanner.optimization.models import Results
+from offgridplanner.optimization.models import Roads
 from offgridplanner.optimization.models import Simulation
 from offgridplanner.optimization.processing import GridProcessor
 from offgridplanner.optimization.processing import PreProcessor
+from offgridplanner.optimization.requests import fetch_road_network
 from offgridplanner.optimization.requests import optimization_check_status
 from offgridplanner.optimization.requests import optimization_server_request
 from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
@@ -176,6 +178,73 @@ def remove_buildings_inside_boundary(
         return JsonResponse({"map_elements": df.to_dict("records")})
 
 
+@require_http_methods(["POST"])
+def add_roads_inside_boundary(request, proj_id):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+    js_data = json.loads(request.body)
+    boundary_coordinates = js_data["boundary_coordinates"][0][0]
+
+    df = pd.DataFrame.from_dict(boundary_coordinates).rename(
+        columns={"lat": "latitude", "lng": "longitude"},
+    )
+
+    if df["latitude"].max() - df["latitude"].min() > float(
+        os.environ.get("MAX_LAT_LON_DIST", 0.15)
+    ):
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "The maximum latitude distance selected is too large.",
+            }
+        )
+
+    if df["longitude"].max() - df["longitude"].min() > float(
+        os.environ.get("MAX_LAT_LON_DIST", 0.15)
+    ):
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "The maximum longitude distance selected is too large.",
+            }
+        )
+
+    bbox = [
+        df["latitude"].min(),
+        df["longitude"].min(),
+        df["latitude"].max(),
+        df["longitude"].max(),
+    ]
+
+    road_geometries = fetch_road_network(bbox)
+
+    if not road_geometries:
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "In the selected area, no roads could be identified.",
+            }
+        )
+
+    # roads for JS
+    roads_list = road_geometries
+
+    return JsonResponse({"executed": True, "msg": "", "new_roads": roads_list})
+
+
+@require_http_methods(["POST"])
+def remove_roads_inside_boundary(request, proj_id):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+    return JsonResponse({"executed": True, "msg": "Roads removed"})
+
+
 # TODO this seems like an old unused view
 @require_http_methods(["GET"])
 def db_links_to_js(request, proj_id):
@@ -224,6 +293,17 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
             status=200,
         )
     return JsonResponse({"msg": "Missing project ID"}, status=400)
+
+
+@require_http_methods(["GET"])
+def db_roads_to_js(request, proj_id=None):
+    project = get_object_or_404(Project, id=proj_id)
+    try:
+        roads = Roads.objects.get(project=project)
+        data = json.loads(roads.data) if isinstance(roads.data, str) else roads.data
+        return JsonResponse({"road_elements": data})
+    except Roads.DoesNotExist:
+        return JsonResponse({"road_elements": []})
 
 
 @require_http_methods(["POST"])
@@ -306,6 +386,41 @@ def consumer_to_db(request, proj_id=None):
         # TODO add implementation when proj_id is not given
         msg = "Missing project ID"
         raise ValueError(msg)
+
+
+@require_http_methods(["POST"])
+def roads_to_db(request, proj_id=None):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+        data = json.loads(request.body)
+        road_elements = data.get("road_elements", [])
+
+        if not road_elements:
+            Roads.objects.filter(project=project).delete()
+            return JsonResponse({"message": "No data provided"}, status=200)
+
+        df = pd.DataFrame.from_records(road_elements)
+        if df.empty:
+            Roads.objects.filter(project=project).delete()
+            return JsonResponse({"message": "No valid data"}, status=200)
+
+        df = df.drop_duplicates(subset=["road_id"], keep="first")
+        required_columns = ["road_id", "coordinates", "how_added", "road_type"]
+        df = df[required_columns]
+        df["how_added"] = df["how_added"].fillna("automatic")
+        df["road_type"] = df["road_type"].fillna("osm")
+
+        roads, _ = Roads.objects.get_or_create(project=project)
+
+        roads.data = df.to_json(orient="records")
+        roads.save()
+
+        return JsonResponse({"message": "Success"}, status=200)
+
+    return JsonResponse({"error": "Project ID missing"}, status=400)
 
 
 @require_http_methods(["POST"])

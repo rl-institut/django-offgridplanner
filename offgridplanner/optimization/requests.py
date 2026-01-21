@@ -295,19 +295,41 @@ def fetch_grid_network():
         return response.json()
 
 
-def fetch_road_network():
+def fetch_road_network(bbox):
     """
-    Fetch the road network for display on the map.
+    Fetch the roads data from the MG Explorer API and convert them
+    to the same structure as the old OSM-based road format.
     """
     request_url = MG_EXPLORER_API_HOST + "/features/roads"
 
     try:
-        response = httpx.get(request_url, timeout=5)
+        response = httpx.get(
+            request_url, params={"bbox": ",".join(map(str, bbox))}, timeout=5
+        )
         response.raise_for_status()
     except httpx.HTTPError as e:
         logger.exception("HTTP error occurred")
-        msg = "An error occurred during the road data fetching."
+        msg = "An error occurred during the road network fetching."
         raise RuntimeError(msg) from e
-    else:
-        logger.info("Obtained road network data.")
-        return response.json()
+
+    api_roads = response.json()
+
+    converted = []
+    for idx, road in enumerate(api_roads):
+        coords = road["geography"]["coordinates"]
+
+        # coords from [lon, lat] → [lat, lon]
+        converted_coords = [
+            [c[1], c[0]] for c in coords if c[0] is not None and c[1] is not None
+        ]
+
+        converted.append(
+            {
+                "road_id": f"api_{idx}",
+                "coordinates": converted_coords,
+                "how_added": "automatic",
+                "road_type": road.get("road_type", "api"),
+            }
+        )
+
+    return converted

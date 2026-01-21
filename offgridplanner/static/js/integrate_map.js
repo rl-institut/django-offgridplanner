@@ -33,6 +33,8 @@ let polygonCoordinates = [];
 
 let map_elements = [];
 
+let_roads_elements = [];
+
 var markerConsumer = new L.Icon({
     iconUrl: "/static/assets/icons/i_consumer.svg",
     iconSize: [18, 18],
@@ -91,10 +93,10 @@ var image = [
     "/static/icons/i_enterprise.svg",
     "/static/icons/i_public_service.svg",
     "/static/icons/i_pole.svg",
-    "/static/icons/i_pole_highlight.svg",
     "/static/assets/icons/i_shs.svg",
     "/static/assets/icons/i_distribution.svg",
     "/static/assets/icons/i_connection.svg",
+    "/static/assets/icons/i_roads.svg",
 ];
 
 const drawnItems = new L.FeatureGroup();
@@ -377,7 +379,7 @@ function load_legend() {
     }
     var pageName = window.location.pathname;
 
-    var description = ["Load Center", "Household", "Enterprise", "Public Service", "Pole", "Solar Home System", "Distribution", "Connection"];
+    var description = ["Load Center", "Household", "Enterprise", "Public Service", "Pole", "Solar Home System", "Distribution", "Connection", "Road"];
 
     if (pageName === "/simulation_results" && is_load_center === false) {
         description[0] = "Power House";

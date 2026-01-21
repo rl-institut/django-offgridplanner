@@ -582,6 +582,7 @@
       const boundsDict = {{ bounds_dict | safe }};
       const dbNodesToJsUrl = `{% url 'optimization:db_nodes_to_js' proj_id %}`;
       const dbLinksToJsUrl = `{% url 'optimization:db_links_to_js' proj_id %}`;
+      const dbRoadsToJsUrl = "{% url 'optimization:db_roads_to_js' proj_id %}";
       const loadPlotDataUrl = `{% url 'optimization:load_plot_data' proj_id %}`;
       const loadDemandPlotUrl = `{% url 'optimization:load_demand_plot_data' proj_id %}`;
       const downloadPDFReportUrl = `{% url 'projects:download_pdf_report' proj_id %}`;
@@ -589,6 +590,7 @@
       const downloadResultsUrl = `{% url 'projects:export_project_results' proj_id %}`;
       const updatePolePositionsUrl = `{% url 'optimization:update_pole_positions' proj_id %}`;
     </script>
+  <script src="{% static 'js/backend_communication.js' %}"></script>
   <script src="{% static 'js/integrate_map.js' %}"></script>
   <script src="{% static 'js/add_drawing_tools_to_map.js' %}"></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>

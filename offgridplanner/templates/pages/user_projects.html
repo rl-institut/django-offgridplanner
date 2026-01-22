@@ -9,48 +9,48 @@
 {% endblock head_block %}
 
 {% block content %}
-  <body>
-    <main>
-      <section class="dashboard">
-        <div>
-          <div class="row">
-            <div class="col">
-              <div class="chart" style="height: auto; padding-bottom: 10px">
-                <div class="chart__header">
-                  <a class="title">Projects</a>
-                  <span style="float:right;"><a>&nbsp;
+<body>
+<main>
+  <section class="dashboard">
+    <div>
+      <div class="row">
+        <div class="col">
+          <div class="chart" style="height: auto; padding-bottom: 10px">
+            <div class="chart__header">
+              <a class="title">Projects</a>
+              <span style="float:right;"><a>&nbsp;
                     <a href="{% url 'steps:project_setup' %}"
                        class="btn btn--long text-right">{% translate "New Project" %}</a>
                   </a></span>
-                </div>
-                <span class="title"></span>
-                <table id="projectTable" class="sortable">
-                  <thead>
-                  <tr style="border-bottom:1px solid black">
-                    <th><button class="btn btn--action">{% translate "Project Name" %}<span aria-hidden="true"></span></button></th>
-                    <th aria-sort="descending" class="date"><button class="btn btn--action">{% translate "Creation Date" %}<span aria-hidden="true"></span></button></th>
-                    <th class="date"><button class="btn btn--action">{% translate "Last Update" %}<span aria-hidden="true"></span></button></th>
-                    <th><button class="btn btn--action">{% translate "Model Status" %}<span aria-hidden="true"></span></button></th>
-                    <th></th>
-                    <!-- Added an empty header for the new column -->
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% if projects|length > 0 %}
-                    {% for project in projects %}
-                      <tr>
-                        <td>{{ project.name }}</td>
-                        <td class="date" data-timestamp="{{ project.date_created|date:'U' }}">
-                          {{ project.date_created }}
-                        </td>
-                        <td class="date" data-timestamp="{{ project.date_updated|date:'U' }}">
-                          {{ project.date_updated }}
-                        </td>
-                        <td>{{ project.status }}</td>
-                        <td>
+            </div>
+            <span class="title"></span>
+            <table id="projectTable" class="sortable">
+              <thead>
+              <tr style="border-bottom:1px solid black">
+                <th><button class="btn btn--action">{% translate "Project Name" %}<span aria-hidden="true"></span></button></th>
+                <th aria-sort="descending" class="date"><button class="btn btn--action">{% translate "Creation Date" %}<span aria-hidden="true"></span></button></th>
+                <th class="date"><button class="btn btn--action">{% translate "Last Update" %}<span aria-hidden="true"></span></button></th>
+                <th><button class="btn btn--action">{% translate "Model Status" %}<span aria-hidden="true"></span></button></th>
+                <th></th>
+                <!-- Added an empty header for the new column -->
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              {% if projects|length > 0 %}
+              {% for project in projects %}
+              <tr>
+                <td>{{ project.name }}</td>
+                <td class="date" data-timestamp="{{ project.date_created|date:'U' }}">
+                  {{ project.date_created }}
+                </td>
+                <td class="date" data-timestamp="{{ project.date_updated|date:'U' }}">
+                  {{ project.date_updated }}
+                </td>
+                <td>{{ project.status }}</td>
+                <td>
                           <span style="float:none;">
                             <form action="{% url 'projects:project_duplicate' project.id %}"
                                   method="POST">
@@ -62,26 +62,26 @@
                                       value="Duplicate">{% translate "Duplicate" %}</button>
                             </form>
                           </span>
-                        </td>
-                        <td>
-                        </span>
-                      </td>
-                      <td>
+                </td>
+                <td>
+                  </span>
+                </td>
+                <td>
                         <span style="float:none;">
                           <button class="grey_button">
                           <a onclick="document.getElementById('projectID{{ project.id }}').style.display='block'"
                              style="color:white">{% translate "Delete" %}</a>
                           </button>
                         </span>
-                      </td>
-                      <td>
+                </td>
+                <td>
                         <span style="float:none;">
                           <button class="grey_button">
                           <a href="{% url 'steps:project_setup' project.id %}">{% translate "Edit" %}</a>
                           </button>
                         </span>
-                      </td>
-                      <td>
+                </td>
+                <td>
                         <span style="float:none;">
                           <button class="grey_button {% if not project.has_simulation %} disabled {% endif %}" >
                             {% if project.has_simulation %}
@@ -89,72 +89,71 @@
                               {% translate "Results" %}</a>
                           </button>
                         </span>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                {% else %}
-                  <tr>
-                    <td>{% translate "You do not yet have any saved projects" %}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <!-- Added an empty cell for the new column -->
-                  </tr>
-                {% endif %}
-                </tbody>
-              </table>
-              <span class="subtitle"></span>
-            </div>
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td>{% translate "You do not yet have any saved projects" %}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <!-- Added an empty cell for the new column -->
+              </tr>
+              {% endif %}
+              </tbody>
+            </table>
+            <span class="subtitle"></span>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-</section>
-{% if projects|length > 0 %}
+  </section>
+  {% if projects %}
   {% for project in projects %}
-    <div id=projectID{{ project.id }} class="modal">
-      <form class="modal-content"
-            action="{% url 'projects:project_delete' project.id %}"
-            method="POST">
-        {% csrf_token %}
-        <div class="container">
-          <h1>{% translate "Delete Project" %}</h1>
-          <p>{% translate "Are you sure you want to delete the project?" %}</p>
-          <div class="clearfix">
-            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">{% translate "Delete" %}</button>
-            <button onclick="document.getElementById('projectID{{ project.id }}').style.display='none'"
-                    type="button"
-                    class="cancelbtn">{% translate "Cancel" %}</button>
-          </div>
+  <div id=projectID{{ project.id }} class="modal">
+    <form class="modal-content"
+          action="{% url 'projects:project_delete' project.id %}"
+          method="POST">
+      {% csrf_token %}
+      <div class="container">
+        <h1>{% translate "Delete Project" %}</h1>
+        <p>{% translate "Are you sure you want to delete the project?" %}</p>
+        <div class="clearfix">
+          <button style="margin-top:0.25rem;" class="deletebtn" type="submit">{% translate "Delete" %}</button>
+          <button onclick="document.getElementById('projectID{{ project.id }}').style.display='none'"
+                  type="button"
+                  class="cancelbtn">{% translate "Cancel" %}</button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
+  </div>
   {% endfor %}
-{% endif %}
-<div id="projectExample"
-     class="modal"
-     style="background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-            text-align: left">
-  <form class="modal-content" style="max-width: 24rem">
-    <div class="container">
-      <h1>{% translate "Create Example Model" %}</h1>
-      <p>{% translate "You have not created any projects yet. Would you like a sample project to be set up for you?" %}</p>
-      <button onclick="create_example_project()" type="button" class="deletebtn">{% translate "Yes" %}</button>
-      <button onclick="document.getElementById('projectExample').style.display='none'"
-              type="button"
-              class="deletebtn">{% translate "No" %}</button>
-    </div>
-  </form>
-</div>
+  {% else %}
+  <div id="projectExample"
+       class="modal fade show">
+    <form class="modal-content" style="max-width: 24rem">
+      <div class="container">
+        <h1>{% translate "Create Example Project" %}</h1>
+        <p>{% translate "You have not created any projects yet. Would you like an example project to be set up for you?" %}</p>
+        <a class="btn btn--small" href="{% url 'projects:create_example_project' %}" type="button">{% translate "Yes" %}</a>
+        <a class="btn btn--small btn--hollow" onclick="document.getElementById('projectExample').style.display='none'" type="button">{% translate "No" %}</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
 </main>
 </body>
 {% endblock content %}
 {% block end_body_scripts %}
-  <script src="{% static 'js/third_party/sortable-table.js' %}"></script>
-  <script src="{% static 'js/pages/user_projects.js' %}"></script>
-  <script src="{% static 'js/backend_communication.js' %}"></script>
+{% if not projects %}
+<script>
+  const modal = document.getElementById('projectExample');
+  modal.style.display = 'block';
+</script>
+{% endif %}
+<script src="{% static 'js/third_party/sortable-table.js' %}"></script>
+<script src="{% static 'js/pages/user_projects.js' %}"></script>
+<script src="{% static 'js/backend_communication.js' %}"></script>
 {% endblock end_body_scripts %}

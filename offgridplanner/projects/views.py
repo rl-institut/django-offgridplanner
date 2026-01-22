@@ -1,6 +1,8 @@
 import base64
+import datetime
 import io
 import json
+import secrets
 import urllib
 from http.client import HTTPException
 from pathlib import Path
@@ -8,6 +10,7 @@ from pathlib import Path
 # from jsonview.decorators import json_view
 import pandas as pd
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Exists
@@ -18,15 +21,19 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django_ratelimit.decorators import ratelimit
 from openpyxl.drawing.image import PILImage
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch
 from reportlab.platypus import Image
 from svglib.svglib import svg2rlg
 
+from config.settings.base import DEMO_EXPIRY_SECONDS
 from config.settings.base import DONE
 from config.settings.base import EXAMPLE_PROJECT_PATH
 from offgridplanner.optimization.models import Links
@@ -44,6 +51,35 @@ from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
+from offgridplanner.users.forms import UserSignupForm
+from offgridplanner.users.models import DemoAccount
+from offgridplanner.users.models import User
+
+
+@ratelimit(key="ip", rate="20/h")
+@require_http_methods(["GET"])
+def demo_start(request):
+    with transaction.atomic():
+        user = User.objects.create(
+            email=f"demo_{secrets.token_urlsafe(6)}@example.com",
+            is_active=True,
+        )
+        user.set_unusable_password()
+        user.save()
+
+        expires_at = timezone.now() + datetime.timedelta(seconds=DEMO_EXPIRY_SECONDS)
+        DemoAccount.objects.create(
+            user=user,
+            expires_at=expires_at,
+        )
+
+        # Log them in using session auth
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+        # if create_example:
+        #     _create_example_project_for(user)
+
+    return redirect("projects:projects_list")
 
 
 @require_http_methods(["GET"])
@@ -70,7 +106,14 @@ def projects_list(request, proj_id=None):
         .reverse()
     )
 
-    return render(request, "pages/user_projects.html", {"projects": projects})
+    # Empty signup form for the case of a demo account where the user wants to sign up from the projects page
+    signup_form = UserSignupForm()
+
+    return render(
+        request,
+        "pages/user_projects.html",
+        {"projects": projects, "user": request.user, "signup_form": signup_form},
+    )
 
 
 def populate_project_from_export(export_dict, user):

@@ -276,8 +276,8 @@
   const exportDemandUrl = `{% url 'optimization:export_demand' proj_id %}`;
   const importDemandUrl = `{% url 'optimization:import_demand' proj_id %}`;
 </script>
+<script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
 <script src="{% static 'js/pages/demand_estimation.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>
-<script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
 {% endblock end_body_scripts %}

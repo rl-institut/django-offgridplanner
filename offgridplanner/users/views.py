@@ -1,13 +1,20 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import QuerySet
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
+from offgridplanner.users.forms import UserSignupForm
 from offgridplanner.users.models import User
 
 UserModel = get_user_model()
@@ -47,3 +54,36 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+@login_required
+@require_http_methods(["POST"])
+def demo_convert_account(request):
+    user = request.user
+
+    form = UserSignupForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data["email"].lower()
+        password = form.cleaned_data["password1"]
+
+        user_qs = User.objects.filter(email=email)
+        if not hasattr(user, "demo") or user_qs.exists():
+            # Account is already a real user account
+            msg = "User account already exists"
+            messages.add_message(request, messages.INFO, msg)
+            return redirect("projects:projects_list")
+
+        user.email = email
+        user.set_password(password)
+        user.save()
+
+        # Remove demo marker
+        user.demo.delete()
+
+        # Update hash to keep user logged in
+        update_session_auth_hash(request, user)
+        msg = "User account successfully created"
+        messages.add_message(request, messages.INFO, msg)
+
+        return redirect("projects:projects_list")
+    return render(request, "pages/user_projects.html", {"signup_form": form})

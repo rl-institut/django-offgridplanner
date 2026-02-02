@@ -19,7 +19,12 @@ class BaseJsonData(models.Model):
 
     @property
     def df(self):
-        return pd.read_json(StringIO(self.data)) if self.data else None
+        if self.data:
+            df = pd.read_json(StringIO(self.data))
+            if "label" in df:
+                df = df.set_index("label")
+            return df
+        return None
 
 
 class Nodes(BaseJsonData):
@@ -52,6 +57,10 @@ class Nodes(BaseJsonData):
 
 
 class Links(BaseJsonData):
+    pass
+
+
+class Roads(BaseJsonData):
     pass
 
 
@@ -151,6 +160,20 @@ class Results(models.Model):
 
     def __str__(self):
         return f"Results {self.id}: Project {self.simulation.project.name}"
+
+    def process_shared_results(self):
+        """
+        Processes KPIs that are computed combining grid and supply results (other KPIs are updated within the
+        GridProcessor and SupplyProcessor classes)
+        """
+        self.lcoe_share_supply = (
+            (self.epc_total - self.cost_grid) / self.epc_total * 100
+        )
+        self.lcoe_share_grid = 100 - self.lcoe_share_supply
+        assets = ["grid", "diesel_genset", "inverter", "rectifier", "battery", "pv"]
+        self.upfront_invest_total = sum(
+            [getattr(self, f"upfront_invest_{key}") for key in assets]
+        )
 
 
 # TODO check what is saved in these models and potentially restructure in db

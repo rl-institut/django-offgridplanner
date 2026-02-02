@@ -6,10 +6,14 @@ app_name = "projects"
 
 urlpatterns = [
     path("", home, name="home"),
+    path("demo_start", demo_start, name="demo_start"),
     path("projects", projects_list, name="projects_list"),
     path("<int:proj_id>", projects_list, name="projects_list"),
     path("duplicate/<int:proj_id>", project_duplicate, name="project_duplicate"),
     path("delete/<int:proj_id>", project_delete, name="project_delete"),
+    path(
+        "create_example_project", create_example_project, name="create_example_project"
+    ),
     path(
         "export_results/<int:proj_id>",
         export_project_results,

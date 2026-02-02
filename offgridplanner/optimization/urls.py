@@ -15,8 +15,19 @@ urlpatterns = [
         remove_buildings_inside_boundary,
         name="remove_buildings_inside_boundary",
     ),
+    path(
+        "add_roads_inside_boundary/<int:proj_id>",
+        add_roads_inside_boundary,
+        name="add_roads_inside_boundary",
+    ),
+    path(
+        "remove_roads_inside_boundary/<int:proj_id>",
+        remove_roads_inside_boundary,
+        name="remove_roads_inside_boundary",
+    ),
     path("consumer_to_db", consumer_to_db, name="consumer_to_db"),
     path("consumer_to_db/<int:proj_id>", consumer_to_db, name="consumer_to_db"),
+    path("roads_to_db/<int:proj_id>", roads_to_db, name="roads_to_db"),
     path("export_demand/<int:proj_id>", export_demand, name="export_demand"),
     path("import_demand/<int:proj_id>", import_demand, name="import_demand"),
     path("db_links_to_js/<int:proj_id>", db_links_to_js, name="db_links_to_js"),
@@ -29,6 +40,7 @@ urlpatterns = [
         db_nodes_to_js,
         name="db_nodes_to_js",
     ),
+    path("db_roads_to_js/<int:proj_id>/", db_roads_to_js, name="db_roads_to_js"),
     path(
         "load-demand-plot-data/<int:proj_id>",
         load_demand_plot_data,
@@ -53,6 +65,11 @@ urlpatterns = [
         "waiting_for_results/<int:proj_id>",
         waiting_for_results,
         name="waiting_for_results",
+    ),
+    path(
+        "handle_optimization_results_request/<int:proj_id>",
+        handle_optimization_results_request,
+        name="handle_optimization_results_request",
     ),
     path(
         "process_optimization_results/<int:proj_id>",

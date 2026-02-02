@@ -41,41 +41,40 @@ services:
     ports:
       - "8025:8025"
 
-# TODO enable again if being used later - currently not needed
-#  redis:
-#    image: docker.io/redis:6
-#    container_name: offgridplanner_local_redis
-#
-#    volumes:
-#      - offgridplanner_local_redis_data:/data
+  redis:
+    image: docker.io/redis:6
+    container_name: offgridplanner_local_redis
+
+    volumes:
+      - offgridplanner_local_redis_data:/data
 
 
-#  celeryworker:
-#    <<: *django
-#    image: offgridplanner_local_celeryworker
-#    container_name: offgridplanner_local_celeryworker
-#    depends_on:
-#      - redis
-#      - postgres
-#      - mailpit
-#    ports: []
-#    command: /start-celeryworker
+  celeryworker:
+    <<: *django
+    image: offgridplanner_local_celeryworker
+    container_name: offgridplanner_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+      - mailpit
+    ports: []
+    command: /start-celeryworker
 
-#  celerybeat:
-#    <<: *django
-#    image: offgridplanner_local_celerybeat
-#    container_name: offgridplanner_local_celerybeat
-#    depends_on:
-#      - redis
-#      - postgres
-#      - mailpit
-#    ports: []
-#    command: /start-celerybeat
+  celerybeat:
+    <<: *django
+    image: offgridplanner_local_celerybeat
+    container_name: offgridplanner_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+      - mailpit
+    ports: []
+    command: /start-celerybeat
 
-#  flower:
-#    <<: *django
-#    image: offgridplanner_local_flower
-#    container_name: offgridplanner_local_flower
-#    ports:
-#      - '5555:5555'
-#    command: /start-flower
+  flower:
+    <<: *django
+    image: offgridplanner_local_flower
+    container_name: offgridplanner_local_flower
+    ports:
+      - '5555:5555'
+    command: /start-flower

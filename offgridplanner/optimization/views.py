@@ -19,25 +19,24 @@ from django.views.decorators.http import require_http_methods
 from config.settings.base import DONE
 from config.settings.base import ERROR
 from config.settings.base import PENDING
-from offgridplanner.optimization.grid import identify_consumers_on_map
+from offgridplanner.optimization.grid import osm_utils
 from offgridplanner.optimization.helpers import check_imported_consumer_data
 from offgridplanner.optimization.helpers import check_imported_demand_data
 from offgridplanner.optimization.helpers import consumer_data_to_file
 from offgridplanner.optimization.helpers import convert_file_to_df
+from offgridplanner.optimization.helpers import df_to_file
+from offgridplanner.optimization.helpers import process_optimization_results
 from offgridplanner.optimization.helpers import validate_file_extension
 from offgridplanner.optimization.models import Links
 from offgridplanner.optimization.models import Nodes
-from offgridplanner.optimization.models import Results
+from offgridplanner.optimization.models import Roads
 from offgridplanner.optimization.models import Simulation
-from offgridplanner.optimization.processing import GridProcessor
 from offgridplanner.optimization.processing import PreProcessor
-from offgridplanner.optimization.processing import SupplyProcessor
 from offgridplanner.optimization.requests import optimization_check_status
 from offgridplanner.optimization.requests import optimization_server_request
 from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
 from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
 from offgridplanner.optimization.tasks import revoke_task
-from offgridplanner.projects.helpers import df_to_file
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.models import CustomDemand
 
@@ -97,7 +96,7 @@ def add_buildings_inside_boundary(request, proj_id):
             },
         )
     data, building_coordinates_within_boundaries = (
-        identify_consumers_on_map.get_consumer_within_boundaries(df)
+        osm_utils.get_consumer_within_boundaries(df)
     )
     if not building_coordinates_within_boundaries:
         return JsonResponse(
@@ -160,13 +159,82 @@ def remove_buildings_inside_boundary(
             .to_numpy()
             .tolist()
         )
-        df["inside_boundary"] = identify_consumers_on_map.are_points_in_boundaries(
+        df["inside_boundary"] = osm_utils.are_points_in_boundaries(
             df,
             boundaries=boundaries,
         )
         df = df[df["inside_boundary"] == False]  # noqa: E712
         df = df.drop(columns=["inside_boundary"])
         return JsonResponse({"map_elements": df.to_dict("records")})
+
+
+@require_http_methods(["POST"])
+def add_roads_inside_boundary(request, proj_id):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+    js_data = json.loads(request.body)
+    boundary_coordinates = js_data["boundary_coordinates"][0][0]
+
+    df = pd.DataFrame.from_dict(boundary_coordinates).rename(
+        columns={"lat": "latitude", "lng": "longitude"},
+    )
+
+    if df["latitude"].max() - df["latitude"].min() > float(
+        os.environ.get("MAX_LAT_LON_DIST", 0.15)
+    ):
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "The maximum latitude distance selected is too large.",
+            }
+        )
+
+    if df["longitude"].max() - df["longitude"].min() > float(
+        os.environ.get("MAX_LAT_LON_DIST", 0.15)
+    ):
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "The maximum longitude distance selected is too large.",
+            }
+        )
+
+    data, road_geometries = osm_utils.get_roads_within_boundaries(df)
+
+    if not road_geometries:
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "In the selected area, no roads could be identified.",
+            }
+        )
+
+    # roads for JS
+    roads_list = []
+    for road_id, coords in road_geometries.items():
+        roads_list.append(
+            {
+                "road_id": road_id,
+                "coordinates": coords,
+                "how_added": "automatic",
+                "road_type": "osm",
+            }
+        )
+
+    return JsonResponse({"executed": True, "msg": "", "new_roads": roads_list})
+
+
+@require_http_methods(["POST"])
+def remove_roads_inside_boundary(request, proj_id):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+    return JsonResponse({"executed": True, "msg": "Roads removed"})
 
 
 # TODO this seems like an old unused view
@@ -230,6 +298,17 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
             status=200,
         )
     return JsonResponse({"msg": "Missing project ID"}, status=400)
+
+
+@require_http_methods(["GET"])
+def db_roads_to_js(request, proj_id=None):
+    project = get_object_or_404(Project, id=proj_id)
+    try:
+        roads = Roads.objects.get(project=project)
+        data = json.loads(roads.data) if isinstance(roads.data, str) else roads.data
+        return JsonResponse({"road_elements": data})
+    except Roads.DoesNotExist:
+        return JsonResponse({"road_elements": []})
 
 
 @require_http_methods(["POST"])
@@ -308,6 +387,41 @@ def consumer_to_db(request, proj_id=None):
             )
 
         return response
+
+
+@require_http_methods(["POST"])
+def roads_to_db(request, proj_id=None):
+    if proj_id is not None:
+        project = get_object_or_404(Project, id=proj_id)
+        if project.user != request.user:
+            raise PermissionDenied
+
+        data = json.loads(request.body)
+        road_elements = data.get("road_elements", [])
+
+        if not road_elements:
+            Roads.objects.filter(project=project).delete()
+            return JsonResponse({"message": "No data provided"}, status=200)
+
+        df = pd.DataFrame.from_records(road_elements)
+        if df.empty:
+            Roads.objects.filter(project=project).delete()
+            return JsonResponse({"message": "No valid data"}, status=200)
+
+        df = df.drop_duplicates(subset=["road_id"], keep="first")
+        required_columns = ["road_id", "coordinates", "how_added", "road_type"]
+        df = df[required_columns]
+        df["how_added"] = df["how_added"].fillna("automatic")
+        df["road_type"] = df["road_type"].fillna("osm")
+
+        roads, _ = Roads.objects.get_or_create(project=project)
+
+        roads.data = df.to_json(orient="records")
+        roads.save()
+
+        return JsonResponse({"message": "Success"}, status=200)
+
+    return JsonResponse({"error": "Project ID missing"}, status=400)
 
 
 @require_http_methods(["POST"])
@@ -613,28 +727,11 @@ def waiting_for_results(request, proj_id):
     )
 
 
-def process_optimization_results(request, proj_id):
+def handle_optimization_results_request(request, proj_id):
     # Processes the results (contains both optimization result objects)
     data = json.loads(request.body)
     sim_res = data.get("results", {})
-    grid_processor = GridProcessor(proj_id=proj_id, results_json=sim_res.get("grid"))
-    grid_processor.grid_results_to_db()
-    supply_processor = SupplyProcessor(
-        proj_id=proj_id, results_json=sim_res.get("supply")
-    )
-    supply_processor.process_supply_optimization_results()
-    supply_processor.supply_results_to_db()
-    # Process shared results (after both grid and supply have been processed)
-    results = Results.objects.get(simulation__project__id=proj_id)
-    results.lcoe_share_supply = (
-        (results.epc_total - results.cost_grid) / results.epc_total * 100
-    )
-    results.lcoe_share_grid = 100 - results.lcoe_share_supply
-    assets = ["grid", "diesel_genset", "inverter", "rectifier", "battery", "pv"]
-    results.upfront_invest_total = sum(
-        [getattr(results, f"upfront_invest_{key}") for key in assets]
-    )
-    results.save()
+    process_optimization_results(proj_id, sim_res)
     return JsonResponse({"msg": "Optimization results saved to database"})
 
 

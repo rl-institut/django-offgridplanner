@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.1.0] – 2026-02-02
 ### Added
 - Display roads on map ([#138](https://github.com/rl-institut/django-offgridplanner/pull/138)).
 - Allow user to duplicate projects ([#191](https://github.com/rl-institut/django-offgridplanner/pull/191))

@@ -139,6 +139,30 @@ function loadDemandPlot() {
 /* ================================
    Plot Construction
 ================================ */
+const colors = {
+    total: 'black',
+
+    households: {
+        line: 'rgba(31, 119, 180, 1)',
+        fill: 'rgba(31, 119, 180, 0.6)'
+    },
+    enterprises: {
+        line: 'rgba(255, 127, 14, 1)',
+        fill: 'rgba(255, 127, 14, 0.6)'
+    },
+    public_services: {
+        line: 'rgba(44, 160, 44, 1)',
+        fill: 'rgba(44, 160, 44, 0.6)'
+    },
+
+    average: 'black',
+
+    very_high: 'blue',
+    high: 'green',
+    middle: 'black',
+    low: 'orange',
+    very_low: 'red'
+};
 
 var layout = {
     font: { size: 14 },
@@ -195,37 +219,107 @@ function buildPlot(data) {
 
     const dataTraces = [
         {
-            x, y: Total_Demand, mode: 'lines',
+            x: x,
+            y: Total_Demand,
+            mode: 'lines',
             name: 'Total Demand',
-            line: { width: 3, shape: 'spline' },
+            line: { color: colors.total, width: 3, shape: 'spline' },
+            visible: true, // Initially visible
             legendrank: 0
         },
         {
-            x, y: public_services, stackgroup: 'one',
+            x: x,
+            y: public_services,
+            type: 'scatter',
+            mode: 'lines',
             name: 'Demand of Public Services',
-            fill: 'tonexty', legendrank: 1
+            stackgroup: 'one',
+            fill: 'tonexty',
+            hoverinfo: 'x+y',
+            line: { shape: 'spline', width: 0.5, color: colors.public_services.line },
+            fillcolor: colors.public_services.fill,
+            legendrank: 1
         },
         {
-            x, y: enterprises, stackgroup: 'one',
+            x: x,
+            y: enterprises,
+            type: 'scatter',
+            mode: 'lines',
             name: 'Demand of Enterprises',
-            fill: 'tonexty', legendrank: 2
+            stackgroup: 'one',
+            fill: 'tonexty',
+            hoverinfo: 'x+y',
+            line: { shape: 'spline', width: 0.5, color: colors.enterprises.line },
+            fillcolor: colors.enterprises.fill,
+            legendrank: 2
         },
         {
-            x, y: households, stackgroup: 'one',
+            x: x,
+            y: households,
+            type: 'scatter',
+            mode: 'lines',
             name: 'Demand of Households',
-            fill: 'tonexty', legendrank: 3
+            stackgroup: 'one',
+            fill: 'tonexty',
+            hoverinfo: 'x+y',
+            line: { shape: 'spline', width: 0.5, color: colors.households.line },
+            fillcolor: colors.households.fill,
+            legendrank: 3
         },
         {
-            x, y: Average,
+            x: x,
+            y: Average,
+            mode: 'lines',
             name: 'Average Household Profile',
-            visible: false,
+            line: { color: colors.average, width: 2, shape: 'spline' },
+            visible: false, // Initially hidden
             legendrank: 4
         },
-        { x, y: Very_High, name: 'Very High Consumption', visible: 'legendonly' },
-        { x, y: High, name: 'High Consumption', visible: 'legendonly' },
-        { x, y: Middle, name: 'Middle Consumption', visible: 'legendonly' },
-        { x, y: Low, name: 'Low Consumption', visible: 'legendonly' },
-        { x, y: Very_Low, name: 'Very Low Consumption', visible: 'legendonly' }
+        {
+            x: x,
+            y: Very_High,
+            mode: 'lines',
+            name: 'Very High Consumption',
+            line: { color: colors.very_high, width: 1, shape: 'spline' },
+            visible: 'legendonly',
+            legendrank: 5
+        },
+        {
+            x: x,
+            y: High,
+            mode: 'lines',
+            name: 'High Consumption',
+            line: { color: colors.high, width: 1, shape: 'spline' },
+            visible: 'legendonly',
+            legendrank: 6
+        },
+        {
+            x: x,
+            y: Middle,
+            mode: 'lines',
+            name: 'Middle Consumption',
+            line: { color: colors.middle, width: 1, shape: 'spline' },
+            visible: 'legendonly',
+            legendrank: 7
+        },
+        {
+            x: x,
+            y: Low,
+            mode: 'lines',
+            name: 'Low Consumption',
+            line: { color: colors.low, width: 1, shape: 'spline' },
+            visible: 'legendonly',
+            legendrank: 8
+        },
+        {
+            x: x,
+            y: Very_Low,
+            mode: 'lines',
+            name: 'Very Low Consumption',
+            line: { color: colors.very_low, width: 1, shape: 'spline' },
+            visible: 'legendonly',
+            legendrank: 9
+        }
     ];
 
     //update y-values, so they can be used globally for average share update

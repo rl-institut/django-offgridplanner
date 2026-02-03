@@ -26,10 +26,10 @@ function calculateTotalDemand(households, enterprises, public_services) {
 };
 
 function calibrate_demand(reverse = false) {
-    var households_raw = Average.map(value => value * AppState.num_households);
+    var households_raw = AppState.average.map(value => value * AppState.num_households);
 
     let calibration_factor;
-    const total_demand_raw = calculateTotalDemand(households_raw, enterprises_raw, public_services_raw);
+    const total_demand_raw = calculateTotalDemand(households_raw, AppState.enterprises, AppState.public_services);
     if (calibration_option === 'kW') {
         calibration_factor = calibration_target_value / Math.max(...total_demand_raw);
     } else if (calibration_option === 'kWh') {
@@ -38,8 +38,8 @@ function calibrate_demand(reverse = false) {
         calibration_factor = 1
     }
     households = households_raw.map(value => value * calibration_factor);
-    enterprises = enterprises_raw.map(value => value * calibration_factor);
-    public_services = public_services_raw.map(value => value * calibration_factor);
+    enterprises = AppState.enterprises.map(value => value * calibration_factor);
+    public_services = AppState.public_services.map(value => value * calibration_factor);
 }
 
 /* ================================
@@ -47,9 +47,20 @@ function calibrate_demand(reverse = false) {
 ================================ */
 
 const AppState = {
+    // needed for plot
     plotReady: false,
     plotElement: null,
+    radioTotalDemand: null,
+    radioSingleHousehold: null,
 
+    // radio buttons
+    toggleSwitch: null, // toggle custom calibration on/off
+    option7Radio: null, // total vs peak
+    option8Radio: null, // total vs peak
+    totalEnergyInput: null,
+    maximumPeakLoadInput: null,
+
+    // neended for demand calculations
     customShares: {},
     previousValues: {},
     num_households: 0,
@@ -57,6 +68,7 @@ const AppState = {
     enterprises: null,
     public_services: null,
 
+    average: [],
 
     traces: {
         averageIndex: 4, // trace6
@@ -74,6 +86,14 @@ const AppState = {
 
 function initDOM() {
     AppState.plotElement = document.getElementById('demand_plot');
+    AppState.radioTotalDemand = document.getElementById('optionTotalDemand');
+    AppState.radioSingleHousehold = document.getElementById('optionSingleHousehold');
+
+    AppState.toggleSwitch = document.getElementById('toggleswitch');
+    AppState.option7Radio = document.getElementById('option7radio');
+    AppState.option8Radio = document.getElementById('option8radio');
+    AppState.totalEnergyInput = document.getElementById('id_annual_total_consumption');
+    AppState.maximumPeakLoadInput = document.getElementById('id_annual_total_consumption');
 
     AppState.customShares = {
         id_very_low: document.getElementById('id_very_low'),
@@ -221,13 +241,27 @@ function buildPlot(data) {
 /* ================================
    Plot Updates
 ================================ */
+// Function to update plot based on selection (total or single household demand)
+function showOnlySelection() {
+    if (AppState.radioTotalDemand.checked) {
+        // Activate traces 1 to 4 (indices 0 to 3)
+        Plotly.restyle(AppState.plotElement, { 'visible': true }, [0, 1, 2, 3]);
+        // Deactivate traces 5 to 10 (indices 4 to 9)
+        Plotly.restyle(AppState.plotElement, { 'visible': 'legendonly' }, [4, 5, 6, 7, 8, 9]);
+    } else if (AppState.radioSingleHousehold.checked) {
+        // Activate traces 5 to 10 (indices 4 to 9)
+        Plotly.restyle(AppState.plotElement, { 'visible': true }, [4, 5, 6, 7, 8, 9]);
+        // Deactivate traces 1 to 4 (indices 0 to 3)
+        Plotly.restyle(AppState.plotElement, { 'visible': 'legendonly' }, [0, 1, 2, 3]);
+    }
+}
 
 function updateTrace6() {
     if (!AppState.plotReady) return;
 
     Plotly.restyle(
         AppState.plotElement,
-        { y: [Average] },
+        { y: [AppState.average] },
         [AppState.traces.averageIndex]
     );
 }
@@ -257,12 +291,13 @@ function updateAverageArray() {
                         (share4 * AppState.traces.trace4Y[idx]) +
                         (share5 * AppState.traces.trace5Y[idx]);
     0});
+    AppState.average = Average;
 }
 
 /* ================================
    Input Handling
 ================================ */
-
+// function to handle the input of custom household shares
 function handleInputChange(inputId) {
     return function () {
         if (!AppState.plotReady) return;
@@ -284,6 +319,70 @@ function handleInputChange(inputId) {
     };
 }
 
+// Handle change of calibration values (total vs. peak)
+// not sure if this is used on old code or the other way
+function handleOptions2Change() {
+    if (AppState.option7Radio.checked) {
+        AppState.totalEnergyInput.disabled = false;
+        AppState.maximumPeakLoadInput.disabled = true;
+        AppState.maximumPeakLoadInput.value = '';
+    } else {
+        AppState.totalEnergyInput.disabled = true;
+        AppState.totalEnergyInput.value = '';
+        AppState.maximumPeakLoadInput.disabled = false;
+    }
+}
+// Function to handle calibration input changes
+function handleCalibrationInputChange() {
+    // Only proceed if the toggle switch is activated
+    if (AppState.toggleSwitch.checked) {
+        if (AppState.option7Radio.checked) {
+            // Option 7: "Set Average Total Annual Energy (kWh/year)"
+            const value = parseFloat(AppState.totalEnergyInput.value);
+            if (!isNaN(value) && value >= 0) {
+                calibrate_demand(true);
+                calibration_target_value = value;
+                calibration_option = 'kWh';
+                calibrate_demand(false);
+                updateTrace7to10();
+            }
+        } else if (AppState.option8Radio.checked) {
+            // Option 8: "Set Maximum Peak Demand (kW)"
+            const value = parseFloat(AppState.maximumPeakLoadInput.value);
+            if (!isNaN(value) && value >= 0) {
+                calibrate_demand(true);
+                calibration_target_value = value;
+                calibration_option = 'kW';
+                calibrate_demand(false);
+                updateTrace7to10();
+            }
+        }
+    } else {
+        // Toggle is deactivated
+        calibrate_demand(true);
+        calibration_target_value = 1;
+        calibration_option = null;
+        updateTrace7to10();
+        households = AppState.average.map(value => value * AppState.num_households);
+        calibrate_demand(false);
+    }
+}
+
+function handleRadioButtonChange() {
+    if (AppState.option7Radio.checked) {
+        AppState.totalEnergyInput.disabled = false;
+        AppState.maximumPeakLoadInput.disabled = true;
+        AppState.maximumPeakLoadInput.value = '';
+        handleCalibrationInputChange();
+    } else if (AppState.option8Radio.checked) {
+        AppState.totalEnergyInput.disabled = true;
+        AppState.totalEnergyInput.value = '';
+        AppState.maximumPeakLoadInput.disabled = false;
+        handleCalibrationInputChange();
+    }
+}
+
+// Adding all the Event Listeners
 function attachInputListeners() {
     Object.keys(AppState.customShares).forEach(id => {
         AppState.customShares[id].addEventListener(
@@ -291,6 +390,21 @@ function attachInputListeners() {
             handleInputChange(id)
         );
     });
+    AppState.radioTotalDemand.addEventListener('change', showOnlySelection);
+    AppState.radioSingleHousehold.addEventListener('change', showOnlySelection);
+    // custom calibration buttons/switches
+    AppState.toggleSwitch.addEventListener('change', function(event) {
+        if (!event.target.checked) {
+            // Toggle is deactivated
+            calibration_target_value = 1;
+            calibration_option = null;
+            updateTrace7to10();
+        }
+    });
+    AppState.option7Radio.addEventListener('change', handleRadioButtonChange, 1, false);
+    AppState.option8Radio.addEventListener('change', handleRadioButtonChange, 1, false);
+    AppState.totalEnergyInput.addEventListener('input', debounce(handleCalibrationInputChange, 1000, false));
+    AppState.maximumPeakLoadInput.addEventListener('input', debounce(handleCalibrationInputChange, 1000, false));
 }
 
 // update UI element to show users that they need to enter input of total 100%
@@ -336,3 +450,48 @@ document.getElementById("resetShares").addEventListener("click", () => {
         updateDemandCheck();
     }
 });
+
+/* ================================
+   File Handling
+================================ */
+
+// Trigger the file input dialog when the "Import Consumers" button is clicked
+document.getElementById('importButton').addEventListener('click', function() {
+    document.getElementById('fileInput').click();
+});
+
+// Handle the file selection and upload the file to the server
+document.getElementById('fileInput').addEventListener('change', async function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        await file_demand_to_db(formData);
+        document.getElementById('fileInput').value = '';
+    }
+});
+
+async function export_demand(file_type) {
+    const response = await fetch(exportDemandUrl, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({"file_type": file_type})
+    });
+
+    if (response.ok) {
+        // Handle the file download for "csv" or "xlsx"
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = file_type === "xlsx" ? "offgridplanner_demand.xlsx" : "offgridplanner_demand.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+    } else {
+        console.error('Request failed with status:', response.status);
+        const errorDetails = await response.json();
+        console.error('Error details:', errorDetails);
+    }
+}

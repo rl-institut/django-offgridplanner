@@ -14,10 +14,6 @@ function debounce(func, wait) {
     };
 }
 
-function isSignificantChange(newValue, oldValue, threshold = 0.2) {
-    return Math.abs(newValue - oldValue) >= threshold;
-}
-
 // Function to calculate Total_Demand
 function calculateTotalDemand(households, enterprises, public_services) {
     return households.map((value, index) => {
@@ -401,8 +397,6 @@ function handleInputChange(inputId) {
 
         const newValue = Number(input.value) || 0;
         const oldValue = AppState.previousValues[inputId];
-
-        if (!isSignificantChange(newValue, oldValue)) return;
 
         AppState.previousValues[inputId] = newValue;
 

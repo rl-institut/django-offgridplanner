@@ -90,7 +90,7 @@ function initDOM() {
     AppState.option7Radio = document.getElementById('option7radio');
     AppState.option8Radio = document.getElementById('option8radio');
     AppState.totalEnergyInput = document.getElementById('id_annual_total_consumption');
-    AppState.maximumPeakLoadInput = document.getElementById('id_annual_total_consumption');
+    AppState.maximumPeakLoadInput = document.getElementById('id_annual_peak_consumption');
 
     AppState.customShares = {
         id_very_low: document.getElementById('id_very_low'),

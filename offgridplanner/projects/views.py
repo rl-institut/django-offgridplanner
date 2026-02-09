@@ -62,13 +62,6 @@ logger = logging.getLogger(__name__)
 @ratelimit(key="ip", rate="20/h")
 @require_http_methods(["GET"])
 def demo_start(request):
-    logger.warning(
-        "REMOTE_ADDR=%s XFF=%s CF=%s",
-        request.META.get("REMOTE_ADDR"),
-        request.headers.get("x-forwarded-for"),
-        request.headers.get("cf-connecting-ip"),
-    )
-
     with transaction.atomic():
         user = User.objects.create(
             email=f"demo_{secrets.token_urlsafe(6)}@example.com",
@@ -96,6 +89,12 @@ def demo_start(request):
 def home(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("projects:projects_list"))
+    logger.warning(
+        "REMOTE_ADDR=%s XFF=%s CF=%s",
+        request.META.get("REMOTE_ADDR"),
+        request.headers.get("x-forwarded-for"),
+        request.headers.get("cf-connecting-ip"),
+    )
     return render(request, "pages/landing_page.html")
 
 

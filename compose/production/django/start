@@ -33,4 +33,4 @@ if compress_enabled; then
 fi
 
 echo RUNNING
-exec /usr/local/bin/gunicorn config.asgi --bind 0.0.0.0:5000 --access-logfile "-" --loglevel=info --error-logfile "-" --capture-output --chdir=/app -k uvicorn_worker.UvicornWorker
+exec /usr/local/bin/gunicorn config.asgi --bind 0.0.0.0:5000 --access-logfile "-" --log-level=info --error-logfile "-" --capture-output --chdir=/app -k uvicorn_worker.UvicornWorker

@@ -2,6 +2,7 @@ import base64
 import datetime
 import io
 import json
+import logging
 import secrets
 import urllib
 from http.client import HTTPException
@@ -55,10 +56,19 @@ from offgridplanner.users.forms import UserSignupForm
 from offgridplanner.users.models import DemoAccount
 from offgridplanner.users.models import User
 
+logger = logging.getLogger(__name__)
+
 
 @ratelimit(key="ip", rate="20/h")
 @require_http_methods(["GET"])
 def demo_start(request):
+    logger.warning(
+        "REMOTE_ADDR=%s XFF=%s CF=%s",
+        request.META.get("REMOTE_ADDR"),
+        request.headers.get("x-forwarded-for"),
+        request.headers.get("cf-connecting-ip"),
+    )
+
     with transaction.atomic():
         user = User.objects.create(
             email=f"demo_{secrets.token_urlsafe(6)}@example.com",

@@ -83,4 +83,4 @@ class UserSocialSignupForm(SocialSignupForm):
 
 
 class CaptchaForm(forms.Form):
-    captcha = CaptchaField()
+    captcha = CaptchaField(help_text="Please enter the letters shown below")

@@ -224,9 +224,8 @@
 <!--          minutes-->
 <!--        </p>-->
            {% csrf_token %}
-        <b style="color:red">{{ captcha_form.captcha.errors }} </b>
         {{ captcha_form }}
-        <button type="button" class="js-captcha-refresh" data-url="/captcha/refresh">↻</button>
+          <a type="button" class="js-captcha-refresh" data-url="/captcha/refresh"><h2>↻</h2></a>
         <p id="responseMsg3"></p>
         <div class="clearfix">
           <button type="submit" class="btn btn-primary">Continue</button>

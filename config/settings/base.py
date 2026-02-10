@@ -219,6 +219,9 @@ TEMPLATES = [
     },
 ]
 
+# https://django-simple-captcha.readthedocs.io/en/latest/advanced.html
+CAPTCHA_FONT_SIZE = 30
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 

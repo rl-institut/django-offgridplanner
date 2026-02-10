@@ -16,7 +16,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # pycairo dependencies
   libcairo2-dev \
   pkgconf \
-  python3-dev
+  python3-dev \
+  # pillow dependencies
+  libz-dev \
+  libjpeg-dev \
+  libfreetype6-dev \
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements .

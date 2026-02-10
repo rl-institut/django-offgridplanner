@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed:
+- Added captcha for demo users instead of IP rate limit ([#203](https://github.com/rl-institut/django-offgridplanner/pull/203))
 
 ## [v1.1.0] – 2026-02-02
 ### Added

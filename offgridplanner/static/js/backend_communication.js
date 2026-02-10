@@ -30,6 +30,19 @@
  * smooth data flow, user interaction, and application functionality.
  */
 
+$('.js-captcha-refresh').click(function(){
+    $form = $(this).parents('form');
+    $.getJSON($(this).data('url'), {}, function(json) {
+        // Update image
+        $form.find('img.captcha').attr('src', json.image_url);
+        // Update hidden key
+        $form.find('input[name="captcha_0"]').val(json.key);
+        // Clear + focus text input
+        $form.find('input[name="captcha_1"]').val('').focus();
+    });
+    return false;
+});
+
 
 async function plot_results(sequential = false) {
     const urlParams = new URLSearchParams(window.location.search);

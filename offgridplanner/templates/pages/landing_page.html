@@ -202,8 +202,8 @@
   <div id="msgBox"
        class="modal"
        style="background-color: rgba(0,0,0,0.5);
-                z-index: 999">
-    <form class="modal-content" id="myForm" style="max-width: 40rem">
+                z-index: 999;display:{% if show_modal %}block{% else %}none{% endif %}">
+    <form class="modal-content" id="myForm" style="max-width: 40rem" method="post" action="{% url 'projects:home' %}">
       <div class="container">
         <h1 style="text-align:left;">Testing the Offgridplanner</h1>
         <p style="text-align:left;">
@@ -223,15 +223,17 @@
 <!--          &bull; The calculation time of your optimization model is limited to 5-->
 <!--          minutes-->
 <!--        </p>-->
+           {% csrf_token %}
+        <b style="color:red">{{ captcha_form.captcha.errors }} </b>
+        {{ captcha_form }}
+        <button type="button" class="js-captcha-refresh" data-url="/captcha/refresh">↻</button>
         <p id="responseMsg3"></p>
         <div class="clearfix">
-          <a id="myButton"
-                  href="{% url 'projects:demo_start' %}"
-                  type="button"
-                  class="btn btn--small">Continue</a>
+          <button type="submit" class="btn btn-primary">Continue</button>
           <a onclick="document.getElementById('msgBox').style.display='none'"
                   type="button"
-                  class="btn btn--small btn--hollow">Cancel</a>
+                  class="btn btn--small btn--hollow">Cancel
+          </a>
         </div>
       </div>
     </form>

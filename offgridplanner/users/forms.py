@@ -1,5 +1,7 @@
 from allauth.account.forms import SignupForm
 from allauth.socialaccount.forms import SignupForm as SocialSignupForm
+from captcha.fields import CaptchaField
+from django import forms
 from django.contrib.auth import forms as admin_forms
 from django.forms import BooleanField
 from django.forms import CharField
@@ -78,3 +80,7 @@ class UserSocialSignupForm(SocialSignupForm):
     Default fields will be added automatically.
     See UserSignupForm otherwise.
     """
+
+
+class CaptchaForm(forms.Form):
+    captcha = CaptchaField(help_text="Please enter the letters shown below")

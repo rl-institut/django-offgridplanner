@@ -44,4 +44,4 @@ djangorestframework==3.15.2  # https://github.com/encode/django-rest-framework
 django-cors-headers==4.7.0  # https://github.com/adamchainz/django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular==0.28.0  # https://github.com/tfranzel/drf-spectacular
-django-ratelimit==4.1.0 # https://github.com/jsocol/django-ratelimit
+django-simple-captcha==0.6.2 # https://github.com/mbi/django-simple-captcha

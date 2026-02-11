@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # pillow dependencies
   libz-dev \
   libjpeg-dev \
-  libfreetype6-dev \
+  libfreetype6-dev
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements .

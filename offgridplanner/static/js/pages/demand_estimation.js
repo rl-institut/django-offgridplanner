@@ -56,13 +56,14 @@ const AppState = {
     totalEnergyInput: null,
     maximumPeakLoadInput: null,
 
-    // neended for demand calculations
+    // needed for demand calculations
     customShares: {},
     previousValues: {},
     num_households: 0,
     households: null,
     enterprises: null,
     public_services: null,
+    total_demand_raw: null,
 
     average_raw: [],
     average_shares: [],
@@ -208,7 +209,7 @@ function buildPlot(data) {
     AppState.enterprises = enterprises;
     AppState.public_services = public_services;
 
-    const Total_Demand = calculateTotalDemand(
+    AppState.total_demand_raw = calculateTotalDemand(
         households,
         enterprises,
         public_services
@@ -217,7 +218,7 @@ function buildPlot(data) {
     const dataTraces = [
         {
             x: x,
-            y: Total_Demand,
+            y: AppState.total_demand_raw,
             mode: 'lines',
             name: 'Total Demand',
             line: { color: colors.total, width: 3, shape: 'spline' },
@@ -383,6 +384,19 @@ function updateAverageArray() {
     AppState.average_shares = AppState.average_raw;
 }
 
+function updateHouseholdDemandTrace() {
+    // recalculate demand of households after changing average
+    let households_demand = AppState.average_shares.map(share => share * AppState.num_households);
+
+    households_measure_corrected = households_demand.map(value => value / 1000);
+    let total_Demand = calculateTotalDemand(households_measure_corrected, AppState.enterprises, AppState.public_services);
+
+    // Restyle all traces in one command
+    Plotly.restyle(AppState.plotElement, {
+        'y': [total_Demand, households_measure_corrected]
+    }, [0, 3]);
+}
+
 /* ================================
    Input Handling
 ================================ */
@@ -401,8 +415,7 @@ function handleInputChange(inputId) {
 
         updateAverageArray();
         updateAverageTrace();
-        //calibrate_demand();
-        updateTrace0to3();
+        updateHouseholdDemandTrace();
     };
 }
 

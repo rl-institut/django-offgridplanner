@@ -83,7 +83,10 @@ def from_nested_dict(model_cls, nested_data):
         params[field_name] = value
 
         # Reverse the efficiency scaling
-        if "efficiency" in db_column.split("__")[-1]:
+        if any(
+            percentage_param in db_column.split("__")[-1]
+            for percentage_param in ["soc", "efficiency", "max_shortage"]
+        ):
             percentage_value = value * 100
             params[field_name] = percentage_value
 

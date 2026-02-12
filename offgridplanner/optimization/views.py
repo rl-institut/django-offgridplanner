@@ -95,9 +95,17 @@ def add_buildings_inside_boundary(request, proj_id):
                 "Please select a smaller area.",
             },
         )
-    data, building_coordinates_within_boundaries = (
-        osm_utils.get_consumer_within_boundaries(df)
-    )
+    try:
+        data, building_coordinates_within_boundaries = (
+            osm_utils.get_consumer_within_boundaries(df)
+        )
+    except RuntimeError:
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "An error occurred fetching OpenStreetMap building data. Please try again.",
+            },
+        )
     if not building_coordinates_within_boundaries:
         return JsonResponse(
             {
@@ -202,7 +210,15 @@ def add_roads_inside_boundary(request, proj_id):
             }
         )
 
-    data, road_geometries = osm_utils.get_roads_within_boundaries(df)
+    try:
+        data, road_geometries = osm_utils.get_roads_within_boundaries(df)
+    except RuntimeError:
+        return JsonResponse(
+            {
+                "executed": False,
+                "msg": "An error occurred fetching OpenStreetMap roads data. Please try again.",
+            },
+        )
 
     if not road_geometries:
         return JsonResponse(

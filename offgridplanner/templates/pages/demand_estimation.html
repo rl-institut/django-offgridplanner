@@ -35,17 +35,14 @@
                   <span style="flex-shrink: 0;  margin-right: 20px;">
                     <strong>{% translate 'Use Custom Demand Time Series:' %}</strong>
                   </span>
-                  <label class="switch" style="margin-right: 20px;">
-                    <input id="customDemand"
-                           type="checkbox"
-                           data-bs-toggle="collapse"
-                           data-bs-target="#consumerProperties, #demandUpload" />
-                    <span class="slider round"></span>
-                  </label>
+                <label class="switch inverted" style="margin-right: 20px;">
+                  {{ opts_form.do_demand_estimation }}
+                  <span class="slider round"></span>
+                </label>
                 </button>
               </h2>
               <div id="consumerProperties"
-                   class="accordion-collapse collapse show"
+                   class="accordion-collapse collapse {% if opts_form.do_demand_estimation.value %} show {% endif %}"
                    aria-labelledby="headingOne"
                    data-bs-parent="#accordionExample">
                 <div class="accordion-body">
@@ -229,7 +226,7 @@
           </div>
           <div class="accordion-item" style="border-top: none; padding: 10px">
             <div id="demandUpload"
-                 class="accordion-collapse collapse"
+                 class="accordion-collapse collapse {% if not opts_form.do_demand_estimation.value %} show {% endif %}"
                  aria-labelledby="headingThree">
               <div class="accordion-body">
                 <p style="display: flex; align-items: center; color: var(--ccb);">
@@ -273,6 +270,7 @@
 <script>
   const proj_id = '{{ proj_id }}';
   const csrfToken = '{{ csrf_token }}';
+  const previousValues = {{ household_initial_shares | safe }};
   const exportDemandUrl = `{% url 'optimization:export_demand' proj_id %}`;
   const importDemandUrl = `{% url 'optimization:import_demand' proj_id %}`;
 </script>

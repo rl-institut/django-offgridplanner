@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [v1.1.1] – 2026-02-25
+### Changed
+- Do not display options fields on first steps ([#210](https://github.com/rl-institut/django-offgridplanner/pull/210))
+- Add captcha for demo users instead of IP rate limit ([#203](https://github.com/rl-institut/django-offgridplanner/pull/203))
+- Do not fetch roads data on map to avoid overloading the OpenStreetMap API ([#206](https://github.com/rl-institut/django-offgridplanner/pull/206))
+
+### Fixed
+- Fix uploaded demand being used instead of computed demand if provided ([#210](https://github.com/rl-institut/django-offgridplanner/pull/210))
+- Fix percentage fields scaling on project import / duplication ([#205](https://github.com/rl-institut/django-offgridplanner/pull/205))
+- Display error message if OpenStreetMap building data loading fails ([#206](https://github.com/rl-institut/django-offgridplanner/pull/206))
+
 ## [v1.1.0] – 2026-02-02
 ### Added
 - Display roads on map ([#138](https://github.com/rl-institut/django-offgridplanner/pull/138)).

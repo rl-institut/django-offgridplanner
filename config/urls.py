@@ -53,6 +53,7 @@ urlpatterns = (
         path("accounts/", include("allauth.urls")),
     )
     + [path("i18n/", include("django.conf.urls.i18n"))]
+    + [path("captcha/", include("captcha.urls"))]
     + staticfiles_urlpatterns()
 )
 if settings.DEBUG:

@@ -163,7 +163,7 @@ def demand_estimation(request, proj_id=None):
     step_id = list(STEPS.keys()).index("demand_estimation") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-
+        options = project.options
         custom_demand, _ = CustomDemand.objects.get_or_create(
             project=project, defaults=get_param_from_metadata("default", "CustomDemand")
         )
@@ -172,15 +172,28 @@ def demand_estimation(request, proj_id=None):
 
         if request.method == "POST":
             form = CustomDemandForm(request.POST, instance=custom_demand)
-            if form.is_valid():
+            opts = OptionForm(request.POST, instance=options)
+            display_error = None
+            if form.is_valid() and opts.is_valid():
                 form.save()
-                return redirect("steps:ogp_steps", proj_id, step_id + 1)
+                opts.save()
+                if (
+                    options.do_demand_estimation is False
+                    and custom_demand.uploaded_data is None
+                ):
+                    display_error = "You have selected the option to use a custom demand timeseries, but not provided any data. Please upload a timeseries or unselect the given slider."
             else:
                 errors = form.non_field_errors()
                 display_error = errors[0] if len(errors) == 1 else errors
                 messages.add_message(request, messages.WARNING, display_error)
+
+            if display_error:
+                messages.add_message(request, messages.WARNING, display_error)
+            else:
+                return redirect("steps:ogp_steps", proj_id, step_id + 1)
         else:
             form = CustomDemandForm(instance=custom_demand)
+            opts = OptionForm(instance=options)
 
         context = {
             "calibration": {
@@ -188,6 +201,7 @@ def demand_estimation(request, proj_id=None):
                 "initial": calibration_initial,
             },
             "form": form,
+            "opts_form": opts,
             "proj_id": proj_id,
             "step_id": step_id,
             "step_list": STEP_LIST_RIBBON,
@@ -247,13 +261,13 @@ def energy_system_design(request, proj_id=None):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
 
-    energy_system_design, _ = EnergySystemDesign.objects.get_or_create(
+    esd, _ = EnergySystemDesign.objects.get_or_create(
         project=project,
         defaults=get_param_from_metadata("default", "EnergySystemDesign"),
     )
     if request.method == "GET":
         form = EnergySystemDesignForm(
-            instance=energy_system_design,
+            instance=esd,
             set_db_column_attribute=True,
         )
 
@@ -278,7 +292,7 @@ def energy_system_design(request, proj_id=None):
         return render(request, "pages/energy_system_design.html", context)
     if request.method == "POST":
         form = EnergySystemDesignForm(
-            request.POST, instance=energy_system_design, set_db_column_attribute=True
+            request.POST, instance=esd, set_db_column_attribute=True
         )
         if form.is_valid():
             form.save()

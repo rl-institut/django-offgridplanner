@@ -26,7 +26,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
-from django_ratelimit.decorators import ratelimit
 from openpyxl.drawing.image import PILImage
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch
@@ -51,12 +50,12 @@ from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
+from offgridplanner.users.forms import CaptchaForm
 from offgridplanner.users.forms import UserSignupForm
 from offgridplanner.users.models import DemoAccount
 from offgridplanner.users.models import User
 
 
-@ratelimit(key="ip", rate="20/h")
 @require_http_methods(["GET"])
 def demo_start(request):
     with transaction.atomic():
@@ -82,11 +81,26 @@ def demo_start(request):
     return redirect("projects:projects_list")
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 def home(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("projects:projects_list"))
-    return render(request, "pages/landing_page.html")
+
+    if request.POST:
+        captcha_form = CaptchaForm(request.POST)
+        show_modal = True
+        # Validate the captcha
+        if captcha_form.is_valid():
+            return redirect("projects:demo_start")
+
+    else:
+        captcha_form = CaptchaForm()
+        show_modal = False
+    return render(
+        request,
+        "pages/landing_page.html",
+        context={"captcha_form": captcha_form, "show_modal": show_modal},
+    )
 
 
 @login_required

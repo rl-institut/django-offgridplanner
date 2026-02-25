@@ -98,6 +98,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "widget_tweaks",
     "statici18n",
+    "captcha",
 ]
 
 LOCAL_APPS = [
@@ -217,6 +218,9 @@ TEMPLATES = [
         },
     },
 ]
+
+# https://django-simple-captcha.readthedocs.io/en/latest/advanced.html
+CAPTCHA_FONT_SIZE = 30
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
@@ -389,7 +393,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 # OFFGRIDPLANNER SETTINGS
-APP_VERSION_NUMBER = "1.1.0"
+APP_VERSION_NUMBER = "1.1.1"
 
 # Demo user expiry time
 DEMO_EXPIRY_SECONDS = 2 * 60 * 60  # 2 hours

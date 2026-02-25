@@ -163,7 +163,7 @@ def demand_estimation(request, proj_id=None):
     step_id = list(STEPS.keys()).index("demand_estimation") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-
+        options = project.options
         custom_demand, _ = CustomDemand.objects.get_or_create(
             project=project, defaults=get_param_from_metadata("default", "CustomDemand")
         )
@@ -172,18 +172,28 @@ def demand_estimation(request, proj_id=None):
 
         if request.method == "POST":
             form = CustomDemandForm(request.POST, instance=custom_demand)
-            opts = OptionForm(request.POST)
+            opts = OptionForm(request.POST, instance=options)
+            display_error = None
             if form.is_valid() and opts.is_valid():
                 form.save()
                 opts.save()
-                return redirect("steps:ogp_steps", proj_id, step_id + 1)
+                if (
+                    options.do_demand_estimation is False
+                    and custom_demand.uploaded_data is None
+                ):
+                    display_error = "You have selected the option to use a custom demand timeseries, but not provided any data. Please upload a timeseries or unselect the given slider."
             else:
                 errors = form.non_field_errors()
                 display_error = errors[0] if len(errors) == 1 else errors
                 messages.add_message(request, messages.WARNING, display_error)
+
+            if display_error:
+                messages.add_message(request, messages.WARNING, display_error)
+            else:
+                return redirect("steps:ogp_steps", proj_id, step_id + 1)
         else:
             form = CustomDemandForm(instance=custom_demand)
-            opts = OptionForm(instance=project.options)
+            opts = OptionForm(instance=options)
 
         context = {
             "calibration": {

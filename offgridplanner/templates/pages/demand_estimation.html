@@ -42,7 +42,7 @@
                 </button>
               </h2>
               <div id="consumerProperties"
-                   class="accordion-collapse collapse show"
+                   class="accordion-collapse collapse {% if opts_form.do_demand_estimation.value %} show {% endif %}"
                    aria-labelledby="headingOne"
                    data-bs-parent="#accordionExample">
                 <div class="accordion-body">
@@ -226,7 +226,7 @@
           </div>
           <div class="accordion-item" style="border-top: none; padding: 10px">
             <div id="demandUpload"
-                 class="accordion-collapse collapse"
+                 class="accordion-collapse collapse {% if not opts_form.do_demand_estimation.value %} show {% endif %}"
                  aria-labelledby="headingThree">
               <div class="accordion-body">
                 <p style="display: flex; align-items: center; color: var(--ccb);">

@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.1.1] – 2026-02-25
 ### Changed
 - Do not display options fields on first steps ([#210](https://github.com/rl-institut/django-offgridplanner/pull/210))
 - Add captcha for demo users instead of IP rate limit ([#203](https://github.com/rl-institut/django-offgridplanner/pull/203))

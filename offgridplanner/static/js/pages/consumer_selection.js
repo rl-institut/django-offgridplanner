@@ -99,8 +99,10 @@ let markerPowerHouseSelected = new L.Icon({
 });
 
 
-let marker
-let old_marker
+let selectedMarkers = [];
+let oldMarkers = [];
+let clickedMarker;
+let oldCopy;
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -109,14 +111,26 @@ function getKeyByValue(object, value) {
 // TODO this can stay
 function markerOnClick(e) {
     L.DomEvent.stopPropagation(e);
-    if (marker) {
-        update_map_elements();
+    const isShift = e.originalEvent.shiftKey;
+    if (!isShift && selectedMarkers.length > 0) {
+        selectedMarkers.forEach(marker => {
+            resetMarkerIcon(marker);
+        });
     }
+    if (!isShift) {
+        //reset if "normal" click without shift
+        selectedMarkers = [];
+        oldMarkers = [];
+    }
+
     expandAccordionItem2();
     const index = map_elements.findIndex(obj => obj.latitude === e.latlng.lat && obj.longitude === e.latlng.lng);
     if (index >= 0) {
-        marker = map_elements.splice(index, 1)[0];
-        old_marker = JSON.parse(JSON.stringify(marker));
+        clickedMarker = map_elements.splice(index, 1)[0];
+        oldCopy = JSON.parse(JSON.stringify(clickedMarker));
+
+        selectedMarkers.push(clickedMarker);
+        oldMarkers.push(oldCopy);
     }
     map.eachLayer(function (layer) {
         if (layer instanceof L.Marker) {
@@ -124,16 +138,16 @@ function markerOnClick(e) {
             if (markerLatLng.lat === e.latlng.lat && markerLatLng.lng === e.latlng.lng) {
                 map.removeLayer(layer);
                 let markerIcon;
-                if (marker.node_type === 'power-house') {
+                if (clickedMarker.node_type === 'power-house') {
                     markerIcon = markerPowerHouseSelected;
                 } else {
                     markerIcon = markerConsumerSelected;
                 }
                 L.marker([markerLatLng.lat, markerLatLng.lng], {icon: markerIcon,})
                     .on('click', markerOnClick).addTo(map);
-                document.getElementById('longitude').value = marker.longitude;
-                document.getElementById('latitude').value = marker.latitude;
-                if (marker.node_type === 'power-house') {
+                document.getElementById('longitude').value = clickedMarker.longitude;
+                document.getElementById('latitude').value = clickedMarker.latitude;
+                if (clickedMarker.node_type === 'power-house') {
                     document.getElementById('consumer').value = '';
                     document.getElementById('consumer').disabled = true;
                     document.getElementById('shs_options').value = '';
@@ -141,7 +155,7 @@ function markerOnClick(e) {
                     document.getElementById('enterprise').disabled = true;
                     document.getElementById('enterprise').value = '';
                     deactivate_large_loads();
-                } else if (marker.consumer_type === 'household') {
+                } else if (clickedMarker.consumer_type === 'household') {
                     document.getElementById('consumer').value = 'H';
                     document.getElementById('enterprise').disabled = true;
                     document.getElementById('enterprise').value = '';
@@ -149,36 +163,36 @@ function markerOnClick(e) {
                     document.getElementById('consumer').disabled = false;
                     deactivate_large_loads();
 
-                } else if (marker.consumer_type === 'enterprise') {
+                } else if (clickedMarker.consumer_type === 'enterprise') {
                     dropDownMenu(enterprise_list);
                     document.getElementById('consumer').value = 'E';
-                    let key = getKeyByValue(enterprise_list, marker.consumer_detail);
+                    let key = getKeyByValue(enterprise_list, clickedMarker.consumer_detail);
                     document.getElementById('enterprise').value = key;
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
                     activate_large_loads();
-                    if (marker.custom_specification.length > 5) {
+                    if (clickedMarker.custom_specification.length > 5) {
                         activate_large_loads(false);
-                        fillList(marker.custom_specification);
+                        fillList(clickedMarker.custom_specification);
                         document.getElementById('toggleswitch2').checked = true;
                         const accordionItem3 = new bootstrap.Collapse(document.getElementById('collapseThree'), {
                             toggle: false
                         });
                         accordionItem3.show();
                     }
-                } else if (marker.consumer_type === 'public_service') {
+                } else if (clickedMarker.consumer_type === 'public_service') {
                     dropDownMenu(public_service_list);
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').value = 'P';
                     document.getElementById('consumer').disabled = false;
-                    let key2 = getKeyByValue(public_service_list, marker.consumer_detail);
+                    let key2 = getKeyByValue(public_service_list, clickedMarker.consumer_detail);
                     document.getElementById('enterprise').value = key2;
                     deactivate_large_loads()
                 }
-                if (marker.node_type !== 'power-house') {
-                    if (marker.shs_options == 0) {
+                if (clickedMarker.node_type !== 'power-house') {
+                    if (clickedMarker.shs_options == 0) {
                         document.getElementById('shs_options').value = 'optimize';
-                    } else if (marker.shs_options == 1) {
+                    } else if (clickedMarker.shs_options == 1) {
                         document.getElementById('shs_options').value = 'grid';
                     }
                 }
@@ -212,60 +226,97 @@ function update_map_elements() {
     let selected_icon;
 
     if (longitude.length > 0 && latitude.length > 0) {
-        marker.longitude = parseFloat(longitude);
-        marker.latitude = parseFloat(latitude);
-        marker.shs_options = parseInt(shs_value);
-        marker.custom_specification = large_load_string;
+        selectedMarkers.forEach((marker, i) => {
+            let oldMarker = oldMarkers[i];
+
+            marker.longitude = parseFloat(longitude);
+            marker.latitude = parseFloat(latitude);
+            marker.shs_options = parseInt(shs_value);
+            marker.custom_specification = large_load_string;
 
 
-        let consumerValue = document.getElementById('consumer').value;
 
-        switch (consumerValue) {
-            case 'H':
-                marker.consumer_type = 'household';
-                marker.consumer_detail = 'default';
-                selected_icon = markerConsumer;
-                break;
-            case 'P':
-                marker.consumer_type = 'public_service';
-                marker.consumer_detail = document.getElementById('enterprise').value;
-                let key2 = document.getElementById('enterprise').value;
-                marker.consumer_detail = public_service_list[key2];
-                selected_icon = markerPublicservice;
-                break;
-            case 'E':
-                marker.consumer_type = 'enterprise';
-                let key = document.getElementById('enterprise').value;
-                marker.consumer_detail = enterprise_list[key];
-                selected_icon = markerEnterprise;
-                break;
-            case '':
-                marker.node_type = 'power-house';
-                marker.consumer_type = '';
-                marker.consumer_detail = '';
-                selected_icon = markerPowerHouse;
-                break;
-            default:
-                console.error("Invalid consumer value: " + consumerValue);
-        }
+            let consumerValue = document.getElementById('consumer').value;
 
-        if (marker.shs_options == 2) {
-            selected_icon = markerShs;
-        }
-        map_elements.push(marker);
-
-        map.eachLayer(function (layer) {
-            if (layer instanceof L.Marker) {
-                let markerLatLng = layer.getLatLng();
-                if (markerLatLng.lat === old_marker.latitude && markerLatLng.lng === old_marker.longitude) {
-                    map.removeLayer(layer);
-                    L.marker([marker.latitude, marker.longitude], {icon: selected_icon})
-                        .on('click', markerOnClick).addTo(map);
-                }
+            switch (consumerValue) {
+                case 'H':
+                    marker.consumer_type = 'household';
+                    marker.consumer_detail = 'default';
+                    selected_icon = markerConsumer;
+                    break;
+                case 'P':
+                    marker.consumer_type = 'public_service';
+                    marker.consumer_detail = document.getElementById('enterprise').value;
+                    let key2 = document.getElementById('enterprise').value;
+                    marker.consumer_detail = public_service_list[key2];
+                    selected_icon = markerPublicservice;
+                    break;
+                case 'E':
+                    marker.consumer_type = 'enterprise';
+                    let key = document.getElementById('enterprise').value;
+                    marker.consumer_detail = enterprise_list[key];
+                    selected_icon = markerEnterprise;
+                    break;
+                case '':
+                    marker.node_type = 'power-house';
+                    marker.consumer_type = '';
+                    marker.consumer_detail = '';
+                    selected_icon = markerPowerHouse;
+                    break;
+                default:
+                    console.error("Invalid consumer value: " + consumerValue);
             }
+
+            if (marker.shs_options == 2) {
+                selected_icon = markerShs;
+            }
+            map_elements.push(marker);
+
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    let markerLatLng = layer.getLatLng();
+                    if (markerLatLng.lat === oldMarker.latitude && markerLatLng.lng === oldMarker.longitude) {
+                        map.removeLayer(layer);
+                        L.marker([marker.latitude, marker.longitude], {icon: selected_icon})
+                            .on('click', markerOnClick).addTo(map);
+                    }
+                }
+            });
         });
     }
     count_consumers(false)
+}
+
+function resetMarkerIcon(marker) {
+    const epsilon = 0.0000001;
+
+    map.eachLayer(function(layer) {
+        if (layer instanceof L.Marker) {
+            let latLng = layer.getLatLng();
+
+            if (Math.abs(latLng.lat - marker.latitude) < epsilon &&
+                Math.abs(latLng.lng - marker.longitude) < epsilon) {
+
+                map.removeLayer(layer);
+
+                let normalIcon;
+
+                if (marker.node_type === 'power-house') {
+                    normalIcon = markerPowerHouse;
+                } else if (marker.consumer_type === 'enterprise') {
+                    normalIcon = markerEnterprise;
+                } else if (marker.consumer_type === 'public_service') {
+                    normalIcon = markerPublicservice;
+                } else {
+                    normalIcon = markerConsumer;
+                }
+
+                L.marker([marker.latitude, marker.longitude], {icon: normalIcon})
+                    .on('click', markerOnClick)
+                    .addTo(map);
+            }
+        }
+    });
 }
 
 function move_marker() {

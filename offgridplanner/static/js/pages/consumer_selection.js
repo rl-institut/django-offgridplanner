@@ -314,6 +314,11 @@ function resetMarkerIcon(marker) {
                 L.marker([marker.latitude, marker.longitude], {icon: normalIcon})
                     .on('click', markerOnClick)
                     .addTo(map);
+
+                // important: marker needs to be put back in datastructure since it's being sliced from there
+                if (!map_elements.includes(marker)) {
+                    map_elements.push(marker);
+                }
             }
         }
     });

@@ -65,20 +65,35 @@ document.getElementById('loads').value = "";
 document.getElementById('number_loads').disabled = true;
 
 document.getElementById('consumer').addEventListener('change', function () {
+
+    let newType;
+
     if (this.value === 'H') {
+        newType = "household";
         document.getElementById('enterprise').value = '';
         document.getElementById('enterprise').disabled = true;
         deactivate_large_loads();
+
     } else if (this.value === 'E') {
+        newType = "enterprise";
         dropDownMenu(enterprise_list);
         document.getElementById('enterprise').innerHTML = enterprise_option;
         document.getElementById('enterprise').value = 'group1';
         document.getElementById('enterprise').disabled = false;
         activate_large_loads();
+
     } else if (this.value === 'P') {
+        newType = "public_service";
         dropDownMenu(public_service_list);
         deactivate_large_loads();
     }
+
+    // edit multiple markers at the same time if shift click was used
+    selectedMarkers.forEach(marker => {
+        marker.consumer_type = newType;
+    });
+
+    count_consumers(false);
 });
 document.getElementById('enterprise').disabled = true;
 document.getElementById('consumer').disabled = true;
@@ -100,9 +115,7 @@ let markerPowerHouseSelected = new L.Icon({
 
 
 let selectedMarkers = [];
-let oldMarkers = [];
 let clickedMarker;
-let oldCopy;
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -127,10 +140,10 @@ function markerOnClick(e) {
     const index = map_elements.findIndex(obj => obj.latitude === e.latlng.lat && obj.longitude === e.latlng.lng);
     if (index >= 0) {
         clickedMarker = map_elements.splice(index, 1)[0];
-        oldCopy = JSON.parse(JSON.stringify(clickedMarker));
+        clickedMarker._oldLat = clickedMarker.latitude;
+        clickedMarker._oldLng = clickedMarker.longitude;
 
         selectedMarkers.push(clickedMarker);
-        oldMarkers.push(oldCopy);
     }
     map.eachLayer(function (layer) {
         if (layer instanceof L.Marker) {
@@ -205,6 +218,7 @@ function markerOnClick(e) {
 }
 
 function update_map_elements() {
+    const isMultiSelect = selectedMarkers.length > 1;
     let longitude = document.getElementById('longitude').value;
     let latitude = document.getElementById('latitude').value;
     let shs_options = document.getElementById('shs_options').value;
@@ -225,65 +239,68 @@ function update_map_elements() {
 
     let selected_icon;
 
-    if (longitude.length > 0 && latitude.length > 0) {
-        selectedMarkers.forEach((marker, i) => {
-            let oldMarker = oldMarkers[i];
+    selectedMarkers.forEach((marker, i) => {
+        let oldLat = marker._oldLat;
+        let oldLng = marker._oldLng;
 
+        if (!isMultiSelect && longitude.length > 0 && latitude.length > 0) {
             marker.longitude = parseFloat(longitude);
             marker.latitude = parseFloat(latitude);
-            marker.shs_options = parseInt(shs_value);
-            marker.custom_specification = large_load_string;
+        }
+        marker.shs_options = parseInt(shs_value);
+        marker.custom_specification = large_load_string;
 
+        let consumerValue = document.getElementById('consumer').value;
 
+        switch (consumerValue) {
+            case 'H':
+                marker.consumer_type = 'household';
+                marker.consumer_detail = 'default';
+                selected_icon = markerConsumer;
+                break;
+            case 'P':
+                marker.consumer_type = 'public_service';
+                marker.consumer_detail = document.getElementById('enterprise').value;
+                let key2 = document.getElementById('enterprise').value;
+                marker.consumer_detail = public_service_list[key2];
+                selected_icon = markerPublicservice;
+                break;
+            case 'E':
+                marker.consumer_type = 'enterprise';
+                let key = document.getElementById('enterprise').value;
+                marker.consumer_detail = enterprise_list[key];
+                selected_icon = markerEnterprise;
+                break;
+            case '':
+                marker.node_type = 'power-house';
+                marker.consumer_type = '';
+                marker.consumer_detail = '';
+                selected_icon = markerPowerHouse;
+                break;
+            default:
+                console.error("Invalid consumer value: " + consumerValue);
+        }
 
-            let consumerValue = document.getElementById('consumer').value;
-
-            switch (consumerValue) {
-                case 'H':
-                    marker.consumer_type = 'household';
-                    marker.consumer_detail = 'default';
-                    selected_icon = markerConsumer;
-                    break;
-                case 'P':
-                    marker.consumer_type = 'public_service';
-                    marker.consumer_detail = document.getElementById('enterprise').value;
-                    let key2 = document.getElementById('enterprise').value;
-                    marker.consumer_detail = public_service_list[key2];
-                    selected_icon = markerPublicservice;
-                    break;
-                case 'E':
-                    marker.consumer_type = 'enterprise';
-                    let key = document.getElementById('enterprise').value;
-                    marker.consumer_detail = enterprise_list[key];
-                    selected_icon = markerEnterprise;
-                    break;
-                case '':
-                    marker.node_type = 'power-house';
-                    marker.consumer_type = '';
-                    marker.consumer_detail = '';
-                    selected_icon = markerPowerHouse;
-                    break;
-                default:
-                    console.error("Invalid consumer value: " + consumerValue);
-            }
-
-            if (marker.shs_options == 2) {
-                selected_icon = markerShs;
-            }
+        if (marker.shs_options == 2) {
+            selected_icon = markerShs;
+        }
+        if (!map_elements.includes(marker)) {
             map_elements.push(marker);
+        }
 
-            map.eachLayer(function (layer) {
-                if (layer instanceof L.Marker) {
-                    let markerLatLng = layer.getLatLng();
-                    if (markerLatLng.lat === oldMarker.latitude && markerLatLng.lng === oldMarker.longitude) {
-                        map.removeLayer(layer);
-                        L.marker([marker.latitude, marker.longitude], {icon: selected_icon})
-                            .on('click', markerOnClick).addTo(map);
-                    }
+        map.eachLayer(function (layer) {
+            if (layer instanceof L.Marker) {
+                let markerLatLng = layer.getLatLng();
+                if (markerLatLng.lat === oldLat && markerLatLng.lng === oldLng) {
+                    map.removeLayer(layer);
+                    L.marker([marker.latitude, marker.longitude], {icon: selected_icon})
+                        .on('click', markerOnClick).addTo(map);
                 }
-            });
+            }
         });
-    }
+        marker._oldLat = marker.latitude;
+        marker._oldLng = marker.longitude;
+    });
     count_consumers(false)
 }
 

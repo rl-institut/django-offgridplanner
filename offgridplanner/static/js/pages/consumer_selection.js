@@ -134,6 +134,8 @@ function markerOnClick(e) {
         //reset if "normal" click without shift
         selectedMarkers = [];
         oldMarkers = [];
+        document.getElementById('longitude').disabled = false;
+        document.getElementById('latitude').disabled = false;
     }
 
     expandAccordionItem2();
@@ -144,6 +146,10 @@ function markerOnClick(e) {
         clickedMarker._oldLng = clickedMarker.longitude;
 
         selectedMarkers.push(clickedMarker);
+        if (selectedMarkers.length > 1) {
+            document.getElementById('longitude').disabled = true;
+            document.getElementById('latitude').disabled = true;
+        }
     }
     map.eachLayer(function (layer) {
         if (layer instanceof L.Marker) {
@@ -209,9 +215,6 @@ function markerOnClick(e) {
                         document.getElementById('shs_options').value = 'grid';
                     }
                 }
-                document.getElementById('longitude').disabled = false;
-                document.getElementById('latitude').disabled = false;
-
             }
         }
     });

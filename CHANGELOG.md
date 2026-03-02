@@ -1,11 +1,14 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Automatically log out users after 1 hour of idle time ([#216](https://github.com/rl-institut/django-offgridplanner/pull/216))
+
 ### Changed
-- If results for the simulation already exist for the project, calculation is skipped
+- If results for the simulation already exist for the project, calculation is skipped ([#215](https://github.com/rl-institut/django-offgridplanner/pull/215))
 
 ### Fixed
-- Fix recalculate button on results page
+- Fix recalculate button on results page ([#215](https://github.com/rl-institut/django-offgridplanner/pull/215))
 
 ## [v1.1.1] – 2026-02-25
 ### Changed

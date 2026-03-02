@@ -58,7 +58,6 @@ const AppState = {
 
     // needed for demand calculations
     customShares: {},
-    previousValues: {},
     num_households: 0,
     households: null,
     enterprises: null,
@@ -100,10 +99,6 @@ function initDOM() {
         id_high: document.getElementById('id_high'),
         id_very_high: document.getElementById('id_very_high')
     };
-
-    Object.entries(AppState.customShares).forEach(([id, el]) => {
-        AppState.previousValues[id] = parseFloat(el?.value) || 0;
-    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -409,9 +404,6 @@ function handleInputChange(inputId) {
         if (!input) return;
 
         const newValue = Number(input.value) || 0;
-        const oldValue = AppState.previousValues[inputId];
-
-        AppState.previousValues[inputId] = newValue;
 
         updateAverageArray();
         updateAverageTrace();

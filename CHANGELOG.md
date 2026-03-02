@@ -1,6 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- If results for the simulation already exist for the project, calculation is skipped
+
+### Fixed
+- Fix recalculate button on results page
 
 ## [v1.1.1] – 2026-02-25
 ### Changed

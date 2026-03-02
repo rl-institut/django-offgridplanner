@@ -21,6 +21,18 @@ function calculateTotalDemand(households, enterprises, public_services) {
     });
 };
 
+
+function resetInitialShares() {
+  for (const [field, value] of Object.entries(previousValues)) {
+        document.querySelector(`#id_${field}`).value = value;
+      }
+  updateDemandCheck();
+  updateAverageArray();
+  updateAverageTrace();
+  updateHouseholdDemandTrace();
+}
+
+
 function calibrate_demand(reverse = false) {
     var households_raw = AppState.average_shares.map(value => value * AppState.num_households);
 
@@ -531,17 +543,7 @@ document.addEventListener("input", updateDemandCheck);
 ================================ */
 
 // add functionality to reset Shares Button
-document.getElementById("resetShares").addEventListener("click", () => {
-    const inputs = document.querySelectorAll(".shares-container input[type='number']");
-
-    inputs.forEach(input => {
-        input.value = ""; // or input.defaultValue if Django pre-fills data
-    });
-
-    if (typeof updateDemandCheck === "function") {
-        updateDemandCheck();
-    }
-});
+document.getElementById("resetShares").addEventListener("click", resetInitialShares);
 
 /* ================================
    File Handling

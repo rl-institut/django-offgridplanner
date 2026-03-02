@@ -33,21 +33,18 @@ function resetInitialShares() {
 }
 
 
-function calibrate_demand(reverse = false) {
-    var households_raw = AppState.average_shares.map(value => value * AppState.num_households);
-
-    let calibration_factor;
-    const total_demand_raw = calculateTotalDemand(households_raw, AppState.enterprises, AppState.public_services);
-    if (calibration_option === 'kW') {
-        calibration_factor = calibration_target_value / Math.max(...total_demand_raw);
-    } else if (calibration_option === 'kWh') {
-        calibration_factor = calibration_target_value / total_demand_raw.reduce((a, b) => a + b, 0);
+function calibrate_demand() {
+    const total_demand_raw = calculateTotalDemand(AppState.households, AppState.enterprises, AppState.public_services);
+    if (AppState.calibration_option === 'kW') {
+        AppState.calibration_factor = AppState.calibration_target_value / Math.max(...total_demand_raw);
+    } else if (AppState.calibration_option === 'kWh') {
+        AppState.calibration_factor = AppState.calibration_target_value / total_demand_raw.reduce((a, b) => a + b, 0);
     } else {
-        calibration_factor = 1
+        AppState.calibration_factor = 1
     }
-    households = households_raw.map(value => value * calibration_factor);
-    enterprises = AppState.enterprises.map(value => value * calibration_factor);
-    public_services = AppState.public_services.map(value => value * calibration_factor);
+    AppState.households = AppState.households.map(value => value * AppState.calibration_factor);
+    AppState.enterprises = AppState.enterprises.map(value => value * AppState.calibration_factor);
+    AppState.public_services = AppState.public_services.map(value => value * AppState.calibration_factor);
 }
 
 /* ================================
@@ -67,6 +64,9 @@ const AppState = {
     option8Radio: null, // total vs peak
     totalEnergyInput: null,
     maximumPeakLoadInput: null,
+    calibration_option: null,
+    calibration_target_value: null,
+    calibration_factor: null,
 
     // needed for demand calculations
     customShares: {},
@@ -103,6 +103,7 @@ function initDOM() {
     AppState.option8Radio = document.getElementById('option8radio');
     AppState.totalEnergyInput = document.getElementById('id_annual_total_consumption');
     AppState.maximumPeakLoadInput = document.getElementById('id_annual_peak_consumption');
+    AppState.calibration_option = AppState.option7Radio.checked ? 'kWh' : 'kW';
 
     AppState.customShares = {
         id_very_low: document.getElementById('id_very_low'),
@@ -135,6 +136,7 @@ function loadDemandPlot() {
         .then(data => {
             buildPlot(data);
             AppState.plotReady = true;
+            handleCalibrationInputChange();
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -444,31 +446,29 @@ function handleCalibrationInputChange() {
             // Option 7: "Set Average Total Annual Energy (kWh/year)"
             const value = parseFloat(AppState.totalEnergyInput.value);
             if (!isNaN(value) && value >= 0) {
-                calibrate_demand(true);
-                calibration_target_value = value;
-                calibration_option = 'kWh';
-                calibrate_demand(false);
+                AppState.calibration_target_value = value;
+                AppState.calibration_option = 'kWh';
+                calibrate_demand();
                 updateTrace0to3();
             }
         } else if (AppState.option8Radio.checked) {
             // Option 8: "Set Maximum Peak Demand (kW)"
             const value = parseFloat(AppState.maximumPeakLoadInput.value);
             if (!isNaN(value) && value >= 0) {
-                calibrate_demand(true);
-                calibration_target_value = value;
-                calibration_option = 'kW';
-                calibrate_demand(false);
+                AppState.calibration_target_value = value;
+                AppState.calibration_option = 'kW';
+                calibrate_demand();
+
                 updateTrace0to3();
             }
         }
     } else {
         // Toggle is deactivated
-        calibrate_demand(true);
-        calibration_target_value = 1;
-        calibration_option = null;
+        AppState.calibration_target_value = 1;
+        AppState.calibration_option = null;
         updateTrace0to3();
         households = AppState.average_shares.map(value => value * AppState.num_households);
-        calibrate_demand(false);
+        calibrate_demand();
     }
 }
 
@@ -500,8 +500,8 @@ function attachInputListeners() {
     AppState.toggleSwitch.addEventListener('change', function(event) {
         if (!event.target.checked) {
             // Toggle is deactivated
-            calibration_target_value = 1;
-            calibration_option = null;
+            AppState.calibration_target_value = 1;
+            AppState.calibration_option = null;
             updateTrace0to3();
         }
     });

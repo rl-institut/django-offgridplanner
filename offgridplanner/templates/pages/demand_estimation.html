@@ -175,7 +175,7 @@
             </div>
             <div class="accordion-item" style="border-top: none; padding: 10px">
               <div id="collapseTwo"
-                   class="accordion-collapse {% if not calibration.active %}collapse{% endif %}"
+                   class="accordion-collapse collapse {% if calibration.active %}show{% endif %}"
                    aria-labelledby="headingTwo">
                 <div class="accordion-body">
                   <p>
@@ -206,7 +206,7 @@
                     </span>
                       <div class="input-group" style="max-width: 200px">
                         {{ form.annual_total_consumption|add_class:"form-control" }}
-                        <span class="input-group-text">{{ form.annual_total_consumption.field.attrs.unit }}</span>
+                        <span class="input-group-text">{{ form.annual_total_consumption.field.widget.attrs.unit }}</span>
                       </div>
                     </div>
                     <div class="btn btn-custom active d-inline-flex align-items-center justify-content-start" for="option7">
@@ -216,7 +216,7 @@
                       </span>
                       <div class="input-group" style="max-width: 200px">
                         {{ form.annual_peak_consumption|add_class:"form-control" }}
-                        <span class="input-group-text">{{ form.annual_peak_consumption.field.attrs.unit }}</span>
+                        <span class="input-group-text">{{ form.annual_peak_consumption.field.widget.attrs.unit }}</span>
                       </div>
                     </div>
                   </div>

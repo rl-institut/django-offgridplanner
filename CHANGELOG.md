@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.1.2] – 2026-03-03
 ### Added
 - Automatically log out users after 1 hour of idle time ([#216](https://github.com/rl-institut/django-offgridplanner/pull/216))
 

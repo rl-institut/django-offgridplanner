@@ -170,6 +170,8 @@ def demand_estimation(request, proj_id=None):
         )
         calibration_initial = custom_demand.calibration_option
         calibration_active = calibration_initial is not None
+        # Pass the initial values for the customDemand shares to be able to use the dynamic reset button
+        household_initial_shares = custom_demand.get_shares_dict(as_percentage=True)
 
         if request.method == "POST":
             form = CustomDemandForm(request.POST, instance=custom_demand)
@@ -197,6 +199,7 @@ def demand_estimation(request, proj_id=None):
             opts = OptionForm(instance=options)
 
         context = {
+            "household_initial_shares": household_initial_shares,
             "calibration": {
                 "active": calibration_active,
                 "initial": calibration_initial,

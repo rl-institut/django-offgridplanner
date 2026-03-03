@@ -499,6 +499,11 @@ def load_demand_plot_data(request, proj_id=None):
         )
 
     timeseries["Average"] = timeseries["Average"].tolist()
+
+    # need num_households to calculate demand for plots
+    num_households = len(nodes.filter_consumers("household"))
+    timeseries["num_households"] = num_households
+
     return JsonResponse({"timeseries": timeseries})
 
 

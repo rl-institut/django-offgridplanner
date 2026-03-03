@@ -125,14 +125,13 @@ function getKeyByValue(object, value) {
 function markerOnClick(e) {
     L.DomEvent.stopPropagation(e);
     const isShift = e.originalEvent.shiftKey;
-    if (!isShift && selectedMarkers.length > 0) {
-        selectedMarkers.forEach(marker => {
-            resetMarkerIcon(marker);
-        });
-        updateConsumerDropdownForSelection();
-    }
     if (!isShift) {
         //reset if "normal" click without shift
+        if (selectedMarkers.length > 0) {
+            selectedMarkers.forEach(marker => {
+                resetMarkerIcon(marker);
+            });
+        }
         selectedMarkers = [];
         oldMarkers = [];
         document.getElementById('longitude').disabled = false;

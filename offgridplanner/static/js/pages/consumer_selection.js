@@ -190,8 +190,6 @@ function markerOnClick(e) {
                 } else if (clickedMarker.consumer_type === 'enterprise') {
                     dropDownMenu(enterprise_list, clickedMarker._consumer_detail_key);
                     document.getElementById('consumer').value = 'E';
-                    let key = getKeyByValue(enterprise_list, clickedMarker.consumer_detail);
-                    document.getElementById('enterprise').value = key;
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
                     activate_large_loads();

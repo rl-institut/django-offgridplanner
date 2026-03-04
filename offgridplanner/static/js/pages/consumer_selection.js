@@ -40,10 +40,10 @@ let consumer_type = "H";
 
 let enterprise_option = '';
 
-function dropDownMenu(dropdown_list) {
+function dropDownMenu(dropdown_list, selectedValue = null) {
     enterprise_option = '';
     for (let enterprise_code in dropdown_list) {
-        let selected = (enterprise_code == consumer_type) ? ' selected' : '';
+        let selected = (enterprise_code == selectedValue) ? ' selected' : '';
         enterprise_option += '<option value="' + enterprise_code + '"' + selected + '>' + dropdown_list[enterprise_code] + '</option>';
         document.getElementById('enterprise').innerHTML = enterprise_option;
         document.getElementById('enterprise').disabled = false;
@@ -101,6 +101,10 @@ document.getElementById('enterprise').value = '';
 document.getElementById('consumer').value = '';
 document.getElementById('shs_options').disabled = true;
 document.getElementById('shs_options').value = '';
+
+document.getElementById('enterprise').addEventListener('change', function () {
+    update_map_elements();
+});
 
 
 let markerConsumerSelected = new L.Icon({
@@ -184,7 +188,7 @@ function markerOnClick(e) {
                     deactivate_large_loads();
 
                 } else if (clickedMarker.consumer_type === 'enterprise') {
-                    dropDownMenu(enterprise_list);
+                    dropDownMenu(enterprise_list, clickedMarker._consumer_detail_key);
                     document.getElementById('consumer').value = 'E';
                     let key = getKeyByValue(enterprise_list, clickedMarker.consumer_detail);
                     document.getElementById('enterprise').value = key;
@@ -201,7 +205,7 @@ function markerOnClick(e) {
                         accordionItem3.show();
                     }
                 } else if (clickedMarker.consumer_type === 'public_service') {
-                    dropDownMenu(public_service_list);
+                    dropDownMenu(public_service_list, clickedMarker._consumer_detail_key);
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').value = 'P';
                     document.getElementById('consumer').disabled = false;
@@ -267,12 +271,14 @@ function update_map_elements() {
                 marker.consumer_type = 'public_service';
                 marker.consumer_detail = document.getElementById('enterprise').value;
                 let key2 = document.getElementById('enterprise').value;
+                marker._consumer_detail_key = key2;
                 marker.consumer_detail = public_service_list[key2];
                 selected_icon = markerPublicservice;
                 break;
             case 'E':
                 marker.consumer_type = 'enterprise';
                 let key = document.getElementById('enterprise').value;
+                marker._consumer_detail_key = key;
                 marker.consumer_detail = enterprise_list[key];
                 selected_icon = markerEnterprise;
                 break;
@@ -396,7 +402,7 @@ function updateConsumerDropdownForSelection() {
             m.consumer_detail === firstDetail
         );
 
-        dropDownMenu(enterprise_list, allSameDetail ? firstDetail : null);
+        dropDownMenu(enterprise_list, allSameDetail ? getKeyByValue(enterprise_list, firstDetaill) : null);
 
     } else {
 

@@ -40,10 +40,10 @@ let consumer_type = "H";
 
 let enterprise_option = '';
 
-function dropDownMenu(dropdown_list) {
+function dropDownMenu(dropdown_list, selectedValue = null) {
     enterprise_option = '';
     for (let enterprise_code in dropdown_list) {
-        let selected = (enterprise_code == consumer_type) ? ' selected' : '';
+        let selected = (enterprise_code == selectedValue) ? ' selected' : '';
         enterprise_option += '<option value="' + enterprise_code + '"' + selected + '>' + dropdown_list[enterprise_code] + '</option>';
         document.getElementById('enterprise').innerHTML = enterprise_option;
         document.getElementById('enterprise').disabled = false;
@@ -65,20 +65,35 @@ document.getElementById('loads').value = "";
 document.getElementById('number_loads').disabled = true;
 
 document.getElementById('consumer').addEventListener('change', function () {
+
+    let newType;
+
     if (this.value === 'H') {
+        newType = "household";
         document.getElementById('enterprise').value = '';
         document.getElementById('enterprise').disabled = true;
         deactivate_large_loads();
+
     } else if (this.value === 'E') {
+        newType = "enterprise";
         dropDownMenu(enterprise_list);
         document.getElementById('enterprise').innerHTML = enterprise_option;
         document.getElementById('enterprise').value = 'group1';
         document.getElementById('enterprise').disabled = false;
         activate_large_loads();
+
     } else if (this.value === 'P') {
+        newType = "public_service";
         dropDownMenu(public_service_list);
         deactivate_large_loads();
     }
+
+    // edit multiple markers at the same time if shift click was used
+    selectedMarkers.forEach(marker => {
+        marker.consumer_type = newType;
+    });
+
+    count_consumers(false);
 });
 document.getElementById('enterprise').disabled = true;
 document.getElementById('consumer').disabled = true;
@@ -86,6 +101,13 @@ document.getElementById('enterprise').value = '';
 document.getElementById('consumer').value = '';
 document.getElementById('shs_options').disabled = true;
 document.getElementById('shs_options').value = '';
+
+document.getElementById('enterprise').addEventListener('change', function () {
+    update_map_elements();
+});
+document.getElementById('shs_options').addEventListener('change', function () {
+    update_map_elements();
+});
 
 
 let markerConsumerSelected = new L.Icon({
@@ -99,8 +121,8 @@ let markerPowerHouseSelected = new L.Icon({
 });
 
 
-let marker
-let old_marker
+let selectedMarkers = [];
+let clickedMarker;
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -109,14 +131,33 @@ function getKeyByValue(object, value) {
 // TODO this can stay
 function markerOnClick(e) {
     L.DomEvent.stopPropagation(e);
-    if (marker) {
-        update_map_elements();
+    const isShift = e.originalEvent.shiftKey;
+    if (!isShift) {
+        //reset if "normal" click without shift
+        if (selectedMarkers.length > 0) {
+            selectedMarkers.forEach(marker => {
+                resetMarkerIcon(marker);
+            });
+        }
+        selectedMarkers = [];
+        oldMarkers = [];
+        document.getElementById('longitude').disabled = false;
+        document.getElementById('latitude').disabled = false;
+        updateConsumerDropdownForSelection();
     }
+
     expandAccordionItem2();
     const index = map_elements.findIndex(obj => obj.latitude === e.latlng.lat && obj.longitude === e.latlng.lng);
     if (index >= 0) {
-        marker = map_elements.splice(index, 1)[0];
-        old_marker = JSON.parse(JSON.stringify(marker));
+        clickedMarker = map_elements.splice(index, 1)[0];
+        clickedMarker._oldLat = clickedMarker.latitude;
+        clickedMarker._oldLng = clickedMarker.longitude;
+
+        selectedMarkers.push(clickedMarker);
+        if (selectedMarkers.length > 1) {
+            document.getElementById('longitude').disabled = true;
+            document.getElementById('latitude').disabled = true;
+        }
     }
     map.eachLayer(function (layer) {
         if (layer instanceof L.Marker) {
@@ -124,16 +165,16 @@ function markerOnClick(e) {
             if (markerLatLng.lat === e.latlng.lat && markerLatLng.lng === e.latlng.lng) {
                 map.removeLayer(layer);
                 let markerIcon;
-                if (marker.node_type === 'power-house') {
+                if (clickedMarker.node_type === 'power-house') {
                     markerIcon = markerPowerHouseSelected;
                 } else {
                     markerIcon = markerConsumerSelected;
                 }
                 L.marker([markerLatLng.lat, markerLatLng.lng], {icon: markerIcon,})
                     .on('click', markerOnClick).addTo(map);
-                document.getElementById('longitude').value = marker.longitude;
-                document.getElementById('latitude').value = marker.latitude;
-                if (marker.node_type === 'power-house') {
+                document.getElementById('longitude').value = clickedMarker.longitude;
+                document.getElementById('latitude').value = clickedMarker.latitude;
+                if (clickedMarker.node_type === 'power-house') {
                     document.getElementById('consumer').value = '';
                     document.getElementById('consumer').disabled = true;
                     document.getElementById('shs_options').value = '';
@@ -141,7 +182,7 @@ function markerOnClick(e) {
                     document.getElementById('enterprise').disabled = true;
                     document.getElementById('enterprise').value = '';
                     deactivate_large_loads();
-                } else if (marker.consumer_type === 'household') {
+                } else if (clickedMarker.consumer_type === 'household') {
                     document.getElementById('consumer').value = 'H';
                     document.getElementById('enterprise').disabled = true;
                     document.getElementById('enterprise').value = '';
@@ -149,48 +190,38 @@ function markerOnClick(e) {
                     document.getElementById('consumer').disabled = false;
                     deactivate_large_loads();
 
-                } else if (marker.consumer_type === 'enterprise') {
-                    dropDownMenu(enterprise_list);
+                } else if (clickedMarker.consumer_type === 'enterprise') {
+                    dropDownMenu(enterprise_list, clickedMarker._consumer_detail_key);
                     document.getElementById('consumer').value = 'E';
-                    let key = getKeyByValue(enterprise_list, marker.consumer_detail);
-                    document.getElementById('enterprise').value = key;
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
                     activate_large_loads();
-                    if (marker.custom_specification.length > 5) {
+                    if (clickedMarker.custom_specification.length > 5) {
                         activate_large_loads(false);
-                        fillList(marker.custom_specification);
+                        fillList(clickedMarker.custom_specification);
                         document.getElementById('toggleswitch2').checked = true;
                         const accordionItem3 = new bootstrap.Collapse(document.getElementById('collapseThree'), {
                             toggle: false
                         });
                         accordionItem3.show();
                     }
-                } else if (marker.consumer_type === 'public_service') {
-                    dropDownMenu(public_service_list);
+                } else if (clickedMarker.consumer_type === 'public_service') {
+                    dropDownMenu(public_service_list, clickedMarker._consumer_detail_key);
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').value = 'P';
                     document.getElementById('consumer').disabled = false;
-                    let key2 = getKeyByValue(public_service_list, marker.consumer_detail);
-                    document.getElementById('enterprise').value = key2;
+                    //let key2 = getKeyByValue(public_service_list, clickedMarker.consumer_detail);
+                    //document.getElementById('enterprise').value = key2;
                     deactivate_large_loads()
                 }
-                if (marker.node_type !== 'power-house') {
-                    if (marker.shs_options == 0) {
-                        document.getElementById('shs_options').value = 'optimize';
-                    } else if (marker.shs_options == 1) {
-                        document.getElementById('shs_options').value = 'grid';
-                    }
-                }
-                document.getElementById('longitude').disabled = false;
-                document.getElementById('latitude').disabled = false;
-
             }
         }
     });
+    updateConsumerDropdownForSelection();
 }
 
 function update_map_elements() {
+    const isMultiSelect = selectedMarkers.length > 1;
     let longitude = document.getElementById('longitude').value;
     let latitude = document.getElementById('latitude').value;
     let shs_options = document.getElementById('shs_options').value;
@@ -211,12 +242,16 @@ function update_map_elements() {
 
     let selected_icon;
 
-    if (longitude.length > 0 && latitude.length > 0) {
-        marker.longitude = parseFloat(longitude);
-        marker.latitude = parseFloat(latitude);
+    selectedMarkers.forEach((marker, i) => {
+        let oldLat = marker._oldLat;
+        let oldLng = marker._oldLng;
+
+        if (!isMultiSelect && longitude.length > 0 && latitude.length > 0) {
+            marker.longitude = parseFloat(longitude);
+            marker.latitude = parseFloat(latitude);
+        }
         marker.shs_options = parseInt(shs_value);
         marker.custom_specification = large_load_string;
-
 
         let consumerValue = document.getElementById('consumer').value;
 
@@ -228,14 +263,15 @@ function update_map_elements() {
                 break;
             case 'P':
                 marker.consumer_type = 'public_service';
-                marker.consumer_detail = document.getElementById('enterprise').value;
                 let key2 = document.getElementById('enterprise').value;
+                marker._consumer_detail_key = key2;
                 marker.consumer_detail = public_service_list[key2];
                 selected_icon = markerPublicservice;
                 break;
             case 'E':
                 marker.consumer_type = 'enterprise';
                 let key = document.getElementById('enterprise').value;
+                marker._consumer_detail_key = key;
                 marker.consumer_detail = enterprise_list[key];
                 selected_icon = markerEnterprise;
                 break;
@@ -252,20 +288,138 @@ function update_map_elements() {
         if (marker.shs_options == 2) {
             selected_icon = markerShs;
         }
-        map_elements.push(marker);
+        if (!map_elements.includes(marker)) {
+            map_elements.push(marker);
+        }
 
         map.eachLayer(function (layer) {
             if (layer instanceof L.Marker) {
                 let markerLatLng = layer.getLatLng();
-                if (markerLatLng.lat === old_marker.latitude && markerLatLng.lng === old_marker.longitude) {
+                if (markerLatLng.lat === oldLat && markerLatLng.lng === oldLng) {
                     map.removeLayer(layer);
                     L.marker([marker.latitude, marker.longitude], {icon: selected_icon})
                         .on('click', markerOnClick).addTo(map);
                 }
             }
         });
-    }
+        marker._oldLat = marker.latitude;
+        marker._oldLng = marker.longitude;
+    });
     count_consumers(false)
+}
+
+function resetMarkerIcon(marker) {
+    const epsilon = 0.0000001;
+
+    map.eachLayer(function(layer) {
+        if (layer instanceof L.Marker) {
+            let latLng = layer.getLatLng();
+
+            if (Math.abs(latLng.lat - marker.latitude) < epsilon &&
+                Math.abs(latLng.lng - marker.longitude) < epsilon) {
+
+                map.removeLayer(layer);
+
+                let normalIcon;
+
+                if (marker.node_type === 'power-house') {
+                    normalIcon = markerPowerHouse;
+                } else if (marker.consumer_type === 'enterprise') {
+                    normalIcon = markerEnterprise;
+                } else if (marker.consumer_type === 'public_service') {
+                    normalIcon = markerPublicservice;
+                } else {
+                    normalIcon = markerConsumer;
+                }
+
+                L.marker([marker.latitude, marker.longitude], {icon: normalIcon})
+                    .on('click', markerOnClick)
+                    .addTo(map);
+
+                // important: marker needs to be put back in datastructure since it's being sliced from there
+                if (!map_elements.includes(marker)) {
+                    map_elements.push(marker);
+                }
+            }
+        }
+    });
+}
+
+function updateConsumerDropdownForSelection() {
+    // function differentiates on multi-consumer selection if all selected consumers have the same type or not
+    // if yes, the chosen type is shown as selected, if not the default list is shown
+    const consumerDropdown = document.getElementById('consumer');
+    const enterpriseDropdown = document.getElementById('enterprise');
+    const shsOptionsDropdown = document.getElementById('shs_options');
+
+    if (selectedMarkers.length === 0) {
+        consumerDropdown.value = '';
+        enterpriseDropdown.innerHTML = '';
+        enterpriseDropdown.disabled = true;
+        return;
+    }
+
+    const firstType = selectedMarkers[0].consumer_type;
+    const allSameType = selectedMarkers.every(m =>
+        m.consumer_type === firstType
+    );
+
+    if (!allSameType) {
+        // consumer_type doesn't match between all the selectedMarkes -> default #consumer dropdown is shown (empty)
+        consumerDropdown.value = '';
+        enterpriseDropdown.innerHTML = '';
+        enterpriseDropdown.disabled = true;
+        return;
+    }
+
+    if (firstType !== 'enterprise' && firstType !== 'public_service') {
+        enterpriseDropdown.innerHTML = '';
+        enterpriseDropdown.disabled = true;
+    } else {
+        const firstDetail = selectedMarkers[0].consumer_detail;
+        const allSameDetail = selectedMarkers.every(m =>
+            m.consumer_detail === firstDetail
+        );
+
+        switch (firstType) {
+            case 'household':
+                consumerDropdown.value = 'H';
+                break;
+            case 'public_service':
+                consumerDropdown.value = 'P';
+                dropDownMenu(public_service_list, allSameDetail ? getKeyByValue(public_service_list, firstDetail) : null);
+                break;
+            case 'enterprise':
+                consumerDropdown.value = 'E';
+                dropDownMenu(enterprise_list, allSameDetail ? getKeyByValue(enterprise_list, firstDetail) : null);
+                break;
+            case 'power-house':
+                consumerDropdown.value = '';
+                break;
+            default:
+                console.error("Invalid consumer type (firstType): " + firstType);
+        }
+    }
+
+    const firstShsOption = selectedMarkers[0].shs_options;
+    const allSameShsOption = selectedMarkers.every(m =>
+        m.shs_options === firstShsOption
+    );
+
+    if (!allSameShsOption) {
+        shsOptionsDropdown.value = 'optimize';
+    } else {
+        switch (firstShsOption) {
+            case 0:
+                shsOptionsDropdown.value = 'optimize';
+                break;
+            case 1:
+                shsOptionsDropdown.value = 'grid';
+                break;
+            default:
+                console.error("Invalid shs Option (firstShsOption): " + firstShsOption);
+        }
+    }
 }
 
 function move_marker() {

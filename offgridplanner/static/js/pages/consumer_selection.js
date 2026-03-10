@@ -206,7 +206,7 @@ function markerOnClick(e) {
         activate_large_loads(true);
         const commonLoads = getCommonLoads(selectedMarkers);
         commonLoads.forEach(load => {
-            addElementToLargeLoadList(load);
+            fillList(load);
         });
         if (clickedMarker.custom_specification.length > 5) {
             activate_large_loads(false);
@@ -535,8 +535,19 @@ function addElementToLargeLoadList(customText) {
     if (!customText) {
         document.getElementById('number_loads').value = '1';
     }
-    update_map_elements();
 };
+
+function saveNewLoadItemToList() {
+    addElementToLargeLoadList(customText = undefined);
+    let large_load_string = large_loads_to_string();
+    selectedMarkers.forEach((marker, i) => {
+        if (marker.custom_specification.length > 5) {
+            marker.custom_specification += ';' + large_load_string;
+        } else {
+            marker.custom_specification = large_load_string;
+        }
+    });
+}
 
 // TODO just use boostraps action attributes for this
 function expandAccordionItem2() {

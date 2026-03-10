@@ -541,11 +541,7 @@ function saveNewLoadItemToList() {
     addElementToLargeLoadList(customText = undefined);
     let large_load_string = large_loads_to_string();
     selectedMarkers.forEach((marker, i) => {
-        if (marker.custom_specification.length > 5) {
-            marker.custom_specification += ';' + large_load_string;
-        } else {
-            marker.custom_specification = large_load_string;
-        }
+        marker.custom_specification = large_load_string;
     });
 }
 

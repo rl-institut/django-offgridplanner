@@ -181,49 +181,44 @@ function markerOnClick(e) {
                     document.getElementById('shs_options').disabled = true;
                     document.getElementById('enterprise').disabled = true;
                     document.getElementById('enterprise').value = '';
-                    deactivate_large_loads();
                 } else if (clickedMarker.consumer_type === 'household') {
                     document.getElementById('consumer').value = 'H';
                     document.getElementById('enterprise').disabled = true;
                     document.getElementById('enterprise').value = '';
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
-                    deactivate_large_loads();
-
                 } else if (clickedMarker.consumer_type === 'enterprise') {
                     dropDownMenu(enterprise_list, clickedMarker._consumer_detail_key);
                     document.getElementById('consumer').value = 'E';
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
-                    activate_large_loads();
-                    if (clickedMarker.custom_specification.length > 5) {
-                        activate_large_loads(false);
-                        fillList(clickedMarker.custom_specification);
-                        document.getElementById('toggleswitch2').checked = true;
-                        const accordionItem3 = new bootstrap.Collapse(document.getElementById('collapseThree'), {
-                            toggle: false
-                        });
-                        accordionItem3.show();
-                    }
                 } else if (clickedMarker.consumer_type === 'public_service') {
                     dropDownMenu(public_service_list, clickedMarker._consumer_detail_key);
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').value = 'P';
                     document.getElementById('consumer').disabled = false;
-                    //let key2 = getKeyByValue(public_service_list, clickedMarker.consumer_detail);
-                    //document.getElementById('enterprise').value = key2;
-                    deactivate_large_loads()
                 }
             }
         }
     });
     // handle large loads for selected markers
-    activate_large_loads(false);
-    deleteAllElements();
-    const commonLoads = getCommonLoads(selectedMarkers);
-    commonLoads.forEach(load => {
-        addElementToLargeLoadList(load);
-    });
+    if (clickedMarker.consumer_type === 'enterprise') {
+        activate_large_loads(true);
+        const commonLoads = getCommonLoads(selectedMarkers);
+        commonLoads.forEach(load => {
+            addElementToLargeLoadList(load);
+        });
+        if (clickedMarker.custom_specification.length > 5) {
+            activate_large_loads(false);
+            document.getElementById('toggleswitch2').checked = true;
+            const accordionItem3 = new bootstrap.Collapse(document.getElementById('collapseThree'), {
+                toggle: false
+            });
+            accordionItem3.show();
+        }
+    } else {
+        deactivate_large_loads();
+    }
     // handle updating the input options for the dropdowns depending on consumer type
     updateConsumerDropdownForSelection();
 }

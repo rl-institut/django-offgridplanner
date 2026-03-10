@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Fix dynamic plot updates on demand estimation, shares reset and calibration option issues ([#195](https://github.com/rl-institut/django-offgridplanner/pull/195))
+- Display error message to user if imported consumers are not within country bounds ([#220](https://github.com/rl-institut/django-offgridplanner/pull/220))
 
 ## [v1.1.2] – 2026-03-03
 ### Added

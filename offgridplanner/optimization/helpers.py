@@ -178,7 +178,6 @@ def check_geographic_bounds(df, proj_id):
 
 
 def check_nodes_within_country(df, proj_id):
-    print("CHECK NODES WITHIN COUNTRY START")
     project = get_object_or_404(Project, id=proj_id)
 
     country_code = project.country
@@ -190,14 +189,12 @@ def check_nodes_within_country(df, proj_id):
     country_shape = world[world["ADMIN"] == country_name]
 
     if country_shape.empty:
-        print("CHECK NODES WITHIN COUNTRY START")
         return False
 
     for _, row in df.iterrows():
         point = Point(row["longitude"], row["latitude"])
 
         if not country_shape.contains(point).any():
-            print("OUTSIDE COUNTRY")
             return False
 
     return True
@@ -257,7 +254,6 @@ def check_imported_consumer_data(df, proj_id):
         "is_connected": bool,
     }
     convert_column_types(df, column_types)
-    print("CHECK RESULT:", check_nodes_within_country(df, proj_id))
     if not check_nodes_within_country(df, proj_id):
         return None, (
             "Some of the imported consumers are located outside the selected country. "

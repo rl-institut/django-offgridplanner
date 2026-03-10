@@ -217,6 +217,14 @@ function markerOnClick(e) {
             }
         }
     });
+    // handle large loads for selected markers
+    activate_large_loads(false);
+    deleteAllElements();
+    const commonLoads = getCommonLoads(selectedMarkers);
+    commonLoads.forEach(load => {
+        addElementToLargeLoadList(load);
+    });
+    // handle updating the input options for the dropdowns depending on consumer type
     updateConsumerDropdownForSelection();
 }
 
@@ -485,7 +493,19 @@ function large_loads_to_string() {
     }
     let concatenated_text = texts.join(";");
     return concatenated_text;
+}
 
+function getCommonLoads(markers) {
+    if (markers.length === 0) return [];
+
+    const loadSets = markers.map(marker => {
+        if (!marker.custom_specification) return [];
+        return marker.custom_specification.split(";").map(l => l.trim());
+    });
+
+    return loadSets.reduce((common, current) =>
+        common.filter(load => current.includes(load))
+    );
 }
 
 
@@ -520,6 +540,7 @@ function addElementToLargeLoadList(customText) {
     if (!customText) {
         document.getElementById('number_loads').value = '1';
     }
+    update_map_elements();
 };
 
 // TODO just use boostraps action attributes for this

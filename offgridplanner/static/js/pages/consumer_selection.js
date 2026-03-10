@@ -452,10 +452,28 @@ document.getElementById('latitude').addEventListener('change', move_marker);
 document.getElementById('longitude').addEventListener('change', move_marker);
 
 function deleteAllElements() {
+    // empties the UI list
     var listDiv = document.getElementById('load_list');
     listDiv.innerHTML = '';
 }
 
+function deleteOneElement(listItem) {
+    // deletes 1 load item from the UI and from the marker
+    let loadText = listItem.textContent;
+    loadText = loadText.replace('Delete', '').trim();
+    listItem.remove();
+
+    selectedMarkers.forEach(marker => {
+        if (!marker.custom_specification) return;
+        let loads = marker.custom_specification
+            .split(';')
+            .map(l => l.trim())
+            .filter(l => l.length > 0);
+
+        loads = loads.filter(l => l !== loadText);
+        marker.custom_specification = loads.join(';');
+    });
+}
 
 function activate_large_loads(delete_list_elements = true) {
     if (delete_list_elements == true) {
@@ -522,13 +540,15 @@ function addElementToLargeLoadList(customText) {
     newButton.classList.add('right-align');
     newButton.textContent = 'Delete';
     newButton.onclick = function () {
-        list.removeChild(newItem);
+        deleteOneElement(newItem);
     };
+
     if (customText) {
         newItem.textContent = customText + '    ';
     } else {
         newItem.textContent = inputValue + ' x ' + selectedValue + '    ';
     }
+
     newItem.appendChild(newButton);
     newItem.style.marginBottom = '10px';
     list.appendChild(newItem);

@@ -230,7 +230,11 @@ def check_imported_consumer_data(df, proj_id):
     }
     convert_column_types(df, column_types)
     # Check geographic bounds
-    check_geographic_bounds(df, proj_id)
+    try:
+        check_geographic_bounds(df, proj_id)
+    except ValidationError as e:
+        return None, e.message
+
     df = df[
         [
             "latitude",

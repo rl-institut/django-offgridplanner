@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Fix upload custom demand option being enabled by default ([#222](https://github.com/rl-institut/django-offgridplanner/pull/222))
 
 ## [v1.1.2] – 2026-03-03
 ### Added

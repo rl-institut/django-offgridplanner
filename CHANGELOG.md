@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
+- Fix dynamic plot updates on demand estimation, shares reset and calibration option issues ([#195](https://github.com/rl-institut/django-offgridplanner/pull/195))
 - Fix upload custom demand option being enabled by default ([#222](https://github.com/rl-institut/django-offgridplanner/pull/222))
 
 ## [v1.1.2] – 2026-03-03

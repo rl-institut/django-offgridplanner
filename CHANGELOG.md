@@ -1,8 +1,13 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Display message to users about backend migration ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
 
 ## [v1.1.3] – 2026-03-16
+### Changed
+- Remove landing page (send directly to login) ([#223](https://github.com/rl-institut/django-offgridplanner/pull/223))
+
 ### Fixed
 - Fix dynamic plot updates on demand estimation, shares reset and calibration option issues ([#195](https://github.com/rl-institut/django-offgridplanner/pull/195))
 - Fix upload custom demand option being enabled by default ([#222](https://github.com/rl-institut/django-offgridplanner/pull/222))

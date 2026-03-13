@@ -9,30 +9,77 @@
 
 {% block index %}
 
-    <main class="signup">
-        <div class="signup-frame">
-            <div class="signup-frame__img">
-                <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="PeopleSun logo">
-            </div>
-            <div class="signup-frame__heading">{% translate "Login" %}</div>
-            <form method="post" class="signup-frame__form">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button class="btn btn--large" type="submit"
-                    id="loginbutton">{% translate "Login" %}</button>
-            </form>
-            <!--div style="text-align: left;">
-                <input type="checkbox" class="form-check-input" id="isEnabled"/>
-                <label for="isEnabled" style="margin-left: 5px;"><span>Remember me</span></label>
-            </div-->
-            <div class="signup-frame__subheading">
-                {% translate "Do you not have an account yet?" %} <a
-                href="{% url 'account_signup' %}">{% translate "Sign up" %}</a>
-            </div>
-            <!--button onclick="document.getElementById('login').style.display='none'" type="button" class="cancelbtn">
-                Close
-            </button>
-            <p id="responseMsg"></p-->
+<main class="signup">
+  <div id="msgBox"
+       class="modal"
+       style="background-color: rgba(0,0,0,0.5);
+                z-index: 999;display:{% if show_modal %}block{% else %}none{% endif %}">
+    <form class="modal-content" id="myForm" style="max-width: 40rem" method="post" action="{% url 'users:login' %}">
+      <div class="container">
+        <h1 style="text-align:left;">Testing the Offgridplanner</h1>
+        <p style="text-align:left;">
+          To test the planning tool, you do not need to register an account, a
+          temporary account will be created for you. However, if you use the planning tool without
+          registering, please note:
+        </p>
+        <p style="text-align:left;">&bull; Your data will be automatically deleted after two hours.</p>
+        <p style="text-align:left;">&bull; After this time, you will be automatically logged out.</p>
+        <p style="text-align:left;">&bull; If you log out manually, you will lose access to your data.</p>
+        <!--        <p style="text-align:left;">&bull; The modeling time is limited to {{ MAX_DAYS }} days</p>-->
+        <!--        <p style="text-align:left;">-->
+        <!--          &bull; The number of allowed consumers is limited-->
+        <!--          to {{ MAX_CONSUMER_ANONYMOUS }}-->
+        <!--        </p>-->
+        <!--        <p style="text-align:left;">-->
+        <!--          &bull; The calculation time of your optimization model is limited to 5-->
+        <!--          minutes-->
+        <!--        </p>-->
+        {% csrf_token %}
+        {{ captcha_form }}
+        <a type="button" class="js-captcha-refresh" data-url="/captcha/refresh"><h2>↻</h2></a>
+        <p id="responseMsg3"></p>
+        <div class="clearfix">
+          <button type="submit" name="guest_submit" class="btn btn-primary">Continue</button>
+          <a onclick="document.getElementById('msgBox').style.display='none'"
+             type="button"
+             class="btn btn--small btn--hollow">Cancel
+          </a>
         </div>
-    </main>
+      </div>
+    </form>
+  </div>
+  <div class="signup-frame">
+    <div class="signup-frame__img">
+      <img src="{% static 'assets/logos/PeopleSunLogo.png' %}" alt="PeopleSun logo">
+    </div>
+    <form method="post" class="signup-frame__form">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn--large" type="submit"
+              id="loginbutton">{% translate "Login" %}</button>
+    </form>
+    <!--div style="text-align: left;">
+        <input type="checkbox" class="form-check-input" id="isEnabled"/>
+        <label for="isEnabled" style="margin-left: 5px;"><span>Remember me</span></label>
+    </div-->
+    <div class="signup-frame__subheading">
+      <a href="{% url 'account_reset_password' %}">
+        {% translate "Forgot your password?" %}
+      </a>
+    </div>
+    <div class="signup-frame__subheading">
+      {% translate "You do not have an account yet?" %} <a
+      href="{% url 'account_signup' %}">{% translate "Sign up" %}</a> or
+    </div>
+    <div class="signup-frame__subheading">
+      <button class="btn btn--medium" onclick="document.getElementById('msgBox').style.display='block'">
+        {% translate "Test it (without an account)" %}
+      </button>
+    </div>
+    <!--button onclick="document.getElementById('login').style.display='none'" type="button" class="cancelbtn">
+        Close
+    </button>
+    <p id="responseMsg"></p-->
+  </div>
+</main>
 {% endblock index %}

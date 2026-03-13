@@ -434,23 +434,28 @@ function updateConsumerDropdownForSelection() {
 
     // handle comparison and differences of shs options (optimize and grid)
 
-    const firstShsOption = selectedMarkers[0].shs_options;
-    const allSameShsOption = selectedMarkers.every(m =>
-        m.shs_options === firstShsOption
-    );
-
-    if (!allSameShsOption) {
-        shsOptionsDropdown.value = '';
+    const shs_options = selectedMarkers.map(m => m.shs_options).filter(Boolean);
+    if (selectedMarkers.length === 1 && !shs_options.length) {
+        // single click
+        shsOptionsDropdown.value = 'optimize';
     } else {
-        switch (firstShsOption) {
-            case 0:
-                shsOptionsDropdown.value = 'optimize';
-                break;
-            case 1:
-                shsOptionsDropdown.value = 'grid';
-                break;
-            default:
-                console.error("Invalid shs Option (firstShsOption): " + firstShsOption);
+        // multi click
+        const uniqueShsOptions = [...new Set(shs_options)];
+        if (uniqueShsOptions.length === 0) {
+            shsOptionsDropdown.value = 'optimize';
+        } else if (uniqueShsOptions.length === 1 && shs_options.length === selectedMarkers.length) {
+            switch (shs_options) {
+                case 0:
+                    shsOptionsDropdown.value = 'optimize';
+                    break;
+                case 1:
+                    shsOptionsDropdown.value = 'grid';
+                    break;
+                default:
+                    console.error("Invalid shs Option (firstShsOption): " + firstShsOption);
+            }
+        } else {
+            shsOptionsDropdown.value = '';
         }
     }
 }

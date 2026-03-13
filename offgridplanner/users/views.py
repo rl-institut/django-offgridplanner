@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
@@ -71,6 +72,20 @@ class CustomLoginView(LoginView):
         context.setdefault("captcha_form", CaptchaForm())
         context.setdefault("show_modal", False)
         return context
+
+    def get(self, request, *args, **kwargs):
+        if not request.session.get("backend_upgrade_info_shown", False):
+            msg = mark_safe(  # noqa: S308 (safe since no content is user-provided)
+                "Dear user, <br> We have upgraded the Offgridplanner behind the scenes.<br>"
+                "The tool looks the same, but it's now running on a new backend to improve reliability and future development.<br>"
+                "You should be able to log in and access all your projects as usual. "
+                "If you experience any issues logging in, accessing projects, or notice unexpected behavior, "
+                "please reach out to <a href='mailto:offgridplanner@rl-institut.de'>offgridplanner@rl-institut.de</a>."
+            )
+            messages.info(request, msg)
+            request.session["backend_upgrade_info_shown"] = True
+
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if "guest_submit" in request.POST:

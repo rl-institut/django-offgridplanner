@@ -40,14 +40,22 @@ let consumer_type = "H";
 
 let enterprise_option = '';
 
-function dropDownMenu(dropdown_list, selectedValue = null) {
-    enterprise_option = '';
+function dropDownMenu(dropdown_list, selectedValue = undefined) {
+    let enterprise_option = '';
+
+    if (selectedValue === null) {
+        enterprise_option += '<option value="" selected></option>';
+    }
     for (let enterprise_code in dropdown_list) {
         let selected = (enterprise_code == selectedValue) ? ' selected' : '';
-        enterprise_option += '<option value="' + enterprise_code + '"' + selected + '>' + dropdown_list[enterprise_code] + '</option>';
-        document.getElementById('enterprise').innerHTML = enterprise_option;
-        document.getElementById('enterprise').disabled = false;
+        enterprise_option += '<option value="' + enterprise_code + '"' + selected + '>'
+            + dropdown_list[enterprise_code] +
+            '</option>';
     }
+
+    const enterpriseDropdown = document.getElementById('enterprise');
+    enterpriseDropdown.innerHTML = enterprise_option;
+    enterpriseDropdown.disabled = false;
 }
 
 let large_load_type = "group1";
@@ -351,6 +359,7 @@ function resetMarkerIcon(marker) {
 function updateConsumerDropdownForSelection() {
     // function differentiates on multi-consumer selection if all selected consumers have the same type or not
     // if yes, the chosen type is shown as selected, if not the default list is shown
+
     const consumerDropdown = document.getElementById('consumer');
     const enterpriseDropdown = document.getElementById('enterprise');
     const shsOptionsDropdown = document.getElementById('shs_options');
@@ -361,6 +370,8 @@ function updateConsumerDropdownForSelection() {
         enterpriseDropdown.disabled = true;
         return;
     }
+
+    // handle comparison and differences of consumer types
 
     const firstType = selectedMarkers[0].consumer_type;
     const allSameType = selectedMarkers.every(m =>
@@ -375,34 +386,53 @@ function updateConsumerDropdownForSelection() {
         return;
     }
 
-    if (firstType !== 'enterprise' && firstType !== 'public_service') {
-        enterpriseDropdown.innerHTML = '';
-        enterpriseDropdown.disabled = true;
-    } else {
-        const firstDetail = selectedMarkers[0].consumer_detail;
-        const allSameDetail = selectedMarkers.every(m =>
-            m.consumer_detail === firstDetail
-        );
+    // handle comparison and differences of consumer details (in case of consumer type = enterprise or public service)
 
-        switch (firstType) {
-            case 'household':
-                consumerDropdown.value = 'H';
-                break;
-            case 'public_service':
-                consumerDropdown.value = 'P';
-                dropDownMenu(public_service_list, allSameDetail ? getKeyByValue(public_service_list, firstDetail) : null);
-                break;
-            case 'enterprise':
-                consumerDropdown.value = 'E';
-                dropDownMenu(enterprise_list, allSameDetail ? getKeyByValue(enterprise_list, firstDetail) : null);
-                break;
-            case 'power-house':
-                consumerDropdown.value = '';
-                break;
-            default:
-                console.error("Invalid consumer type (firstType): " + firstType);
-        }
+    let loadList = '';
+    switch (firstType) {
+        case 'household':
+            consumerDropdown.value = 'H';
+            enterpriseDropdown.innerHTML = '';
+            enterpriseDropdown.disabled = true;
+            break;
+        case 'public_service':
+            consumerDropdown.value = 'P';
+            loadList = public_service_list;
+            break;
+        case 'enterprise':
+            consumerDropdown.value = 'E';
+            loadList = enterprise_list;
+            break;
+        case 'power-house':
+            consumerDropdown.value = '';
+            enterpriseDropdown.innerHTML = '';
+            enterpriseDropdown.disabled = true;
+            break;
+        default:
+            console.error("Invalid consumer type (firstType): " + firstType);
     }
+
+    if (loadList != '') {
+        const details = selectedMarkers.map(m => m.consumer_detail).filter(Boolean);
+        let selectedKey ='';
+        if (selectedMarkers.length === 1 && !details.length) {
+            // single click
+            selectedKey = undefined;
+        } else {
+            // multi click
+            const uniqueDetails = [...new Set(details)];
+            if (uniqueDetails.length === 0) {
+                selectedKey = undefined;
+            } else if (uniqueDetails.length === 1 && details.length === selectedMarkers.length) {
+                selectedKey = getKeyByValue(loadList, uniqueDetails[0]);
+            } else {
+                selectedKey = null;
+            }
+        }
+        dropDownMenu(loadList, selectedKey);
+    }
+
+    // handle comparison and differences of shs options (optimize and grid)
 
     const firstShsOption = selectedMarkers[0].shs_options;
     const allSameShsOption = selectedMarkers.every(m =>
@@ -410,7 +440,7 @@ function updateConsumerDropdownForSelection() {
     );
 
     if (!allSameShsOption) {
-        shsOptionsDropdown.value = 'optimize';
+        shsOptionsDropdown.value = '';
     } else {
         switch (firstShsOption) {
             case 0:

@@ -153,11 +153,24 @@ function markerOnClick(e) {
         document.getElementById('latitude').disabled = false;
         updateConsumerDropdownForSelection();
     }
-
     expandAccordionItem2();
+
+    // unselect marker if it was already selected before
+    const selectedIndex = selectedMarkers.findIndex(
+        m => m.latitude === e.latlng.lat && m.longitude === e.latlng.lng
+    );
+    if (isShift && selectedIndex !== -1) {
+        const removedMarker = selectedMarkers.splice(selectedIndex, 1)[0];
+        resetMarkerIcon(removedMarker);
+        map_elements.push(removedMarker);
+        updateConsumerDropdownForSelection();
+        return;
+    }
+
     const index = map_elements.findIndex(obj => obj.latitude === e.latlng.lat && obj.longitude === e.latlng.lng);
     if (index >= 0) {
         clickedMarker = map_elements.splice(index, 1)[0];
+        console.log(clickedMarker);
         clickedMarker._oldLat = clickedMarker.latitude;
         clickedMarker._oldLng = clickedMarker.longitude;
 

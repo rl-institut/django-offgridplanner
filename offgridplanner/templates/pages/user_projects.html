@@ -57,6 +57,27 @@
 {% endif %}
 
 <main>
+      {% if projects %}
+    {% for project in projects %}
+    <div id=projectID{{ project.id }} class="modal">
+      <form class="modal-content"
+            action="{% url 'projects:project_delete' project.id %}"
+            method="POST">
+        {% csrf_token %}
+        <div class="container">
+          <h1>{% translate "Delete Project" %}</h1>
+          <p>{% translate "Are you sure you want to delete the project?" %}</p>
+          <div class="clearfix">
+            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">{% translate "Delete" %}</button>
+            <button onclick="document.getElementById('projectID{{ project.id }}').style.display='none'"
+                    type="button"
+                    class="cancelbtn">{% translate "Cancel" %}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    {% endfor %}
+    {% endif %}
   <section class="dashboard">
     <section class="dashboard">
 
@@ -160,27 +181,6 @@
         <span class="subtitle"></span>
       </div>
     </section>
-    {% if projects %}
-    {% for project in projects %}
-    <div id=projectID{{ project.id }} class="modal">
-      <form class="modal-content"
-            action="{% url 'projects:project_delete' project.id %}"
-            method="POST">
-        {% csrf_token %}
-        <div class="container">
-          <h1>{% translate "Delete Project" %}</h1>
-          <p>{% translate "Are you sure you want to delete the project?" %}</p>
-          <div class="clearfix">
-            <button style="margin-top:0.25rem;" class="deletebtn" type="submit">{% translate "Delete" %}</button>
-            <button onclick="document.getElementById('projectID{{ project.id }}').style.display='none'"
-                    type="button"
-                    class="cancelbtn">{% translate "Cancel" %}</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    {% endfor %}
-    {% endif %}
   </section>
 </main>
 </body>

@@ -4,6 +4,9 @@
 ### Changed
 - Display message to users about backend migration ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
 
+### Fixed
+- Fix delete project modal layout ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
+
 ## [v1.1.3] – 2026-03-16
 ### Changed
 - Remove landing page (send directly to login) ([#223](https://github.com/rl-institut/django-offgridplanner/pull/223))

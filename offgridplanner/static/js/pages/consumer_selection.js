@@ -474,25 +474,29 @@ function updateConsumerDropdownForSelection() {
 }
 
 function move_marker() {
-    old_marker = JSON.parse(JSON.stringify(marker));
-    marker.longitude = parseFloat(document.getElementById('longitude').value);
-    marker.latitude = parseFloat(document.getElementById('latitude').value);
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-            let markerLatLng = layer.getLatLng();
-            if (markerLatLng.lat === old_marker.latitude && markerLatLng.lng === old_marker.longitude) {
-                map.removeLayer(layer);
-                let markerIcon;
-                if (marker.node_type === 'power-house') {
-                    markerIcon = markerPowerHouseSelected;
-                } else {
-                    markerIcon = markerConsumerSelected;
+    // atm only single markers can be moved, but by parsing over all selected markers it should be possible to
+    // move multiple markers at once, if wished and the UI is therefore updated
+    selectedMarkers.forEach(marker => {
+        old_marker = JSON.parse(JSON.stringify(marker));
+        marker.longitude = parseFloat(document.getElementById('longitude').value);
+        marker.latitude = parseFloat(document.getElementById('latitude').value);
+        map.eachLayer(function (layer) {
+            if (layer instanceof L.Marker) {
+                let markerLatLng = layer.getLatLng();
+                if (markerLatLng.lat === old_marker.latitude && markerLatLng.lng === old_marker.longitude) {
+                    map.removeLayer(layer);
+                    let markerIcon;
+                    if (marker.node_type === 'power-house') {
+                        markerIcon = markerPowerHouseSelected;
+                    } else {
+                        markerIcon = markerConsumerSelected;
+                    }
+                    L.marker([marker.latitude, marker.longitude], {icon: markerIcon})
+                        .on('click', markerOnClick)
+                        .addTo(map);
                 }
-                L.marker([marker.latitude, marker.longitude], {icon: markerIcon})
-                    .on('click', markerOnClick)
-                    .addTo(map);
             }
-        }
+        });
     });
 }
 

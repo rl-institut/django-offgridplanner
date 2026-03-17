@@ -196,27 +196,19 @@ function markerOnClick(e) {
                 document.getElementById('longitude').value = clickedMarker.longitude;
                 document.getElementById('latitude').value = clickedMarker.latitude;
                 if (clickedMarker.node_type === 'power-house') {
-                    document.getElementById('consumer').value = '';
                     document.getElementById('consumer').disabled = true;
                     document.getElementById('shs_options').value = '';
                     document.getElementById('shs_options').disabled = true;
                     document.getElementById('enterprise').disabled = true;
-                    document.getElementById('enterprise').value = '';
                 } else if (clickedMarker.consumer_type === 'household') {
-                    document.getElementById('consumer').value = 'H';
                     document.getElementById('enterprise').disabled = true;
-                    document.getElementById('enterprise').value = '';
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
                 } else if (clickedMarker.consumer_type === 'enterprise') {
-                    dropDownMenu(enterprise_list, clickedMarker._consumer_detail_key);
-                    document.getElementById('consumer').value = 'E';
                     document.getElementById('shs_options').disabled = false;
                     document.getElementById('consumer').disabled = false;
                 } else if (clickedMarker.consumer_type === 'public_service') {
-                    dropDownMenu(public_service_list, clickedMarker._consumer_detail_key);
                     document.getElementById('shs_options').disabled = false;
-                    document.getElementById('consumer').value = 'P';
                     document.getElementById('consumer').disabled = false;
                 }
             }

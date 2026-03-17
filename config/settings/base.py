@@ -413,6 +413,9 @@ AUTO_LOGOUT = {
 # Assumed country based on timeseries data (used for map settings and user warning if a different country is selected)
 DEFAULT_COUNTRY = ("NG", "Nigeria")
 
+# Default url to privacy statement
+PRIVACY_URL = "https://offgridplanner.org/privacy"
+
 # SIMULATION
 # ------------------------------------------------------------------------------
 SIM_API_HOST = os.getenv("SIM_API_HOST")

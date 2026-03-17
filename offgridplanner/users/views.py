@@ -105,9 +105,6 @@ class CustomLoginView(LoginView):
         return super().post(request, *args, **kwargs)
 
 
-login_view = CustomLoginView.as_view()
-
-
 @login_required
 @require_http_methods(["POST"])
 def demo_convert_account(request):

@@ -13,6 +13,8 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from offgridplanner.users.views import CustomLoginView
+
 urlpatterns = (
     i18n_patterns(
         path(
@@ -50,6 +52,7 @@ urlpatterns = (
             "opt/",
             include("offgridplanner.optimization.urls", namespace="optimization"),
         ),
+        path("accounts/login/", CustomLoginView.as_view()),
         path("accounts/", include("allauth.urls")),
     )
     + [path("i18n/", include("django.conf.urls.i18n"))]

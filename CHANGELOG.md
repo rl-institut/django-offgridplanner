@@ -3,9 +3,11 @@
 ## [Unreleased]
 ### Changed
 - Display message to users about backend migration ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
+- Update navbar logo ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
 
 ### Fixed
 - Fix delete project modal layout ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
+- Fix login page bugs ([#221](https://github.com/rl-institut/django-offgridplanner/pull/221))
 
 ## [v1.1.3] – 2026-03-16
 ### Changed

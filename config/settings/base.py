@@ -413,6 +413,9 @@ AUTO_LOGOUT = {
 # Assumed country based on timeseries data (used for map settings and user warning if a different country is selected)
 DEFAULT_COUNTRY = ("NG", "Nigeria")
 
+# Currency in which all the default cost values are defined, also needed to define the exchange rate on currency switch
+DEFAULT_CURRENCY = "EUR"
+
 # Default url to privacy statement
 PRIVACY_URL = "https://offgridplanner.org/privacy"
 

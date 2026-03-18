@@ -414,7 +414,7 @@ AUTO_LOGOUT = {
 DEFAULT_COUNTRY = ("NG", "Nigeria")
 
 # Currency in which all the default cost values are defined, also needed to define the exchange rate on currency switch
-DEFAULT_CURRENCY = "EUR"
+DEFAULT_CURRENCY = "USD"
 
 # Default url to privacy statement
 PRIVACY_URL = "https://offgridplanner.org/privacy"

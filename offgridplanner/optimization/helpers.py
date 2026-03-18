@@ -2,6 +2,7 @@ import io
 import logging
 import os
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pycountry
@@ -9,6 +10,7 @@ from country_bounding_boxes import country_subunits_by_iso_code
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from rest_framework.generics import get_object_or_404
+from shapely.geometry import Point
 
 from config.settings.base import DEFAULT_COUNTRY
 from offgridplanner.optimization.models import Results
@@ -175,6 +177,29 @@ def check_geographic_bounds(df, proj_id):
         raise ValidationError(error_msg)
 
 
+def check_nodes_within_country(df, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
+
+    country_code = project.country
+    country_name = pycountry.countries.get(alpha_2=country_code).name
+
+    world = gpd.read_file(
+        "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
+    )
+    country_shape = world[world["ADMIN"] == country_name]
+
+    if country_shape.empty:
+        return False
+
+    for _, row in df.iterrows():
+        point = Point(row["longitude"], row["latitude"])
+
+        if not country_shape.contains(point).any():
+            return False
+
+    return True
+
+
 def check_imported_consumer_data(df, proj_id):
     """Validate imported consumer data."""
     if df.empty:
@@ -229,8 +254,12 @@ def check_imported_consumer_data(df, proj_id):
         "is_connected": bool,
     }
     convert_column_types(df, column_types)
-    # Check geographic bounds
-    check_geographic_bounds(df, proj_id)
+    if not check_nodes_within_country(df, proj_id):
+        return None, (
+            "Some of the imported consumers are located outside the selected country. "
+            "Please verify the project country or check the coordinates in your CSV file."
+        )
+
     df = df[
         [
             "latitude",

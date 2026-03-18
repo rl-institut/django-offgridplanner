@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
+from config.settings.base import DEFAULT_CURRENCY
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
 from offgridplanner.projects.widgets import BatteryDesignWidget
 from offgridplanner.steps.models import CustomDemand
@@ -18,7 +19,7 @@ def set_field_metadata(field, meta):
     field.help_text = _(meta.get("help_text", ""))  # Set help text
     # TODO change hard coded unit to customizable in the future
     field.widget.attrs["unit"] = meta.get("unit", "").replace(
-        "currency", "USD"
+        "currency", DEFAULT_CURRENCY
     )  # Store unit as an attribute
 
 

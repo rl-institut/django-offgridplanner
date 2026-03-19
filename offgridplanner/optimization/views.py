@@ -510,9 +510,16 @@ def load_demand_plot_data(request, proj_id=None):
 def export_demand(request, proj_id):
     project = Project.objects.get(id=proj_id)
     data = json.loads(request.body)
-    file_type = data["file_type"]
+    input_shares = data.get("custom_shares", {})
+    file_type = data.get("file_type", "csv")
+    custom_demand = project.customdemand
+    # set current selected values to custom shares (to not export outdated demand)
+    for tier, value in input_shares.items():
+        setattr(custom_demand, tier, float(value))
+    custom_demand.save()
+
     total_demand = get_demand_timeseries(
-        project.nodes, project.customdemand, time_range=range(project.n_days * 24)
+        project.nodes, custom_demand, time_range=range(project.n_days * 24)
     ).sum(axis=1)
     total_demand_df = total_demand.reset_index()
     total_demand_df.columns = ["timestamp", "demand"]

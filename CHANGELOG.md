@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Export demand with currently selected share values instead of previously saved values ([#229](https://github.com/rl-institut/django-offgridplanner/pull/229))
 
 ## [v1.1.4] – 2026-03-17
 ### Changed

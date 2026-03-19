@@ -1,8 +1,10 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.1.5] – 2026-03-19
 ### Fixed
-- Export demand with currently selected share values instead of previously saved values ([#229](https://github.com/rl-institut/django-offgridplanner/pull/229))
+- Export demand with currently selected share values instead of previously saved values ([#229](https://github.com/rl-institut/django-offgridplanner/pull/229)) ([#223](https://github.com/rl-institut/django-offgridplanner/pull/223))
 
 ## [v1.1.4] – 2026-03-17
 ### Changed

@@ -566,10 +566,13 @@ document.getElementById('fileInput').addEventListener('change', async function(e
 });
 
 async function export_demand(file_type) {
+    custom_shares = Object.fromEntries(
+        Object.entries(AppState.customShares).map(([key, el]) => [el.name, el.value])
+    );
     const response = await fetch(exportDemandUrl, {
         method: "POST",
         headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
-        body: JSON.stringify({"file_type": file_type})
+        body: JSON.stringify({"file_type": file_type, "custom_shares": custom_shares})
     });
 
     if (response.ok) {

@@ -154,29 +154,6 @@ def get_country_bounds(proj_id):
     return bounds_data
 
 
-def check_geographic_bounds(df, proj_id):
-    max_distance = float(os.environ.get("MAX_LAT_LON_DIST", 0.15))
-    if (
-        df["latitude"].max() - df["latitude"].min() > max_distance
-        or df["longitude"].max() - df["longitude"].min() > max_distance
-    ):
-        error_msg = "Distance between consumers exceeds maximum allowed distance."
-        raise ValidationError(error_msg)
-
-    country_bounds = get_country_bounds(proj_id)
-    out_of_bounds = df[
-        (df["latitude"] < country_bounds["latitude_min"])
-        | (df["latitude"] > country_bounds["latitude_max"])
-        | (df["longitude"] < country_bounds["longitude_min"])
-        | (df["longitude"] > country_bounds["longitude_max"])
-    ]
-    if not out_of_bounds.empty:
-        error_msg = (
-            "Some latitude/longitude values are outside the selected country bounds."
-        )
-        raise ValidationError(error_msg)
-
-
 def check_nodes_within_country(df, proj_id):
     project = get_object_or_404(Project, id=proj_id)
 

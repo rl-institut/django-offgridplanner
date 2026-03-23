@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Fix blocked tiles on OpenStreetMap views ([#232](https://github.com/rl-institut/django-offgridplanner/pull/232))
+- Fix error on demand export with empty demand tier share ([#233](https://github.com/rl-institut/django-offgridplanner/pull/233))
 
 ## [v1.1.5] – 2026-03-19
 ### Fixed

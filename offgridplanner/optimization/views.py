@@ -515,7 +515,11 @@ def export_demand(request, proj_id):
     custom_demand = project.customdemand
     # set current selected values to custom shares (to not export outdated demand)
     for tier, value in input_shares.items():
-        setattr(custom_demand, tier, float(value) / 100)
+        try:
+            val = float(value) / 100
+        except ValueError:
+            val = 0
+        setattr(custom_demand, tier, val)
     custom_demand.save()
 
     total_demand = get_demand_timeseries(

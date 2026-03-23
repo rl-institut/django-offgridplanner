@@ -10,6 +10,8 @@ from django.forms import TextInput
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from config.settings.base import PRIVACY_URL
+
 from .models import User
 
 
@@ -50,7 +52,7 @@ class UserSignupForm(SignupForm):
     accept_privacy = BooleanField(required=True)
 
     def __init__(self, *args, **kwargs):
-        privacy_url = kwargs.pop("privacy_url", "")
+        privacy_url = kwargs.pop("privacy_url", PRIVACY_URL)
         super().__init__(*args, **kwargs)
         self.fields["accept_privacy"].label = mark_safe(  # noqa: S308
             _(

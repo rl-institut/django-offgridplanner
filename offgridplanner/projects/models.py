@@ -24,7 +24,7 @@ class Options(models.Model):
     do_es_design_optimization = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Options {self.id}: Project {self.project.name}"
+        return f"Options {self.id}"
 
 
 class Project(models.Model):

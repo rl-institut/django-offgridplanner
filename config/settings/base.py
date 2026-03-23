@@ -141,6 +141,7 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "offgridplanner.users.hashers.LegacyBCryptHasher",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
@@ -397,7 +398,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 # OFFGRIDPLANNER SETTINGS
-APP_VERSION_NUMBER = "1.1.2"
+APP_VERSION_NUMBER = "1.1.6"
 
 # Demo user expiry time
 DEMO_EXPIRY_SECONDS = 2 * 60 * 60  # 2 hours
@@ -411,6 +412,12 @@ AUTO_LOGOUT = {
 
 # Assumed country based on timeseries data (used for map settings and user warning if a different country is selected)
 DEFAULT_COUNTRY = ("NG", "Nigeria")
+
+# Currency in which all the default cost values are defined, also needed to define the exchange rate on currency switch
+DEFAULT_CURRENCY = "USD"
+
+# Default url to privacy statement
+PRIVACY_URL = "https://offgridplanner.org/privacy"
 
 # SIMULATION
 # ------------------------------------------------------------------------------

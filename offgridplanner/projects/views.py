@@ -50,7 +50,6 @@ from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
-from offgridplanner.users.forms import CaptchaForm
 from offgridplanner.users.forms import UserSignupForm
 from offgridplanner.users.models import DemoAccount
 from offgridplanner.users.models import User
@@ -79,28 +78,6 @@ def demo_start(request):
         #     _create_example_project_for(user)
 
     return redirect("projects:projects_list")
-
-
-@require_http_methods(["GET", "POST"])
-def home(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("projects:projects_list"))
-
-    if request.POST:
-        captcha_form = CaptchaForm(request.POST)
-        show_modal = True
-        # Validate the captcha
-        if captcha_form.is_valid():
-            return redirect("projects:demo_start")
-
-    else:
-        captcha_form = CaptchaForm()
-        show_modal = False
-    return render(
-        request,
-        "pages/landing_page.html",
-        context={"captcha_form": captcha_form, "show_modal": show_modal},
-    )
 
 
 @login_required

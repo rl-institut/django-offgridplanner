@@ -3,17 +3,21 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import QuerySet
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
+from offgridplanner.users.forms import CaptchaForm
 from offgridplanner.users.forms import UserSignupForm
 from offgridplanner.users.models import User
 
@@ -54,6 +58,51 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class CustomLoginView(LoginView):
+    template_name = "account/login.html"
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        return reverse_lazy("projects:projects_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.setdefault("captcha_form", CaptchaForm())
+        context.setdefault("show_modal", False)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if not request.session.get("backend_upgrade_info_shown", False):
+            msg = mark_safe(  # noqa: S308 (safe since no content is user-provided)
+                "Dear user, <br> We have upgraded the Offgridplanner behind the scenes.<br>"
+                "The tool looks the same, but it's now running on a new backend to improve reliability and future development.<br>"
+                "You should be able to log in and access all your projects as usual. "
+                "If you experience any issues logging in, accessing projects, or notice unexpected behavior, "
+                "please reach out to <a href='mailto:offgridplanner@rl-institut.de'>offgridplanner@rl-institut.de</a>."
+            )
+            messages.info(request, msg)
+            request.session["backend_upgrade_info_shown"] = True
+
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if "guest_submit" in request.POST:
+            captcha_form = CaptchaForm(request.POST)
+
+            if captcha_form.is_valid():
+                return redirect("projects:demo_start")
+
+            return self.render_to_response(
+                self.get_context_data(
+                    form=self.get_form(),
+                    captcha_form=captcha_form,
+                    show_modal=True,
+                )
+            )
+
+        return super().post(request, *args, **kwargs)
 
 
 @login_required

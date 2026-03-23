@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
+from config.settings.base import DEFAULT_CURRENCY
 from offgridplanner.projects.helpers import FORM_FIELD_METADATA
 from offgridplanner.projects.widgets import BatteryDesignWidget
 from offgridplanner.steps.models import CustomDemand
@@ -18,7 +19,7 @@ def set_field_metadata(field, meta):
     field.help_text = _(meta.get("help_text", ""))  # Set help text
     # TODO change hard coded unit to customizable in the future
     field.widget.attrs["unit"] = meta.get("unit", "").replace(
-        "currency", "USD"
+        "currency", DEFAULT_CURRENCY
     )  # Store unit as an attribute
 
 
@@ -50,6 +51,7 @@ class CustomModelForm(ModelForm):
 
 class CustomDemandForm(CustomModelForm):
     percentage_fields = ["very_low", "low", "middle", "high", "very_high"]
+    w_to_kw_factor = 1000
 
     class Meta:
         model = CustomDemand
@@ -66,6 +68,12 @@ class CustomDemandForm(CustomModelForm):
                     getattr(instance, field),
                     upper_limit=100,
                 )
+
+            calibration_field = instance.calibration_option
+            if calibration_field:
+                initial[calibration_field] = (
+                    getattr(instance, calibration_field) / self.w_to_kw_factor
+                )  # Change units from W to kW for display in form
 
             kwargs["initial"] = initial
 
@@ -88,6 +96,9 @@ class CustomDemandForm(CustomModelForm):
                     value,
                     upper_limit=1,
                 )
+            if field in ["annual_peak_consumption", "annual_total_consumption"]:
+                if self.cleaned_data[field] is not None:
+                    self.cleaned_data[field] *= self.w_to_kw_factor
 
         return cleaned_data
 

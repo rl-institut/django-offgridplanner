@@ -1,10 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Fix blocked tiles on OpenStreetMap views ([#232](https://github.com/rl-institut/django-offgridplanner/pull/232))
 
 ## [v1.1.5] – 2026-03-19
 ### Fixed
-- Export demand with currently selected share values instead of previously saved values ([#229](https://github.com/rl-institut/django-offgridplanner/pull/229)) ([#223](https://github.com/rl-institut/django-offgridplanner/pull/223))
+- Export demand with currently selected share values instead of previously saved values ([#229](https://github.com/rl-institut/django-offgridplanner/pull/229)) ([#230](https://github.com/rl-institut/django-offgridplanner/pull/230))
 
 ## [v1.1.4] – 2026-03-17
 ### Changed

@@ -126,13 +126,12 @@ function initializeMap(center = null, zoom = null, bounds = null) {
         // Define the OSM layer
         let osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            refererPolicy: 'origin-when-cross-origin'
+            referrerPolicy: 'origin-when-cross-origin'
         });
 
         // Define the Esri satellite layer
         let satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
-            referrerPolicy: 'origin-when-cross-origin'
         });
 
         // Add the OSM layer to the map as the default

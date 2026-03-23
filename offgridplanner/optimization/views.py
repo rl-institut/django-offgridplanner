@@ -10,6 +10,7 @@ import numpy as np
 # from jsonview.decorators import json_view
 import pandas as pd
 from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ValidationError
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.http import StreamingHttpResponse
@@ -443,13 +444,13 @@ def roads_to_db(request, proj_id=None):
 @require_http_methods(["POST"])
 def file_nodes_to_js(request, proj_id):
     if "file" not in request.FILES:
-        return JsonResponse({"responseMsg": "No file uploaded."}, status=400)
+        return JsonResponse({"responseMsg": "No file uploaded."})
 
     file = request.FILES["file"]
     is_valid, result = validate_file_extension(file.name)
 
     if not is_valid:
-        return JsonResponse({"responseMsg": result}, status=400)
+        return JsonResponse({"responseMsg": result})
 
     file_extension = result
     df = convert_file_to_df(file, file_extension)
@@ -457,11 +458,9 @@ def file_nodes_to_js(request, proj_id):
     try:
         df, msg = check_imported_consumer_data(df, proj_id)
         if df is None and msg:
-            return JsonResponse({"responseMsg": msg}, status=400)
-    except ValueError as e:
-        return JsonResponse(
-            {"responseMsg": f"Failed to validate data: {e!s}"}, status=400
-        )
+            return JsonResponse({"responseMsg": msg})
+    except ValidationError as e:
+        return JsonResponse({"responseMsg": f"Failed to validate data: {e.message!s}"})
 
     return JsonResponse(
         data={"is_load_center": False, "map_elements": df.to_dict("records")},

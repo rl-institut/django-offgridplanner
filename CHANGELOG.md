@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Display consumer import error message to user ([#235](https://github.com/rl-institut/django-offgridplanner/pull/235))
 
 ## [v1.1.6] – 2026-03-23
 ### Fixed

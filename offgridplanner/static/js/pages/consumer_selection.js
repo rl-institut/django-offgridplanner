@@ -179,7 +179,6 @@ function markerOnClick(e) {
     const index = map_elements.findIndex(obj => obj.latitude === e.latlng.lat && obj.longitude === e.latlng.lng);
     if (index >= 0) {
         clickedMarker = map_elements.splice(index, 1)[0];
-        console.log(clickedMarker);
         clickedMarker._oldLat = clickedMarker.latitude;
         clickedMarker._oldLng = clickedMarker.longitude;
 

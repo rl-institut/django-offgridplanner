@@ -36,6 +36,11 @@ let consumer_type = "H";
 let enterprise_option = '';
 
 function dropDownMenu(dropdown_list, selectedValue = undefined) {
+    /*  creates a string that contains the list of options depending on dropdown_list
+        selectedValue = undefined, if nothing was selected previously, than first entry will be selected
+        selectedValue = null, if multiple markers were selected and their values dont match
+    */
+
     let enterprise_option = '';
 
     if (selectedValue === null) {
@@ -77,7 +82,6 @@ document.getElementById('number_loads').disabled = true;
 
 // Add EventListener to consumer_type dropdwon Menu
 document.getElementById('consumer').addEventListener('change', function () {
-
     let newType;
 
     if (this.value === 'H') {
@@ -89,7 +93,6 @@ document.getElementById('consumer').addEventListener('change', function () {
     } else if (this.value === 'E') {
         newType = "enterprise";
         dropDownMenu(enterprise_list);
-        // group1 as default, so that there is always at least one consumer_detail chosen
         document.getElementById('enterprise').disabled = false;
         activate_large_loads();
 
@@ -106,6 +109,8 @@ document.getElementById('consumer').addEventListener('change', function () {
 
     count_consumers(false);
 });
+
+// set up the inital state of dropdowns
 document.getElementById('enterprise').disabled = true;
 document.getElementById('consumer').disabled = true;
 document.getElementById('enterprise').value = '';
@@ -132,15 +137,16 @@ let markerPowerHouseSelected = new L.Icon({
 });
 
 
-let selectedMarkers = [];
-let clickedMarker;
-
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
 
-// TODO this can stay
+
+let selectedMarkers = [];
+let clickedMarker;
+
 function markerOnClick(e) {
+    // is called with every click on a marker, distinguishes between normal = single-click and shift+click = multi-select
     L.DomEvent.stopPropagation(e);
     const isShift = e.originalEvent.shiftKey;
     if (!isShift) {
@@ -217,7 +223,7 @@ function markerOnClick(e) {
             }
         }
     });
-    // handle large loads for selected markers
+    // handle large loads section for selected markers
     if (clickedMarker.consumer_type === 'enterprise') {
         activate_large_loads(true);
         const commonLoads = getCommonLoads(selectedMarkers);
@@ -240,6 +246,7 @@ function markerOnClick(e) {
 }
 
 function update_map_elements() {
+    // updates map elements based on chosen values and also saves chosen values to marker nodes
     const isMultiSelect = selectedMarkers.length > 1;
     let longitude = document.getElementById('longitude').value;
     let latitude = document.getElementById('latitude').value;
@@ -257,7 +264,6 @@ function update_map_elements() {
         default:
             shs_value = 0;
     }
-
 
     let selected_icon;
 
@@ -328,6 +334,7 @@ function update_map_elements() {
 }
 
 function resetMarkerIcon(marker) {
+    // just resets the marker Icon based marker consumer_type
     const epsilon = 0.0000001;
 
     map.eachLayer(function(layer) {
@@ -578,6 +585,7 @@ function fillList(concatenated_text) {
 
 
 function addElementToLargeLoadList(customText) {
+    // adds a new Element with attached Delete Button to only the DOM element of large loads
     var dropdown = document.getElementById('loads');
     var selectedValue = dropdown.options[dropdown.selectedIndex].text;
     var inputValue = document.getElementById('number_loads').value;
@@ -605,6 +613,7 @@ function addElementToLargeLoadList(customText) {
 };
 
 function saveNewLoadItemToList() {
+    // is called by "add" Button, saves the load elements from the DOM to the marker nodes
     addElementToLargeLoadList(customText = undefined);
     let large_load_string = large_loads_to_string();
     selectedMarkers.forEach((marker, i) => {

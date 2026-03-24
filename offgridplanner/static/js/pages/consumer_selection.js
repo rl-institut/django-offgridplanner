@@ -30,11 +30,6 @@ let consumer_type = "H";
         option_consumer += '<option value="' + consumer_code + '"' + selected + '>' + consumer_list[consumer_code] + '</option>';
     }
     document.getElementById('consumer').innerHTML = option_consumer;
-
-    /* // Add event listener to the dropdown menu
-    document.getElementById('consumer').addEventListener('change', function() {
-        count_consumers();
-    }); */
 })();
 
 
@@ -95,7 +90,6 @@ document.getElementById('consumer').addEventListener('change', function () {
         newType = "enterprise";
         dropDownMenu(enterprise_list);
         // group1 as default, so that there is always at least one consumer_detail chosen
-        //document.getElementById('enterprise').value = 'group1';
         document.getElementById('enterprise').disabled = false;
         activate_large_loads();
 

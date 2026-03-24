@@ -31,10 +31,10 @@ let consumer_type = "H";
     }
     document.getElementById('consumer').innerHTML = option_consumer;
 
-    // Add event listener to the dropdown menu
+    /* // Add event listener to the dropdown menu
     document.getElementById('consumer').addEventListener('change', function() {
         count_consumers();
-    });
+    }); */
 })();
 
 
@@ -46,11 +46,19 @@ function dropDownMenu(dropdown_list, selectedValue = undefined) {
     if (selectedValue === null) {
         enterprise_option += '<option value="" selected></option>';
     }
+
+    let isFirstIteration = true;
     for (let enterprise_code in dropdown_list) {
-        let selected = (enterprise_code == selectedValue) ? ' selected' : '';
+        let selected = '';
+        if (isFirstIteration && selectedValue === undefined) {
+            selected = ' selected';
+        } else if (enterprise_code == selectedValue) {
+            selected = ' selected';
+        }
         enterprise_option += '<option value="' + enterprise_code + '"' + selected + '>'
             + dropdown_list[enterprise_code] +
             '</option>';
+        isFirstIteration = false;
     }
 
     const enterpriseDropdown = document.getElementById('enterprise');
@@ -72,6 +80,7 @@ document.getElementById('loads').disabled = true;
 document.getElementById('loads').value = "";
 document.getElementById('number_loads').disabled = true;
 
+// Add EventListener to consumer_type dropdwon Menu
 document.getElementById('consumer').addEventListener('change', function () {
 
     let newType;
@@ -85,8 +94,8 @@ document.getElementById('consumer').addEventListener('change', function () {
     } else if (this.value === 'E') {
         newType = "enterprise";
         dropDownMenu(enterprise_list);
-        document.getElementById('enterprise').innerHTML = enterprise_option;
-        document.getElementById('enterprise').value = 'group1';
+        // group1 as default, so that there is always at least one consumer_detail chosen
+        //document.getElementById('enterprise').value = 'group1';
         document.getElementById('enterprise').disabled = false;
         activate_large_loads();
 
@@ -279,14 +288,14 @@ function update_map_elements() {
                 break;
             case 'P':
                 marker.consumer_type = 'public_service';
-                let key2 = document.getElementById('enterprise').value;
+                let key2 = document.getElementById('enterprise').value || 'group1';
                 marker._consumer_detail_key = key2;
                 marker.consumer_detail = public_service_list[key2];
                 selected_icon = markerPublicservice;
                 break;
             case 'E':
                 marker.consumer_type = 'enterprise';
-                let key = document.getElementById('enterprise').value;
+                let key = document.getElementById('enterprise').value || 'group1';
                 marker._consumer_detail_key = key;
                 marker.consumer_detail = enterprise_list[key];
                 selected_icon = markerEnterprise;

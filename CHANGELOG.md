@@ -1,10 +1,8 @@
 # Changelog
 
 ## [Unreleased]
-
-## [v1.1.7] – 2026-03-25
 ### Changed
-- User now receives an info message if consumers are not within the selected country([#219](https://github.com/rl-institut/django-offgridplanner/pull/219))
+- Display info message if imported consumers are not within the selected country ([#219](https://github.com/rl-institut/django-offgridplanner/pull/219))
 
 ## [v1.1.6] – 2026-03-23
 ### Fixed

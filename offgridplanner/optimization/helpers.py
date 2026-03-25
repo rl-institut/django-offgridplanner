@@ -1,6 +1,7 @@
 import io
 import logging
 import os
+from urllib.error import URLError
 
 import geopandas as gpd
 import numpy as np
@@ -160,9 +161,14 @@ def check_nodes_within_country(df, proj_id):
     country_code = project.country
     country_name = pycountry.countries.get(alpha_2=country_code).name
 
-    world = gpd.read_file(
-        "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
-    )
+    try:
+        world = gpd.read_file(
+            "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
+        )
+    except (OSError, URLError) as e:
+        logger.warning("Failed to load country shapes: %s", e)
+        return False
+
     country_shape = world[world["ADMIN"] == country_name]
 
     if country_shape.empty:

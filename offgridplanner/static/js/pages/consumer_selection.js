@@ -33,7 +33,7 @@ let consumer_type = "H";
 })();
 
 
-let enterprise_option = '';
+// let enterprise_option = '';
 
 function dropDownMenu(dropdown_list, selectedValue = undefined) {
     /*  creates a string that contains the list of options depending on dropdown_list
@@ -107,7 +107,7 @@ document.getElementById('consumer').addEventListener('change', function () {
         marker.consumer_type = newType;
     });
 
-    count_consumers(false);
+    count_consumers();
 });
 
 // set up the inital state of dropdowns
@@ -160,6 +160,7 @@ function markerOnClick(e) {
         oldMarkers = [];
         document.getElementById('longitude').disabled = false;
         document.getElementById('latitude').disabled = false;
+        // vlt rausnehmen? passiert am ende eh nochmal in jedem fall
         updateConsumerDropdownForSelection();
     }
     expandAccordionItem2();
@@ -253,6 +254,7 @@ function update_map_elements() {
     let shs_value;
     let large_load_string = large_loads_to_string();
 
+    // kann das hier evt raus, weil das ja gewisse multi select sachen überschreiben würde?
     switch (shs_options) {
         case 'optimize':
             shs_value = 0;
@@ -282,7 +284,7 @@ function update_map_elements() {
         switch (consumerValue) {
             case 'H':
                 marker.consumer_type = 'household';
-                marker.consumer_detail = 'default';
+                marker.consumer_detail = '';
                 selected_icon = markerConsumer;
                 break;
             case 'P':
@@ -370,6 +372,45 @@ function resetMarkerIcon(marker) {
     });
 }
 
+function check_map_elements() {
+    // checks all the map elements/markers if they have missing values
+    map_elements.forEach((marker, i) => {
+        let consumerValue = marker.consumer_type;
+
+        switch (consumerValue) {
+            case 'household':
+                // put checks for households here
+                break;
+            case 'public_service':
+                // put checks for public services here
+                break;
+            case 'enterprise':
+                const key = getKeyByValue(enterprise_list, marker.consumer_detail);
+
+                if (!key || marker.consumer_detail === 'null' || !marker.consumer_detail) {
+                    marker.consumer_detail = enterprise_list['group1'];
+
+                    const indexInMapElements = map_elements.findIndex(
+                        m => m.latitude === marker.latitude && m.longitude === marker.longitude
+                    );
+
+                    if (indexInMapElements !== -1) {
+                        map_elements[indexInMapElements].consumer_detail = marker.consumer_detail;
+                        map_elements[indexInMapElements]._consumer_detail_key = 'group1';
+                    } else if (!map_elements.includes(marker)) {
+                        map_elements.push(marker);
+                    }
+                }
+                break;
+            case '':
+                // put checks for power houses here
+                break;
+            default:
+                console.error("Invalid consumer value: " + consumerValue);
+        }
+    });
+}
+
 function updateConsumerDropdownForSelection() {
     // function differentiates on multi-consumer selection if all selected consumers have the same type or not
     // if yes, the chosen type is shown as selected, if not the default list is shown
@@ -429,7 +470,7 @@ function updateConsumerDropdownForSelection() {
     if (loadList != '') {
         const details = selectedMarkers.map(m => m.consumer_detail).filter(Boolean);
         let selectedKey ='';
-        if (selectedMarkers.length === 1 && !details.length) {
+        if (selectedMarkers.length === 1 && details.length == 1) {
             // single click
             selectedKey = undefined;
         } else {

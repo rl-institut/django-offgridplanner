@@ -278,7 +278,7 @@ async function file_demand_to_db(formData) {
 
 // customer_selection
 async function consumer_to_db(href, file_type = "db") {
-    update_map_elements();
+    check_map_elements();
     const response = await fetch(consumerToDBUrl , {
         method: "POST",
         headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},

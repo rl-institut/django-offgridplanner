@@ -65,11 +65,11 @@ function dropDownMenu(dropdown_list, selectedValue = undefined) {
     enterpriseDropdown.disabled = false;
 }
 
-let large_load_type = "group1";
+let consumer_detail_key_default = "group1";
 
 let option_load = '';
 for (let load_code in large_load_list) {
-    let selected = (load_code == large_load_type) ? ' selected' : '';
+    let selected = (load_code == consumer_detail_key_default) ? ' selected' : '';
     option_load += '<option value="' + load_code + '"' + selected + '>' + large_load_list[load_code] + '</option>';
 }
 document.getElementById('loads').innerHTML = option_load;
@@ -285,14 +285,14 @@ function update_map_elements() {
                 break;
             case 'P':
                 marker.consumer_type = 'public_service';
-                let key2 = document.getElementById('enterprise').value || 'group1';
+                let key2 = document.getElementById('enterprise').value || consumer_detail_key_default;
                 marker._consumer_detail_key = key2;
                 marker.consumer_detail = public_service_list[key2];
                 selected_icon = markerPublicservice;
                 break;
             case 'E':
                 marker.consumer_type = 'enterprise';
-                let key = document.getElementById('enterprise').value || 'group1';
+                let key = document.getElementById('enterprise').value || consumer_detail_key_default;
                 marker._consumer_detail_key = key;
                 marker.consumer_detail = enterprise_list[key];
                 selected_icon = markerEnterprise;
@@ -384,7 +384,7 @@ function check_map_elements() {
                 const key = getKeyByValue(enterprise_list, marker.consumer_detail);
 
                 if (!key || marker.consumer_detail === 'null' || !marker.consumer_detail) {
-                    marker.consumer_detail = enterprise_list['group1'];
+                    marker.consumer_detail = enterprise_list[consumer_detail_key_default];
 
                     const indexInMapElements = map_elements.findIndex(
                         m => m.latitude === marker.latitude && m.longitude === marker.longitude
@@ -392,7 +392,7 @@ function check_map_elements() {
 
                     if (indexInMapElements !== -1) {
                         map_elements[indexInMapElements].consumer_detail = marker.consumer_detail;
-                        map_elements[indexInMapElements]._consumer_detail_key = 'group1';
+                        map_elements[indexInMapElements]._consumer_detail_key = consumer_detail_key_default;
                     } else if (!map_elements.includes(marker)) {
                         map_elements.push(marker);
                     }

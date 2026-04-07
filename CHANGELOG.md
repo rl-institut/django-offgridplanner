@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- In Consumer Selection, Users can use shift+click to select multiple consumers at the same time and change type, detail, load and shs-options for all of them at the same time([#212](https://github.com/rl-institut/django-offgridplanner/pull/212))
 
 ## [v1.1.6] – 2026-03-23
 ### Fixed

@@ -34,7 +34,7 @@ let consumer_type = "H";
 })();
 
 
-function dropDownMenu(dropdown_list, selectedValue = undefined) {
+function buildConsumerDetailDropdown(dropdown_list, selectedValue = undefined) {
     /*  creates a string that contains the list of options depending on dropdown_list
         selectedValue = undefined, if nothing was selected previously, than first entry will be selected
         selectedValue = null, if multiple markers were selected and their values dont match
@@ -91,13 +91,13 @@ document.getElementById('consumer').addEventListener('change', function () {
 
     } else if (this.value === 'E') {
         newType = "enterprise";
-        dropDownMenu(enterprise_list);
+        buildConsumerDetailDropdown(enterprise_list);
         document.getElementById('enterprise').disabled = false;
         activate_large_loads();
 
     } else if (this.value === 'P') {
         newType = "public_service";
-        dropDownMenu(public_service_list);
+        buildConsumerDetailDropdown(public_service_list);
         deactivate_large_loads();
     }
 
@@ -170,7 +170,7 @@ function markerOnClick(e) {
         const removedMarker = selectedMarkers.splice(selectedIndex, 1)[0];
         resetMarkerIcon(removedMarker);
         map_elements.push(removedMarker);
-        updateConsumerDropdownForSelection();
+        updateConsumerDropdown();
         return;
     }
 
@@ -239,7 +239,7 @@ function markerOnClick(e) {
         deactivate_large_loads();
     }
     // handle updating the input options for the dropdowns depending on consumer type
-    updateConsumerDropdownForSelection();
+    updateConsumerDropdown();
 }
 
 function update_map_elements() {
@@ -404,7 +404,7 @@ function check_map_elements() {
     });
 }
 
-function updateConsumerDropdownForSelection() {
+function updateConsumerDropdown() {
     // function differentiates on multi-consumer selection if all selected consumers have the same type or not
     // if yes, the chosen type is shown as selected, if not the default list is shown
 
@@ -482,7 +482,7 @@ function updateConsumerDropdownForSelection() {
                 selectedKey = null;
             }
         }
-        dropDownMenu(loadList, selectedKey);
+        buildConsumerDetailDropdown(loadList, selectedKey);
     }
 
     // handle comparison and differences of shs options (optimize and grid)

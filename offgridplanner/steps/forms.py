@@ -8,9 +8,10 @@ from offgridplanner.projects.widgets import BatteryDesignWidget
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
+from offgridplanner.projects.helpers import get_exchange_rate
 
 
-def set_field_metadata(field, meta):
+def set_field_metadata(field, meta, currency):
     label = (
         _(field.label.title()) if meta.get("verbose") == "" else meta.get("verbose")
     )  # Set verbose name
@@ -19,8 +20,8 @@ def set_field_metadata(field, meta):
     field.help_text = _(meta.get("help_text", ""))  # Set help text
     # TODO change hard coded unit to customizable in the future
     field.widget.attrs["unit"] = meta.get("unit", "").replace(
-        "currency", DEFAULT_CURRENCY
-    )  # Store unit as an attribute
+        "currency", currency
+    )
 
 
 class CustomModelForm(ModelForm):
@@ -29,11 +30,19 @@ class CustomModelForm(ModelForm):
     def __init__(self, *args, **kwargs):
         set_db_column_attr = kwargs.pop("set_db_column_attribute", False)
         super().__init__(*args, **kwargs)
+
+        self.exchange_rate = 1.0
+        self.currency = DEFAULT_CURRENCY
+
+        if hasattr(self.instance, "project") and self.instance.project:
+            self.exchange_rate = self.instance.project.exchange_rate
+            self.currency = self.instance.project.currency
+
         for field_name, field in self.fields.items():
             # Set metadata for the field (help text, units)
             if field_name in FORM_FIELD_METADATA:
                 meta = FORM_FIELD_METADATA[field_name]
-                set_field_metadata(field, meta)
+                set_field_metadata(field, meta, self.currency)
                 # Set the db column as an attribute for the fields (relevant for group_form_by_component)
                 if set_db_column_attr is True:
                     model_field = self._meta.model._meta.get_field(field_name)  # noqa: SLF001
@@ -47,6 +56,18 @@ class CustomModelForm(ModelForm):
                         "component": field.db_column.split("__")[0],
                     }
                 )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        currency = cleaned_data.get("currency")
+
+        if currency and currency != "EUR":
+            cleaned_data["exchange_rate"] = get_exchange_rate(currency)
+        else:
+            cleaned_data["exchange_rate"] = 1.0
+
+        return cleaned_data
 
 
 class CustomDemandForm(CustomModelForm):

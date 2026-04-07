@@ -140,6 +140,10 @@ function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
 
+addEventListener("beforeunload", function() {
+    check_map_elements();
+});
+
 
 let selectedMarkers = [];
 let clickedMarker;
@@ -367,6 +371,12 @@ function resetMarkerIcon(marker) {
 }
 
 function check_map_elements() {
+    // checks if there are still selected markes and pushes them back into map_elements
+    selectedMarkers.forEach((marker, i) => {
+        if (!map_elements.includes(marker)) {
+            map_elements.push(marker);
+        }
+    });
     // checks all the map elements/markers if they have missing values
     map_elements.forEach((marker, i) => {
         let consumerValue = marker.consumer_type;

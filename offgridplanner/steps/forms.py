@@ -61,16 +61,27 @@ class CustomModelForm(ModelForm):
                         "component": field.db_column.split("__")[0],
                     }
                 )
+            # Apply exchange rate to currency fields
+            if is_currency_field(field):
+                if self.initial.get(field_name) is not None:
+                    original_value = self.initial[field_name]
+                    try:
+                        self.initial[field_name] = float(original_value) * self.exchange_rate
+                    except (TypeError, ValueError):
+                        pass
 
     def clean(self):
         cleaned_data = super().clean()
+        exchange_rate = self.exchange_rate or 1.0
 
-        currency = cleaned_data.get("currency")
-
-        if currency and currency != "EUR":
-            cleaned_data["exchange_rate"] = get_exchange_rate(currency)
-        else:
-            cleaned_data["exchange_rate"] = 1.0
+        for field_name, field in self.fields.items():
+            if is_currency_field(field):
+                value = cleaned_data.get(field_name)
+                if value is not None:
+                    try:
+                        cleaned_data[field_name] = float(value) / exchange_rate
+                    except (TypeError, ValueError):
+                        pass
 
         return cleaned_data
 

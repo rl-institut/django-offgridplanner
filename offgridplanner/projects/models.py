@@ -2,6 +2,7 @@ import datetime
 import json
 
 import pycountry
+from config.settings.base import DEFAULT_CURRENCY
 from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -61,7 +62,7 @@ class Project(models.Model):
     currency = models.CharField(
         max_length=3,
         choices=CURRENCY_CHOICES,
-        default="EUR"
+        default=DEFAULT_CURRENCY
     )
 
     exchange_rate = models.FloatField(

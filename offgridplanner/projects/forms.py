@@ -3,6 +3,7 @@ from django.forms import Textarea
 from django.forms.widgets import CheckboxInput
 from django.utils.translation import gettext_lazy as _
 
+from offgridplanner.projects.helpers import get_exchange_rate
 from offgridplanner.steps.forms import CustomModelForm
 
 from .models import *
@@ -18,9 +19,21 @@ class ProjectForm(CustomModelForm):
             "temporal_resolution",
             "user",
             "options",
-            "exchange_rate",
+            #"exchange_rate",
         ]
         widgets = {"description": Textarea(attrs={"rows": 7})}
+
+    def clean(self):
+        cleaned_data = super().clean()
+        currency = cleaned_data.get("currency")
+        if currency:
+            try:
+                rate = get_exchange_rate(currency)
+            except Exception:
+                rate = 1.0
+            cleaned_data["exchange_rate"] = rate
+        return cleaned_data
+
 
 
 OPTIONS_LABELS = {

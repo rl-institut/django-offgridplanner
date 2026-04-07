@@ -466,9 +466,14 @@ function updateConsumerDropdownForSelection() {
     if (loadList != '') {
         const details = selectedMarkers.map(m => m.consumer_detail).filter(Boolean);
         let selectedKey ='';
-        if (selectedMarkers.length === 1 && details.length == 1) {
+        if (selectedMarkers.length === 1) {
             // single click
-            selectedKey = undefined;
+            if (details[0] !== undefined) {
+                const possibleKey = getKeyByValue(loadList, details[0]);
+                selectedKey = loadList.hasOwnProperty(possibleKey) ? possibleKey : undefined;
+            } else {d
+                selectedKey = undefined;
+            }
         } else {
             // multi click
             const uniqueDetails = [...new Set(details)];

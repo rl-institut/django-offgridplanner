@@ -23,6 +23,7 @@ let consumer_list = {
 };
 let consumer_type = "H";
 
+// set up consumer dropdown
 (function () {
     let option_consumer = '';
     for (let consumer_code in consumer_list) {
@@ -32,8 +33,6 @@ let consumer_type = "H";
     document.getElementById('consumer').innerHTML = option_consumer;
 })();
 
-
-// let enterprise_option = '';
 
 function dropDownMenu(dropdown_list, selectedValue = undefined) {
     /*  creates a string that contains the list of options depending on dropdown_list
@@ -160,8 +159,6 @@ function markerOnClick(e) {
         oldMarkers = [];
         document.getElementById('longitude').disabled = false;
         document.getElementById('latitude').disabled = false;
-        // vlt rausnehmen? passiert am ende eh nochmal in jedem fall
-        updateConsumerDropdownForSelection();
     }
     expandAccordionItem2();
 
@@ -254,7 +251,6 @@ function update_map_elements() {
     let shs_value;
     let large_load_string = large_loads_to_string();
 
-    // kann das hier evt raus, weil das ja gewisse multi select sachen überschreiben würde?
     switch (shs_options) {
         case 'optimize':
             shs_value = 0;

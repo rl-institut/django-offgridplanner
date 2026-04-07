@@ -286,14 +286,12 @@ function update_map_elements() {
             case 'P':
                 marker.consumer_type = 'public_service';
                 let key2 = document.getElementById('enterprise').value || consumer_detail_key_default;
-                marker._consumer_detail_key = key2;
                 marker.consumer_detail = public_service_list[key2];
                 selected_icon = markerPublicservice;
                 break;
             case 'E':
                 marker.consumer_type = 'enterprise';
                 let key = document.getElementById('enterprise').value || consumer_detail_key_default;
-                marker._consumer_detail_key = key;
                 marker.consumer_detail = enterprise_list[key];
                 selected_icon = markerEnterprise;
                 break;
@@ -392,7 +390,6 @@ function check_map_elements() {
 
                     if (indexInMapElements !== -1) {
                         map_elements[indexInMapElements].consumer_detail = marker.consumer_detail;
-                        map_elements[indexInMapElements]._consumer_detail_key = consumer_detail_key_default;
                     } else if (!map_elements.includes(marker)) {
                         map_elements.push(marker);
                     }

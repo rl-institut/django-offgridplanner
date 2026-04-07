@@ -19,10 +19,15 @@ def set_field_metadata(field, meta, currency):
     field.label = label + question_icon if meta.get("help_text") != "" else label
     field.help_text = _(meta.get("help_text", ""))  # Set help text
     # TODO change hard coded unit to customizable in the future
-    field.widget.attrs["unit"] = meta.get("unit", "").replace(
-        "currency", currency
-    )
+    unit_template = meta.get("unit", "")
+    if "currency" in unit_template:
+        field.is_currency = True
+    else:
+        field.is_currency = False
+    field.widget.attrs["unit"] = unit_template.replace("currency", currency)
 
+def is_currency_field(field):
+    return getattr(field, "is_currency", False)
 
 class CustomModelForm(ModelForm):
     """Automatically assign labels, help_text and units to the fields"""

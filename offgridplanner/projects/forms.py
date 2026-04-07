@@ -18,6 +18,7 @@ class ProjectForm(CustomModelForm):
             "temporal_resolution",
             "user",
             "options",
+            "exchange_rate",
         ]
         widgets = {"description": Textarea(attrs={"rows": 7})}
 

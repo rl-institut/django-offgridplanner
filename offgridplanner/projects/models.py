@@ -11,6 +11,11 @@ from django.forms.models import model_to_dict
 # Create a list containing (two-letter-code, country-name) tuples from the pycountry data
 COUNTRIES = [(country.alpha_2, country.name) for country in pycountry.countries]
 
+CURRENCY_CHOICES = [
+    ("EUR", "Euro"),
+    ("USD", "US Dollar"),
+    ("THB", "Thai Baht"),
+]
 
 def default_start_date():
     current_year = datetime.datetime.now(tz=datetime.UTC).year
@@ -51,6 +56,16 @@ class Project(models.Model):
         Options,
         on_delete=models.SET_NULL,
         null=True,
+    )
+
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default="EUR"
+    )
+
+    exchange_rate = models.FloatField(
+        default=1.0,
     )
 
     def __str__(self):

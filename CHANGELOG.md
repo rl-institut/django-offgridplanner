@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [v1.2.0] – 2026-04-08
+### Added
+- In Consumer Selection, users can now use Shift+Click to select and edit multiple consumers at the same time ([#212](https://github.com/rl-institut/django-offgridplanner/pull/212))
+
+### Changed
+- Display info message if imported consumers are not within the selected country ([#219](https://github.com/rl-institut/django-offgridplanner/pull/219))
+
+### Fixed
+- Display consumer import error messages to user ([#235](https://github.com/rl-institut/django-offgridplanner/pull/235))
+
 ## [v1.1.6] – 2026-03-23
 ### Fixed
 - Fix blocked tiles on OpenStreetMap views ([#232](https://github.com/rl-institut/django-offgridplanner/pull/232))

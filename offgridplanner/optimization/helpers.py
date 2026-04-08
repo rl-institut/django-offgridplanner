@@ -1,7 +1,9 @@
 import io
 import logging
 import os
+from urllib.error import URLError
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pycountry
@@ -9,6 +11,7 @@ from country_bounding_boxes import country_subunits_by_iso_code
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from rest_framework.generics import get_object_or_404
+from shapely.geometry import Point
 
 from config.settings.base import DEFAULT_COUNTRY
 from offgridplanner.optimization.models import Results
@@ -152,27 +155,32 @@ def get_country_bounds(proj_id):
     return bounds_data
 
 
-def check_geographic_bounds(df, proj_id):
-    max_distance = float(os.environ.get("MAX_LAT_LON_DIST", 0.15))
-    if (
-        df["latitude"].max() - df["latitude"].min() > max_distance
-        or df["longitude"].max() - df["longitude"].min() > max_distance
-    ):
-        error_msg = "Distance between consumers exceeds maximum allowed distance."
-        raise ValidationError(error_msg)
+def check_nodes_within_country(df, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
 
-    country_bounds = get_country_bounds(proj_id)
-    out_of_bounds = df[
-        (df["latitude"] < country_bounds["latitude_min"])
-        | (df["latitude"] > country_bounds["latitude_max"])
-        | (df["longitude"] < country_bounds["longitude_min"])
-        | (df["longitude"] > country_bounds["longitude_max"])
-    ]
-    if not out_of_bounds.empty:
-        error_msg = (
-            "Some latitude/longitude values are outside the selected country bounds."
+    country_code = project.country
+    country_name = pycountry.countries.get(alpha_2=country_code).name
+
+    try:
+        world = gpd.read_file(
+            "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
         )
-        raise ValidationError(error_msg)
+    except (OSError, URLError) as e:
+        logger.warning("Failed to load country shapes: %s", e)
+        return False
+
+    country_shape = world[world["ADMIN"] == country_name]
+
+    if country_shape.empty:
+        return False
+
+    for _, row in df.iterrows():
+        point = Point(row["longitude"], row["latitude"])
+
+        if not country_shape.contains(point).any():
+            return False
+
+    return True
 
 
 def check_imported_consumer_data(df, proj_id):
@@ -229,8 +237,12 @@ def check_imported_consumer_data(df, proj_id):
         "is_connected": bool,
     }
     convert_column_types(df, column_types)
-    # Check geographic bounds
-    check_geographic_bounds(df, proj_id)
+    if not check_nodes_within_country(df, proj_id):
+        return None, (
+            "Some of the imported consumers are located outside the selected country. "
+            "Please verify the project country or check the coordinates in your CSV file."
+        )
+
     df = df[
         [
             "latitude",

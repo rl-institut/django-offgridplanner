@@ -210,22 +210,26 @@ async function file_nodes_to_js(formData) {
             method: 'POST',
             body: formData
         });
-        if (response.ok) {
-            // todo check what this was supposed to do ...
-            document.getElementById('responseMsg').innerHTML = '';
-            document.getElementById('msgBox').style.display = 'none';
-            const result = await response.json();
-            if (result !== null && 'map_elements' in result) {
-                map_elements = result.map_elements;
-                is_load_center = result.is_load_center;
-                load_legend();
-                if (map_elements !== null) {
-                    put_markers_on_map(map_elements, markers_only=true);
-                }
-            } else if (result !== null && 'responseMsg' in result) {
-                document.getElementById('responseMsg').innerHTML = result.responseMsg;
-                document.getElementById('msgBox').style.display = 'block';
+
+        let result = null;
+        try {
+            result = await response.json();
+        } catch (e) {
+            console.error('Could not parse JSON:', e);
+        }
+        document.getElementById('responseMsg').innerHTML = '';
+        document.getElementById('msgBox').style.display = 'none';
+
+        if (response.ok && result !== null && 'map_elements' in result) {
+            map_elements = result.map_elements;
+            is_load_center = result.is_load_center;
+            load_legend();
+            if (map_elements !== null) {
+                put_markers_on_map(map_elements, markers_only=true);
             }
+        } else if (result !== null && 'responseMsg' in result) {
+            document.getElementById('responseMsg').innerHTML = result.responseMsg;
+            document.getElementById('msgBox').style.display = 'block';
         } else {
             console.error('File upload failed with status:', response.status);
         }
@@ -278,7 +282,7 @@ async function file_demand_to_db(formData) {
 
 // customer_selection
 async function consumer_to_db(href, file_type = "db") {
-    update_map_elements();
+    check_map_elements();
     const response = await fetch(consumerToDBUrl , {
         method: "POST",
         headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},

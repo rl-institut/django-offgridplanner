@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.2.0] – 2026-04-08
 ### Added
 - In Consumer Selection, users can now use Shift+Click to select and edit multiple consumers at the same time ([#212](https://github.com/rl-institut/django-offgridplanner/pull/212))
 

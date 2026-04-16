@@ -314,11 +314,16 @@ class GridProcessor(OptimizationDataHandler):
         results.n_connection_links = len(
             self.links_df[self.links_df["link_type"] == "connection"]
         )
+
         results.average_length_distribution_cable = (
-            results.length_distribution_cable / results.n_distribution_links
+            0
+            if results.n_distribution_links == 0
+            else (results.length_distribution_cable / results.n_distribution_links)
         )
         results.average_length_connection_cable = (
-            results.length_connection_cable / results.n_connection_links
+            0
+            if results.n_connection_links == 0
+            else (results.length_connection_cable / results.n_connection_links)
         )
 
         n_households = len(

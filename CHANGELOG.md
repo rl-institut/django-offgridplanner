@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Fix results processing if all consumers are assigned to solar home systems ([#250](https://github.com/rl-institut/django-offgridplanner/pull/250))
 
 ## [v1.2.0] – 2026-04-08
 ### Added

@@ -29,4 +29,5 @@ urlpatterns = [
         download_excel_results,
         name="download_excel_results",
     ),
+    path("api_exchange_rate/", get_exchange_rate_view, name="exchange_rate"),
 ]

@@ -2,7 +2,6 @@ import datetime
 import json
 
 import pycountry
-from config.settings.base import DEFAULT_CURRENCY
 from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -17,6 +16,7 @@ CURRENCY_CHOICES = [
     ("USD", "US Dollar"),
     ("THB", "Thai Baht"),
 ]
+
 
 def default_start_date():
     current_year = datetime.datetime.now(tz=datetime.UTC).year
@@ -62,12 +62,9 @@ class Project(models.Model):
     currency = models.CharField(
         max_length=3,
         choices=CURRENCY_CHOICES,
-        default=DEFAULT_CURRENCY
     )
 
-    exchange_rate = models.FloatField(
-        default=1.0,
-    )
+    exchange_rate = models.FloatField()
 
     def __str__(self):
         return f"Project {self.id}: {self.name}"

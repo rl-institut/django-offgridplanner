@@ -1,3 +1,4 @@
+import copy
 import os
 
 import pandas as pd
@@ -14,7 +15,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
 from config.settings.base import DEFAULT_COUNTRY
-from config.settings.base import DEFAULT_CURRENCY
 from config.settings.base import PENDING
 from offgridplanner.optimization.helpers import get_country_bounds
 from offgridplanner.optimization.models import Results
@@ -356,13 +356,23 @@ def simulation_results(request, proj_id=None):
     df = pd.Series(model_to_dict(res))
 
     df = df.astype(float)
-    output_kpis = OUTPUT_KPIS.copy()
+    output_kpis = copy.deepcopy(OUTPUT_KPIS)
+
+    currency = project.currency
+    exchange_rate = project.exchange_rate
 
     for kpi in output_kpis:
-        output_kpis[kpi]["value"] = df[kpi].round(1)
-        output_kpis[kpi]["unit"] = output_kpis[kpi]["unit"].replace(
-            "currency", DEFAULT_CURRENCY
-        )
+        value = df[kpi].round(1)
+
+        unit = output_kpis[kpi]["unit"]
+
+        if "currency" in unit:
+            value = value * exchange_rate
+
+            unit = unit.replace("currency", currency)
+
+        output_kpis[kpi]["value"] = value
+        output_kpis[kpi]["unit"] = unit
 
     country_bounds = get_country_bounds(proj_id)
 

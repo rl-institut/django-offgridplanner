@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
@@ -8,7 +10,8 @@ from offgridplanner.projects.widgets import BatteryDesignWidget
 from offgridplanner.steps.models import CustomDemand
 from offgridplanner.steps.models import EnergySystemDesign
 from offgridplanner.steps.models import GridDesign
-from offgridplanner.projects.helpers import get_exchange_rate
+
+logger = logging.getLogger(__name__)
 
 
 def set_field_metadata(field, meta, currency):
@@ -26,8 +29,10 @@ def set_field_metadata(field, meta, currency):
         field.is_currency = False
     field.widget.attrs["unit"] = unit_template.replace("currency", currency)
 
+
 def is_currency_field(field):
     return getattr(field, "is_currency", False)
+
 
 class CustomModelForm(ModelForm):
     """Automatically assign labels, help_text and units to the fields"""
@@ -66,9 +71,13 @@ class CustomModelForm(ModelForm):
                 if self.initial.get(field_name) is not None:
                     original_value = self.initial[field_name]
                     try:
-                        self.initial[field_name] = float(original_value) * self.exchange_rate
+                        self.initial[field_name] = (
+                            float(original_value) * self.exchange_rate
+                        )
                     except (TypeError, ValueError):
-                        pass
+                        logger.warning(
+                            "Failed to apply exchange rate to %s value", field_name
+                        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -81,7 +90,9 @@ class CustomModelForm(ModelForm):
                     try:
                         cleaned_data[field_name] = float(value) / exchange_rate
                     except (TypeError, ValueError):
-                        pass
+                        logger.warning(
+                            "Failed to apply exchange rate to %s value", field_name
+                        )
 
         return cleaned_data
 

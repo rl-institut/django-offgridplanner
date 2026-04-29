@@ -560,10 +560,104 @@ document.getElementById('fileInput').addEventListener('change', async function(e
     if (file) {
         const formData = new FormData();
         formData.append('file', file);
+
+        // Parse and plot the CSV file before uploading
+        parseAndPlotCSV(file);
+
         await file_demand_to_db(formData);
         document.getElementById('fileInput').value = '';
     }
 });
+
+// show user a plot of uploaded file
+function parseAndPlotCSV(file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const csv = event.target.result;
+        const lines = csv.split('\n');
+        const comma_per_line = lines.map(line => (line.match(/,/g) || []).length);
+
+        let d3array;
+        if (comma_per_line.length > 0 && comma_per_line.every(c => c <= 1) || csv.includes(";")) {
+            // Single column or semicolon-delimited
+            delimiter = ";";
+
+        } else {
+            delimiter = ",";
+        }
+        // Parse the CSV manually
+        const data = [];
+        for (const line of lines) {
+            if (line.trim() === '') continue;
+            const row = line.split(delimiter).map(item => item.trim());
+            data.push(row);
+        }
+        processDataAndPlot(data);
+    };
+    reader.readAsText(file);
+}
+
+// Process the parsed data and render the plot
+function processDataAndPlot(array_2D) {
+    const ncols = array_2D[0].length;
+    let x = [], y = [];
+
+    // Single column: use index as x
+    if (ncols === 1) {
+        for (let i = 0; i < array_2D.length; i++) {
+            const line = array_2D[i];
+            x.push(i);
+            y.push(parseFloat(line[0].replace(",", ".")));
+        }
+    }
+    // Two columns: first is timestamp, second is value
+    else if (ncols === 2) {
+        for (let i = 0; i < array_2D.length; i++) {
+            const line = array_2D[i];
+            x.push(line[0]);
+            y.push(parseFloat(line[1].replace(",", ".")));
+        }
+    }
+    // More than 2 columns: show error
+    else {
+        alert("Die Datei hat mehr als 2 Spalten. Erwartet wird eine Spalte mit Werten oder zwei Spalten (Zeitstempel und Werte).");
+        return;
+    }
+
+    makePlotly(x, y, "demand_upload_plot");
+}
+
+// Plotly function
+function makePlotly(x, y, plot_id, userLayout = null) {
+    const plotDiv = document.getElementById(plot_id);
+    userLayout = {
+        height: 220,
+        margin:{
+            b:45,
+            l:60,
+            r:60,
+            t:15,
+        },
+        xaxis:{
+            type: "date"
+        }
+    };
+    const plotLayout = {
+        xaxis: { autorange: true },
+        yaxis: { autorange: true },
+        ...userLayout
+    };
+
+    // Guess if x is a date or number
+    if (x.length > 0 && !isNaN(x[0])) {
+        plotLayout.xaxis.type = "linear";
+    } else {
+        plotLayout.xaxis.type = "date";
+    }
+
+    const traces = [{ type: "scatter", x: x, y: y }];
+    Plotly.newPlot(plotDiv, traces, plotLayout, { responsive: true });
+}
 
 async function export_demand(file_type) {
     custom_shares = Object.fromEntries(

@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from config.settings.base import DATA_DIR
 from config.settings.base import DEFAULT_CURRENCY
-from config.settings.base import EXCHANGERATE_KEY
+from config.settings.base import EXCHANGE_RATE_API_KEY
 from offgridplanner.projects.models import Project
 
 
@@ -206,7 +206,7 @@ def get_exchange_rate(target_currency):
     if target_currency == DEFAULT_CURRENCY:
         return 1.0
 
-    url = f"https://v6.exchangerate-api.com/v6/{EXCHANGERATE_KEY}/latest/{DEFAULT_CURRENCY}"
+    url = f"https://v6.exchangerate-api.com/v6/{EXCHANGE_RATE_API_KEY}/latest/{DEFAULT_CURRENCY}"
     response = httpx.get(url, timeout=5)
     data = response.json()
 

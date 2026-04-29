@@ -570,7 +570,6 @@ document.getElementById('fileInput').addEventListener('change', async function(e
             const plotDiv = document.getElementById("demand_upload_plot");
             plotDiv.innerHTML = '';
         }
-
     }
 });
 
@@ -582,10 +581,9 @@ function parseAndPlotCSV(file) {
         const lines = csv.split('\n');
         const comma_per_line = lines.map(line => (line.match(/,/g) || []).length);
 
-        if (comma_per_line.length > 0 && comma_per_line.every(c => c <= 1) || csv.includes(";")) {
+        if ((comma_per_line.length > 0 && comma_per_line.every(c => c < 1)) || csv.includes(";")) {
             // Single column or semicolon-delimited
             delimiter = ";";
-
         } else {
             delimiter = ",";
         }

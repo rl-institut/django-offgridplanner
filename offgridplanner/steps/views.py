@@ -367,8 +367,10 @@ def simulation_results(request, proj_id=None):
         unit = output_kpis[kpi]["unit"]
 
         if "currency" in unit:
-            value = value * exchange_rate
-
+            if currency == "NGN":
+                value = int(round(value * exchange_rate, -3))
+            else:
+                value = int(round(value * exchange_rate))
             unit = unit.replace("currency", currency)
 
         output_kpis[kpi]["value"] = value

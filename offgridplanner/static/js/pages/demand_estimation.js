@@ -560,12 +560,17 @@ document.getElementById('fileInput').addEventListener('change', async function(e
     if (file) {
         const formData = new FormData();
         formData.append('file', file);
-
-        // Parse and plot the CSV file before uploading
-        parseAndPlotCSV(file);
-
         await file_demand_to_db(formData);
         document.getElementById('fileInput').value = '';
+
+        if (document.getElementById('uploadStatus').textContent == "Uploaded") {
+            parseAndPlotCSV(file);
+        } else {
+            // reset plot div in case that a new upload failed
+            const plotDiv = document.getElementById("demand_upload_plot");
+            plotDiv.innerHTML = '';
+        }
+
     }
 });
 
@@ -577,7 +582,6 @@ function parseAndPlotCSV(file) {
         const lines = csv.split('\n');
         const comma_per_line = lines.map(line => (line.match(/,/g) || []).length);
 
-        let d3array;
         if (comma_per_line.length > 0 && comma_per_line.every(c => c <= 1) || csv.includes(";")) {
             // Single column or semicolon-delimited
             delimiter = ";";

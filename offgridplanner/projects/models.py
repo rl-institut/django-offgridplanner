@@ -14,7 +14,7 @@ COUNTRIES = [(country.alpha_2, country.name) for country in pycountry.countries]
 CURRENCY_CHOICES = [
     ("EUR", "Euro"),
     ("USD", "US Dollar"),
-    ("THB", "Thai Baht"),
+    ("NGN", "Nigerian Naira"),
 ]
 
 

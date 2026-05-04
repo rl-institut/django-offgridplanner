@@ -419,6 +419,12 @@ DEFAULT_CURRENCY = "USD"
 # Default url to privacy statement
 PRIVACY_URL = "https://offgridplanner.org/privacy"
 
+# OVERPASS (OPENSTREETMAP API)
+OVERPASS_API_HOST = os.getenv(
+    "OVERPASS_API_HOST", "https://overpass-api.de/api/interpreter"
+)
+OVERPASS_REFERER = os.getenv("OVERPASS_REFERER", "http://localhost:8000")
+
 # SIMULATION
 # ------------------------------------------------------------------------------
 SIM_API_HOST = os.getenv("SIM_API_HOST")

@@ -19,12 +19,14 @@ from django.db.models import Q
 from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_http_methods
 from openpyxl.drawing.image import PILImage
 from reportlab.lib.pagesizes import A4
@@ -44,6 +46,7 @@ from offgridplanner.projects.exports import prepare_data_for_export
 from offgridplanner.projects.exports import project_data_df_to_xlsx
 from offgridplanner.projects.helpers import collect_project_dataframes
 from offgridplanner.projects.helpers import from_nested_dict
+from offgridplanner.projects.helpers import get_exchange_rate
 from offgridplanner.projects.models import Options
 from offgridplanner.projects.models import Project
 from offgridplanner.steps.decorators import user_owns_project
@@ -384,3 +387,18 @@ def download_excel_results(request, proj_id):
             "Content-Disposition": 'attachment; filename="offgridplanner_results.xlsx"'
         },
     )
+
+
+@require_GET
+def get_exchange_rate_view(request):
+    currency = request.GET.get("currency")
+
+    if not currency:
+        return JsonResponse({"error": "No currency provided"}, status=400)
+
+    try:
+        rate = get_exchange_rate(currency)
+    except ValueError:
+        rate = 1.0
+
+    return JsonResponse({"exchange_rate": rate})

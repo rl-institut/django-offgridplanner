@@ -43,3 +43,21 @@ document.getElementById('id_do_grid_optimization').addEventListener('change', fu
     }
 });
 */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const currencyField = document.querySelector("#id_currency");
+    const exchangeRateField = document.querySelector("#id_exchange_rate");
+
+    if (!currencyField) return;
+
+    currencyField.addEventListener("change", async function () {
+        const currency = this.value;
+
+        const response = await fetch(`/api_exchange_rate/?currency=${currency}`);
+        const data = await response.json();
+
+        if (exchangeRateField) {
+            exchangeRateField.value = data.exchange_rate;
+        }
+    });
+});

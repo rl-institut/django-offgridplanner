@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.3.0] – 2026-05-04
 ### Added
 - Allow the user to choose between different currencies ([#251](https://github.com/rl-institut/django-offgridplanner/pull/251))
 

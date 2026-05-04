@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Fix results processing if all consumers are assigned to solar home systems ([#250](https://github.com/rl-institut/django-offgridplanner/pull/250))
+- Fix Overpass API returning error on consumer selection ([#255](https://github.com/rl-institut/django-offgridplanner/pull/255))
 
 ## [v1.2.0] – 2026-04-08
 ### Added

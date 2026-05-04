@@ -15,7 +15,9 @@ import httpx
 import numpy as np
 from shapely import geometry
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+from config.settings.base import APP_VERSION_NUMBER
+from config.settings.base import OVERPASS_API_HOST
+from config.settings.base import OVERPASS_REFERER
 
 
 def get_consumer_within_boundaries(df):
@@ -34,8 +36,15 @@ def get_consumer_within_boundaries(df):
         f'way["building"="yes"];(._;>;);out;'
     )
 
+    headers = {
+        "User-Agent": f"offgridplanner/{APP_VERSION_NUMBER} (offgridplanner@rl-institut.de)",
+        "Referer": OVERPASS_REFERER,
+    }
+
     try:
-        resp = httpx.get(OVERPASS_URL, params={"data": query}, timeout=30)
+        resp = httpx.get(
+            OVERPASS_API_HOST, params={"data": query}, headers=headers, timeout=30
+        )
         resp.raise_for_status()
 
         if resp.content:
@@ -278,7 +287,7 @@ def get_roads_within_boundaries(df):
     )
 
     try:
-        resp = httpx.get(OVERPASS_URL, params={"data": query}, timeout=30)
+        resp = httpx.get(OVERPASS_API_HOST, params={"data": query}, timeout=30)
         resp.raise_for_status()
         data = resp.json()
     except (httpx.HTTPError, httpx.ReadTimeout) as exc:

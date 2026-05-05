@@ -556,6 +556,12 @@ document.getElementById('importButton').addEventListener('click', function() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log(uploadedData);
     if (uploadedData) {
+        document.getElementById('id_do_demand_estimation').class = '';
+
+        document.getElementById('responseMsg').innerHTML = '';
+        document.getElementById('msgBox').style.display = 'none';
+        document.getElementById('uploadStatus').textContent = 'Uploaded';
+
         const array_2D = Object.entries(uploadedData.demand).map(([timestamp, value]) => [timestamp, value.toString()]);
         console.log(array_2D);
         processDataAndPlot(array_2D)

@@ -553,6 +553,14 @@ document.getElementById("resetShares").addEventListener("click", resetInitialSha
 document.getElementById('importButton').addEventListener('click', function() {
     document.getElementById('fileInput').click();
 });
+document.addEventListener('DOMContentLoaded', () => {
+    console.log(uploadedData);
+    if (uploadedData) {
+        const array_2D = Object.entries(uploadedData.demand).map(([timestamp, value]) => [timestamp, value.toString()]);
+        console.log(array_2D);
+        processDataAndPlot(array_2D)
+    };
+});
 
 // Handle the file selection and upload the file to the server
 document.getElementById('fileInput').addEventListener('change', async function(event) {
@@ -622,7 +630,7 @@ function processDataAndPlot(array_2D) {
     }
     // More than 2 columns: show error
     else {
-        alert("Die Datei hat mehr als 2 Spalten. Erwartet wird eine Spalte mit Werten oder zwei Spalten (Zeitstempel und Werte).");
+        alert("The uploaded file has an invalid format. Please provide a CSV with 2 columns. The first column must be the index (e.g., timestamps) and the second the corresponding values.");
         return;
     }
 

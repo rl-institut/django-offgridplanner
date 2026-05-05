@@ -198,6 +198,8 @@ def demand_estimation(request, proj_id=None):
         else:
             form = CustomDemandForm(instance=custom_demand)
             opts = OptionForm(instance=options)
+            if custom_demand.uploaded_data:
+                uploaded_data = custom_demand.uploaded_data
 
         context = {
             "household_initial_shares": household_initial_shares,
@@ -210,6 +212,7 @@ def demand_estimation(request, proj_id=None):
             "proj_id": proj_id,
             "step_id": step_id,
             "step_list": STEP_LIST_RIBBON,
+            "uploaded_data": uploaded_data,
         }
 
         return render(request, "pages/demand_estimation.html", context)

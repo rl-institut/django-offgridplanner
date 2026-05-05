@@ -272,6 +272,7 @@
   const proj_id = '{{ proj_id }}';
   const csrfToken = '{{ csrf_token }}';
   const previousValues = {{ household_initial_shares | safe }};
+  const uploadedData = {{ uploaded_data | safe }};
   const exportDemandUrl = `{% url 'optimization:export_demand' proj_id %}`;
   const importDemandUrl = `{% url 'optimization:import_demand' proj_id %}`;
 </script>

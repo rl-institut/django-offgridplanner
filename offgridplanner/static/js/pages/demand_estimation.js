@@ -554,9 +554,7 @@ document.getElementById('importButton').addEventListener('click', function() {
     document.getElementById('fileInput').click();
 });
 document.addEventListener('DOMContentLoaded', () => {
-    if (uploadedData) {
-        document.getElementById('id_do_demand_estimation').class = '';
-
+    if (!uploadedData === {}) {
         document.getElementById('responseMsg').innerHTML = '';
         document.getElementById('msgBox').style.display = 'none';
         document.getElementById('uploadStatus').textContent = 'Uploaded';

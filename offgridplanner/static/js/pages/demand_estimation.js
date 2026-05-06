@@ -626,16 +626,11 @@ function processDataAndPlot(array_2D) {
     }
     // Two columns: first is timestamp, second is value
     else if (ncols === 2) {
-        let startTime = new Date(2025, 0, 1);
+        let startTime = new Date(2026, 0, 1);
         for (let i = 0; i < array_2D.length; i++) {
             const line = array_2D[i];
-            if (isTimestamp(line[0])) {
-                x.push(line[0]);
-            }
-            else {
-                let incrementingTimestamp = new Date(startTime.getTime() + i * 60 * 60 * 1000);
-                x.push(incrementingTimestamp.toISOString());
-            }
+            let incrementingTimestamp = new Date(startTime.getTime() + i * 60 * 60 * 1000);
+            x.push(incrementingTimestamp.toISOString());
             y.push(parseFloat(line[1].replace(",", ".")));
         }
     }
@@ -668,7 +663,8 @@ function makePlotly(x, y, plot_id, userLayout = null) {
             t:15,
         },
         xaxis:{
-            type: "date"
+            type: "date",
+            tickformat: "%B" //shows only the month
         }
     };
     const plotLayout = {

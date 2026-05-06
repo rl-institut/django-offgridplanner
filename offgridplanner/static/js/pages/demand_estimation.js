@@ -554,7 +554,6 @@ document.getElementById('importButton').addEventListener('click', function() {
     document.getElementById('fileInput').click();
 });
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(uploadedData);
     if (uploadedData) {
         document.getElementById('id_do_demand_estimation').class = '';
 
@@ -563,7 +562,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('uploadStatus').textContent = 'Uploaded';
 
         const array_2D = Object.entries(uploadedData.demand).map(([timestamp, value]) => [timestamp, value.toString()]);
-        console.log(array_2D);
         processDataAndPlot(array_2D)
     };
 });
@@ -628,9 +626,16 @@ function processDataAndPlot(array_2D) {
     }
     // Two columns: first is timestamp, second is value
     else if (ncols === 2) {
+        let startTime = new Date(2025, 0, 1);
         for (let i = 0; i < array_2D.length; i++) {
             const line = array_2D[i];
-            x.push(line[0]);
+            if (isTimestamp(line[0])) {
+                x.push(line[0]);
+            }
+            else {
+                let incrementingTimestamp = new Date(startTime.getTime() + i * 60 * 60 * 1000);
+                x.push(incrementingTimestamp.toISOString());
+            }
             y.push(parseFloat(line[1].replace(",", ".")));
         }
     }
@@ -642,6 +647,14 @@ function processDataAndPlot(array_2D) {
 
     makePlotly(x, y, "demand_upload_plot");
 }
+
+function isTimestamp(value) {
+    // String like for example "2020-01-01 10:00:00"
+    if (typeof value === 'string') {
+      return !isNaN(Date.parse(value));
+    }
+    return false;
+  }
 
 // Plotly function
 function makePlotly(x, y, plot_id, userLayout = null) {

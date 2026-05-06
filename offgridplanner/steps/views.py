@@ -186,6 +186,7 @@ def demand_estimation(request, proj_id=None):
                     and custom_demand.uploaded_data is None
                 ):
                     display_error = "You have selected the option to use a custom demand timeseries, but not provided any data. Please upload a timeseries or unselect the given slider."
+                    uploaded_data = {}
             else:
                 errors = form.non_field_errors()
                 display_error = errors[0] if len(errors) == 1 else errors
@@ -200,6 +201,8 @@ def demand_estimation(request, proj_id=None):
             opts = OptionForm(instance=options)
             if custom_demand.uploaded_data:
                 uploaded_data = custom_demand.uploaded_data
+            else:
+                uploaded_data = {}
 
         context = {
             "household_initial_shares": household_initial_shares,

@@ -23,6 +23,7 @@ oemof.solph==0.5
 geopandas
 pvlib
 feedinlib==0.1.0rc4
+timezonefinder
 pyarrow
 country-bounding-boxes
 pycountry

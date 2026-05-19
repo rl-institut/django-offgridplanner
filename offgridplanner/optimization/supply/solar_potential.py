@@ -9,15 +9,18 @@ combined with detailed solar panel and inverter specifications, enables it to ca
 """
 
 import logging
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import pvlib
+import pytz
 from feedinlib import era5
 from pvlib.location import Location
 from pvlib.modelchain import ModelChain
 from pvlib.pvsystem import PVSystem
 from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
+from timezonefinder import timezone_at
 
 from offgridplanner.optimization.requests import request_renewables_ninja_pv_output
 from offgridplanner.optimization.requests import request_weather_data
@@ -89,6 +92,9 @@ def build_xarray_for_pvlib(lat, lon, dt_index):
 
 
 def get_dc_feed_in_sync_db_query(lat, lon, dt_index):
+    tz_name = timezone_at(lat=lat, lng=lon)
+    tz = datetime.now(pytz.timezone(tz_name))
+    utc_offset = int(round(tz.utcoffset().total_seconds() / 3600))
     try:
         cds_data = build_xarray_for_pvlib(lat, lon, dt_index)
         weather_df = prepare_weather_data(cds_data)
@@ -100,7 +106,10 @@ def get_dc_feed_in_sync_db_query(lat, lon, dt_index):
             exc_info=True,
         )
         solar_potential = request_renewables_ninja_pv_output(lat, lon)["electricity"]
-        solar_potential.index = dt_index
+
+    # Shift values by UTC offset so solar noon aligns with local noon
+    solar_potential.index = dt_index
+    solar_potential = solar_potential.shift(utc_offset, fill_value=0.0)
     return solar_potential
 
 

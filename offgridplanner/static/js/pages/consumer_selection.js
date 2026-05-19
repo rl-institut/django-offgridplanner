@@ -710,29 +710,18 @@ document.querySelector('#headingTwo .accordion-button').addEventListener('click'
 });
 
 function delete_consumer() {
-    let lat = parseFloat(document.getElementById('latitude').value);
-    let lng = parseFloat(document.getElementById('longitude').value);
-    map_elements = map_elements.filter(function (obj) {
-        return obj.latitude !== lat && obj.longitude !== lng;
-    });
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-            let markerLatLng = layer.getLatLng();
-            if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
-                map.removeLayer(layer);
+    selectedMarkers.forEach(marker => {
+        let lng = marker.longitude;
+        let lat = marker.latitude;
+        map.eachLayer(function (layer) {
+            if (layer instanceof L.Marker) {
+                let markerLatLng = layer.getLatLng();
+                if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+                    map.removeLayer(layer);
+                }
             }
-        }
+        });
     });
-    document.getElementById('consumer').value = '';
-    document.getElementById('consumer').disabled = true;
-    document.getElementById('enterprise').value = '';
-    document.getElementById('enterprise').disabled = true;
-    document.getElementById('shs_options').value = '';
-    document.getElementById('shs_options').disabled = true;
-    document.getElementById('longitude').value = '';
-    document.getElementById('latitude').value = '';
-    document.getElementById('longitude').disabled = true;
-    document.getElementById('latitude').disabled = true;
     count_consumers();
 }
 

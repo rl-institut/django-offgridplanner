@@ -11,6 +11,10 @@ python manage.py compilejsi18n
 echo COLLECTSTATIC
 python /app/manage.py collectstatic --noinput
 
+echo MIGRATE
+python /app/manage.py showmigrations --settings config.settings.production
+python /app/manage.py migrate --settings config.settings.production
+
 compress_enabled() {
 python << END
 import sys

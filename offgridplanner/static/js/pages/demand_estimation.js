@@ -553,6 +553,16 @@ document.getElementById("resetShares").addEventListener("click", resetInitialSha
 document.getElementById('importButton').addEventListener('click', function() {
     document.getElementById('fileInput').click();
 });
+document.addEventListener('DOMContentLoaded', () => {
+     if (uploadedData && Object.keys(uploadedData).length !== 0) {
+        document.getElementById('responseMsg').innerHTML = '';
+        document.getElementById('msgBox').style.display = 'none';
+        document.getElementById('uploadStatus').textContent = 'Uploaded';
+
+        const array_2D = Object.entries(uploadedData.demand).map(([timestamp, value]) => [timestamp, value.toString()]);
+        processDataAndPlot(array_2D)
+    };
+});
 
 // Handle the file selection and upload the file to the server
 document.getElementById('fileInput').addEventListener('change', async function(event) {
@@ -562,8 +572,115 @@ document.getElementById('fileInput').addEventListener('change', async function(e
         formData.append('file', file);
         await file_demand_to_db(formData);
         document.getElementById('fileInput').value = '';
+
+        if (document.getElementById('uploadStatus').textContent == "Uploaded") {
+            parseAndPlotCSV(file);
+        } else {
+            // reset plot div in case that a new upload failed
+            const plotDiv = document.getElementById("demand_upload_plot");
+            plotDiv.innerHTML = '';
+        }
     }
 });
+
+// show user a plot of uploaded file
+function parseAndPlotCSV(file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const csv = event.target.result;
+        const lines = csv.split('\n');
+        const comma_per_line = lines.map(line => (line.match(/,/g) || []).length);
+
+        if ((comma_per_line.length > 0 && comma_per_line.every(c => c < 1)) || csv.includes(";")) {
+            // Single column or semicolon-delimited
+            delimiter = ";";
+        } else {
+            delimiter = ",";
+        }
+        // Parse the CSV manually
+        const data = [];
+        for (const line of lines) {
+            if (line.trim() === '') continue;
+            const row = line.split(delimiter).map(item => item.trim());
+            data.push(row);
+        }
+        processDataAndPlot(data);
+    };
+    reader.readAsText(file);
+}
+
+// Process the parsed data and render the plot
+function processDataAndPlot(array_2D) {
+    const ncols = array_2D[0].length;
+    let x = [], y = [];
+
+    // Single column: use index as x
+    if (ncols === 1) {
+        for (let i = 0; i < array_2D.length; i++) {
+            const line = array_2D[i];
+            x.push(i);
+            y.push(parseFloat(line[0].replace(",", ".")));
+        }
+    }
+    // Two columns: first is timestamp, second is value
+    else if (ncols === 2) {
+        let startTime = new Date(2026, 0, 1);
+        for (let i = 0; i < array_2D.length; i++) {
+            const line = array_2D[i];
+            let incrementingTimestamp = new Date(startTime.getTime() + i * 60 * 60 * 1000);
+            x.push(incrementingTimestamp.toISOString());
+            y.push(parseFloat(line[1].replace(",", ".")));
+        }
+    }
+    // More than 2 columns: show error
+    else {
+        alert("The uploaded file has an invalid format. Please provide a CSV with 2 columns. The first column must be the index (e.g., timestamps) and the second the corresponding values.");
+        return;
+    }
+
+    makePlotly(x, y, "demand_upload_plot");
+}
+
+function isTimestamp(value) {
+    // String like for example "2020-01-01 10:00:00"
+    if (typeof value === 'string') {
+      return !isNaN(Date.parse(value));
+    }
+    return false;
+  }
+
+// Plotly function
+function makePlotly(x, y, plot_id, userLayout = null) {
+    const plotDiv = document.getElementById(plot_id);
+    userLayout = {
+        height: 220,
+        margin:{
+            b:45,
+            l:60,
+            r:60,
+            t:15,
+        },
+        xaxis:{
+            type: "date",
+            tickformat: "%B" //shows only the month
+        }
+    };
+    const plotLayout = {
+        xaxis: { autorange: true },
+        yaxis: { autorange: true },
+        ...userLayout
+    };
+
+    // Guess if x is a date or number
+    if (x.length > 0 && !isNaN(x[0])) {
+        plotLayout.xaxis.type = "linear";
+    } else {
+        plotLayout.xaxis.type = "date";
+    }
+
+    const traces = [{ type: "scatter", x: x, y: y }];
+    Plotly.newPlot(plotDiv, traces, plotLayout, { responsive: true });
+}
 
 async function export_demand(file_type) {
     custom_shares = Object.fromEntries(

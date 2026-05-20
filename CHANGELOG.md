@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Display uploaded demand data if provided ([#252](https://github.com/rl-institut/django-offgridplanner/pull/252))
+
 ### Fixed
 - Fix broken example project for new users ([#259](https://github.com/rl-institut/django-offgridplanner/pull/259))
 

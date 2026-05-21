@@ -263,7 +263,6 @@ class PreProcessor(OptimizationDataHandler):
             "grid_design": self.grid_design_dict,
             "yearly_demand": self.demand.sum(),
         }
-
         # validate the JSON with the schema from the simulation server
         # self.validate_json_with_server_schema(grid_opt_json, "grid", "input")
         return grid_opt_json

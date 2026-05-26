@@ -249,8 +249,28 @@ L.Control.Trashbin = L.Control.extend({
 
         L.DomEvent.on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
-            .on(link, 'click', customTrashBinAction);
+            .on(link, 'click', () => {
+                const modal = document.getElementById('msgBox');
+                const message = document.getElementById('responseMsg');
+                const confirmBtn = document.getElementById('confirmDelete');
+                const cancelBtn = document.getElementById('cancelDelete');
+                const okBtn = modal.querySelector('.deletebtn:not(#confirmDelete)');
 
+                message.innerHTML = gettext('Are you sure? This action will delete all consumers. To delete only selected, please use the button on the consumer properties bar.');
+                confirmBtn.style.display = 'inline-block';
+                cancelBtn.style.display = 'inline-block';
+                okBtn.style.display = 'none';
+
+                confirmBtn.onclick = () => {
+                    modal.style.display = 'none';
+                    customTrashBinAction();
+                };
+                cancelBtn.onclick = () => {
+                    modal.style.display = 'none';
+                };
+
+                modal.style.display = 'block';
+            });
         return container;
     },
 });

@@ -2,6 +2,7 @@
 
 {% load crispy_forms_tags %}
 {% load static %}
+{% load statici18n %}
 {% load i18n %}
 
 {% block head_block %}
@@ -299,6 +300,14 @@
             <button onclick="document.getElementById('msgBox').style.display='none'"
                     type="button"
                     class="deletebtn">{% translate 'OK' %}</button>
+            <button id="confirmDelete"
+                    type="button"
+                    class="deletebtn"
+                    style="display: none;">{% translate 'Yes' %}</button>
+            <button id="cancelDelete"
+                    type="button"
+                    class="cancelbtn"
+                    style="display: none;">{% translate 'Cancel' %}</button>
           </div>
         </form>
       </div>
@@ -371,4 +380,5 @@
     <script src="{% static 'js/add_drawing_tools_to_map.js' %}"></script>
     <script src="{% static 'js/pages/consumer_selection.js' %}"></script>
     <script src="{% static 'js/backend_communication.js' %}"></script>
+    <script src="{% statici18n LANGUAGE_CODE %}"></script>
   {% endblock end_body_scripts %}

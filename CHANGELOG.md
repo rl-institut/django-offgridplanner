@@ -5,6 +5,9 @@
 - Display uploaded demand data if provided ([#252](https://github.com/rl-institut/django-offgridplanner/pull/252))
 
 ### Fixed
+- Fix error simulating example project without clicking through steps ([#262](https://github.com/rl-institut/django-offgridplanner/pull/262))
+
+### Fixed
 - Fix broken example project for new users ([#259](https://github.com/rl-institut/django-offgridplanner/pull/259))
 - Fix timezone offset for solar potential timeseries ([#261](https://github.com/rl-institut/django-offgridplanner/pull/251))
 

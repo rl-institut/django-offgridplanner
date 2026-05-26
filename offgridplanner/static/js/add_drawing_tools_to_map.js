@@ -256,7 +256,7 @@ L.Control.Trashbin = L.Control.extend({
                 const cancelBtn = document.getElementById('cancelDelete');
                 const okBtn = modal.querySelector('.deletebtn:not(#confirmDelete)');
 
-                message.innerHTML = 'Are you sure? This is going to delete all selected consumers.';
+                message.innerHTML = gettext('Are you sure? This action will delete all consumers. To delete only selected, please use the button on the consumer properties bar.');
                 confirmBtn.style.display = 'inline-block';
                 cancelBtn.style.display = 'inline-block';
                 okBtn.style.display = 'none';

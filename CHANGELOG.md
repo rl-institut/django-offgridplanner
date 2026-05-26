@@ -4,12 +4,14 @@
 ### Added
 - Display uploaded demand data if provided ([#252](https://github.com/rl-institut/django-offgridplanner/pull/252))
 
-### Fixed
-- Fix error simulating example project without clicking through steps ([#262](https://github.com/rl-institut/django-offgridplanner/pull/262))
+### Changed
+- Add warning before deleting all consumers with trash bin tool ([#260](https://github.com/rl-institut/django-offgridplanner/pull/260))
 
 ### Fixed
 - Fix broken example project for new users ([#259](https://github.com/rl-institut/django-offgridplanner/pull/259))
 - Fix timezone offset for solar potential timeseries ([#261](https://github.com/rl-institut/django-offgridplanner/pull/251))
+- Fix error simulating example project without clicking through steps ([#262](https://github.com/rl-institut/django-offgridplanner/pull/262))
+- Fix delete button for multiple consumer selection ([#260](https://github.com/rl-institut/django-offgridplanner/pull/260))
 
 ## [v1.3.0] – 2026-05-04
 ### Added

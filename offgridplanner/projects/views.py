@@ -120,6 +120,8 @@ def populate_project_from_export(export_dict, user):
 
         if proj.options is None:
             proj.options = Options.objects.create()
+
+        proj.simulation = Simulation.objects.create(project=proj)
         proj.save()
 
         # Save links and nodes data

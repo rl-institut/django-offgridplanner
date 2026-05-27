@@ -386,7 +386,14 @@ def consumer_to_db(request, proj_id=None):
 
         if file_type == "db":
             nodes, _ = Nodes.objects.get_or_create(project=project)
-            nodes.data = df.to_json(orient="records")  # Keep format structured
+            # Keep pole data if exists (to avoid deleting poles on results display)
+            non_consumer_nodes = nodes.df[nodes.df.node_type != "consumer"][
+                required_columns
+            ]
+            updated_nodes = pd.concat([df, non_consumer_nodes])
+            nodes.data = updated_nodes.to_json(
+                orient="records"
+            )  # Keep format structured
             nodes.save()
             return JsonResponse({"message": "Success"}, status=200)
 
@@ -404,6 +411,7 @@ def consumer_to_db(request, proj_id=None):
             )
 
         return response
+    return JsonResponse({"error": "Project ID missing"}, status=400)
 
 
 @require_http_methods(["POST"])

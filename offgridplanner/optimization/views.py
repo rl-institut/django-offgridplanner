@@ -39,6 +39,7 @@ from offgridplanner.optimization.supply.demand_estimation import LOAD_PROFILES
 from offgridplanner.optimization.supply.demand_estimation import get_demand_timeseries
 from offgridplanner.optimization.tasks import revoke_task
 from offgridplanner.projects.models import Project
+from offgridplanner.steps.decorators import user_owns_project
 from offgridplanner.steps.models import CustomDemand
 
 logger = logging.getLogger(__name__)
@@ -330,27 +331,24 @@ def db_roads_to_js(request, proj_id=None):
         return JsonResponse({"road_elements": []})
 
 
+@user_owns_project
 @require_http_methods(["POST"])
 def consumer_to_db(request, proj_id=None):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
-        if project.user != request.user:
-            raise PermissionDenied
 
         data = json.loads(request.body)
         map_elements = data.get("map_elements", [])
         file_type = data.get("file_type", "")
 
         if not map_elements:
-            Nodes.objects.filter(project=project).delete()
-            return JsonResponse({"message": "No data provided"}, status=200)
+            return JsonResponse({"message": "No data provided"}, status=400)
 
         # Create DataFrame and clean data
         df = pd.DataFrame.from_records(map_elements)
 
         if df.empty:
-            Nodes.objects.filter(project=project).delete()
-            return JsonResponse({"message": "No valid data"}, status=200)
+            return JsonResponse({"message": "No valid data"}, status=400)
 
         df = df.drop_duplicates(subset=["latitude", "longitude"])
         df = df[df["node_type"].isin(["power-house", "consumer"])]

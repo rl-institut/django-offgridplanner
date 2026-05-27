@@ -309,6 +309,8 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
             ):
                 is_load_center = False
 
+        # Make sure is_connected attribute is boolean (will be used to check in put_markers_on_map)
+        df.is_connected = df.is_connected.astype(bool)
         nodes_list = df.to_dict("records")
         return JsonResponse(
             {"is_load_center": is_load_center, "map_elements": nodes_list},

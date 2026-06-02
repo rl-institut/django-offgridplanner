@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Do not overwrite poles when saving updated consumer data ([#263](https://github.com/rl-institut/django-offgridplanner/pull/263))
 
 ## [v1.4.0] – 2026-05-26
 ### Added

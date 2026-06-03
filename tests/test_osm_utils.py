@@ -225,10 +225,9 @@ class TestObtainMeanCoordinatesFromGeojson:
         mean_lat = result[WAY_ID][0]
         assert 0.0 <= mean_lat <= BUILDING_SIZE_DEG
 
-    def test_empty_df_returns_empty_tuple(self):
-        # Documents current (buggy) behaviour: returns ({}, {}) not {}
+    def test_empty_df_returns_empty_dict(self):
         result = obtain_mean_coordinates_from_geojson(pd.DataFrame())
-        assert result == ({}, {})
+        assert result == {}
 
     def test_empty_df_return_type_matches_non_empty(self):
         result = obtain_mean_coordinates_from_geojson(pd.DataFrame())
@@ -236,6 +235,6 @@ class TestObtainMeanCoordinatesFromGeojson:
 
     def test_mean_coordinates_are_numpy_floats_or_float(self, overpass_elements_df):
         result = obtain_mean_coordinates_from_geojson(overpass_elements_df)
-        mean_lat, mean_lon = result[100]
+        mean_lat, mean_lon = result[WAY_ID]
         assert isinstance(mean_lat, (float, np.floating))
         assert isinstance(mean_lon, (float, np.floating))

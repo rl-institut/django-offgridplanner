@@ -1,3 +1,4 @@
+import io
 import json
 import logging
 
@@ -83,7 +84,9 @@ def request_renewables_ninja_pv_output(lat, lon):
     # Parse JSON to get a pandas.DataFrame of data and dict of metadata
     parsed_response = json.loads(response.text)
 
-    pv_data = pd.read_json(json.dumps(parsed_response["data"]), orient="index")
+    pv_data = pd.read_json(
+        io.StringIO(json.dumps(parsed_response["data"])), orient="index"
+    )
 
     return pv_data
 

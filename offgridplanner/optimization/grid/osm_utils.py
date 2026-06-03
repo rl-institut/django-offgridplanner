@@ -177,9 +177,7 @@ def obtain_mean_coordinates_from_geojson(df):
     Returns
     -------
         Dict containing the 'id' of each building as a key
-        and the mean loaction of the building as value in the form [long, lat].
-
-        Dict containing the 'id' of each building as a key
+        and the mean location of the building as value in the form [long, lat].
     """
     if not df.empty:
         df1 = df[df["type"] == "way"]
@@ -199,7 +197,7 @@ def obtain_mean_coordinates_from_geojson(df):
                 mean_coord = [np.mean(latitudes), np.mean(longitudes)]
                 building_mean_coordinates[row["id"]] = mean_coord
         return building_mean_coordinates
-    return {}, {}
+    return {}
 
 
 def is_point_in_boundaries(point_coordinates: tuple, boundaries: tuple):
@@ -267,7 +265,7 @@ def xy_coordinates_from_latitude_longitude(
     ref_latitude_rad = math.radians(ref_latitude)
     ref_longitude_rad = math.radians(ref_longitude)
 
-    x = r * (longitude_rad - ref_longitude_rad) * math.cos(ref_latitude)
+    x = r * (longitude_rad - ref_longitude_rad) * math.cos(ref_latitude_rad)
     y = r * (latitude_rad - ref_latitude_rad)
     return x, y
 

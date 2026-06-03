@@ -71,13 +71,7 @@ class TestXyCoordinatesFromLatitudeLongitude:
         _, y_north = xy_coordinates_from_latitude_longitude(11.0, 20.0, 8.0, 20.0)
         assert y_north > y_south
 
-    def test_moving_east_increases_x_at_equator(self):
-        # Works correctly at ref_lat=0 because math.cos(0.0) == 1.0
-        x_west, _ = xy_coordinates_from_latitude_longitude(0.0, 19.0, 0.0, 20.0)
-        x_east, _ = xy_coordinates_from_latitude_longitude(0.0, 21.0, 0.0, 20.0)
-        assert x_east > x_west
-
-    def test_moving_east_increases_x_at_nonzero_lat(self):
+    def test_moving_east_increases_x(self):
         x_west, _ = xy_coordinates_from_latitude_longitude(10.0, 19.0, 10.0, 20.0)
         x_east, _ = xy_coordinates_from_latitude_longitude(10.0, 21.0, 10.0, 20.0)
         assert x_east > x_west

@@ -318,9 +318,9 @@ async function consumer_to_db(href, file_type = "db") {
             window.URL.revokeObjectURL(downloadUrl);
         }
     } else {
-        console.error('Request failed with status:', response.status);
-        const errorDetails = await response.json();
-        console.error('Error details:', errorDetails);
+        resp = await response.json()
+        document.getElementById('responseMsg').innerHTML = resp.message;
+        document.getElementById('msgBox').style.display = 'block';
     }
 }
 

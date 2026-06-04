@@ -6,7 +6,6 @@ import pytest
 from django.urls import reverse
 
 from config.settings.base import EXAMPLE_PROJECT_PATH
-from offgridplanner.optimization.models import Nodes
 from offgridplanner.projects.models import Project
 from offgridplanner.projects.views import populate_project_from_export
 from offgridplanner.users.tests.factories import UserFactory
@@ -52,7 +51,7 @@ class TestDbNodesToJs:
 # ---------- consumer_to_db ----------
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 class TestConsumerToDb:
     @pytest.fixture
     def consumer_row(self):
@@ -76,11 +75,13 @@ class TestConsumerToDb:
         )
         assert response.status_code == HTTPStatus.OK
 
-    def test_empty_map_elements_deletes_nodes(self, auth_client, project):
+    def test_empty_map_elements_returns_400(self, auth_client, project):
         url = reverse("optimization:consumer_to_db", args=[project.id])
         payload = {"map_elements": [], "file_type": "db"}
-        auth_client.post(url, json.dumps(payload), content_type="application/json")
-        assert not Nodes.objects.filter(project=project).exists()
+        response = auth_client.post(
+            url, json.dumps(payload), content_type="application/json"
+        )
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 # ---------- remove_buildings_inside_boundary ----------

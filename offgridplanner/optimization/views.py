@@ -342,13 +342,15 @@ def consumer_to_db(request, proj_id=None):
         file_type = data.get("file_type", "")
 
         if not map_elements:
-            return JsonResponse({"message": "No data provided"}, status=400)
+            return JsonResponse({"message": "No consumer data provided"}, status=400)
 
         # Create DataFrame and clean data
         df = pd.DataFrame.from_records(map_elements)
 
         if df.empty:
-            return JsonResponse({"message": "No valid data"}, status=400)
+            return JsonResponse(
+                {"message": "No valid consumer data provided"}, status=400
+            )
 
         df = df.drop_duplicates(subset=["latitude", "longitude"])
         df = df[df["node_type"].isin(["power-house", "consumer"])]

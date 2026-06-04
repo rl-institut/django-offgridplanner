@@ -569,8 +569,9 @@
       const downloadPDFReportUrl = `{% url 'projects:download_pdf_report' proj_id %}`;
       const downloadExcelResultsUrl = `{% url 'projects:download_excel_results' proj_id %}`;
     </script>
-  <script src="{% static 'js/backend_communication.js' %}"></script>
   <script src="{% static 'js/integrate_map.js' %}"></script>
+  <script src="{% static 'js/map_api.js' %}"></script>
+  <script src="{% static 'js/backend_communication.js' %}"></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="{% static 'js/third_party/plotly.js' %}"></script>
   <script src="{% statici18n LANGUAGE_CODE %}"></script>

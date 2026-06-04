@@ -384,4 +384,12 @@ function load_legend() {
     legend.addTo(map);
 }
 
+function remove_marker_from_map() {
+    map.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+            map.removeLayer(layer);
+        }
+    });
+}
+
 // Function to load external script dynamically

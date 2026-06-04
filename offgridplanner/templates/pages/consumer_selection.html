@@ -367,6 +367,7 @@
       const addRoadsUrl = `{% url 'optimization:add_roads_inside_boundary' proj_id %}`;
       const removeRoadsUrl = `{% url 'optimization:remove_roads_inside_boundary' proj_id %}`;
       window.onload = function () {
+        addDrawingToolsToConsumerMap();
         //redirect_if_cookie_is_missing(true, true); //for anonymous user --> do it pythonside
         db_nodes_to_js({{proj_id}}, true);
         db_roads_to_js({{ proj_id }});
@@ -379,6 +380,7 @@
     <script src="{% static 'js/integrate_map.js' %}"></script>
     <script src="{% static 'js/add_drawing_tools_to_map.js' %}"></script>
     <script src="{% static 'js/pages/consumer_selection.js' %}"></script>
+    <script src="{% static 'js/map_api.js' %}"></script>
     <script src="{% static 'js/backend_communication.js' %}"></script>
     <script src="{% statici18n LANGUAGE_CODE %}"></script>
   {% endblock end_body_scripts %}

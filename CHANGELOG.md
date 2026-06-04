@@ -3,6 +3,11 @@
 ## [Unreleased]
 ### Fixed
 - Do not overwrite poles when saving updated consumer data ([#263](https://github.com/rl-institut/django-offgridplanner/pull/263))
+- Display error message when clicking next without consumers ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))
+- Fix coordinates to xy function using degrees instead of radians ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))
+
+### Dev
+- Add test suite covering optimization, helpers, models, and views ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))
 
 ## [v1.4.0] – 2026-05-26
 ### Added

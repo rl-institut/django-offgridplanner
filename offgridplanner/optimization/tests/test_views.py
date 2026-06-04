@@ -52,7 +52,7 @@ class TestDbNodesToJs:
 # ---------- consumer_to_db ----------
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 class TestConsumerToDb:
     @pytest.fixture
     def consumer_row(self):

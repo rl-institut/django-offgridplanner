@@ -309,9 +309,9 @@ def db_nodes_to_js(request, proj_id=None, *, markers_only=False):
                 and power_house["how_added"].iloc[0] == "manual"
             ):
                 is_load_center = False
+            # Make sure is_connected attribute is boolean (will be used to check in put_markers_on_map)
+            df.is_connected = df.is_connected.astype(bool)
 
-        # Make sure is_connected attribute is boolean (will be used to check in put_markers_on_map)
-        df.is_connected = df.is_connected.astype(bool)
         nodes_list = df.to_dict("records")
         return JsonResponse(
             {"is_load_center": is_load_center, "map_elements": nodes_list},
@@ -388,11 +388,14 @@ def consumer_to_db(request, proj_id=None):
 
         if file_type == "db":
             nodes, _ = Nodes.objects.get_or_create(project=project)
-            # Keep pole data if exists (to avoid deleting poles on results display)
-            non_consumer_nodes = nodes.df[nodes.df.node_type != "consumer"][
-                required_columns
-            ]
-            updated_nodes = pd.concat([df, non_consumer_nodes])
+            if nodes.df is None or nodes.df.empty:
+                updated_nodes = df
+            else:
+                # Keep pole data if exists (to avoid deleting poles on results display)
+                non_consumer_nodes = nodes.df[nodes.df.node_type != "consumer"][
+                    required_columns
+                ]
+                updated_nodes = pd.concat([df, non_consumer_nodes])
             nodes.data = updated_nodes.to_json(
                 orient="records"
             )  # Keep format structured

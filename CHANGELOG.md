@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.4.1] – 2026-06-10
 ### Fixed
 - Do not overwrite poles when saving updated consumer data ([#263](https://github.com/rl-institut/django-offgridplanner/pull/263)) ([#268](https://github.com/rl-institut/django-offgridplanner/pull/268))
 - Display error message when clicking next without consumers ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))

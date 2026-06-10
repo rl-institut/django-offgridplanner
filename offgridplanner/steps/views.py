@@ -119,16 +119,22 @@ def consumer_selection(request, proj_id=None):
         project = get_object_or_404(Project, id=proj_id)
 
         public_service_list = {
-            f"group{ix}": service
+            service: _(service)
             for ix, service in enumerate(sorted(PUBLIC_SERVICE_LIST), 1)
         }
         enterprise_list = {
-            f"group{ix}": enterprise
+            enterprise: _(enterprise)
             for ix, enterprise in enumerate(sorted(ENTERPRISE_LIST), 1)
         }
         large_load_list = {
-            f"group{ix}": f"{machine} ({LARGE_LOAD_KW_MAPPING[machine]}kW)"
+            machine: f"{_(machine)} ({LARGE_LOAD_KW_MAPPING[machine]}kW)"
             for ix, machine in enumerate(sorted(LARGE_LOAD_LIST), 1)
+        }
+
+        consumer_list = {
+            "H": _("Household"),
+            "E": _("Enterprise"),
+            "P": _("Public Service"),
         }
 
         country_bounds = get_country_bounds(proj_id)
@@ -143,6 +149,7 @@ def consumer_selection(request, proj_id=None):
             messages.add_message(request, messages.WARNING, timeseries_warning)
 
         context = {
+            "consumer_list": consumer_list,
             "public_service_list": public_service_list,
             "enterprise_list": enterprise_list,
             "large_load_list": large_load_list,
@@ -228,7 +235,7 @@ def grid_design(request, proj_id=None):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
 
-        grid_design, _ = GridDesign.objects.get_or_create(
+        grid_design, created = GridDesign.objects.get_or_create(
             project=project, defaults=get_param_from_metadata("default", "GridDesign")
         )
         if request.method == "GET":
@@ -238,7 +245,7 @@ def grid_design(request, proj_id=None):
 
             for component in list(grouped_fields):
                 clean_name = (
-                    component.title().replace("_", " ")
+                    _(component.title().replace("_", " "))
                     if component != "mg"
                     else "Connection Costs"
                 )
@@ -271,7 +278,7 @@ def energy_system_design(request, proj_id=None):
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
 
-    esd, _ = EnergySystemDesign.objects.get_or_create(
+    esd, created = EnergySystemDesign.objects.get_or_create(
         project=project,
         defaults=get_param_from_metadata("default", "EnergySystemDesign"),
     )

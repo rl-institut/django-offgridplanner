@@ -5,6 +5,7 @@
 {% load widget_tweaks %}
 {% load static %}
 {% load i18n %}
+{% load statici18n %}
 
 {% block head_block %}
 <link href="{% static 'css/pages/demand_estimation.css' %}" rel="stylesheet">
@@ -276,6 +277,7 @@
   const exportDemandUrl = `{% url 'optimization:export_demand' proj_id %}`;
   const importDemandUrl = `{% url 'optimization:import_demand' proj_id %}`;
 </script>
+<script src="{% statici18n LANGUAGE_CODE %}"></script>
 <script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
 <script src="{% static 'js/pages/demand_estimation.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>

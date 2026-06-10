@@ -45,65 +45,6 @@ var rectangleDrawer = new L.Draw.Rectangle(map, {
 
 let isPowerHouseMarker = false
 
-map.on('draw:created', function (e) {
-    var layerType = e.layerType;
-    if (layerType === 'marker' || layerType === 'rectangle' || layerType === 'polygon') {
-        update_map_elements();
-    }
-});
-
-
-// Add a listener that responds to the 'draw:created' event
-map.on(L.Draw.Event.CREATED, function (event) {
-        const layer = event.layer;
-
-        if (event.layerType === 'marker') {
-            const latLng = layer.getLatLng();
-            const lat = latLng.lat;
-            const lng = latLng.lng;
-
-
-            if (isPowerHouseMarker) {
-                let existingPowerHouseIndex = map_elements.findIndex(element => element.node_type == 'power-house');
-
-                // If an element is found, remove it
-                if (existingPowerHouseIndex !== -1) {
-                    map_elements.splice(existingPowerHouseIndex, 1);
-                    remove_marker_from_map();
-                    put_markers_on_map(map_elements, true);
-                }
-                add_single_consumer_to_array(lat, lng, 'manual', 'power-house');
-                drawMarker(lat, lng, 'power-house');
-                isPowerHouseMarker = false;  // Reset the flag
-            } else {
-                add_single_consumer_to_array(lat, lng, 'manual', 'consumer');
-                drawMarker(lat, lng, 'consumer');
-                setTimeout(() => drawControl._toolbars.draw._modes.marker.handler.enable(), 100);
-            }
-
-            // Add a delay before re-enabling to bypass the default disable action
-
-        } else {
-            drawnItems.addLayer(layer);
-
-            // Save the polygon coordinates in a variable
-            polygonCoordinates.push(layer.getLatLngs());
-
-            polygonDrawer.disable();
-            if (!is_active) {
-                add_buildings_inside_boundary({boundariesCoordinates: polygonCoordinates});
-//                add_roads_inside_boundary({boundariesCoordinates: polygonCoordinates});
-            } else {
-                remove_buildings_inside_boundary({boundariesCoordinates: polygonCoordinates});
-//                remove_roads_inside_boundary({boundariesCoordinates: polygonCoordinates});
-            }
-            removeBoundaries();
-        }
-        ;
-        count_consumers();
-    }
-)
-
 var myCustomMarker = L.Icon.extend({
     options: {
         shadowUrl: null,
@@ -185,56 +126,6 @@ const CustomMarkerControl = L.Control.extend({
 
 
 
-function add_single_consumer_to_array(latitude, longitude, how_added, node_type) {
-    let consumer_type = 'household';
-    if (node_type === 'power-house') {
-        consumer_type = '';
-    }
-
-    // You may want to set consumer_type based on some logic or accept it as a parameter
-    // For this example, we'll assume consumer_type can be 'household', 'enterprise', or 'public_service'
-    // If you have a way to determine consumer_type, update the logic here accordingly
-
-    // Add the new consumer to the map_elements array
-    map_elements.push({
-        latitude: latitude,
-        longitude: longitude,
-        how_added: how_added,
-        node_type: node_type,
-        consumer_type: consumer_type,
-        consumer_detail: 'default',
-        custom_specification: '',
-        shs_options: 0,
-        is_connected: true
-    });
-
-    // Update the counts for each consumer type
-    if (consumer_type === 'household') {
-        let nHouseholdsElem = document.getElementById("n_households");
-        let currentHouseholds = parseInt(nHouseholdsElem.innerText, 10) || 0;
-        nHouseholdsElem.innerText = currentHouseholds + 1;
-    } else if (consumer_type === 'enterprise') {
-        let nEnterprisesElem = document.getElementById("n_enterprises");
-        let currentEnterprises = parseInt(nEnterprisesElem.innerText, 10) || 0;
-        nEnterprisesElem.innerText = currentEnterprises + 1;
-    } else if (consumer_type === 'public_service') {
-        let nPublicServicesElem = document.getElementById("n_public_services");
-        let currentPublicServices = parseInt(nPublicServicesElem.innerText, 10) || 0;
-        nPublicServicesElem.innerText = currentPublicServices + 1;
-    }
-}
-
-
-
-function remove_marker_from_map() {
-    map.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
-            map.removeLayer(layer);
-        }
-    });
-    //document.getElementById("n_consumers").innerText = 0;
-}
-
 L.Control.Trashbin = L.Control.extend({
     options: {
         position: 'topleft',
@@ -298,6 +189,7 @@ const searchInput = document.getElementById('search-input');
 
 searchInput.addEventListener('keypress', async (event) => {
     if (event.key === 'Enter') {
+        event.preventDefault();
         let query = searchInput.value;
         if (!query) return;
 
@@ -309,7 +201,9 @@ searchInput.addEventListener('keypress', async (event) => {
                 map.setView([lat, lng], 13);
             } else {
                 const responseMsg = document.getElementById("responseMsg");
-                responseMsg.innerHTML = 'Location not inside country bounds';
+                if (responseMsg) {
+                    responseMsg.innerHTML = 'Location not inside country bounds';
+                }
             }
         } else {
             alert('No results found');
@@ -358,68 +252,10 @@ var customControl = L.Control.extend({
 
 
 
-function unique_map_elements() {
-    const uniqueLocations = new Set();
-    const uniqueMapElements = [];
-    for (let element of map_elements) {
-        const locationKey = `${element.latitude},${element.longitude}`;
-        if (!uniqueLocations.has(locationKey)) {
-            uniqueLocations.add(locationKey);
-            uniqueMapElements.push(element);
-        }
-    }
-    map_elements = uniqueMapElements;
-}
-
-function count_consumers(first_update = true) {
-    if (first_update) {
-        update_map_elements();
-        unique_map_elements();
-    }
-    const n = map_elements.length;
-
-    // Initialize the counters
-    let num_consumers = 0;
-    let num_households = 0;
-    let num_enterprises = 0;
-    let num_public_services = 0;
-
-    for (let counter = 0; counter < n; counter++) {
-        if (map_elements[counter]["node_type"] === "consumer") {
-            num_consumers++;  // Increase the consumer counter
-
-            // Count the specific types of consumers
-            let consumer_type = map_elements[counter]["consumer_type"];
-            if (consumer_type === "household") {
-                num_households++;
-            } else if (consumer_type === "enterprise") {
-                num_enterprises++;
-            } else if (consumer_type === "public_service") {
-                num_public_services++;
-            }
-        }
-    }
-
-    // Update the HTML elements with the counts
-    if (document.getElementById("n_consumers")) {
-        document.getElementById("n_consumers").innerText = num_consumers;
-    }
-    if (document.getElementById("n_households")) {
-        document.getElementById("n_households").innerText = num_households;
-    }
-    if (document.getElementById("n_enterprises")) {
-        document.getElementById("n_enterprises").innerText = num_enterprises;
-    }
-    if (document.getElementById("n_public_services")) {
-        document.getElementById("n_public_services").innerText = num_public_services;
-    }
-}
-
-function addDrawingToolsToMap() {
+function addDrawingToolsToConsumerMap() {
     map.addControl(new CustomMarkerControl());
     map.addControl(trashbinControl);
     map.addControl(searchControl);
     map.addControl(new customControl());
     map.addControl(drawControl);
 }
-addDrawingToolsToMap();

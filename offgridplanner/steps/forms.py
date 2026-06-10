@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 
 def set_field_metadata(field, meta, currency):
     label = (
-        _(field.label.title()) if meta.get("verbose") == "" else meta.get("verbose")
+        _(field.label.title()) if meta.get("verbose") == "" else _(meta.get("verbose"))
     )  # Set verbose name
     question_icon = f'<span class="icon icon-question" data-bs-toggle="tooltip" title="{_(meta.get("help_text"))}"></span>'
     field.label = label + question_icon if meta.get("help_text") != "" else label
     field.help_text = _(meta.get("help_text", ""))  # Set help text
     # TODO change hard coded unit to customizable in the future
-    unit_template = meta.get("unit", "")
+    unit_template = _(meta.get("unit", ""))
     if "currency" in unit_template:
         field.is_currency = True
     else:
@@ -134,7 +134,7 @@ class CustomDemandForm(CustomModelForm):
         }
         total = round(sum(percentage_values.values(), 0))
         if total != 100:  # noqa: PLR2004
-            error_message = "The sum of all shares must equal 100%."
+            error_message = _("The sum of all shares must equal 100%.")
             raise ValidationError(error_message)
 
         for field, value in self.cleaned_data.items():

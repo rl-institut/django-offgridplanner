@@ -16,11 +16,6 @@
  */
 
 
-let consumer_list = {
-    'H': 'Household',
-    'E': 'Enterprise',
-    'P': 'Public Service',
-};
 let consumer_type = "H";
 
 // set up consumer dropdown
@@ -65,11 +60,11 @@ function buildConsumerDetailDropdown(dropdown_list, selectedValue = undefined) {
     enterpriseDropdown.disabled = false;
 }
 
-let consumer_detail_key_default = "group1";
+let large_load_type = Object.keys(large_load_list)[0];
 
 let option_load = '';
 for (let load_code in large_load_list) {
-    let selected = (load_code == consumer_detail_key_default) ? ' selected' : '';
+    let selected = (load_code == large_load_type) ? ' selected' : '';
     option_load += '<option value="' + load_code + '"' + selected + '>' + large_load_list[load_code] + '</option>';
 }
 document.getElementById('loads').innerHTML = option_load;

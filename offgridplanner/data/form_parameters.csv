@@ -21,7 +21,7 @@ connection_cable_lifetime,Lifetime,int,25,Years,GridDesign,"Lifespan of the comp
 connection_cable_capex,CapEx,float,4,currency/m,GridDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
 connection_cable_max_length,Max. Length,float,20,m,GridDesign,Maximum allowed length of the connection cable
 pole_lifetime,Lifetime,int,25,Years,GridDesign,"Lifespan of the component, after expiration a replacement investment must be made"
-pole_capex,CapEx,float,800,currency/m,GridDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
+pole_capex,CapEx,float,800,currency/pole,GridDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
 pole_max_n_connections,Max. Number of Connections,int,5,n,GridDesign,Maximum number of consumers that can be connected to one pole
 mg_connection_cost,Connection Cost,float,140,currency/con,GridDesign,Costs that arise when connecting a consumer in addition to the material costs of the cable.
 include_shs,Solar Home Systems,bool,True,,GridDesign,"For each consumer, specific costs of grid connection are calculated and related to the consumer's consumption. If the threshold value is exceeded, a grid connection is forgone and instead a solar home system is recommended"
@@ -31,7 +31,7 @@ battery_settings_design,Optimize Capacity,bool,True,,EnergySystemDesign,
 battery_parameters_nominal_capacity,Capacity,float,,kWh,EnergySystemDesign,
 battery_parameters_lifetime,Lifetime,int,7,Years,EnergySystemDesign,"Lifespan of the component, after expiration a replacement investment must be made"
 battery_parameters_capex,CapEx,float,314,currency/kWh,EnergySystemDesign,Capital Expenditure (CapEx) is the money that has to be spent to purchase the component
-battery_parameters_opex,OpEx,float,24,currency/kW/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
+battery_parameters_opex,OpEx,float,24,currency/kWh/year,EnergySystemDesign,Operating Expense (OpEx) is the cost associated with the operation of the component
 battery_parameters_soc_min,Min. SOC,float,0,%,EnergySystemDesign,Minimum State of Charge (SOC) of a battery refers to the lowest level at which the battery is allowed to discharge in order to prevent damage and prolong its lifespan
 battery_parameters_soc_max,Max. SOC,float,100,%,EnergySystemDesign,Maximum State of Charge (SOC) of a battery refers to the highest level at which the battery can be safely charged to prevent overcharging and ensure longevity
 battery_parameters_c_rate_in,C-Rate in,float,1,-,EnergySystemDesign,

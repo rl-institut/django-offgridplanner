@@ -39,7 +39,7 @@
         <li class="nav-item dropdown locale" id="language-switcher">
           <form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
-            <input name="next" type="hidden" value="{{ redirect_to }}" />
+            <input name="next" type="hidden" value="{{ request.get_full_path|custom_redir_lang }}" />
             <select class="selectpicker" name="language" onchange="this.form.submit()">
               {% get_current_language as LANGUAGE_CODE %}
               {% get_available_languages as LANGUAGES %}

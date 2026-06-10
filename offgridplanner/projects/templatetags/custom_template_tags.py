@@ -24,11 +24,6 @@ def getkey(mapping, key):
 
 
 @register.filter
-def get_item(dictionary, key):
-    return dictionary.get(key)
-
-
-@register.filter
 def get_field(form, key):
     return form.fields[key].get_bound_field(form, key)
 
@@ -36,3 +31,11 @@ def get_field(form, key):
 @register.filter
 def has_field(form, key):
     return key in form.fields
+
+
+@register.filter
+def custom_redir_lang(url_fullpath):
+    # see https://stackoverflow.com/questions/67234400/django-i18n-language-switcher-not-working-on-deploy-at-subdirectory
+    ls_urls = url_fullpath.split("/")
+    del ls_urls[1]
+    return "/".join(ls_urls) or "/"

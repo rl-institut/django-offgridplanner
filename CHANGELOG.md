@@ -2,10 +2,12 @@
 
 ## [Unreleased]
 ### Fixed
-- Do not overwrite poles when saving updated consumer data ([#263](https://github.com/rl-institut/django-offgridplanner/pull/263))
+- Do not overwrite poles when saving updated consumer data ([#263](https://github.com/rl-institut/django-offgridplanner/pull/263)) ([#268](https://github.com/rl-institut/django-offgridplanner/pull/268))
 - Display error message when clicking next without consumers ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))
 - Fix coordinates to xy function using degrees instead of radians ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))
 - Fix grid layout image on PDF export ([#267](https://github.com/rl-institut/django-offgridplanner/pull/267))
+- Fix language picker not behaving properly ([#269](https://github.com/rl-institut/django-offgridplanner/pull/269))
+- Fix non-translated strings ([#269](https://github.com/rl-institut/django-offgridplanner/pull/269))
 
 ### Dev
 - Add test suite covering optimization, helpers, models, and views ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))

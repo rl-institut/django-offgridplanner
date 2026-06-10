@@ -67,9 +67,10 @@ def prepare_data_for_export(  # noqa:PLR0913,PLR0915
     input_df.index.str.replace("_settings_", "_settings: ")
     input_df.loc["n_days", "Unit"] = "days"
     input_df.loc["interest_rate", "Unit"] = "%"
-    input_df.loc[
-        ["distribution_cable_capex", "pole_capex", "connection_cable_capex"], "Unit"
-    ] = "USD/m"
+    input_df.loc[["distribution_cable_capex", "connection_cable_capex"], "Unit"] = (
+        "USD/m"
+    )
+    input_df.loc["pole_capex"] = "USD/pole"
     input_df.loc[input_df.index.str.contains("lifetime"), "Unit"] = "years"
     input_df.loc[input_df.index.str.contains("length"), "Unit"] = "m"
     input_df.loc[input_df.index.str.contains("_capex"), "Unit"] = "USD/kWh"

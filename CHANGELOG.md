@@ -8,6 +8,8 @@
 - Fix grid layout image on PDF export ([#267](https://github.com/rl-institut/django-offgridplanner/pull/267))
 - Fix language picker not behaving properly ([#269](https://github.com/rl-institut/django-offgridplanner/pull/269))
 - Fix non-translated strings ([#269](https://github.com/rl-institut/django-offgridplanner/pull/269))
+- Fix blocked OSM tiles on PDF export image ([#270](https://github.com/rl-institut/django-offgridplanner/pull/270))
+- Fix incorrect units ([#270](https://github.com/rl-institut/django-offgridplanner/pull/270))
 
 ### Dev
 - Add test suite covering optimization, helpers, models, and views ([#266](https://github.com/rl-institut/django-offgridplanner/pull/266))

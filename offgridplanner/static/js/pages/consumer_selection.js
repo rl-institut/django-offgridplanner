@@ -284,14 +284,12 @@ function update_map_elements() {
                 break;
             case 'P':
                 marker.consumer_type = 'public_service';
-                let key2 = document.getElementById('enterprise').value || consumer_detail_key_default;
-                marker.consumer_detail = public_service_list[key2];
+                marker.consumer_detail = document.getElementById('enterprise').value;
                 selected_icon = markerPublicservice;
                 break;
             case 'E':
                 marker.consumer_type = 'enterprise';
-                let key = document.getElementById('enterprise').value || consumer_detail_key_default;
-                marker.consumer_detail = enterprise_list[key];
+                marker.consumer_detail = document.getElementById('enterprise').value;
                 selected_icon = markerEnterprise;
                 break;
             case '':
@@ -387,7 +385,7 @@ function check_map_elements() {
                 const key = getKeyByValue(enterprise_list, marker.consumer_detail);
 
                 if (!key || marker.consumer_detail === 'null' || !marker.consumer_detail) {
-                    marker.consumer_detail = enterprise_list[consumer_detail_key_default];
+                    marker.consumer_detail = Object.keys(enterprise_list)[0];
 
                     const indexInMapElements = map_elements.findIndex(
                         m => m.latitude === marker.latitude && m.longitude === marker.longitude

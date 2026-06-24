@@ -45,6 +45,40 @@ $('.js-captcha-refresh').click(function(){
 
 
 async function plot_results() {
+
+(function initAutoSave() {
+    const form = document.querySelector('form[data-autosave-url]');
+    if (!form) return;
+    let saveTimer = null;
+    const SAVE_DELAY = 2000;
+
+    ['input', 'change'].forEach(event => {
+        form.addEventListener(event, () => {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                const formData = new FormData(form);
+                const dataObj = {};
+                formData.forEach((value, key) => { dataObj[key] = value; });
+                fetch(form.dataset.autosaveUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+                    body: JSON.stringify(dataObj),
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Save failed');
+                    return res.json();
+                })
+                .then(data => console.log('Autosaved', data))
+                .catch(err => console.error('Autosave error:', err));
+            }, SAVE_DELAY);
+        });
+    });
+
+    window.addEventListener('beforeunload', () => clearTimeout(saveTimer));
+})();
+
+
+async function plot_results(sequential = false) {
     const urlParams = new URLSearchParams(window.location.search);
     const project_id = urlParams.get('project_id');
 

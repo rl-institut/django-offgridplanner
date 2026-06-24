@@ -20,8 +20,7 @@
       <div class="chart__header">
         <a class="title"></a>
       </div>
-      <form action="{% if proj_id %}{% url 'steps:project_setup' proj_id %}{% else %}{% url 'steps:project_setup' %}{% endif %}" method="POST">
-
+      <form data-autosave-url="{% url 'steps:project_setup_autosave' proj_id %}" action="{% if proj_id %}{% url 'steps:project_setup' proj_id %}{% else %}{% url 'steps:project_setup' %}{% endif %}" method="POST">
         {% csrf_token %}
         <div class="row" style="height: auto">
           <div class="col-md-6" style="height: auto">
@@ -77,6 +76,9 @@
 </main>
 {% endblock progression_content %}
 {% block end_body_scripts %}
+<script>
+  const csrfToken = `{{ csrf_token }}`;
+</script>
 <!-- TODO mostly not needed as JS -->
 <script src="{% static 'js/pages/project_setup.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>

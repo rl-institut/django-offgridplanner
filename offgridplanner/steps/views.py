@@ -6,7 +6,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
+from django.db import transaction
+from django.http import Http404
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -415,6 +418,29 @@ def steps(request, proj_id, step_id=None):
     return HttpResponseRedirect(
         reverse(f"steps:{list(STEPS.keys())[step_id - 1]}", args=[proj_id])
     )
+
+
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
+def project_setup_autosave(request, proj_id):
+    with transaction.atomic():
+        project = get_object_or_404(Project, id=proj_id)
+        if project is None:
+            form = ProjectForm(request.POST)
+            opts_form = OptionForm(request.POST)
+        else:
+            form = ProjectForm(request.POST, instance=project)
+            opts_form = OptionForm(request.POST, instance=project.options)
+        if form.is_valid() and opts_form.is_valid():
+            opts = opts_form.save()
+            if project is None:
+                project = form.save(commit=False)
+                project.user = User.objects.get(email=request.user.email)
+                project.options = opts
+            project.save()
+            simulation, _ = Simulation.objects.get_or_create(project=project)
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
 
 
 @require_http_methods(["GET"])

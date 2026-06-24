@@ -50,7 +50,7 @@ async function plot_results() {
     const form = document.querySelector('form[data-autosave-url]');
     if (!form) return;
     let saveTimer = null;
-    const SAVE_DELAY = 2000;
+    const SAVE_DELAY = 1500;
 
     ['input', 'change'].forEach(event => {
         form.addEventListener(event, () => {

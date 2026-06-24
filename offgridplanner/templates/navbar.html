@@ -24,7 +24,7 @@
             aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+   <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mb-2 mb-lg-0">
         {% if not scenario_create %}
           <li class="nav-item">
@@ -36,7 +36,11 @@
         {% elif signup %}
           <!--For user signup the nav bar does not display all options-->
         {% endif %}
-        <li class="nav-item dropdown locale" id="language-switcher">
+        <li id="autosave-indicator" aria-hidden="true">
+          <span class="autosave-dots"><span></span><span></span><span></span></span>
+          <span class="autosave-label">Saving</span>
+        </li>
+          <li class="nav-item dropdown locale" id="language-switcher">
           <form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input name="next" type="hidden" value="{{ request.get_full_path|custom_redir_lang }}" />

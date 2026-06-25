@@ -486,74 +486,57 @@ def autosave_project_setup(request, proj_id=None):
     return JsonResponse({"message": "autosave failed"}, status=400)
 
 
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
 def autosave_demand_estimation(request, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"message": "invalid JSON"}, status=400)
-    try:
-        with transaction.atomic():
-            project = get_object_or_404(Project, id=proj_id) if proj_id else None
-            form = CustomDemandForm(
-                data,
-                instance=project.customdemand
-                if hasattr(project, "customdemand")
-                else None,
-            )
-            opts = OptionForm(
-                data, instance=project.options if hasattr(project, "options") else None
-            )
-            if form.is_valid() and opts.is_valid():
-                form.save()
-                opts.save()
-                return JsonResponse({"message": "successfully autosaved"}, status=200)
-    except IntegrityError:
-        pass
-    return JsonResponse({"message": "Autosave failed"}, status=400)
+    form = CustomDemandForm(data, instance=project.customdemand)
+    opts = OptionForm(data, instance=project.options)
+    if form.is_valid() and opts.is_valid():
+        form.save()
+        opts.save()
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
+    return JsonResponse({"message": "autosave failed"}, status=400)
 
 
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
 def autosave_grid_design(request, proj_id):
-    try:
-        data = json.loads(request.body)
-    except (json.JSONDecodeError, ValueError):
-        return JsonResponse({"message": "invalid JSON"}, status=400)
-    try:
-        with transaction.atomic():
-            project = get_object_or_404(Project, id=proj_id) if proj_id else None
-            form = GridDesignForm(
-                data,
-                instance=project.griddesign if hasattr(project, "griddesign") else None,
-                set_db_column_attribute=True,
-            )
-            if form.is_valid():
-                form.save()
-                return JsonResponse({"message": "successfully autosaved"}, status=200)
-    except IntegrityError:
-        pass
-    return JsonResponse({"message": "Autosave failed"}, status=400)
+    project = get_object_or_404(Project, id=proj_id)
+    return _autosave(
+        request, GridDesignForm, project.griddesign, set_db_column_attribute=True
+    )
 
 
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
 def autosave_energy_system_design(request, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
+    return _autosave(
+        request,
+        EnergySystemDesignForm,
+        project.energysystemdesign,
+        set_db_column_attribute=True,
+    )
+
+
+def _autosave(request, form_class, instance, **form_kwargs):
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"message": "invalid JSON"}, status=400)
-    try:
-        with transaction.atomic():
-            project = get_object_or_404(Project, id=proj_id) if proj_id else None
-            form = EnergySystemDesignForm(
-                data,
-                instance=project.energysystemdesign
-                if hasattr(project, "energysystemdesign")
-                else None,
-                set_db_column_attribute=True,
-            )
-            if form.is_valid():
-                form.save()
-                return JsonResponse({"message": "successfully autosaved"}, status=200)
-    except IntegrityError:
-        pass
-    return JsonResponse({"message": "Autosave failed"}, status=400)
+    form = form_class(data, instance=instance, **form_kwargs)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
+    return JsonResponse({"message": "autosave failed"}, status=400)
 
 
 def _save_project_setup(user, proj_id, form_data):

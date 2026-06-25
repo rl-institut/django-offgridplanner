@@ -14,7 +14,7 @@
 <main>
   <section class="dashboard">
     <div>
-      <form method="post">
+      <form method="post" data-autosave-url="{% url 'steps:autosave_energy_system_design' proj_id %}">
         {% csrf_token %}
       <div class="row">
         <div class="col-md-4">

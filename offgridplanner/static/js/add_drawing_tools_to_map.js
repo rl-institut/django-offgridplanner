@@ -45,6 +45,66 @@ var rectangleDrawer = new L.Draw.Rectangle(map, {
 
 let isPowerHouseMarker = false
 
+map.on('draw:created', function (e) {
+    var layerType = e.layerType;
+    if (layerType === 'marker' || layerType === 'rectangle' || layerType === 'polygon') {
+        update_map_elements();
+    }
+});
+
+
+// Add a listener that responds to the 'draw:created' event
+map.on(L.Draw.Event.CREATED, function (event) {
+        const layer = event.layer;
+
+        if (event.layerType === 'marker') {
+            const latLng = layer.getLatLng();
+            const lat = latLng.lat;
+            const lng = latLng.lng;
+
+
+            if (isPowerHouseMarker) {
+                let existingPowerHouseIndex = map_elements.findIndex(element => element.node_type == 'power-house');
+
+                // If an element is found, remove it
+                if (existingPowerHouseIndex !== -1) {
+                    map_elements.splice(existingPowerHouseIndex, 1);
+                    remove_marker_from_map();
+                    put_markers_on_map(map_elements, true);
+                }
+                add_single_consumer_to_array(lat, lng, 'manual', 'power-house');
+                drawMarker(lat, lng, 'power-house');
+                isPowerHouseMarker = false;  // Reset the flag
+            } else {
+                add_single_consumer_to_array(lat, lng, 'manual', 'consumer');
+                drawMarker(lat, lng, 'consumer');
+                setTimeout(() => drawControl._toolbars.draw._modes.marker.handler.enable(), 100);
+            }
+            if (typeof autosave_consumers === 'function') autosave_consumers();
+
+            // Add a delay before re-enabling to bypass the default disable action
+
+        } else {
+            drawnItems.addLayer(layer);
+
+            // Save the polygon coordinates in a variable
+            polygonCoordinates.push(layer.getLatLngs());
+
+            polygonDrawer.disable();
+            if (!is_active) {
+                add_buildings_inside_boundary({boundariesCoordinates: polygonCoordinates});
+                add_roads_inside_boundary({boundariesCoordinates: polygonCoordinates});
+            } else {
+                remove_buildings_inside_boundary({boundariesCoordinates: polygonCoordinates});
+                remove_roads_inside_boundary({boundariesCoordinates: polygonCoordinates});
+            }
+            removeBoundaries();
+        }
+        ;
+        count_consumers();
+    }
+)
+
 var myCustomMarker = L.Icon.extend({
     options: {
         shadowUrl: null,

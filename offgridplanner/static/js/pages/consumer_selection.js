@@ -19,6 +19,24 @@
 let consumer_type = "H";
 
 // set up consumer dropdown
+let consumerSaveTimer = null;
+function autosave_consumers() {
+    clearTimeout(consumerSaveTimer);
+    consumerSaveTimer = setTimeout(() => {
+        const indicator = document.getElementById('autosave-indicator');
+        indicator?.classList.add('visible');
+        fetch(consumerToDBUrl, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
+            body: JSON.stringify({map_elements: map_elements, file_type: "db"})
+        })
+        .then(res => {
+            if (indicator) setTimeout(() => indicator.classList.remove('visible'), res.ok ? 2000 : 0);
+        })
+        .catch(() => { if (indicator) indicator.classList.remove('visible'); });
+    }, 1500);
+}
+
 (function () {
     let option_consumer = '';
     for (let consumer_code in consumer_list) {
@@ -323,6 +341,9 @@ function update_map_elements() {
         marker._oldLng = marker.longitude;
     });
     count_consumers(false)
+    }
+    count_consumers(false);
+    autosave_consumers();
 }
 
 function resetMarkerIcon(marker) {
@@ -717,6 +738,7 @@ function delete_consumer() {
     });
     selectedMarkers = []
     count_consumers();
+    autosave_consumers();
 }
 
 

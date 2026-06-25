@@ -20,7 +20,7 @@
 
 {% block progression_content %}
 <main>
-  <form method="post">
+  <form method="post" data-autosave-url="{% url 'steps:autosave_demand_estimation' proj_id %}">
     {% csrf_token %}
 
     <section id="section" class="dashboard" style="height: auto">

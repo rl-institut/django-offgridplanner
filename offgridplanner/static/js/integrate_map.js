@@ -243,11 +243,15 @@ async function put_markers_on_map(array, markers_only) {
           else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
           else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
         }
-      } else {
+      } else if (node.node_type === "power-house") {
+        selectedIcon = icons[node.node_type] || null;
+    }
+    // 👇 Andere Node-Typen (z. B. Poles): Nur bei markers_only=false
+    else {
         if (!markers_only) {
-          selectedIcon = icons[node.node_type] || null;
+            selectedIcon = icons[node.node_type] || null;
         }
-      }
+    }
 
   // Only add if we actually chose an icon for this node
   if (selectedIcon) {

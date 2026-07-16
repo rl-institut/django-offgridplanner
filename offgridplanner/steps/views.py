@@ -6,9 +6,8 @@ import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.forms import model_to_dict
 from django.db import transaction
-from django.http import Http404
+from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -528,12 +527,9 @@ def autosave_energy_system_design(request, proj_id):
     )
 
 
+@require_http_methods([ "POST" ])
 def _autosave(request, form_class, instance, **form_kwargs):
-    try:
-        data = json.loads(request.body)
-    except (json.JSONDecodeError, ValueError):
-        return JsonResponse({"message": "invalid JSON"}, status=400)
-    form = form_class(data, instance=instance, **form_kwargs)
+    form = form_class(request.POST, instance=instance, **form_kwargs)
     if form.is_valid():
         form.save()
         return JsonResponse({"message": "successfully autosaved"}, status=200)

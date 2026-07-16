@@ -1,17 +1,19 @@
 #autosave-indicator {
+    opacity: 0;
     display: flex;
     align-items: center;
     gap: 6px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.15s ease 1.5s;
     pointer-events: none;
+}
+
+#autosave-indicator.htmx-request {
+    opacity: 1;
+    transition: opacity 0.15s ease;
 }
 .autosave-label {
     color: #bbb;
     font-size: 1rem;
-}
-#autosave-indicator.visible {
-    opacity: 1;
 }
 .autosave-dots {
     display: flex;

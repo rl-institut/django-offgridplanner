@@ -340,11 +340,9 @@ function update_map_elements() {
         marker._oldLat = marker.latitude;
         marker._oldLng = marker.longitude;
     });
-    count_consumers(false)
-    }
     count_consumers(false);
     autosave_consumers();
-}
+    }
 
 function resetMarkerIcon(marker) {
     // just resets the marker Icon based marker consumer_type

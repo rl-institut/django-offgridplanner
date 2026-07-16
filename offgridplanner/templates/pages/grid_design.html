@@ -14,7 +14,7 @@
 <main>
   <section class="dashboard">
     <div>
-      <form method="post">
+      <form method="post" hx-post="{% url 'steps:autosave_grid_design' proj_id %}" hx-trigger="input changed delay:1500ms" hx-indicator="#autosave-indicator" hx-swap="none" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
         {% csrf_token %}
         <div class="row">
           {% for component, fields in grouped_fields.items %}
@@ -88,7 +88,7 @@
     </div>
   </section>
   <div id="videoTutorial" class="modal" style="background-color: rgba(0,0,0,0.5); z-index: 999; text-align: left">
-    <form class="modal-content" style="width: 700px; height: 520px;">
+  <form class="modal-content" style="width: 700px; height: 520px;">
       <div class="container">
         <h1 style="margin-bottom: 0;">Video Tutorial</h1>
         <div style="padding: 15px;">
@@ -108,6 +108,9 @@
 
 
 {% block end_body_scripts %}
+<script>
+  const csrfToken = '{{ csrf_token }}';
+</script>
 <script src="{% static 'js/pages/grid_design.js' %}"></script>
 <script src="{% static 'js/map_api.js' %}"></script>
 <script src="{% static 'js/backend_communication.js' %}"></script>

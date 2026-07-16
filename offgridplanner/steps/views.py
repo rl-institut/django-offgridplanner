@@ -1,12 +1,15 @@
 import copy
+import json
 import os
 
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -167,7 +170,7 @@ def consumer_selection(request, proj_id=None):
 @login_required
 @user_owns_project
 @require_http_methods(["GET", "POST"])
-def demand_estimation(request, proj_id=None):
+def demand_estimation(request, proj_id):
     # TODO demand import and export from this step still needs to be handled
     step_id = list(STEPS.keys()).index("demand_estimation") + 1
     if proj_id is not None:
@@ -184,31 +187,37 @@ def demand_estimation(request, proj_id=None):
             uploaded_data = custom_demand.uploaded_data
         else:
             uploaded_data = {}
+    project = get_object_or_404(Project, id=proj_id)
+    options = project.options
+    custom_demand, _ = CustomDemand.objects.get_or_create(
+        project=project, defaults=get_param_from_metadata("default", "CustomDemand")
+    )
+    calibration_initial = custom_demand.calibration_option
+    calibration_active = custom_demand.calibration_option is not None
+    # Pass the default values to be able to switch between settlement types
+    household_default_shares = custom_demand.get_shares_dict(
+        as_percentage=True, defaults=True
+    )
 
-        if request.method == "POST":
-            form = CustomDemandForm(request.POST, instance=custom_demand)
-            opts = OptionForm(request.POST, instance=options)
-            display_error = None
-            if form.is_valid() and opts.is_valid():
-                form.save()
-                opts.save()
-                if (
-                    options.do_demand_estimation is False
-                    and custom_demand.uploaded_data is None
-                ):
-                    display_error = "You have selected the option to use a custom demand timeseries, but not provided any data. Please upload a timeseries or unselect the given slider."
-            else:
-                errors = form.non_field_errors()
-                display_error = errors[0] if len(errors) == 1 else errors
-                messages.add_message(request, messages.WARNING, display_error)
+    # Pass the initial values for the customDemand shares to be able to use the dynamic reset button
+    household_initial_shares = custom_demand.get_shares_dict(as_percentage=True)
 
-            if display_error:
-                messages.add_message(request, messages.WARNING, display_error)
-            else:
-                return redirect("steps:ogp_steps", proj_id, step_id + 1)
+    if request.method == "POST":
+        form = CustomDemandForm(request.POST, instance=custom_demand)
+        opts = OptionForm(request.POST, instance=options)
+        display_error = None
+        if form.is_valid() and opts.is_valid():
+            form.save()
+            opts.save()
+            if (
+                options.do_demand_estimation is False
+                and custom_demand.uploaded_data is None
+            ):
+                display_error = "You have selected the option to use a custom demand timeseries, but not provided any data. Please upload a timeseries or unselect the given slider."
         else:
-            form = CustomDemandForm(instance=custom_demand)
-            opts = OptionForm(instance=options)
+            errors = form.non_field_errors()
+            display_error = errors[0] if len(errors) == 1 else errors
+            messages.add_message(request, messages.WARNING, display_error)
 
         context = {
             "household_initial_shares": household_initial_shares,
@@ -223,8 +232,36 @@ def demand_estimation(request, proj_id=None):
             "step_list": STEP_LIST_RIBBON,
             "uploaded_data": uploaded_data,
         }
+        if display_error:
+            messages.add_message(request, messages.WARNING, display_error)
+        else:
+            return redirect("steps:ogp_steps", proj_id, step_id + 1)
+    else:
+        form = CustomDemandForm(instance=custom_demand)
+        opts = OptionForm(instance=options)
 
-        return render(request, "pages/demand_estimation.html", context)
+    context = {
+        "calibration": {
+            "active": calibration_active,
+            "initial": calibration_initial,
+        },
+        "custom_demand_shares": [
+            "very_low",
+            "low",
+            "middle",
+            "high",
+            "very_high",
+        ],
+        "household_default_shares": household_default_shares,
+        "household_initial_shares": household_initial_shares,
+        "form": form,
+        "opts_form": opts,
+        "proj_id": proj_id,
+        "step_id": step_id,
+        "step_list": STEP_LIST_RIBBON,
+    }
+
+    return render(request, "pages/demand_estimation.html", context)
 
 
 @login_required
@@ -273,7 +310,7 @@ def grid_design(request, proj_id=None):
 @login_required
 @user_owns_project
 @require_http_methods(["GET", "POST"])
-def energy_system_design(request, proj_id=None):
+def energy_system_design(request, proj_id):
     step_id = list(STEPS.keys()).index("energy_system_design") + 1
     if proj_id is not None:
         project = get_object_or_404(Project, id=proj_id)
@@ -415,6 +452,113 @@ def steps(request, proj_id, step_id=None):
     return HttpResponseRedirect(
         reverse(f"steps:{list(STEPS.keys())[step_id - 1]}", args=[proj_id])
     )
+
+
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
+def project_setup_autosave(request, proj_id):
+    with transaction.atomic():
+        project = get_object_or_404(Project, id=proj_id)
+        if project is None:
+            form = ProjectForm(request.POST)
+            opts_form = OptionForm(request.POST)
+        else:
+            form = ProjectForm(request.POST, instance=project)
+            opts_form = OptionForm(request.POST, instance=project.options)
+        if form.is_valid() and opts_form.is_valid():
+            opts = opts_form.save()
+            if project is None:
+                project = form.save(commit=False)
+                project.user = User.objects.get(email=request.user.email)
+                project.options = opts
+            project.save()
+            simulation, _ = Simulation.objects.get_or_create(project=project)
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
+def autosave_project_setup(request, proj_id=None):
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"message": "invalid JSON"}, status=400)
+    _, _, _, success = _save_project_setup(request.user, proj_id, data)
+    if success:
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
+    return JsonResponse({"message": "autosave failed"}, status=400)
+
+
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
+def autosave_demand_estimation(request, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"message": "invalid JSON"}, status=400)
+    form = CustomDemandForm(data, instance=project.customdemand)
+    opts = OptionForm(data, instance=project.options)
+    if form.is_valid() and opts.is_valid():
+        form.save()
+        opts.save()
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
+    return JsonResponse({"message": "autosave failed"}, status=400)
+
+
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
+def autosave_grid_design(request, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
+    return _autosave(
+        request, GridDesignForm, project.griddesign, set_db_column_attribute=True
+    )
+
+
+@login_required
+@user_owns_project
+@require_http_methods(["POST"])
+def autosave_energy_system_design(request, proj_id):
+    project = get_object_or_404(Project, id=proj_id)
+    return _autosave(
+        request,
+        EnergySystemDesignForm,
+        project.energysystemdesign,
+        set_db_column_attribute=True,
+    )
+
+
+@require_http_methods([ "POST" ])
+def _autosave(request, form_class, instance, **form_kwargs):
+    form = form_class(request.POST, instance=instance, **form_kwargs)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({"message": "successfully autosaved"}, status=200)
+    return JsonResponse({"message": "autosave failed"}, status=400)
+
+
+def _save_project_setup(user, proj_id, form_data):
+    project = get_object_or_404(Project, id=proj_id) if proj_id else None
+    form = ProjectForm(form_data, instance=project)
+    opts_form = OptionForm(form_data, instance=project.options if project else None)
+    success = True
+    if form.is_valid() and opts_form.is_valid():
+        try:
+            with transaction.atomic():
+                opts = opts_form.save()
+                if project is None:
+                    project = form.save(commit=False)
+                    project.user = User.objects.get(email=user.email)
+                    project.options = opts
+                    project.save()
+                else:
+                    project.save()
+                Simulation.objects.get_or_create(project=project)
+        except IntegrityError:
+            success = False
+    else:
+        success = False
+
+    return form, opts_form, project, success
 
 
 @require_http_methods(["GET"])

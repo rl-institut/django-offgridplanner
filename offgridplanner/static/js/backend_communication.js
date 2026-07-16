@@ -45,50 +45,6 @@ $('.js-captcha-refresh').click(function(){
 
 
 async function plot_results() {
-
-(function initAutoSave() {
-    const form = document.querySelector('form[data-autosave-url]');
-    if (!form) return;
-    let saveTimer = null;
-    const SAVE_DELAY = 1500;
-
-    ['input', 'change'].forEach(event => {
-        form.addEventListener(event, () => {
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => {
-                const formData = new FormData(form);
-                const dataObj = {};
-                formData.forEach((value, key) => { dataObj[key] = value; });
-                const indicator = document.getElementById('autosave-indicator');
-                indicator?.classList.add('visible');
-                fetch(form.dataset.autosaveUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
-                    body: JSON.stringify(dataObj),
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('Save failed');
-                    return res.json();
-                })
-                .then(() => {
-                    if (indicator) setTimeout(() => indicator.classList.remove('visible'), 1500);
-                })
-                .catch(err => {
-                    console.error('Autosave error:', err);
-                    indicator?.classList.remove('visible');
-                });
-            }, SAVE_DELAY);
-        });
-    });
-
-    window.addEventListener('beforeunload', () => clearTimeout(saveTimer));
-})();
-
-
-async function plot_results(sequential = false) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const project_id = urlParams.get('project_id');
-
     // Initialize an array to hold fetch and plot promises
     const fetchAndPlotPromises = [];
 

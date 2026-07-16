@@ -20,7 +20,7 @@
       <div class="chart__header">
         <a class="title"></a>
       </div>
-      <form data-autosave-url="{% if proj_id %}{% url 'steps:autosave_project_setup' proj_id %}{% else %}{% url 'steps:autosave_project-setup' %}{% endif %}" action="{% if proj_id %}{% url 'steps:project_setup' proj_id %}{% else %}{% url 'steps:project_setup' %}{% endif %}" method="POST">
+      <form method="post" hx-post="{% if proj_id %}{% url 'steps:autosave_project_setup' proj_id %}{% else %}{% url 'steps:autosave_project_setup' %}{% endif %}" hx-trigger="input changed delay:1500ms" hx-indicator="#autosave-indicator" hx-swap="none" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
         {% csrf_token %}
         <div class="row" style="height: auto">
           <div class="col-md-6" style="height: auto">

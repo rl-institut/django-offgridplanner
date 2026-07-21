@@ -171,6 +171,7 @@ function customTrashBinAction() {
     remove_marker_from_map();
     polygonCoordinates = [];
     map_elements = [];
+    selectedMarkers = [];
 }
 
 const trashbinControl = new L.Control.Trashbin();

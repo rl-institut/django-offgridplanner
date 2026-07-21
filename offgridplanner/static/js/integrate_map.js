@@ -206,8 +206,6 @@ function drawMarker(latitude, longitude, type) {
 
 async function put_markers_on_map(array, markers_only) {
     const n = array.length;
-    let counter;
-    let selected_icon;
 
     // Initialize the counters
     let num_consumers = 0;
@@ -221,33 +219,33 @@ async function put_markers_on_map(array, markers_only) {
     initializeMap(null, null, bounds);
 
     for (let counter = 0; counter < n; counter++) {
-      const node = array[counter];
-      let selectedIcon = null;
+        const node = array[counter];
+        let selectedIcon = null;
 
-      if (node.node_type === "consumer") {
-        num_consumers++;
+        if (node.node_type === "consumer") {
+            num_consumers++;
 
-        if (node.consumer_type === "household") num_households++;
-        else if (node.consumer_type === "enterprise") num_enterprises++;
-        else if (node.consumer_type === "public_service") num_public_services++;
+            if (node.consumer_type === "household") num_households++;
+            else if (node.consumer_type === "enterprise") num_enterprises++;
+            else if (node.consumer_type === "public_service") num_public_services++;
 
-        if (markers_only) {
-          if (node.shs_options === 2) selectedIcon = markerShs;
-          else if (node.consumer_type === "household") selectedIcon = markerConsumer;
-          else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
-          else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
-        } else {
-          const isConnected = (node.is_connected === true || node.is_connected === "true");
-          if (!isConnected) selectedIcon = markerShs;
-          else if (node.consumer_type === "household") selectedIcon = markerConsumer;
-          else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
-          else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
+            if (markers_only) {
+                if (node.shs_options === 2) selectedIcon = markerShs;
+                else if (node.consumer_type === "household") selectedIcon = markerConsumer;
+                else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
+                else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
+            } else {
+                const isConnected = (node.is_connected === true || node.is_connected === "true");
+                if (!isConnected) selectedIcon = markerShs;
+                else if (node.consumer_type === "household") selectedIcon = markerConsumer;
+                else if (node.consumer_type === "enterprise") selectedIcon = markerEnterprise;
+                else if (node.consumer_type === "public_service") selectedIcon = markerPublicservice;
+            }
+        } else if (node.node_type === "power-house") {
+            selectedIcon = markerPowerHouse;
+        } else if (!markers_only) {
+            selectedIcon = icons[node.node_type] || null;
         }
-      } else {
-        if (!markers_only) {
-          selectedIcon = icons[node.node_type] || null;
-        }
-      }
 
   // Only add if we actually chose an icon for this node
   if (selectedIcon) {

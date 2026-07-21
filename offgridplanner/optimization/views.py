@@ -392,9 +392,9 @@ def consumer_to_db(request, proj_id=None):
                 updated_nodes = df
             else:
                 # Keep pole data if exists (to avoid deleting poles on results display)
-                non_consumer_nodes = nodes.df[nodes.df.node_type != "consumer"][
-                    required_columns
-                ]
+                non_consumer_nodes = nodes.df[
+                    ~nodes.df.node_type.isin(["consumer", "power-house"])
+                ][required_columns]
                 updated_nodes = pd.concat([df, non_consumer_nodes])
             nodes.data = updated_nodes.to_json(
                 orient="records"

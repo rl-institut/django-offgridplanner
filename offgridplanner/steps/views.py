@@ -194,11 +194,6 @@ def demand_estimation(request, proj_id):
     )
     calibration_initial = custom_demand.calibration_option
     calibration_active = custom_demand.calibration_option is not None
-    # Pass the default values to be able to switch between settlement types
-    household_default_shares = custom_demand.get_shares_dict(
-        as_percentage=True, defaults=True
-    )
-
     # Pass the initial values for the customDemand shares to be able to use the dynamic reset button
     household_initial_shares = custom_demand.get_shares_dict(as_percentage=True)
 
@@ -252,7 +247,6 @@ def demand_estimation(request, proj_id):
             "high",
             "very_high",
         ],
-        "household_default_shares": household_default_shares,
         "household_initial_shares": household_initial_shares,
         "form": form,
         "opts_form": opts,

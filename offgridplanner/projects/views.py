@@ -461,4 +461,7 @@ def populate_project_from_export(export_dict, user, *, include_results=True):
             ]:
                 _save_json_data_model(export_dict[name], proj, model)
 
+        else:
+            simulation = Simulation.objects.create(project=proj)
+
     return proj.id

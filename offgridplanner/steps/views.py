@@ -475,6 +475,8 @@ def project_setup_autosave(request, proj_id):
             project.save()
             simulation, _ = Simulation.objects.get_or_create(project=project)
         return JsonResponse({"message": "successfully autosaved"}, status=200)
+
+
 def autosave_project_setup(request, proj_id=None):
     try:
         data = json.loads(request.body)
@@ -527,7 +529,7 @@ def autosave_energy_system_design(request, proj_id):
     )
 
 
-@require_http_methods([ "POST" ])
+@require_http_methods(["POST"])
 def _autosave(request, form_class, instance, **form_kwargs):
     form = form_class(request.POST, instance=instance, **form_kwargs)
     if form.is_valid():

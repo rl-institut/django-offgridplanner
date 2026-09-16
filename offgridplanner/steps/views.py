@@ -1,5 +1,4 @@
 import copy
-import json
 import os
 
 import pandas as pd
@@ -479,11 +478,7 @@ def project_setup_autosave(request, proj_id):
 
 
 def autosave_project_setup(request, proj_id=None):
-    try:
-        data = json.loads(request.body)
-    except (json.JSONDecodeError, ValueError):
-        return JsonResponse({"message": "invalid JSON"}, status=400)
-    _, _, _, success = _save_project_setup(request.user, proj_id, data)
+    _, _, _, success = _save_project_setup(request.user, proj_id, request.POST)
     if success:
         return JsonResponse({"message": "successfully autosaved"}, status=200)
     return JsonResponse({"message": "autosave failed"}, status=400)
@@ -494,12 +489,8 @@ def autosave_project_setup(request, proj_id=None):
 @require_http_methods(["POST"])
 def autosave_demand_estimation(request, proj_id):
     project = get_object_or_404(Project, id=proj_id)
-    try:
-        data = json.loads(request.body)
-    except (json.JSONDecodeError, ValueError):
-        return JsonResponse({"message": "invalid JSON"}, status=400)
-    form = CustomDemandForm(data, instance=project.customdemand)
-    opts = OptionForm(data, instance=project.options)
+    form = CustomDemandForm(request.POST, instance=project.customdemand)
+    opts = OptionForm(request.POST, instance=project.options)
     if form.is_valid() and opts.is_valid():
         form.save()
         opts.save()

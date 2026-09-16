@@ -20,7 +20,7 @@
 
 {% block progression_content %}
 <main>
-  <form method="post" data-autosave-url="{% url 'steps:autosave_demand_estimation' proj_id %}">
+  <form method="post" hx-post="{% url 'steps:autosave_demand_estimation' proj_id %}" hx-trigger="input changed delay:1500ms" hx-indicator="#autosave-indicator" hx-swap="none" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
     {% csrf_token %}
 
     <section id="section" class="dashboard" style="height: auto">

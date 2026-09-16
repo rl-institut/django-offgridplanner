@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Autosave form data without having to click next on the page ([#279](https://github.com/rl-institut/django-offgridplanner/pull/279))
+
 ### Fixed
 - Fix power house issues on consumer export/import ([#280](https://github.com/rl-institut/django-offgridplanner/pull/280))
 

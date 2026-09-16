@@ -187,7 +187,7 @@ def project_delete(request, proj_id):
     if request.method == "POST":
         project.delete()
         # message not defined
-        messages.success(request, _( "Project successfully deleted!" ))
+        messages.success(request, _("Project successfully deleted!"))
 
     return HttpResponseRedirect(reverse("projects:projects_list"))
 
@@ -403,6 +403,7 @@ def get_exchange_rate_view(request):
         rate = 1.0
 
     return JsonResponse({"exchange_rate": rate})
+
 
 def _save_model(model_dict, proj, model):
     instance, _ = model.objects.get_or_create(**model_dict | {"project": proj})

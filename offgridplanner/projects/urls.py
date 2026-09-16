@@ -27,7 +27,8 @@ urlpatterns = [
     path(
         "download_excel_results/<int:proj_id>",
         download_excel_results,
-        name="download_excel_results",
-    ),
+        name="download_excel_results"),
+    path("export/<int:proj_id>", project_export, name="project_export"),
+    path("json_import", project_import, name="project_import"),
     path("api_exchange_rate/", get_exchange_rate_view, name="exchange_rate"),
 ]

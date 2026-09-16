@@ -225,7 +225,6 @@ def demand_estimation(request, proj_id):
             "proj_id": proj_id,
             "step_id": step_id,
             "step_list": STEP_LIST_RIBBON,
-            "uploaded_data": uploaded_data,
         }
         if display_error:
             messages.add_message(request, messages.WARNING, display_error)
@@ -250,6 +249,7 @@ def demand_estimation(request, proj_id):
         "household_initial_shares": household_initial_shares,
         "form": form,
         "opts_form": opts,
+        "uploaded_data": uploaded_data,
         "proj_id": proj_id,
         "step_id": step_id,
         "step_list": STEP_LIST_RIBBON,

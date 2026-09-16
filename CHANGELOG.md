@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.5.0] – 2026-09-16
 ### Added
 - Autosave form data without having to click next on the page ([#279](https://github.com/rl-institut/django-offgridplanner/pull/279))
 - Option to export and import projects in JSON format ([#289](https://github.com/rl-institut/django-offgridplanner/pull/289))

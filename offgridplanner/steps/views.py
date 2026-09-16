@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse

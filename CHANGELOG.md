@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [v1.5.1] – 2026-09-17
 ### Fixed
 - Fix buggy power-house placement button ([#291](https://github.com/rl-institut/django-offgridplanner/pull/291))
 

@@ -490,7 +490,7 @@ function updateConsumerDropdown() {
             if (details[0] !== undefined) {
                 const possibleKey = getKeyByValue(loadList, details[0]);
                 selectedKey = loadList.hasOwnProperty(possibleKey) ? possibleKey : undefined;
-            } else {d
+            } else {
                 selectedKey = undefined;
             }
         } else {
@@ -802,6 +802,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
                 drawMarker(lat, lng, 'consumer');
                 setTimeout(() => drawControl._toolbars.draw._modes.marker.handler.enable(), 100);
             }
+            if (typeof autosave_consumers === 'function') autosave_consumers();
 
         } else {
             drawnItems.addLayer(layer);

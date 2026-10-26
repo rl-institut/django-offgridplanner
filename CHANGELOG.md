@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Fix duplicate project button ([#300](https://github.com/rl-institut/django-offgridplanner/pull/300))
 
 ## [v1.5.1] – 2026-09-17
 ### Fixed
